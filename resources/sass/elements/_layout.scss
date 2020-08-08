@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
+
+
+.main-content__top {
+  position: fixed;
+  top: 0;
+  margin-left: -15px;
+  width: calc(100% - 277px);
+  height: 60px;
+  border-bottom: 1px solid #eee;
+  background: $color-primary;
+  z-index: 1000;
+}
+
+.main-content__title {
+  font-size: 1.7em;
+  margin: 15px 0 15px 15px;
+  border-bottom: none;
+  color: $color-grey;
+}
+
+.main-content__body {
+  margin-top: 40px;
+  margin-left: 10px;
+}

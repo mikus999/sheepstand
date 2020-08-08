@@ -1,0 +1,15 @@
+
+.menu-toggle-btn {
+  display: block;
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  z-index: 1001;
+  color: #fff;
+  background: transparent;
+
+  &:hover {
+    color: $color-secondary;
+    text-decoration: none;
+  }
+}
