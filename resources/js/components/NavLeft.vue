@@ -3,7 +3,7 @@
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">
-          <img src="dist/img/cplogo.png" width="30" height="30" class="d-inline-block align-top ml-1 mr-2">
+          <img src="logo.png" width="30" height="30" class="d-inline-block align-top ml-1 mr-2">
 
           <span class="head-thick">CART</span>
           <span class="head-thin ml-n1">PLAN</span>
