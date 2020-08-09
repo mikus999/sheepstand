@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <router-link :to="{ name: user ? 'home' : 'welcome' }" class="navbar-brand">
-        <img src="dist/img/cplogo.png" width="30" height="30" class="d-inline-block align-top mr-1" alt="" loading="lazy">
+        <img src="~/src/assets/cplogo.png" width="30" height="30" class="d-inline-block align-top mr-1" alt="" loading="lazy">
         <span class="head-thick">CART</span>
         <span class="head-thin ml-n1">PLAN</span>
 
