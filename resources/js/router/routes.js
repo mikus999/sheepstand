@@ -35,7 +35,7 @@ export default [
     ] },
   { path: '/team/join', name: 'teams.join', component: page('teams/join.vue') },
   { path: '/team/create', name: 'teams.create', component: page('teams/create.vue') },
-  { path: '/team/', name: 'teams.index', component: page('teams/index.vue') },
+  { path: '/team/settings', name: 'teams.index', component: page('teams/index.vue') },
 
   { path: '*', component: page('errors/404.vue') }
 ]

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <h1 class="display-3">
+      <h1 class="display-1">
         Team Settings
       </h1>
     </v-row>
@@ -51,7 +51,7 @@
 
     <v-row>
       <v-col md="12">
-        <h4>{{ $t('users') }}</h4>
+        <h3>{{ $t('users') }}</h3>
       </v-col>
     </v-row>  
   </v-container>

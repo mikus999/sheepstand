@@ -2,7 +2,7 @@
   <v-card class="w-75 mx-auto" outlined>
     <div class="row">
       <div class="col-md-12 text-center p-5">
-        <h1 class="display-">
+        <h1 class="display-3">
           Create a new team
         </h1>
 

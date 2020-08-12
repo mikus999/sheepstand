@@ -1,5 +1,5 @@
 <template>
-  <v-list>
+  <v-list flat>
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">
@@ -39,17 +39,17 @@
 
       <v-subheader inset>Teams</v-subheader>
 
-      <v-list-item v-for="t in teams" :key="t.id" @click.prevent="setTeam(t.id)" >
+      <v-list-item v-for="t in teams" :key="t.id" item-value="true" @click.prevent="setTeam(t.id)" >
         <v-list-item-content>
           <v-list-item-title v-text="t.name" />
         </v-list-item-content>
       </v-list-item>
 
-      <v-divider inset></v-divider>
+      <v-divider inset />
       <v-subheader inset>Actions</v-subheader>
 
       <v-list-item router :to="{ name: 'teams.join' }">
-          <v-list-item-title>Join Team</v-list-item-title>
+        <v-list-item-title>Join Team</v-list-item-title>
       </v-list-item>
 
       <v-list-item router :to="{ name: 'teams.index' }">
