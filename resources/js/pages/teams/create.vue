@@ -1,37 +1,29 @@
 <template>
-<div id="main-content">
-    <div class="main-content__title">
-    </div>
-    <div class="main-content__body">
-      <div class="card w-75 mx-auto">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-12 text-center p-5">
-              <h1 class="display-4">
-                Create a new team
-              </h1>
+  <v-card class="w-75 mx-auto" outlined>
+    <div class="row">
+      <div class="col-md-12 text-center p-5">
+        <h1 class="display-">
+          Create a new team
+        </h1>
 
-              <div class="row mt-5" />
-              <form @submit.prevent="joinTeam">
-                <h4>Give your team a name</h4>
-                <h6 class="text-muted">
-                  This might be the name of your congregation, special metropolitan witnessing program, service group, etc.
-                </h6>
-                <input v-model="team_name" class="form-control form-control-lg text-center mt-5" type="text" placeholder="Team Name">
-                <h6 v-if="hasError" class="text-danger m-2">
-                  There was an error while creating the team.
-                </h6>
-                <br>
-                <button class="btn btn-primary">
-                  Create
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+        <form @submit.prevent="joinTeam">
+          <h4 class="mt-5">Give your team a name</h4>
+          <h6 class="text-muted">
+            This might be the name of your congregation, special metropolitan witnessing program, service group, etc.
+          </h6>
+          <input v-model="team_name" class="form-control form-control-lg text-center mt-5" type="text" placeholder="Team Name">
+          <h6 v-if="hasError" class="text-danger m-2">
+            There was an error while creating the team.
+          </h6>
+          <br>
+          <v-btn color="secondary" type="submit">
+            Create
+          </v-btn>
+        </form>
+
       </div>
     </div>
-  </div>
+  </v-card>
 </template>
 
 <script>

@@ -1,58 +1,62 @@
 <template>
-  <div id="main-content">
-    <div class="main-content__title">
-      {{ pagetitle }}
-    </div>
-    <div class="main-content__body">
-      <div class="row">
-        <div class="col-md-9">
-          <form @submit.prevent="updateTeam">
-            <alert-success :form="form" :message="$t('info_updated')" />
+  <v-container>
+    <v-row>
+      <h1 class="display-3">
+        Team Settings
+      </h1>
+    </v-row>
 
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">{{ $t('name') }}</label>
-              <div class="col-md-7">
-                <input v-model="form.name" class="form-control" type="text" name="name">
-              </div>
+    <v-row>
+      <v-col md="12">
+        <form @submit.prevent="updateTeam">
+          <alert-success :form="form" :message="$t('info_updated')" />
+
+          <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">{{ $t('name') }}</label>
+            <div class="col-md-7">
+              <input v-model="form.name" class="form-control" type="text" name="name">
             </div>
+          </div>
 
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">{{ $t('team_code') }}</label>
-              <div class="col-md-7 col-form-label">
-                {{ form.code }}
-                <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('reset_code') }}</a>
-              </div>
+          <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">{{ $t('team_code') }}</label>
+            <div class="col-md-7 col-form-label">
+              {{ form.code }}
+              <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('reset_code') }}</a>
             </div>
+          </div>
 
-            <div class="form-group row">
-              <label class="col-md-3 col-form-label text-md-right">{{ $t('date_created') }}</label>
-              <div class="col-md-7 col-form-label">
-                {{ form.created_at | formatDate }}
-              </div>
+          <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">{{ $t('date_created') }}</label>
+            <div class="col-md-7 col-form-label">
+              {{ form.created_at | formatDate }}
             </div>
+          </div>
 
-            <!-- Submit Button -->
-            <div class="form-group row">
-              <div class="col-md-9 ml-md-auto">
-                <v-button type="primary">
-                  {{ $t('update') }}
-                </v-button>
-                <button v-b-modal.modal-confirm class="btn btn-danger" @click.prevent="confirmDeleteTeam">
-                  {{ $t('delete_team') }}
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+          <!-- Submit Button -->
+          <v-row>
+            <v-col md="7" offset-md="2">
+              <v-btn color="secondary" type="submit">
+                {{ $t('update') }}
+              </v-btn>
+              <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
+                {{ $t('delete_team') }}
+              </v-btn>       
+            </v-col>
+          </v-row>
+          
+        </form>
+      </v-col>
+    </v-row>
 
-      <div class="row mt-5">
-        <div class="col-md-12">
-          <h4>{{ $t('users') }}</h4>
-        </div>
-      </div>
-    </div>
-  </div>
+    <v-row>
+      <v-col md="12">
+        <h4>{{ $t('users') }}</h4>
+      </v-col>
+    </v-row>  
+  </v-container>
+  
+  
 </template>
 
 <script>

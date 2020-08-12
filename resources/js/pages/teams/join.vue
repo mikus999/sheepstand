@@ -20,9 +20,9 @@
                 </h6>
 
                 <br>
-                <button class="btn btn-primary">
+                <v-btn color="secondary" type="submit">
                   Find Team
-                </button>
+                </v-btn>
                 <hr class="d-lg-none mt-5">
               </form>
             </div>
@@ -30,9 +30,9 @@
             <div class="col-md-6 mt-5">
               <h4>Create a new team</h4>
               <br>
-              <router-link class="btn btn-primary" :to="{ name: 'teams.create' }">
+              <v-btn color="secondary" :to="{ name: 'teams.create' }">
                 Get Started
-              </router-link>
+              </v-btn>
             </div>
           </div>
 
@@ -72,13 +72,13 @@
                   </label>
                 </div>
 
-                <button id="cancel" class="btn btn-secondary mt-5" @click.prevent="clearForm">
+                <v-btn tton id="cancel" class="mt-5" @click.prevent="clearForm">
                   Go Back
-                </button>
+                </v-btn>
 
-                <button class="btn btn-primary mt-5">
+                <v-btn color="secondary" class="mt-5">
                   Join Team
-                </button>
+                </v-btn>
               </form>
             </div>
           </div>
