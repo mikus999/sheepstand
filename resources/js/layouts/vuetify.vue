@@ -1,8 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer class="navleft-main" app>
-      <NavLeft />
-    </v-navigation-drawer>
+    <NavLeft />
 
     <!-- Sizes your content based upon application components -->
     <v-main>

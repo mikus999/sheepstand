@@ -44,9 +44,8 @@ export const actions = {
   async setTeam ({ commit }, { teamid }) {
     await axios.get('/api/teams/' + teamid)
       .then(response => {
-        commit(types.SET_TEAM, response.data)
-
         Cookies.set('team', response.data, { expires: 365 })
+        commit(types.SET_TEAM, response.data)
       })
   }
 }

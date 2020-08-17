@@ -40,7 +40,7 @@ class ScheduleController extends Controller
 
 
         $data = [
-            'data' => $schedule,
+            'schedule' => $schedule,
             'status' => (bool) $schedule,
             'message' => $schedule ? 'Schedule Created!' : 'Error Creating Schedule',
         ];

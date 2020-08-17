@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam');
     Route::get('teams/resetcode/{id}', 'TeamController@changeTeamCode');
     Route::get('teams/findteam/{code}', 'TeamController@findTeamByCode');
+    Route::get('teams/users/{id}', 'TeamController@getTeamUsers');
 
     // SHIFT routes
     Route::post('schedules/joinshift', 'ShiftController@addUserToShift');

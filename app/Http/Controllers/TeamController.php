@@ -93,29 +93,49 @@ class TeamController extends Controller
 
     public function addUserToTeam(Request $request)
     {
-      $userid = $request->user_id;
-      $user = User::find($userid);
+      $error = false;
 
-      if (strlen($request->team_id)<7) {
-        $teamid = $request->team_id;
-        $team = Team::find($teamid);
-      } else {
-        $team = Team::where('code',$request->team_id)->first();
+      if ($request->user_id) {
+        $user = User::find($request->user_id);
+      } elseif ($request->user_code) {
+        $user = User::where('user_code',$request->user_code)->first();
       }
 
-      if ($team) {
-        $user->teams()->detach($team); // First detach if already exists
-        $user->teams()->attach($team);
-        $message = 'SUCCESS';
+      if ($user) {
+        if (strlen($request->team_id)<7) {
+          $teamid = $request->team_id;
+          $team = Team::find($teamid);
+        } else {
+          $team = Team::where('code',$request->team_id)->first();
+        }
+
+        if ($team) {
+          $user->teams()->detach($team); // First detach if already exists
+          $user->teams()->attach($team);
+          $message = 'SUCCESS';
+        } else {
+          $error = true;
+          $message = 'NOT_FOUND';
+        }
       } else {
-        $message = 'NOT_FOUND';
+        $error = true;
+        $message = 'USER NOT FOUND';
       }
 
 
-      $data = [
+      if ($error) {
+        $data = [
+          'error' => $error,
+          'message' => $message
+        ];
+      } else {
+        $data = [
+          'error' => $error,
           'message' => $message,
-          'teams' => $user->teams
-      ];
+          'teams' => $user->teams,
+          'user' => $user
+        ];
+      }
       return response()->json($data);
     }
 
@@ -165,4 +185,11 @@ class TeamController extends Controller
       ];
       return response()->json($data);
     }
+
+    public function getTeamUsers($id)
+      {
+        $team = Team::find($id);
+  
+        return response()->json($team->users);
+      }
 }
