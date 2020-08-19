@@ -88,7 +88,10 @@
           </template>
           
           <template v-slot:item.actions="{ item }">
-            <v-icon small @click="deleteSched(item)">
+            <v-icon small @click="editSched(item)" class="mr-2">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="deleteSched(item)" class="mr-2">
               mdi-delete
             </v-icon>
           </template>
@@ -112,6 +115,7 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 import Form from 'vform'
 import helper from '../../mixins/helper'
+import moment from 'moment'
 
 export default {
   middleware: 'auth',
@@ -171,6 +175,15 @@ export default {
         })
     },
 
+    editSched (schedule) {
+      this.$router.push({
+          name: 'schedules.edit',
+          params: {
+              id: schedule.id
+          }
+      }) 
+    },
+
     deleteSched (sched) {
       const index = this.schedData.indexOf(sched.id)
       if (confirm('Are you sure you want to remove this schedule?')) {
@@ -191,18 +204,20 @@ export default {
 
     save () {
       if (this.newSchedDate !== '') {
-      const formData = new FormData()
-      formData.append('user_id', this.user.id)
-      formData.append('team_id', this.formatJSON(this.team).id)
-      formData.append('date_start', this.newSchedDate)
-      axios.post('/api/schedules', formData)
-        .then(response => {
-          this.schedData.push(response.data.schedule)
+        this.newSchedDate = moment(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
 
-          this.snack = true
-          this.snackColor = 'success'
-          this.snackText = response.data.message
-        })
+        const formData = new FormData()
+        formData.append('user_id', this.user.id)
+        formData.append('team_id', this.formatJSON(this.team).id)
+        formData.append('date_start', this.newSchedDate)
+        axios.post('/api/schedules', formData)
+          .then(response => {
+            this.schedData.push(response.data.schedule)
+
+            this.snack = true
+            this.snackColor = 'success'
+            this.snackText = response.data.message
+          })
       }
 
       this.newSchedDate = ''

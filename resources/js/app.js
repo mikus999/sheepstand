@@ -8,11 +8,15 @@ import moment from 'moment'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
+import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+
+Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 Vue.config.productionTip = false
 Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttribute('content')
@@ -20,6 +24,12 @@ Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttrib
 Vue.filter('formatDate', function (value) {
   if (value) {
     return moment(String(value)).format('DD.MM.YYYY')
+  }
+})
+
+Vue.filter('formatTime', function (value) {
+  if (value) {
+    return moment(String(value)).format('HH:mm')
   }
 })
 

@@ -37,7 +37,7 @@ export default [
   { path: '/team/create', name: 'teams.create', component: page('teams/create.vue') },
   { path: '/team/settings', name: 'teams.index', component: page('teams/index.vue') },
 
-  { path: '/schedule/edit', name: 'schedules.edit', component: page('schedules/edit.vue') },
+  { path: '/schedule/edit/:id', name: 'schedules.edit', component: page('schedules/edit.vue'), props: true },
   { path: '/schedule/', name: 'schedules.index', component: page('schedules/index.vue') },
 
   { path: '*', component: page('errors/404.vue') }
