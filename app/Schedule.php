@@ -42,4 +42,5 @@ class Schedule extends Model
         return $this->hasMany('App\Shift');
     }
 
+
 }

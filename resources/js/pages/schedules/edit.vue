@@ -6,31 +6,52 @@
       </h1>
     </v-row>
 
-    <v-row>
-      <v-col v-for="day in days7" :key="day.id" class="custom7cols day-col" >
-        <h4>{{ day.name }}</h4>
-
-        <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
-          @start="drag = true" @end="drag = false" draggable=".shift">
-            <v-card v-for="shift in day.list" :key="shift.id" class="shift mt-5">
-              <v-card-text class="shift-body">
-                Location: {{ shift.location_id }}<br>
-                Start: {{ shift.time_start | formatTime }}<br>
-                End: {{ shift.time_end | formatTime }}<br>
-                Max Part: {{ shift.min_participants }}<br>
-                Min Part: {{ shift.max_participants }}
-              </v-card-text>
-            </v-card>
-
-            <v-card slot="footer" class="mt-5" key="footer" @click.stop="showShiftDialog(day)">
-              <v-card-text class="text-center">
-                <v-icon large class="pa-4">mdi-plus-box</v-icon>
-              </v-card-text>
-            </v-card>
-        </draggable>
-      </v-col>
+    <v-row class="mt-5 mb-5">
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
     </v-row>
 
+    <v-row>
+      <swiper ref="mySwiper" :options="swiperOptions">
+        <swiper-slide v-for="day in days7" :key="day.id" class="text-center">
+          <h4>{{ day.name }}</h4>
+          <h6>{{ day.date }}</h6>
+
+          <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
+            @end="moveShift" draggable=".shift" :id="day.id">
+              <v-card v-for="shift in day.list" :key="shift.id" class="shift mt-5" :color="shift.location.color_code">
+                <v-card-text class="shift-body text-center pa-0">
+                  <v-row>
+                    <v-col cols=2><v-icon>mdi-map-marker</v-icon></v-col>
+                    <v-col cols=6 class="font-weight-bold">{{ shift.location.name }}</v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
+                    <v-col cols=6 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols=2><v-icon>mdi-account-tie</v-icon></v-col>
+                    <v-col cols=3>
+                      <v-chip small>{{ shift.min_participants }}</v-chip><br>
+                      <span class="text-caption">min</span>
+                    </v-col>
+                    <v-col cols=2>
+                      <v-chip small>{{ shift.max_participants }}</v-chip><br>
+                      <span class="text-caption">max</span>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+
+              <v-card slot="footer" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
+                <v-card-text class="text-center">
+                  <v-icon large class="pa-4">mdi-plus-box</v-icon>
+                </v-card-text>
+              </v-card>
+          </draggable>
+        </swiper-slide>
+      </swiper>
+    </v-row>
 
 
      <v-dialog v-model="dialog" max-width="500px">
@@ -72,6 +93,8 @@ import { mapGetters } from 'vuex'
 import Form from 'vform'
 import draggable from 'vuedraggable'
 import moment from 'moment'
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+
 
 export default {
   middleware: 'auth',
@@ -83,9 +106,10 @@ export default {
     }
   },
   components: {
-    draggable
+    draggable,
+    Swiper,
+    SwiperSlide
   },
-
 
   data () {
     return {
@@ -138,11 +162,38 @@ export default {
           date: '',
           list: [] 
         },        
-      ]
+      ],
+      swiperOptions: {
+        slidesPerView: 1,
+        spaceBetween: 10,
+        freeMode: false,
+        allowTouchMove: false,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        },
+        keyboard: {
+          enabled: true,
+        },
+        breakpoints: {
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          768: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          },
+          1024: {
+            slidesPerView: 4,
+            spaceBetween: 40,
+          }
+        }
+      },
 
     }
   },
-
+  
   created () {
     this.initialize()
   },
@@ -206,7 +257,31 @@ export default {
           this.getShiftData(this.date)
           this.close()  
         })
-      
+    },
+
+    moveShift (evt) {
+      var divID = evt.to.id
+      var newIndex = evt.newDraggableIndex
+      var newShiftDate = this.days7[divID].date
+      var newShiftData = this.days7[divID].list[newIndex]
+
+      var tempStart = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
+      var tempEnd = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
+
+      axios({
+        method: 'patch',      
+        url: '/api/schedules/' + this.id + '/shifts/' + newShiftData.id,
+        data: {
+          location_id: newShiftData.location_id,
+          time_start: tempStart,
+          time_end: tempEnd,
+          min_participants: newShiftData.min_participants,
+          max_participants: newShiftData.max_participants
+        }
+      })
+        .then(response => {
+          this.getShiftData(this.date)
+        })
     }
   },
 
@@ -225,17 +300,15 @@ export default {
 </script>
 
 <style scoped>
-  .custom7cols {
-    width: 14%;
-    max-width: 14%;
-    flex-basis: 14%;
-  }
-
   .day-col {
     border: 1 solid white;
   }
 
   .shift-body {
     font-size: 0.8em;
+  }
+
+  .swiper-container {
+    width: 92%;
   }
 </style>

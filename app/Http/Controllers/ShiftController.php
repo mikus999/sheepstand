@@ -24,8 +24,12 @@ class ShiftController extends Controller
 
     public function index($scheduleid)
     {
-        $shifts = Schedule::find($scheduleid)->shifts;
-
+        //$shifts = Schedule::find($scheduleid)->shifts;
+        $shifts = Shift::with('location')
+                        ->where('shifts.schedule_id', $scheduleid)
+                        ->orderBy('shifts.location_id')
+                        ->orderBy('shifts.time_start')
+                        ->get();
         return response()->json($shifts);
     }
 

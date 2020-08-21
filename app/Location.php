@@ -19,6 +19,6 @@ class Location extends Model
   }
 
   public function shifts() {
-      return $this->belongsToMany('App\Shift');
+      return $this->hasMany('App\Shift');
   }
 }
