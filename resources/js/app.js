@@ -3,6 +3,8 @@ import store from '~/store'
 import router from '~/router'
 import i18n from '~/plugins/i18n'
 import vuetify from '~/plugins/vuetify'
+import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
 import App from '~/components/App'
 import moment from 'moment'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
@@ -15,6 +17,7 @@ import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+Vue.use(VueLodash, { lodash: lodash })
 
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 

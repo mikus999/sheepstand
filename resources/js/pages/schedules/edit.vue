@@ -21,22 +21,22 @@
             @end="moveShift" draggable=".shift" :id="day.id">
               <v-card v-for="shift in day.list" :key="shift.id" class="shift mt-5" :color="shift.location.color_code">
                 <v-card-text class="shift-body text-center pa-0">
-                  <v-row>
-                    <v-col cols=2><v-icon>mdi-map-marker</v-icon></v-col>
-                    <v-col cols=6 class="font-weight-bold">{{ shift.location.name }}</v-col>
+                  <v-row dense>
+                    <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
+                    <v-col cols=8 class="font-weight-bold">{{ shift.location.name }}</v-col>
                   </v-row>
-                  <v-row>
-                    <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
-                    <v-col cols=6 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
+                  <v-row dense>
+                    <v-col cols=2><v-icon small>mdi-clock</v-icon></v-col>
+                    <v-col cols=8 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
                   </v-row>
-                  <v-row>
-                    <v-col cols=2><v-icon>mdi-account-tie</v-icon></v-col>
-                    <v-col cols=3>
-                      <v-chip small>{{ shift.min_participants }}</v-chip><br>
+                  <v-row dense>
+                    <v-col cols=2><v-icon small>mdi-account-tie</v-icon></v-col>
+                    <v-col cols=3 offset="1">
+                      <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
                       <span class="text-caption">min</span>
                     </v-col>
                     <v-col cols=2>
-                      <v-chip small>{{ shift.max_participants }}</v-chip><br>
+                      <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
                       <span class="text-caption">max</span>
                     </v-col>
                   </v-row>
@@ -54,7 +54,7 @@
     </v-row>
 
 
-     <v-dialog v-model="dialog" max-width="500px">
+     <v-dialog v-model="dialog" max-width="500px" min-height="500px">
         <v-card>
           <v-card-title class="text-center">
             <span class="headline">New Shift - {{ shiftData.date | formatDate }}</span>
@@ -63,15 +63,33 @@
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="6">
-                  <VueCtkDateTimePicker v-model="shiftData.start" id="timepickStart" only-time inline
-                    format="HH:mm" formatted="HH:mm" minute-interval="15" input-size="lg" 
+                <v-col cols=2><v-icon>mdi-map-marker</v-icon></v-col>
+                <v-col cols=10>
+                  <v-select v-model="shiftData.location" :items="locations" item-value="id" item-text="name" outlined dense />
+                </v-col>
+              </v-row>
+              
+              <v-row class="mt-10">
+                <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
+                <v-col cols=5>
+                  <VueCtkDateTimePicker v-model="shiftData.start" id="timepickStart" 
+                    only-time no-header no-label no-clear-button no-button
+                    format="HH:mm" formatted="HH:mm" minute-interval="15"  
+                    :dark="this.$vuetify.theme.dark" class="text-center" />
+                </v-col>
+                <v-col cols=5>
+                  <VueCtkDateTimePicker v-model="shiftData.end" id="timepickEnd" 
+                    only-time no-header no-label no-clear-button no-button
+                    format="HH:mm" formatted="HH:mm" minute-interval="15" 
                     :dark="this.$vuetify.theme.dark" />
                 </v-col>
-                <v-col cols="6">
-                  <VueCtkDateTimePicker v-model="shiftData.end" id="timepickEnd" only-time inline 
-                    format="HH:mm" formatted="HH:mm" minute-interval="15" input-size="lg"  
-                    :dark="this.$vuetify.theme.dark" />
+              </v-row>
+
+              <v-row class="mt-10">
+                <v-col cols=2><v-icon>mdi-account-tie</v-icon></v-col>
+                <v-col cols=10>
+                  <v-range-slider v-model="shiftData.participants" :thumb-size="16" thumb-label="always"
+                    min="1" max="8" ticks="always" tick-size="4" />
                 </v-col>
               </v-row>
             </v-container>
@@ -94,11 +112,13 @@ import Form from 'vform'
 import draggable from 'vuedraggable'
 import moment from 'moment'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import helper from '../../mixins/helper'
 
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
+  mixins: [helper],
   props: {
     id: {
       type: String,
@@ -116,16 +136,16 @@ export default {
       dialog: false,
       date: '',
       menu: false,
-      timetest: "08:00",
       schedData: [],
-      shiftData: {
+      locations: [],
+      shiftDefaults: {
           date: '',
           start: '08:00',
           end: '10:00',
           location: 1,
-          partMin: 1,
-          partMax: 2
+          participants: [1, 2]
       },
+      shiftData: [],
       days7: [
         { name: "Mon", 
           id:0, 
@@ -201,6 +221,9 @@ export default {
   methods: {
     initialize () {
       this.getSchedData()
+      this.getLocations()
+      this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
+      console.log(this.shiftData)
     },
 
     async getSchedData () {
@@ -227,6 +250,13 @@ export default {
 
     },
 
+    async getLocations () {
+      await axios.get('/api/teams/' + this.formatJSON(this.team).id + '/locations')
+        .then(response => {
+          this.locations = response.data
+        })
+    },
+
     close () {
       this.dialog = false
     },
@@ -250,11 +280,12 @@ export default {
       formData.append('location_id', this.shiftData.location)
       formData.append('time_start', tempStart)
       formData.append('time_end', tempEnd)
-      formData.append('min_participants', this.shiftData.partMin)
-      formData.append('max_participants', this.shiftData.partMax)
+      formData.append('min_participants', this.shiftData.participants[0])
+      formData.append('max_participants', this.shiftData.participants[1])
       axios.post('/api/schedules/' + this.id + '/shifts', formData)
         .then(response => {
           this.getShiftData(this.date)
+          this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
           this.close()  
         })
     },
@@ -292,8 +323,14 @@ export default {
         group: "description",
         disabled: false,
         ghostClass: "ghost"
-      };
-    }
+      }
+    },
+
+    ...mapGetters({
+      user: 'auth/user',
+      team: 'teams/getTeam',
+    })
+    
   }
 }
 
