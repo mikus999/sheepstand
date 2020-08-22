@@ -19,7 +19,7 @@
 
         <v-divider />
 
-        <v-list-item router :to="{ name: 'home' }">
+        <v-list-item router :to="{ name: 'home' }" class="text-decoration-none">
           <v-list-item-icon>
             <v-icon>mdi-view-dashboard</v-icon>
           </v-list-item-icon>
@@ -49,11 +49,11 @@
           <v-divider inset />
           <v-subheader inset>Actions</v-subheader>
 
-          <v-list-item router :to="{ name: 'teams.join' }">
+          <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
             <v-list-item-title>Join Team</v-list-item-title>
           </v-list-item>
 
-          <v-list-item router :to="{ name: 'teams.index' }" v-if="hasTeam">
+          <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" v-if="hasTeam">
             <v-list-item-title>Team Settings</v-list-item-title>
           </v-list-item>
         </v-list-group>
@@ -68,7 +68,7 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item router :to="{ name: 'schedules.index' }">
+          <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none">
             <v-list-item-title>Cart Schedules</v-list-item-title>
           </v-list-item>
 
