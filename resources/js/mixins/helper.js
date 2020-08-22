@@ -28,7 +28,7 @@ const helper = {
         case '0':
           return 'red'
         case '1':
-          return 'yellow'
+          return 'blue'
         case '2':
           return 'green'
         case '3':

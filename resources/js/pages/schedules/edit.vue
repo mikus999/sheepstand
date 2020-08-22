@@ -19,7 +19,7 @@
 
           <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
             @end="moveShift" draggable=".shift" :id="day.id">
-              <v-card v-for="shift in day.list" :key="shift.id" class="shift mt-5" :color="shift.location.color_code">
+              <v-card v-for="shift in day.list" :key="shift.id" :id="shift.id" class="shift mt-5" :color="shift.location.color_code">
                 <v-card-text class="shift-body text-center pa-0">
                   <v-row dense>
                     <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
@@ -43,8 +43,8 @@
                 </v-card-text>
               </v-card>
 
-              <v-card slot="footer" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
-                <v-card-text class="text-center">
+              <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
+                <v-card-text class="text-center pa-0">
                   <v-icon large class="pa-4">mdi-plus-box</v-icon>
                 </v-card-text>
               </v-card>
@@ -54,7 +54,7 @@
     </v-row>
 
 
-     <v-dialog v-model="dialog" max-width="500px" min-height="500px">
+     <v-dialog v-model="dialog" max-width="500px">
         <v-card>
           <v-card-title class="text-center">
             <span class="headline">New Shift - {{ shiftData.date | formatDate }}</span>
@@ -69,7 +69,7 @@
                 </v-col>
               </v-row>
               
-              <v-row class="mt-10">
+              <v-row class="mt-5">
                 <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
                 <v-col cols=5>
                   <VueCtkDateTimePicker v-model="shiftData.start" id="timepickStart" 
@@ -121,7 +121,7 @@ export default {
   mixins: [helper],
   props: {
     id: {
-      type: String,
+      type: [String, Number],
       required: true,
     }
   },
@@ -207,6 +207,10 @@ export default {
           1024: {
             slidesPerView: 4,
             spaceBetween: 40,
+          },
+          1366: {
+            slidesPerView: 5,
+            spaceBetween: 40,
           }
         }
       },
@@ -223,7 +227,6 @@ export default {
       this.getSchedData()
       this.getLocations()
       this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
-      console.log(this.shiftData)
     },
 
     async getSchedData () {
@@ -263,7 +266,6 @@ export default {
 
     showShiftDialog (dayInfo) {
       this.shiftData.date = moment(dayInfo.date).format("YYYY-MM-DD")
-
       this.dialog = true
     },
 
@@ -290,31 +292,46 @@ export default {
         })
     },
 
-    moveShift (evt) {
-      var divID = evt.to.id
-      var newIndex = evt.newDraggableIndex
-      var newShiftDate = this.days7[divID].date
-      var newShiftData = this.days7[divID].list[newIndex]
+    async moveShift (evt) {
+      var newDayID = evt.to.id
+      var shiftID = evt.item.id
+      var newShiftDate = this.days7[newDayID].date
+      var newShiftData = []
 
-      var tempStart = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
-      var tempEnd = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
+      await axios.get('/api/schedules/' + this.id + '/shifts/' + shiftID)
+        .then(response => {
+          newShiftData = response.data
 
-      axios({
+          var tempStart = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
+          var tempEnd = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
+
+          newShiftData.time_start = tempStart
+          newShiftData.time_end = tempEnd
+
+          this.updateShift(newShiftData)
+        })
+    },
+
+
+    async updateShift (data) {
+      await axios({
         method: 'patch',      
-        url: '/api/schedules/' + this.id + '/shifts/' + newShiftData.id,
+        url: '/api/schedules/' + this.id + '/shifts/' + data.id,
         data: {
-          location_id: newShiftData.location_id,
-          time_start: tempStart,
-          time_end: tempEnd,
-          min_participants: newShiftData.min_participants,
-          max_participants: newShiftData.max_participants
+          location_id: data.location_id,
+          time_start: data.time_start,
+          time_end: data.time_end,
+          min_participants: data.min_participants,
+          max_participants: data.max_participants
         }
       })
-        .then(response => {
-          this.getShiftData(this.date)
-        })
-    }
+      .then(response => {
+        this.getShiftData(this.date)
+      })
+
+    },    
   },
+
 
   computed: {
     dragOptions() {

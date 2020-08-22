@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer class="navleft-main" app>
+  <v-navigation-drawer class="navleft-main" :mini-variant="mini" permanent :expand-on-hover="mini" style="z-index: 500;" app>
     <v-list flat>
         <v-list-item>
           <v-list-item-content>
@@ -83,15 +83,20 @@
             </v-list-item-content>
           </template>
 
+          <v-list-item class="text-decoration-none">
+                      <v-switch v-model="$vuetify.theme.dark" hide-details inset label="Dark Theme" class="pb-4"></v-switch>
+
+          </v-list-item>
         </v-list-group>
 
       </v-list>
 
       <template v-slot:append>
         <div class="pa-2">
-          <v-switch v-model="$vuetify.theme.dark" hide-details inset label="Dark Theme" class="pb-4"></v-switch>
-
-          <v-btn block @click.prevent="logout">Logout</v-btn>
+          <v-btn block @click.prevent="logout">
+            <v-icon>mdi-logout-variant</v-icon>
+            <span class="ml-3">Logout</span>
+          </v-btn>
         </div>
       </template>
   </v-navigation-drawer>
@@ -105,6 +110,7 @@ import Cookies from 'js-cookie'
 export default {
   data () {
     return {
+      drawer: null
     }
   },
 
@@ -113,7 +119,11 @@ export default {
       team: 'teams/getTeam',
       teams: 'teams/getTeams',
       hasTeam: 'teams/hasTeam'
-    })
+    }),
+
+    mini () {
+      return this.$vuetify.breakpoint.mdAndDown;
+    }
   },
 
   created () {
