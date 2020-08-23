@@ -59,32 +59,8 @@
             <div :class="getScheduleStatusColor(item.status)+'--text'">{{ getScheduleStatusText(item.status) }}</div>
           </template>
 
-          <template v-slot:item.availableday_mon="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_mon)">{{ getDayIcon(item.availableday_mon) }}</v-icon>
-          </template>
-
-          <template v-slot:item.availableday_tues="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_tues)">{{ getDayIcon(item.availableday_tues) }}</v-icon>
-          </template>  
-
-          <template v-slot:item.availableday_wed="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_wed)">{{ getDayIcon(item.availableday_wed) }}</v-icon>
-          </template>
-
-          <template v-slot:item.availableday_thur="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_thur)">{{ getDayIcon(item.availableday_thur) }}</v-icon>
-          </template>
-
-          <template v-slot:item.availableday_fri="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_fri)">{{ getDayIcon(item.availableday_fri) }}</v-icon>
-          </template>  
-
-          <template v-slot:item.availableday_sat="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_sat)">{{ getDayIcon(item.availableday_sat) }}</v-icon>
-          </template>
-
-          <template v-slot:item.availableday_sun="{ item }">
-            <v-icon small :color="getDayColor(item.availableday_sun)">{{ getDayIcon(item.availableday_sun) }}</v-icon>
+          <template v-slot:item.shifts_count="{ item }">
+            {{ item.shifts_count }}
           </template>
           
           <template v-slot:item.actions="{ item }">
@@ -128,13 +104,7 @@ export default {
       schedHeaders: [
         { text: 'Status', align: 'start', value: 'status' },
         { text: 'Start Date', value: 'date_start' },
-        { text: 'Mon', value: 'availableday_mon', sortable: false },
-        { text: 'Tues', value: 'availableday_tues', sortable: false },
-        { text: 'Wed', value: 'availableday_wed', sortable: false },
-        { text: 'Thur', value: 'availableday_thur', sortable: false },
-        { text: 'Fri', value: 'availableday_fri', sortable: false },
-        { text: 'Sat', value: 'availableday_sat', sortable: false },
-        { text: 'Sun', value: 'availableday_sun', sortable: false },
+        { text: 'Shifts #', value: 'shifts_count', sortable: false },
         { text: 'Template Name', value: 'schedule_template_id', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false },
       ],

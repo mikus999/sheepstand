@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Schedule;
 use App\User;
 use Auth;
+use DB;
+use Carbon\Carbon;
 
 class ScheduleController extends Controller
 {
 
     public function index()
     {
-        $schedules = Schedule::all();
+        $schedules = Schedule::withCount('shifts')->get();
 
         return response()->json($schedules);
     }
@@ -84,5 +86,21 @@ class ScheduleController extends Controller
           'message' => 'Location Deleted!',
       ];
       return response()->json($data);
+    }
+
+
+
+    public function getShiftCounts($id, $date, $dayOfWeek)
+    {
+        $date = (new Carbon($date))->addDays($dayOfWeek)->toDateString();
+
+
+        $shiftcount = DB::table('shifts')
+            ->select(DB::raw('COUNT(*) as shift_count'))
+            ->where('schedule_id', $id)
+            ->whereDate('time_start', $date)
+            ->get();
+
+        return response()->json($shiftcount);
     }
 }

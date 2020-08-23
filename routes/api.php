@@ -35,6 +35,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('schedules/joinshift', 'ShiftController@addUserToShift');
     Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift');
 
+    // SCHEDULE routes
+    Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts');
+
     // API Resource Routes
     Route::apiResources([
         'teams' => 'TeamController',
