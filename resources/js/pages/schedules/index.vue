@@ -186,7 +186,7 @@ export default {
 
     deleteSched (sched) {
       const index = this.schedData.indexOf(sched.id)
-      if (confirm('Are you sure you want to remove this schedule?')) {
+      if (confirm('Are you sure you want to delete this schedule?')) {
         axios.delete('/api/schedules/' + sched.id)
           .then(response => {
             this.schedData.splice(index, 1)  
