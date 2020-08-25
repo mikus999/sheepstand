@@ -1,75 +1,66 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('login')">
-        <form @submit.prevent="login" @keydown="form.onKeydown($event)">
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
+  <v-container>
+    <v-card class="w-75 mx-auto" outlined>
+      <v-card-title>{{ $t('login') }}</v-card-title>
+      <v-card-text>
+        <v-form >
+          <v-text-field v-model="email" name="email" label="Email" 
+            :error-messages="emailErrors" @blur="$v.email.$touch()"></v-text-field>
 
-          <!-- Password -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('password') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.password" :class="{ 'is-invalid': form.errors.has('password') }" class="form-control" type="password" name="password">
-              <has-error :form="form" field="password" />
-            </div>
-          </div>
+          <v-text-field v-model="password" password="password" label="Password" 
+            :error-messages="passwordErrors" @blur="$v.password.$touch()"
+            :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
+            ></v-text-field>
+          
+          <v-checkbox v-model="remember" name="remember" :label="$t('remember_me')"></v-checkbox>
 
-          <!-- Remember Me -->
-          <div class="form-group row">
-            <div class="col-md-3" />
-            <div class="col-md-7 d-flex">
+          <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">
+            {{ $t('forgot_password') }}
+          </router-link>
 
-              <checkbox v-model="remember" name="remember" class="small">
-                {{ $t('remember_me') }}
-              </checkbox>
-
-              <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">
-                {{ $t('forgot_password') }}
-              </router-link>
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <div class="col-md-7 offset-md-3 d-flex">
+          <v-row>
+            <v-col cols=12 class="text-center">
               <!-- Submit Button -->
-              <v-button :loading="form.busy" class="btn-primary">
+              <v-btn type="submit" @click.prevent="login" color="secondary">
                 {{ $t('login') }}
-              </v-button>
+              </v-btn>
 
-              <router-link :to="{ name: 'register' }" class="btn btn-secondary ml-2" active-class="active">
+              <v-btn :to="{ name: 'register' }" class="ml-2" style="text-decoration: none;">
                 {{ $t('register') }}
-              </router-link>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-7 offset-md-3">
-              <hr />
-
-              <span class="h6 mr-2">{{ $t('login_with') }}:</span>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols=12 class="text-center">
+              <span class="h6 mr-2">{{ $t('login_with') }}:</span><br>
               <login-with-google />
               <login-with-facebook />
-            </div>
-          </div>
-        </form>
-      </card>
-    </div>
-  </div>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+
+    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+      {{ snackText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
 </template>
 
 <script>
-import Form from 'vform'
+import axios from 'axios'
 import LoginWithGithub from '~/components/LoginWithGithub'
 import LoginWithGoogle from '~/components/LoginWithGoogle'
 import LoginWithFacebook from '~/components/LoginWithFacebook'
+import { required, email } from 'vuelidate/lib/validators'
+
 
 export default {
+  layout: 'vuetify',
   middleware: 'guest',
 
   components: {
@@ -78,37 +69,75 @@ export default {
     LoginWithFacebook
   },
 
-  metaInfo () {
-    return { title: this.$t('login') }
+  validations: {
+    email: { required, email },
+    password: { required },
   },
 
   data: () => ({
-    form: new Form({
-      email: '',
-      password: ''
-    }),
-    remember: false
+    email: '',
+    password: '',
+    remember: null,
+    showPwd: false,
+    snack: false,
+    snackText: '',
+    snackColor: ''
   }),
+
+  computed: {
+    passwordErrors () {
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+      !this.$v.password.required && errors.push('Password is required.')
+      return errors
+    },
+    emailErrors () {
+      const errors = []
+      if (!this.$v.email.$dirty) return errors
+      !this.$v.email.email && errors.push('Must be valid e-mail')
+      !this.$v.email.required && errors.push('E-mail is required')
+      return errors
+    },
+  },
 
   methods: {
     async login () {
-      // Submit the form.
-      const { data } = await this.form.post('/api/login')
+      this.$v.$touch()
 
-      // Save the token.
-      this.$store.dispatch('auth/saveToken', {
-        token: data.token,
-        remember: this.remember
-      })
+      if (!this.$v.$invalid) {
+        await axios({
+          method: 'post',      
+          url: '/api/login',
+          data: {
+            email: this.email,
+            password: this.password
+          }
+        })
+        .then(response => {
+          if (response.data.token) {
+            // Save the token.
+            this.$store.dispatch('auth/saveToken', {
+              token: response.data.token,
+              remember: this.remember
+            })
 
-      // Fetch the user.
-      await this.$store.dispatch('auth/fetchUser')
+            // Fetch the user.
+            this.$store.dispatch('auth/fetchUser')
 
-      // Fetch the teams.
-      this.$store.dispatch('teams/fetchTeams');
+            // Fetch the teams.
+            this.$store.dispatch('teams/fetchTeams');
 
-      // Redirect home.
-      this.$router.push({ name: 'home' })
+            // Redirect home.
+            this.$router.push({ name: 'home' })
+
+          }
+        })
+        .catch(error => {
+            this.snack = true
+            this.snackColor = 'error'
+            this.snackText = "Login credentials incorrect."
+        });
+      }
     }
   }
 }

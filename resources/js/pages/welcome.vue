@@ -8,7 +8,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  layout: 'default',
+  layout: 'vuetify',
 
   metaInfo () {
     return { title: this.$t('home') }

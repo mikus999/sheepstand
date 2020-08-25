@@ -1,7 +1,7 @@
 <template>
-  <button v-if="googleAuth" class="btn btn-primary m-2" type="button" @click="login">
-    <fa :icon="['fab', 'google']" /> Google
-  </button>
+  <v-btn v-if="googleAuth" class="m-2" @click="login">
+    <fa :icon="['fab', 'google']"/> <span class="pl-2">Google</span>
+  </v-btn>
 </template>
 
 <script>
@@ -44,6 +44,13 @@ export default {
         token: e.data.token
       })
 
+      // Fetch the user.
+      this.$store.dispatch('auth/fetchUser')
+
+      // Fetch the teams.
+      this.$store.dispatch('teams/fetchTeams');
+
+      // Redirect home.
       this.$router.push({ name: 'home' })
     }
   }

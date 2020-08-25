@@ -1,74 +1,66 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card v-if="mustVerifyEmail" :title="$t('register')">
-        <div class="alert alert-success" role="alert">
-          {{ $t('verify_email_address') }}
-        </div>
-      </card>
-      <card v-else :title="$t('register')">
-        <form @submit.prevent="register" @keydown="form.onKeydown($event)">
-          <!-- Name -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('name') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" class="form-control" type="text" name="name">
-              <has-error :form="form" field="name" />
-            </div>
-          </div>
+  <v-container>
+    <v-card class="w-75 mx-auto" outlined>
+      <v-card-title>{{ $t('register') }}</v-card-title>
+      <v-card-text>
 
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
+        <v-form>
+          <v-text-field v-model="name" name="name" label="Name" 
+            :error-messages="nameErrors" @blur="$v.name.$touch()"></v-text-field>
 
-          <!-- Password -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('password') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.password" :class="{ 'is-invalid': form.errors.has('password') }" class="form-control" type="password" name="password">
-              <has-error :form="form" field="password" />
-            </div>
-          </div>
+          <v-text-field v-model="email" name="email" label="Email" 
+            :error-messages="emailErrors" @blur="$v.email.$touch()"></v-text-field>
 
-          <!-- Password Confirmation -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('confirm_password') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.password_confirmation" :class="{ 'is-invalid': form.errors.has('password_confirmation') }" class="form-control" type="password" name="password_confirmation">
-              <has-error :form="form" field="password_confirmation" />
-            </div>
-          </div>
+          <v-text-field v-model="password" name="password" label="Password" 
+            :error-messages="passwordErrors" @blur="$v.password.$touch()"
+            :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
+            ></v-text-field>
 
-          <div class="form-group row">
-            <div class="col-md-7 offset-md-3 d-flex">
+          <v-text-field v-model="password2" name="password2" label="Confirm Password" 
+            :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
+            :append-icon="showPwd2 ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
+            ></v-text-field>
+
+
+          <v-row>
+            <v-col cols=12 class="text-center">
               <!-- Submit Button -->
-              <v-button :loading="form.busy">
+              <v-btn type="submit" @click.prevent="register" color="secondary">
                 {{ $t('register') }}
-              </v-button>
+              </v-btn>
+            </v-col>
+          </v-row>
 
-              <!-- GitHub Register Button -->
+          <v-row>
+            <v-col cols=12 class="text-center">
+              <span class="h6 mr-2">{{ $t('login_with') }}:</span><br>
               <login-with-google />
               <login-with-facebook />
+            </v-col>
+          </v-row>
+        </v-form>
 
-            </div>
-          </div>
-        </form>
-      </card>
-    </div>
-  </div>
+      </v-card-text>
+    </v-card>
+
+    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+      {{ snackText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
 </template>
 
 <script>
-import Form from 'vform'
+import axios from 'axios'
 import LoginWithGoogle from '~/components/LoginWithGoogle'
 import LoginWithFacebook from '~/components/LoginWithFacebook'
+import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 
 export default {
+  layout: 'vuetify',
   middleware: 'guest',
 
   components: {
@@ -76,41 +68,124 @@ export default {
     LoginWithFacebook
   },
 
-  metaInfo () {
-    return { title: this.$t('register') }
+  validations: {
+    name: { required },
+    email: { required, email },
+    password: { required, minLength: minLength(6) },
+    password2: { required, sameAsPassword: sameAs('password') },
   },
 
   data: () => ({
-    form: new Form({
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
-    }),
+    name: '',
+    email: '',
+    password: '',
+    password2: '',
+    showPwd: false,
+    showPwd2: false,
+    snack: false,
+    snackText: '',
+    snackColor: '',
     mustVerifyEmail: false
   }),
 
+  computed: {
+    nameErrors () {
+      const errors = []
+      if (!this.$v.name.$dirty) return errors
+      !this.$v.name.required && errors.push('Name is required')
+      return errors
+    },
+    emailErrors () {
+      const errors = []
+      if (!this.$v.email.$dirty) return errors
+      !this.$v.email.email && errors.push('Must be valid e-mail')
+      !this.$v.email.required && errors.push('E-mail is required')
+      return errors
+    },
+    passwordErrors () {
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+      !this.$v.password.minLength && errors.push('Name must be at least 6 characters')
+      !this.$v.password.required && errors.push('Password is required')
+      return errors
+    },
+    passwordErrors2 () {
+      const errors = []
+      if (!this.$v.password2.$dirty) return errors
+      !this.$v.password2.sameAsPassword && errors.push('Passwords must match')
+      return errors
+    },
+  },
+
   methods: {
     async register () {
-      // Register the user.
-      const { data } = await this.form.post('/api/register')
+      this.$v.$touch()
 
-      // Must verify email fist.
-      if (data.status) {
-        this.mustVerifyEmail = true
-      } else {
-        // Log in the user.
-        const { data: { token } } = await this.form.post('/api/login')
+      if (!this.$v.$invalid) {
 
-        // Save the token.
-        this.$store.dispatch('auth/saveToken', { token })
+        await axios({
+            method: 'post',      
+            url: '/api/register',
+            data: {
+              name: this.name,
+              email: this.email,
+              password: this.password,
+              password_confirmation: this.password2
+            }
+          })
+          .then(response => {
+            // Must verify email fist.
+            if (response.data.status) {
+              this.mustVerifyEmail = true
+            } else {
 
-        // Update the user.
-        await this.$store.dispatch('auth/updateUser', { user: data })
-
-        // Redirect home.
-        this.$router.push({ name: 'home' })
+              this.login(response.data)
+            }
+          })
+          .catch(error => {
+              this.snack = true
+              this.snackColor = 'error'
+              this.snackText = "Error completing registration."
+          });
       }
+    },
+
+    async login (userdata) {
+      await axios({
+        method: 'post',      
+        url: '/api/login',
+        data: {
+          email: this.email,
+          password: this.password
+        }
+      })
+      .then(response => {
+        if (response.data.token) {
+          // Save the token.
+          this.$store.dispatch('auth/saveToken', {
+            token: response.data.token,
+            remember: this.remember
+          })
+
+          // Update the user.
+          this.$store.dispatch('auth/updateUser', { user: userdata })
+
+          // Fetch the user.
+          this.$store.dispatch('auth/fetchUser')
+
+          // Fetch the teams.
+          this.$store.dispatch('teams/fetchTeams');
+
+          // Redirect home.
+          this.$router.push({ name: 'home' })
+
+        }
+      })
+      .catch(error => {
+          this.snack = true
+          this.snackColor = 'error'
+          this.snackText = "Error signing in."
+      });
     }
   }
 }
