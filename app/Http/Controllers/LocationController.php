@@ -15,7 +15,7 @@ class LocationController extends Controller
     /*
     API Usage
     index   ->  GET	    /teams/{team_id}/locations
-    store   ->  POST    /teams/{team_id}/locations ('name','color_code', 'map')
+    store   ->  POST    /teams/{team_id}/locations ('name','color_code', 'map', 'default')
     show    ->  GET	    /teams/{team_id}/locations/{location_id}
     update  ->  PATCH	  /teams/{team_id}/locations/{location_id} ('name','color_code', 'map')
     destroy ->  DELETE	/teams/{team_id}/locations/{location_id}

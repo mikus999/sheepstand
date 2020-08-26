@@ -34,8 +34,8 @@ export default [
       { path: 'password', name: 'settings.password', component: page('settings/password.vue') }
     ] },
   { path: '/team/join', name: 'teams.join', component: page('teams/join.vue') },
-  { path: '/team/create', name: 'teams.create', component: page('teams/create.vue') },
   { path: '/team/settings', name: 'teams.index', component: page('teams/index.vue') },
+  { path: '/team/locations', name: 'teams.locations', component: page('teams/locations.vue') },
 
   { path: '/schedule/edit/:id', name: 'schedules.edit', component: page('schedules/edit.vue'), props: true },
   { path: '/schedule/', name: 'schedules.index', component: page('schedules/index.vue') },

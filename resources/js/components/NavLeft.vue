@@ -42,21 +42,26 @@
 
         <v-subheader inset>Teams</v-subheader>
 
-        <v-list-item v-for="t in teams" :key="t.id" item-value="true" @click.prevent="setTeam(t.id)" >
-          <v-list-item-content>
-            <v-list-item-title v-text="t.name" />
-          </v-list-item-content>
+        <v-list-item>
+          <v-radio-group v-model="formatJSON(team).id" column dense class="mt-0">
+              <v-radio v-for="t in teams" :key="t.id" :value="t.id" @click.prevent="setTeam(t.id)">
+                <template v-slot:label>{{ t.name }}</template>
+              </v-radio>
+          </v-radio-group>
+        </v-list-item>
+        <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
+          <v-list-item-title>Join Another Team</v-list-item-title>
         </v-list-item>
 
         <v-divider inset />
-        <v-subheader inset>Actions</v-subheader>
-
-        <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
-          <v-list-item-title>Join Team</v-list-item-title>
-        </v-list-item>
+        <v-subheader inset>Settings</v-subheader>
 
         <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" v-if="hasTeam">
           <v-list-item-title>Team Settings</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item router :to="{ name: 'teams.locations' }" class="text-decoration-none" v-if="hasTeam">
+          <v-list-item-title>Locations</v-list-item-title>
         </v-list-item>
       </v-list-group>
 
@@ -86,7 +91,7 @@
         </template>
 
         <v-list-item class="text-decoration-none">
-          <v-switch v-model="$vuetify.theme.dark" hide-details inset label="Dark Theme" class="pb-4"></v-switch>
+          <v-switch v-model="$vuetify.theme.dark" hide-details inset label="Dark Theme" color="black"></v-switch>
         </v-list-item>
       </v-list-group>
 
