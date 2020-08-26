@@ -62,6 +62,10 @@
             </v-toolbar>
           </template>
           
+          <template v-slot:item.color_code="{ item }">
+            <v-chip :color="item.color_code" small>{{ item.color_code }}</v-chip>
+          </template>
+          
           <template v-slot:item.actions="{ item }">
             <v-icon small @click="showDialog(item, true)" class="mr-2">
               mdi-pencil
