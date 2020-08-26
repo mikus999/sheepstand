@@ -12,9 +12,9 @@ use Carbon\Carbon;
 class ScheduleController extends Controller
 {
 
-    public function index()
+    public function index($teamid)
     {
-        $schedules = Schedule::withCount('shifts')->get();
+        $schedules = Schedule::withCount('shifts')->where('team_id','=',$teamid)->get();
 
         return response()->json($schedules);
     }

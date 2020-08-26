@@ -37,12 +37,12 @@
                         </template>
                         <v-card>
                           <v-card-text class="pa-0">
-                            <v-color-picker v-model="tempData.color_code" flat />
+                            <v-color-picker v-model="tempData.color_code" mode="hex" flat />
                           </v-card-text>
                         </v-card>
                       </v-menu>
                       
-                      <v-file-input show-size label="Map/Route File (optional)" prepend-icon="mdi-map"></v-file-input>
+                      <!--<v-file-input v-model="tempData.map" show-size label="Map/Route File (optional)" prepend-icon="mdi-map"></v-file-input>-->
                        
                       <!-- DEFAULT CHECKBOX -->
                   
@@ -65,7 +65,12 @@
           <template v-slot:item.color_code="{ item }">
             <v-chip :color="item.color_code" small>{{ item.color_code }}</v-chip>
           </template>
-          
+
+          <template v-slot:item.default="{ item }">
+            <v-icon v-if="item.default" color="green">mdi-check-circle</v-icon>
+            <v-icon v-else @click.prevent="updateDefault(item.id)">mdi-circle-outline</v-icon>
+          </template>
+
           <template v-slot:item.actions="{ item }">
             <v-icon small @click="showDialog(item, true)" class="mr-2">
               mdi-pencil
@@ -95,6 +100,7 @@ import { mapGetters } from 'vuex'
 import Form from 'vform'
 import helper from '../../mixins/helper'
 import moment from 'moment'
+import UploadService from "../../plugins/fileupload";
 
 export default {
   middleware: 'auth',
@@ -107,16 +113,17 @@ export default {
       isEdit: false,
       headers: [
         { text: 'Location Name', align: 'start', value: 'name' },
-        { text: 'Display Color', value: 'color_code', sortable: false},
+        { text: 'Display Color', value: 'color_code', align: 'center', sortable: false},
         { text: 'Map/Route File', value: 'map', sortable: false },
+        { text: 'Default Location', value: 'default', align: 'center', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       defaultData: {
         id: null,
         team_id: null,
         name: '',
-        color_code: '',
-        map: '',
+        color_code: '#000000',
+        map: null,
         default: false
       },
       tempData: [],
@@ -124,7 +131,8 @@ export default {
       menu: false,
       snack: false,
       snackText: '',
-      snackColor: ''
+      snackColor: '',
+
     }
   },
 
@@ -192,8 +200,8 @@ export default {
     },
 
 
-    createOrUpdate () {
-      
+    async createOrUpdate () {
+
       if (!this.isEdit) {
         var aMethod = 'post'
         var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/'
@@ -202,7 +210,7 @@ export default {
         var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/' + this.tempData.id
       }
 
-      axios({
+      await axios({
         method: aMethod,      
         url: aUrl,
         data: this.tempData
@@ -217,6 +225,21 @@ export default {
 
       this.close()
     },
+
+    async updateDefault (locid) {
+      await axios({
+        method: 'post',      
+        url: '/api/teams/' + this.formatJSON(this.team).id + '/locations/' + locid + '/makedefault',
+        data: this.tempData
+      })
+      .then(response => {
+        this.getData()
+
+        this.snack = true
+        this.snackColor = 'success'
+        this.snackText = "Successfully changed default location"
+      })
+    }
 
   }
 }

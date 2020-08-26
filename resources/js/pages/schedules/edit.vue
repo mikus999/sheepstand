@@ -288,6 +288,8 @@ export default {
       await axios.get('/api/teams/' + this.formatJSON(this.team).id + '/locations')
         .then(response => {
           this.locations = response.data
+          this.shiftDefaults.location = response.data.filter(location => location.default)[0].id
+          console.log(this.shiftDefaults.location)
         })
     },
 

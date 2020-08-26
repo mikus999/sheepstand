@@ -10,7 +10,8 @@ class Location extends Model
       'team_id',
       'name',
       'color_code',
-      'map'
+      'map',
+      'default'
   ];
 
 

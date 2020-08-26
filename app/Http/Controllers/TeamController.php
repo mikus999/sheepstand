@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Team;
 use App\User;
+use App\Location;
 use Helper;
 use Auth;
 
@@ -36,6 +37,14 @@ class TeamController extends Controller
           'name' => $request->name,
           'code' => $teamcode,
           'user_id' => $userid
+      ]);
+
+      $location = Location::create([
+        'team_id' => $newteam->id,
+        'name' => 'Default Location',
+        'color_code' => '#000000',
+        'map' => null,
+        'default' => true
       ]);
 
       $user->teams()->attach($newteam);

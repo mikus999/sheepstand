@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Team;
 use App\User;
 use App\Location;
+use App\File;
 use Helper;
 use Auth;
+use DB;
 
 
 class LocationController extends Controller
@@ -38,7 +40,8 @@ class LocationController extends Controller
             'team_id' => $teamid,
             'name' => $request->name,
             'color_code' => $request->color_code,
-            'map' => $request->map
+            'map' => $request->map,
+            'default' => $request->default
         ]);
 
         $data = [
@@ -66,7 +69,7 @@ class LocationController extends Controller
         $location = Location::find($locid);
         $location->name = $request->name;
         $location->color_code = $request->color_code;
-        $location->map = $request->map;
+        $location->map = null;
         $location->save();
 
         return response()->json($location);
@@ -81,5 +84,19 @@ class LocationController extends Controller
           'message' => 'Location Deleted!',
       ];
       return response()->json($data);
+    }
+
+
+    public function setDefault($teamid, Request $request, $locid)
+    {
+        // Set 'default' for all team locations to 'false'
+        $affected = DB::table('locations')->where('team_id', '=', $teamid)->update(array('default' => false));
+
+        // Set the selected location 'default' to 'true'
+        $location = Location::find($locid);
+        $location->default = true;
+        $location->save();
+
+        return response()->json($location);
     }
 }

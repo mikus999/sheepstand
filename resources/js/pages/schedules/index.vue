@@ -104,7 +104,7 @@ export default {
       schedHeaders: [
         { text: 'Status', align: 'start', value: 'status' },
         { text: 'Start Date', value: 'date_start' },
-        { text: 'Shifts #', value: 'shifts_count', sortable: false },
+        { text: 'Shifts #', value: 'shifts_count', align: 'center', sortable: false },
         { text: 'Template Name', value: 'schedule_template_id', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
@@ -139,7 +139,7 @@ export default {
     },
 
     async getSchedData () {
-      await axios.get('/api/schedules')
+      await axios.get('/api/schedules/' + this.formatJSON(this.team).id)
         .then(response => {
           this.schedData = response.data
         })

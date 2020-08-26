@@ -36,15 +36,17 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift');
 
     // SCHEDULE routes
+    Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);
     Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts');
+    
+    // LOCATION routes
+    Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');
 
     // API Resource Routes
-    Route::apiResources([
-        'teams' => 'TeamController',
-        'teams.locations' => 'LocationController',
-        'schedules' => 'ScheduleController',
-        'schedules.shifts' => 'ShiftController',
-    ]);
+    Route::apiResource('teams', 'TeamController');
+    Route::apiResource('teams.locations', 'LocationController');
+    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index']]);
+    Route::apiResource('schedules.shifts', 'ShiftController');
 
 });
 
