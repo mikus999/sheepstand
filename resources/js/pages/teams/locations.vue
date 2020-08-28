@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <h1 class="display-1">
-        Locations
+        {{ $tc('teams.cart_location', 1) }}
       </h1>
     </v-row>
 
@@ -11,25 +11,26 @@
         <v-data-table :headers="headers" :items="locationData" sort-by="default, name" sort-desc>
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>Cart Locations</v-toolbar-title>
+              <v-toolbar-title>{{ $tc('teams.cart_location', 1) }}</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-btn color="secondary" class="mb-2" @click="showDialog(tempData, false)">Create New Location</v-btn>
+              <v-btn color="secondary" class="mb-2" @click="showDialog(tempData, false)">{{ $t('teams.create_new_location') }}</v-btn>
 
 
               <!-- NEW/EDIT DIALOG -->
               <v-dialog v-model="dialog" max-width="500px">
                 <v-card>
                   <v-card-title class="text-center">
-                    <span class="headline">Cart Location</span>
+                    <span class="headline">{{ $tc('teams.cart_location', 0) }}</span>
                   </v-card-title>
 
                   <v-card-text>
                     <v-container>
-                      <v-text-field v-model="tempData.name" prepend-icon="mdi-form-textbox" label="Location Name" />
+                      <v-text-field v-model="tempData.name" prepend-icon="mdi-form-textbox" :label="$t('teams.location_name')" 
+                        :error-messages="nameErrors" @blur="$v.tempData.name.$touch()" />
 
                       <v-menu v-model="menu" top nudge-bottom="105" nudge-left="16" :open-on-click="true" :close-on-content-click="true">
                         <template v-slot:activator="{ on }">
-                          <v-text-field v-model="tempData.color_code" label="Display Color (optional)" v-on="on" prepend-icon="mdi-palette" hide-details >
+                          <v-text-field v-model="tempData.color_code" :label="$t('teams.location_color_optional')" v-on="on" prepend-icon="mdi-palette" hide-details >
                               <template v-slot:prepend-inner>
                                 <v-icon :color="tempData.color_code">mdi-square-rounded</v-icon>
                               </template>
@@ -37,12 +38,12 @@
                         </template>
                         <v-card>
                           <v-card-text class="pa-0">
-                            <v-color-picker v-model="tempData.color_code" mode="hex" flat />
+                            <v-color-picker v-model="tempData.color_code" mode="hexa" flat />
                           </v-card-text>
                         </v-card>
                       </v-menu>
                       
-                      <!--<v-file-input v-model="tempData.map" show-size label="Map/Route File (optional)" prepend-icon="mdi-map"></v-file-input>-->
+                      <!--<v-file-input v-model="tempData.map" show-size :label="$t('teams.location_map_optional')" prepend-icon="mdi-map"></v-file-input>-->
                        
                       <!-- DEFAULT CHECKBOX -->
                   
@@ -51,9 +52,9 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="secondary" text @click="close">Cancel</v-btn>
+                    <v-btn color="secondary" text @click="close">{{ $t('general.cancel') }}</v-btn>
                     <v-btn color="secondary" text @click="createOrUpdate">
-                      {{ isEdit ? 'Save' : 'Create' }}
+                      {{ isEdit ? $t('general.save') : $t('general.create') }}
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -85,7 +86,7 @@
           {{ snackText }}
 
           <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+            <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
           </template>
         </v-snackbar>
 
@@ -101,22 +102,29 @@ import Form from 'vform'
 import helper from '../../mixins/helper'
 import moment from 'moment'
 import UploadService from "../../plugins/fileupload";
+import { required } from 'vuelidate/lib/validators'
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
   mixins: [helper],
 
+  validations: {
+    tempData: {
+       name: { required },
+    },
+  },
+
   data () {
     return {
       dialog: false,
       isEdit: false,
       headers: [
-        { text: 'Location Name', align: 'start', value: 'name' },
-        { text: 'Display Color', value: 'color_code', align: 'center', sortable: false},
-        { text: 'Map/Route File', value: 'map', sortable: false },
-        { text: 'Default Location', value: 'default', align: 'center', sortable: false },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: this.$t('teams.location_name'), align: 'start', value: 'name' },
+        { text: this.$t('teams.location_color'), value: 'color_code', align: 'center', sortable: false},
+        { text: this.$t('teams.location_map'), value: 'map', sortable: false },
+        { text: this.$t('general.default'), value: 'default', align: 'center', sortable: false },
+        { text: this.$t('general.actions'), value: 'actions', sortable: false },
       ],
       defaultData: {
         id: null,
@@ -126,7 +134,9 @@ export default {
         map: null,
         default: false
       },
-      tempData: [],
+      tempData: {
+        name: null
+      },
       locationData: [],
       menu: false,
       snack: false,
@@ -152,7 +162,14 @@ export default {
         borderRadius: menu ? '50%' : '4px',
         transition: 'border-radius 200ms ease-in-out'
       }
-    }
+    },
+
+    nameErrors () {
+      const errors = []
+      if (!this.$v.tempData.name.$dirty) return errors
+      !this.$v.tempData.name.required && errors.push(this.$t('teams.location_name_required'))
+      return errors
+    },
   },
 
   created () {
@@ -176,7 +193,7 @@ export default {
             this.locationData.splice(index, 1)  
             this.snack = true
             this.snackColor = 'success'
-            this.snackText = response.data.message
+            this.snackText = this.$t('teams.success_location_delete')
           })
 
       }
@@ -201,29 +218,33 @@ export default {
 
 
     async createOrUpdate () {
+      this.$v.$touch()
 
-      if (!this.isEdit) {
-        var aMethod = 'post'
-        var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/'
-      } else {
-        var aMethod = 'patch'
-        var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/' + this.tempData.id
+      if (!this.$v.$invalid) {
+        if (!this.isEdit) {
+          var aMethod = 'post'
+          var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/'
+        } else {
+          var aMethod = 'patch'
+          var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/' + this.tempData.id
+        }
+
+        await axios({
+          method: aMethod,      
+          url: aUrl,
+          data: this.tempData
+        })
+        .then(response => {
+          this.getData()
+
+          this.snack = true
+          this.snackColor = 'success'
+          this.snackText = this.$t('teams.success_location_update')
+        })
+
+        this.close()
+
       }
-
-      await axios({
-        method: aMethod,      
-        url: aUrl,
-        data: this.tempData
-      })
-      .then(response => {
-        this.getData()
-
-        this.snack = true
-        this.snackColor = 'success'
-        this.snackText = "Location successfully updated"
-      })
-
-      this.close()
     },
 
     async updateDefault (locid) {
@@ -237,7 +258,7 @@ export default {
 
         this.snack = true
         this.snackColor = 'success'
-        this.snackText = "Successfully changed default location"
+        this.snackText = this.$t('teams.success_location_default')
       })
     }
 

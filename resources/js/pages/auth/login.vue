@@ -1,38 +1,38 @@
 <template>
   <v-container>
     <v-card class="w-75 mx-auto" outlined>
-      <v-card-title>{{ $t('login') }}</v-card-title>
+      <v-card-title>{{ $t('auth.login') }}</v-card-title>
       <v-card-text>
         <v-form >
-          <v-text-field v-model="email" name="email" label="Email" 
+          <v-text-field v-model="email" name="email" :label="$t('general.email')" 
             :error-messages="emailErrors" @blur="$v.email.$touch()"></v-text-field>
 
-          <v-text-field v-model="password" password="password" label="Password" 
+          <v-text-field v-model="password" password="password" :label="$t('auth.password')" 
             :error-messages="passwordErrors" @blur="$v.password.$touch()"
             :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
             ></v-text-field>
           
-          <v-checkbox v-model="remember" name="remember" :label="$t('remember_me')"></v-checkbox>
+          <v-checkbox v-model="remember" name="remember" :label="$t('auth.remember_me')"></v-checkbox>
 
           <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">
-            {{ $t('forgot_password') }}
+            {{ $t('auth.forgot_password') }}
           </router-link>
 
           <v-row>
             <v-col cols=12 class="text-center">
               <!-- Submit Button -->
               <v-btn type="submit" @click.prevent="login" color="secondary">
-                {{ $t('login') }}
+                {{ $t('auth.login') }}
               </v-btn>
 
               <v-btn :to="{ name: 'register' }" class="ml-2" style="text-decoration: none;">
-                {{ $t('register') }}
+                {{ $t('auth.register') }}
               </v-btn>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols=12 class="text-center">
-              <span class="h6 mr-2">{{ $t('login_with') }}:</span><br>
+              <span class="h6 mr-2">{{ $t('auth.login_with') }}:</span><br>
               <login-with-google />
               <login-with-facebook />
             </v-col>
@@ -45,7 +45,7 @@
       {{ snackText }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
       </template>
     </v-snackbar>
   </v-container>
@@ -88,14 +88,14 @@ export default {
     passwordErrors () {
       const errors = []
       if (!this.$v.password.$dirty) return errors
-      !this.$v.password.required && errors.push('Password is required.')
+      !this.$v.password.required && errors.push(this.$t('auth.password_required'))
       return errors
     },
     emailErrors () {
       const errors = []
       if (!this.$v.email.$dirty) return errors
-      !this.$v.email.email && errors.push('Must be valid e-mail')
-      !this.$v.email.required && errors.push('E-mail is required')
+      !this.$v.email.email && errors.push(this.$t('auth.email_invalid'))
+      !this.$v.email.required && errors.push(this.$t('auth.email_required'))
       return errors
     },
   },
@@ -135,7 +135,7 @@ export default {
         .catch(error => {
             this.snack = true
             this.snackColor = 'error'
-            this.snackText = "Login credentials incorrect."
+            this.snackText = this.$t('auth.credentials_incorrect')
         });
       }
     }

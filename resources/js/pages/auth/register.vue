@@ -1,22 +1,22 @@
 <template>
   <v-container>
     <v-card class="w-75 mx-auto" outlined>
-      <v-card-title>{{ $t('register') }}</v-card-title>
+      <v-card-title>{{ $t('auth.register') }}</v-card-title>
       <v-card-text>
 
         <v-form>
-          <v-text-field v-model="name" name="name" label="Name" 
+          <v-text-field v-model="name" name="name" :label="$t('general.name')"
             :error-messages="nameErrors" @blur="$v.name.$touch()"></v-text-field>
 
-          <v-text-field v-model="email" name="email" label="Email" 
+          <v-text-field v-model="email" name="email" :label="$t('general.email')" 
             :error-messages="emailErrors" @blur="$v.email.$touch()"></v-text-field>
 
-          <v-text-field v-model="password" name="password" label="Password" 
+          <v-text-field v-model="password" name="password" :label="$t('auth.password')"
             :error-messages="passwordErrors" @blur="$v.password.$touch()"
             :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
             ></v-text-field>
 
-          <v-text-field v-model="password2" name="password2" label="Confirm Password" 
+          <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')"
             :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
             :append-icon="showPwd2 ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
             ></v-text-field>
@@ -26,14 +26,14 @@
             <v-col cols=12 class="text-center">
               <!-- Submit Button -->
               <v-btn type="submit" @click.prevent="register" color="secondary">
-                {{ $t('register') }}
+                {{ $t('auth.register') }}
               </v-btn>
             </v-col>
           </v-row>
 
           <v-row>
             <v-col cols=12 class="text-center">
-              <span class="h6 mr-2">{{ $t('login_with') }}:</span><br>
+              <span class="h6 mr-2">{{ $t('auth.login_with') }}:</span><br>
               <login-with-google />
               <login-with-facebook />
             </v-col>
@@ -47,7 +47,7 @@
       {{ snackText }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
       </template>
     </v-snackbar>
   </v-container>
@@ -92,27 +92,27 @@ export default {
     nameErrors () {
       const errors = []
       if (!this.$v.name.$dirty) return errors
-      !this.$v.name.required && errors.push('Name is required')
+      !this.$v.name.required && errors.push(this.$t('auth.name_required'))
       return errors
     },
     emailErrors () {
       const errors = []
       if (!this.$v.email.$dirty) return errors
-      !this.$v.email.email && errors.push('Must be valid e-mail')
-      !this.$v.email.required && errors.push('E-mail is required')
+      !this.$v.email.email && errors.push(this.$t('auth.email_invalid'))
+      !this.$v.email.required && errors.push(this.$t('auth.email_required'))
       return errors
     },
     passwordErrors () {
       const errors = []
       if (!this.$v.password.$dirty) return errors
-      !this.$v.password.minLength && errors.push('Name must be at least 6 characters')
-      !this.$v.password.required && errors.push('Password is required')
+      !this.$v.password.minLength && errors.push(this.$t('auth.password_length', { length: '6' }))
+      !this.$v.password.required && errors.push(this.$t('auth.password_required'))
       return errors
     },
     passwordErrors2 () {
       const errors = []
       if (!this.$v.password2.$dirty) return errors
-      !this.$v.password2.sameAsPassword && errors.push('Passwords must match')
+      !this.$v.password2.sameAsPassword && errors.push(this.$t('auth.password_mismatch'))
       return errors
     },
   },
@@ -184,7 +184,7 @@ export default {
       .catch(error => {
           this.snack = true
           this.snackColor = 'error'
-          this.snackText = "Error signing in."
+          this.snackText = this.$t('auth.error_login')
       });
     }
   }

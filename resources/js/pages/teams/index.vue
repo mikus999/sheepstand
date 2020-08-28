@@ -2,32 +2,32 @@
   <v-container>
     <v-row>
       <h1 class="display-1">
-        Team Settings
+        {{ $t('teams.team_settings') }}
       </h1>
     </v-row>
 
     <v-row>
       <v-col md="12">
         <form @submit.prevent="updateTeam">
-          <alert-success :form="form" :message="$t('info_updated')" />
+          <alert-success :form="form" :message="$t('general.info_updated')" />
 
           <div class="form-group row">
-            <label class="col-md-2 col-form-label text-md-right">{{ $t('name') }}</label>
+            <label class="col-md-2 col-form-label text-md-right">{{ $t('general.name') }}</label>
             <div class="col-md-7">
               <input v-model="form.name" class="form-control" type="text" name="name">
             </div>
           </div>
 
           <div class="form-group row">
-            <label class="col-md-2 col-form-label text-md-right">{{ $t('team_code') }}</label>
+            <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.team_code') }}</label>
             <div class="col-md-7 col-form-label">
               {{ form.code }}
-              <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('reset_code') }}</a>
+              <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('teams.reset_code') }}</a>
             </div>
           </div>
 
           <div class="form-group row">
-            <label class="col-md-2 col-form-label text-md-right">{{ $t('date_created') }}</label>
+            <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.date_created') }}</label>
             <div class="col-md-7 col-form-label">
               {{ form.created_at | formatDate }}
             </div>
@@ -37,10 +37,10 @@
           <v-row>
             <v-col md="7" offset-md="2">
               <v-btn color="secondary" type="submit">
-                {{ $t('update') }}
+                {{ $t('general.update') }}
               </v-btn>
               <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
-                {{ $t('delete_team') }}
+                {{ $t('teams.delete_team') }}
               </v-btn>       
             </v-col>
           </v-row>
@@ -54,22 +54,22 @@
         <v-data-table :headers="userHeaders" :items="userData">
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>{{ $t('users') }}</v-toolbar-title>
+              <v-toolbar-title>{{ $t('general.users') }}</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">Add User</v-btn>
+                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('teams.add_user') }}</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline">Add User to Team</span>
+                    <span class="headline">{{ $t('teams.add_user_to_team') }}</span>
                   </v-card-title>
 
                   <v-card-text>
                     <v-container>
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="newUserCode" label="User Code"></v-text-field>
+                          <v-text-field v-model="newUserCode" :label="$t('account.user_code')"></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -77,8 +77,8 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                    <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">{{ $t('general.save') }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -100,7 +100,7 @@
           {{ snackText }}
 
           <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+            <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
           </template>
         </v-snackbar>
       </v-col>
@@ -125,18 +125,17 @@ export default {
     return {
       dialog: false,
       hasError: false,
-      pagetitle: 'Team Settings',
       teamdata: [],
       form: new Form({
         name: '',
         code: ''
       }),
       userHeaders: [
-        { text: 'Name', align: 'start', value: 'name' },
-        { text: 'Email', value: 'email' },
-        { text: 'User Code', value: 'user_code' },
-        { text: 'Account Created', value: 'created_at' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: this.$t('general.name'), align: 'start', value: 'name' },
+        { text: this.$t('general.email'), value: 'email' },
+        { text: this.$t('account.user_code'), value: 'user_code' },
+        { text: this.$t('account.account_created'), value: 'created_at' },
+        { text: this.$t('general.actions'), value: 'actions', sortable: false },
       ],
       userData: [],
       newUserCode: '',
@@ -207,11 +206,11 @@ export default {
     },
 
     confirmDeleteTeam () {
-      this.$bvModal.msgBoxConfirm(this.$t('confirm_delete_text'), {
-        title: this.$t('confirm_delete_team'),
+      this.$bvModal.msgBoxConfirm(this.$t('teams.confirm_delete_text'), {
+        title: this.$t('teams.confirm_delete_team'),
         okVariant: 'danger',
-        okTitle: this.$t('delete'),
-        cancelTitle: this.$t('cancel'),
+        okTitle: this.$t('general.delete'),
+        cancelTitle: this.$t('general.cancel'),
         footerClass: 'p-2',
         hideHeaderClose: false,
         centered: true
@@ -225,7 +224,7 @@ export default {
 
     deleteUser (user) {
       const index = this.userData.indexOf(user.id)
-      if (confirm('Are you sure you want to remove this user from the team?')) {
+      if (confirm(this.$t('teams.confirm_remove_user'))) {
         const formData = new FormData()
         formData.append('user_id', user.id)
         formData.append('team_id', this.formatJSON(this.team).id)
@@ -234,7 +233,7 @@ export default {
             this.userData.splice(index, 1)  
             this.snack = true
             this.snackColor = 'success'
-            this.snackText = response.data.message
+            this.snackText = this.$t('teams.success_remove_user')
           })
 
       }
@@ -259,6 +258,7 @@ export default {
           }
         })
 
+      this.newUserCode = ''
       this.close()
     }
   }

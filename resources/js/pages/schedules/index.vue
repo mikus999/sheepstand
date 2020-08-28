@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <h1 class="display-1">
-        Scheduling
+        {{ $t('schedules.shift_schedules') }}
       </h1>
     </v-row>
 
@@ -11,15 +11,15 @@
         <v-data-table :headers="schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>Schedules</v-toolbar-title>
+              <v-toolbar-title>{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">Create New Schedule</v-btn>
+                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('schedules.create_new_schedule') }}</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline">Create New Schedule</span>
+                    <span class="headline">{{ $t('schedules.create_new_schedule') }}</span>
                   </v-card-title>
 
                   <v-card-text>
@@ -30,13 +30,13 @@
                             transition="scale-transition" offset-y min-width="290px">
 
                             <template v-slot:activator="{ on, attrs }">
-                              <v-text-field v-model="newSchedDate" label="Choose a start date" prepend-icon="mdi-calendar" readonly
+                              <v-text-field v-model="newSchedDate" :label="$t('schedules.choose_start_date')" prepend-icon="mdi-calendar" readonly
                                 v-bind="attrs" v-on="on"></v-text-field>
                             </template>
                             <v-date-picker v-model="newSchedDate" no-title scrollable first-day-of-week="1">
                               <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                              <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                              <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
+                              <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
                             </v-date-picker>
                           </v-menu>
 
@@ -47,8 +47,8 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">Create</v-btn>
+                    <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">{{ $t('general.create') }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -77,7 +77,7 @@
           {{ snackText }}
 
           <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+            <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
           </template>
         </v-snackbar>
 
@@ -102,11 +102,11 @@ export default {
     return {
       dialog: false,
       schedHeaders: [
-        { text: 'Status', align: 'start', value: 'status' },
-        { text: 'Start Date', value: 'date_start' },
-        { text: 'Shifts #', value: 'shifts_count', align: 'center', sortable: false },
-        { text: 'Template Name', value: 'schedule_template_id', sortable: false },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: this.$t('schedules.status'), align: 'start', value: 'status' },
+        { text: this.$t('schedules.start_date'), value: 'date_start' },
+        { text: this.$t('schedules.shifts'), value: 'shifts_count', align: 'center', sortable: false },
+        { text: this.$t('schedules.template_name'), value: 'schedule_template_id', sortable: false },
+        { text: this.$t('general.actions'), value: 'actions', sortable: false },
       ],
       schedData: [],
       newSchedDate: '',
@@ -156,15 +156,15 @@ export default {
 
     deleteSched (sched) {
       const index = this.schedData.indexOf(sched.id)
-      if (confirm('Are you sure you want to delete this schedule?')) {
+      if (confirm(this.$t('schedules.confirm_delete_schedule'))) {
         axios.delete('/api/schedules/' + sched.id)
           .then(response => {
-            this.schedData.splice(index, 1)  
             this.snack = true
             this.snackColor = 'success'
-            this.snackText = response.data.message
+            this.snackText = this.$t('schedules.success_delete_schedule')
           })
 
+        this.getSchedData()
       }
     },
 
@@ -182,14 +182,13 @@ export default {
         formData.append('date_start', this.newSchedDate)
         axios.post('/api/schedules', formData)
           .then(response => {
-            this.schedData.push(response.data.schedule)
-
             this.snack = true
             this.snackColor = 'success'
-            this.snackText = response.data.message
+            this.snackText = this.$t('schedules.success_create_schedule')
           })
       }
 
+      this.getSchedData()
       this.newSchedDate = ''
       this.close()
     }

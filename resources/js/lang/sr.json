@@ -1,3 +1,41 @@
 {
-  "ok": "U redu"
+  "general": {
+    "ok": "Ok",
+    "cancel": "Odustati",
+    "save": "Sačuvaj",
+    "delete": "Izbriši",
+    "update": "Ažuriraj",
+    "close": "Zatvori",
+    "create": "Kreiraj",
+    "error_alert_title": "Opa...",
+    "error_alert_text": "Something went wrong! Please try again.",
+    "email": "Mejl",
+    "name": "Ime",
+    "home": "Počentna",
+    "settings": "Podešavanja",
+    "language": "Jezik",
+    "administrators": "Administratori",
+    "users": "Koresnici",
+    "info_updated": "Your info has been updated!",
+    "actions": "Actions",
+    "go_back": "Nazad",
+    "default": "Default",
+    "min": "min",
+    "max": "max"
+  },
+
+  "menu": {
+    "dashboard": "Tabla",
+    "teams": "Timovi",
+    "team_settings": "Podešavanja tima",
+    "join_another_team": "Priključi se timu",
+    "scheduling": "Rasporedi",
+    "assignments": "Dodeljavanja",
+    "shift_planning": "Planiranje smena",
+    "locations": "Lokacije",
+    "account": "Nalog",
+    "change_password": "Promeni lozinku",
+    "account_settings": "Podešavanja naloga",
+    "dark_theme": "Tamna tema"
+  }
 }

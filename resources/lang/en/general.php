@@ -1,7 +1,7 @@
 <?php
 
 return array (
-  'join_team' => 'Join a Team',
+  'join_team' => 'Join an existing team',
   'teams' => 'Teams',
   'teamcode' => 'Team Code',
 );

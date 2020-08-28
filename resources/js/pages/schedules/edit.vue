@@ -1,8 +1,9 @@
 <template>
   <v-container>
     <v-row>
+      <v-icon class="display-1 pb-2 pr-2" @click="$router.go(-1)">mdi-arrow-left</v-icon>
       <h1 class="display-1">
-        Schedule: {{ schedData.date_start }}
+        {{ $t('schedules.schedule') }}: {{ schedData.date_start }}
       </h1>
     </v-row>
 
@@ -34,11 +35,11 @@
                     <v-col cols=2><v-icon small>mdi-account-tie</v-icon></v-col>
                     <v-col cols=3 offset="1">
                       <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
-                      <span>min</span>
+                      <span>{{ $t('general.min') }}</span>
                     </v-col>
                     <v-col cols=2>
                       <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
-                      <span>max</span>
+                      <span>{{ $t('general.max') }}</span>
                     </v-col>
                   </v-row>
                 </v-card-text>
@@ -81,7 +82,7 @@
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title class="text-center">
-          <span class="headline">New Shift - {{ shiftData.date | formatDate }}</span>
+          <span class="headline">{{ $t('schedules.new_shift') }} - {{ shiftData.date | formatDate }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -121,13 +122,21 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="secondary" text @click="close">Cancel</v-btn>
+          <v-btn color="secondary" text @click="close">{{ $t('general.close') }}</v-btn>
           <v-btn color="secondary" text @click="addShift">
-            {{ shiftData.edit ? 'Save' : 'Create' }}
+            {{ shiftData.edit ? $t('general.save') : $t('general.create') }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+      {{ snackText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -249,6 +258,23 @@ export default {
     }
   },
   
+  computed: {
+    dragOptions() {
+      return {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost"
+      }
+    },
+
+    ...mapGetters({
+      user: 'auth/user',
+      team: 'teams/getTeam',
+    })
+    
+  },
+
   created () {
     this.initialize()
   },
@@ -261,7 +287,7 @@ export default {
     },
 
     async getSchedData () {
-      await axios.get('/api/schedules/' + this.id)
+      await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
           this.schedData = response.data
           this.date = moment(this.schedData.date_start).format("YYYY-MM-DD")
@@ -289,7 +315,6 @@ export default {
         .then(response => {
           this.locations = response.data
           this.shiftDefaults.location = response.data.filter(location => location.default)[0].id
-          console.log(this.shiftDefaults.location)
         })
     },
 
@@ -415,12 +440,12 @@ export default {
     },
     
     async deleteShift (id) {
-      if (confirm('Are you sure you want to delete this shift?')) {
+      if (confirm(this.$t('schedules.confirm_delete_shift'))) {
         await axios.delete('/api/schedules/' + this.id + '/shifts/' + id)
           .then(response => {
             this.snack = true
             this.snackColor = 'success'
-            this.snackText = response.data.message
+            this.snackText = this.$t('schedules.success_delete_shift')
             this.getShiftData(this.date)
           })
 
@@ -428,23 +453,6 @@ export default {
     },
   },
 
-
-  computed: {
-    dragOptions() {
-      return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost"
-      }
-    },
-
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-    })
-    
-  }
 }
 
 </script>

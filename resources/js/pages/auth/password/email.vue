@@ -1,58 +1,82 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('reset_password')">
-        <form @submit.prevent="send" @keydown="form.onKeydown($event)">
-          <alert-success :form="form" :message="status" />
+  <v-container>
+    <v-card class="w-75 mx-auto" outlined>
+      <v-card-title>{{ $t('auth.reset_password') }}</v-card-title>
+      <v-card-text>
+        <v-form >
+          <v-text-field v-model="email" name="email" :label="$t('general.email')" 
+            :error-messages="emailErrors" @blur="$v.email.$touch()"></v-text-field>
 
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
 
-          <!-- Submit Button -->
-          <div class="form-group row">
-            <div class="col-md-9 ml-md-auto">
-              <v-button :loading="form.busy">
-                {{ $t('send_password_reset_link') }}
-              </v-button>
-            </div>
-          </div>
-        </form>
-      </card>
-    </div>
-  </div>
+          <v-row>
+            <v-col cols=12 class="text-center">
+              <!-- Submit Button -->
+              <v-btn type="submit" @click.prevent="sendLink" color="secondary">
+                {{ $t('auth.send_password_reset_link') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+
+    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+      {{ snackText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
 </template>
 
 <script>
-import Form from 'vform'
+import axios from 'axios'
+import { required, email } from 'vuelidate/lib/validators'
 
 export default {
   layout: 'vuetify',
   middleware: 'guest',
 
-  metaInfo () {
-    return { title: this.$t('reset_password') }
+  validations: {
+    email: { required, email },
   },
 
   data: () => ({
-    status: '',
-    form: new Form({
-      email: ''
-    })
+    email: '',
+    snack: false,
+    snackText: '',
+    snackColor: '',
   }),
 
+  computed: {
+    emailErrors () {
+      const errors = []
+      if (!this.$v.email.$dirty) return errors
+      !this.$v.email.email && errors.push(this.$t('auth.email_invalid'))
+      !this.$v.email.required && errors.push(this.$t('auth.email_required'))
+      return errors
+    },
+  },
+
   methods: {
-    async send () {
-      const { data } = await this.form.post('/api/password/email')
+    async sendLink () {
+      this.$v.$touch()
 
-      this.status = data.status
-
-      this.form.reset()
+      if (!this.$v.$invalid) {
+        await axios({
+          method: 'post',      
+          url: '/api/password/email',
+          data: {
+            email: this.email,
+          }
+        })
+        .then(response => {
+          this.snack = true
+          this.snackColor = 'success'
+          this.snackText = this.$t('auth.password_reset_link_sent')
+        })
+      }
     }
   }
 }

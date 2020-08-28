@@ -18,7 +18,7 @@
       </v-list-item>
     </v-list>
 
-    <v-list flat v-if="user">
+    <v-list flat  v-if="user">
       <v-divider class="ma-1" />
 
       <v-list-item router :to="{ name: 'home' }" class="text-decoration-none">
@@ -26,7 +26,7 @@
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>Dashboard</v-list-item-title>
+          <v-list-item-title>{{ $t('menu.dashboard') }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -35,34 +35,29 @@
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>
-              {{ hasTeam ? formatJSON(team).name : "Teams"}}
+              {{ hasTeam ? formatJSON(team).name : $t('menu.teams')}}
             </v-list-item-title>
           </v-list-item-content>
         </template>
 
-        <v-subheader inset>Teams</v-subheader>
+        <v-subheader inset>{{ $t('menu.teams') }}</v-subheader>
 
         <v-list-item>
           <v-radio-group v-model="formatJSON(team).id" column dense class="mt-0">
-              <v-radio v-for="t in teams" :key="t.id" :value="t.id" @click.prevent="setTeam(t.id)">
-                <template v-slot:label>{{ t.name }}</template>
-              </v-radio>
+              <v-radio v-for="t in teams" :key="t.id" :value="t.id" :label="t.name" @click.prevent="setTeam(t.id)" class="radio-sm"/>
           </v-radio-group>
         </v-list-item>
-        <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
-          <v-list-item-title>Join Another Team</v-list-item-title>
-        </v-list-item>
-
-        <v-divider inset />
-        <v-subheader inset>Settings</v-subheader>
 
         <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" v-if="hasTeam">
-          <v-list-item-title>Team Settings</v-list-item-title>
+          <v-icon class="menu-subitem-icon">mdi-cog</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.team_settings') }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item router :to="{ name: 'teams.locations' }" class="text-decoration-none" v-if="hasTeam">
-          <v-list-item-title>Locations</v-list-item-title>
+        <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
+          <v-icon class="menu-subitem-icon">mdi-account-multiple-plus</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.join_another_team') }}</v-list-item-title>
         </v-list-item>
+
       </v-list-group>
 
       <!-- SCHEDULING -->
@@ -70,15 +65,28 @@
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>
-              Scheduling
+              {{ $t('menu.scheduling') }}
             </v-list-item-title>
           </v-list-item-content>
         </template>
 
-        <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none">
-          <v-list-item-title>Cart Schedules</v-list-item-title>
+        <v-list-item disabled class="text-decoration-none">
+          <v-icon class="menu-subitem-icon">mdi-account-details</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.assignments') }}</v-list-item-title>
         </v-list-item>
 
+        <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none">
+          <v-icon class="menu-subitem-icon">mdi-calendar-clock</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.shift_planning') }}</v-list-item-title>
+        </v-list-item>
+
+        <v-divider inset />
+        <v-subheader inset>Settings</v-subheader>
+
+        <v-list-item router :to="{ name: 'teams.locations' }" class="text-decoration-none" v-if="hasTeam">
+          <v-icon class="menu-subitem-icon">mdi-map-marker-multiple</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.locations') }}</v-list-item-title>
+        </v-list-item>
       </v-list-group>
 
 
@@ -86,12 +94,22 @@
       <v-list-group prepend-icon="mdi-account" no-action>
         <template v-slot:activator>
           <v-list-item-content>
-            <v-list-item-title>Account</v-list-item-title>
+            <v-list-item-title>{{ $t('menu.account') }}</v-list-item-title>
           </v-list-item-content>
         </template>
 
+        <v-list-item disabled class="text-decoration-none">
+          <v-icon class="menu-subitem-icon">mdi-lock-reset</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.change_password') }}</v-list-item-title>
+        </v-list-item>
+        
+        <v-list-item disabled class="text-decoration-none">
+          <v-icon class="menu-subitem-icon">mdi-account-cog</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.account_settings') }}</v-list-item-title>
+        </v-list-item>
+
         <v-list-item class="text-decoration-none">
-          <v-switch v-model="$vuetify.theme.dark" hide-details inset label="Dark Theme" color="black"></v-switch>
+          <v-switch v-model="$vuetify.theme.dark" hide-details :label="$t('menu.dark_theme')" color="black" class="radio-sm"></v-switch>
         </v-list-item>
       </v-list-group>
 
@@ -99,9 +117,13 @@
 
     <template v-slot:append v-if="user">
       <div class="pa-2">
+        <v-select :items="langArr" :value="locale" @change="setLocale" outlined>
+        </v-select>
+      </div>
+      <div class="pa-2">
         <v-btn block @click.prevent="logout">
           <v-icon>mdi-logout-variant</v-icon>
-          <span class="ml-3">Logout</span>
+          <span class="ml-3">{{ $t('auth.logout') }}</span>
         </v-btn>
       </div>
     </template>
@@ -112,11 +134,13 @@
 import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { loadMessages } from '~/plugins/i18n'
 
 export default {
   data () {
     return {
-      drawer: null
+      drawer: null,
+      langArr: [],
     }
   },
 
@@ -125,7 +149,9 @@ export default {
       user: 'auth/user',
       team: 'teams/getTeam',
       teams: 'teams/getTeams',
-      hasTeam: 'teams/hasTeam'
+      hasTeam: 'teams/hasTeam',
+      locale: 'lang/locale',
+      locales: 'lang/locales'
     }),
 
     mini () {
@@ -137,9 +163,24 @@ export default {
     if (this.user) {
       this.getTeams()
     }
+
+    this.getLocalesArray()
   },
 
   methods: {
+    setLocale (locale) {
+      if (this.$i18n.locale !== locale) {
+        loadMessages(locale)
+        this.$store.dispatch('lang/setLocale', { locale })
+      }
+    },
+
+    getLocalesArray () {
+      for (const key in this.locales) {
+        this.langArr.push({"text": this.locales[key], "value": key});
+      }
+    },
+
     setTeam (teamid) {
       this.$store.dispatch('teams/setTeam', { teamid })
       this.getTeams()
@@ -183,3 +224,19 @@ export default {
   }
 }
 </script>
+
+<style>
+  .radio-sm .v-label {
+    font-size: 11pt;
+    color: #ffffff;
+  }
+
+  .menu-subitem-label {
+    font-size: 11pt;
+  }
+
+  .menu-subitem-icon {
+    font-size: 16pt !important;
+    padding-right: 15px;
+  }
+</style>

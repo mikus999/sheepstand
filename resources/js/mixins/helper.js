@@ -11,15 +11,15 @@ const helper = {
     getScheduleStatusText (status) {
       switch (status) {
         case '0':
-          return 'DRAFT'
+          return this.$t('schedules.status_draft')
         case '1':
-          return 'PUBLISHED'
+          return this.$t('schedules.status_published')
         case '2':
-          return 'FINAL'
+          return this.$t('schedules.status_final')
         case '3':
-          return 'DELETED'
+          return this.$t('schedules.status_archived')
         default:
-          return 'UNKNOWN'
+          return this.$t('schedules.status_unknown')
       }
     },
 

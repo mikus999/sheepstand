@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // SCHEDULE routes
     Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);
+    Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']);
     Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts');
     
     // LOCATION routes
@@ -45,7 +46,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     // API Resource Routes
     Route::apiResource('teams', 'TeamController');
     Route::apiResource('teams.locations', 'LocationController');
-    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index']]);
+    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);
     Route::apiResource('schedules.shifts', 'ShiftController');
 
 });

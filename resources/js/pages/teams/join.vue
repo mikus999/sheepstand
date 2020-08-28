@@ -8,23 +8,22 @@
             <v-stepper-content step="1">
               <v-row class="mt-5">
                 <v-col cols=6 class="mt-5 text-center border-right">
-                  <h4>Join an existing team</h4>
+                  <h4>{{ $t('teams.join_existing_team') }}</h4>
                   <h6 class="text-muted">
-                    Enter the code given to you by your administrator
+                    {{ $t('teams.enter_team_code') }}
                   </h6>
                   <v-text-field v-model="teamid" label="TM-XXXXXXXX" outlined :error="teamNotFound" :error-messages="teamNotFoundMsg"></v-text-field>
                   <v-btn color="secondary" @click.prevent="findTeam">
-                    Find Team
+                    {{ $t('teams.find_team') }}
                   </v-btn>
                 </v-col>
 
                 <v-col cols=6 class="mt-5 text-center">
-                  <h4>Create a new team</h4>
+                  <h4>{{ $t('teams.create_new_team') }}</h4>
                   <h6 class="text-muted">
-                    Enter the code given to you by your administrator
                   </h6>
                   <v-btn color="secondary" @click.prevent="nextStep(3)">
-                    Get Started
+                    {{ $t('teams.get_started') }}
                   </v-btn>
 
                 </v-col>
@@ -36,34 +35,34 @@
             <v-stepper-content step="2">
               <v-row>
                 <v-col cols=12 class="mt-5 text-center">
-                  <h4>Confirm Team Details</h4>
+                  <h4>{{ $t('teams.confirm_team_details') }}</h4>
                   <h6 class="text-muted mb-5">
-                    The following team was found with the code provided. Do you want to join this team?
+                    {{ $t('teams.confirm_team_message') }}
                   </h6>
 
                   <v-row>
-                    <label class="col-md-5 col-form-label text-md-right">Team ID</label>
+                    <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.team_id') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
                       {{ team.code }}
                     </label>
                   </v-row>
 
                   <v-row>
-                    <label class="col-md-5 col-form-label text-md-right">Team Name</label>
+                    <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.team_name') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
                       {{ team.name }}
                     </label>
                   </v-row>
 
                   <v-row>
-                    <label class="col-md-5 col-form-label text-md-right">Contact Name</label>
+                    <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.contact_name') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
                       {{ teamcontact.name }}
                     </label>
                   </v-row>
 
                   <v-row>
-                    <label class="col-md-5 col-form-label text-md-right">Contact Email</label>
+                    <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.contact_email') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
                       {{ teamcontact.email }}
                     </label>
@@ -72,11 +71,11 @@
                   <br><br>
                   
                   <v-btn id="cancel" @click.prevent="clearForm">
-                    Go Back
+                    {{ $t('general.go_back') }}
                   </v-btn>
 
                   <v-btn color="secondary" @click.prevent="joinTeam">
-                    Join Team
+                    {{ $t('teams.join_team') }}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -87,18 +86,18 @@
             <v-stepper-content step="3">
               <v-row>
                 <v-col cols=12 class="mt-5 text-center">
-                  <h4 class="ma-3">Give your team a name</h4>
+                  <h4 class="ma-3">{{ $t('teams.new_team_name') }}</h4>
                   <h6 class="text-muted ma-3">
-                    This might be the name of your congregation, special metropolitan witnessing program, service group, etc.
+                    {{ $t('teams.new_team_name_help') }}
                   </h6>
 
-                  <v-text-field v-model="team_name" class="ma-3" label="Team Name" outlined :error="teamNameError" :error-messages="teamNameErrorMsg"></v-text-field>
+                  <v-text-field v-model="team_name" class="ma-3" :label="$t('teams.team_name')" outlined :error="teamNameError" :error-messages="teamNameErrorMsg"></v-text-field>
 
                   <v-btn id="cancel" @click.prevent="clearForm">
-                    Go Back
+                    {{ $t('general.go_back') }}
                   </v-btn>
                   <v-btn color="secondary" @click.prevent="createTeam">
-                    Create
+                    {{ $t('general.create') }}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -137,7 +136,7 @@ export default {
       teamNameError: false,
       teamNameErrorMsg: '',
       teamFound: false,
-      successMsg: 'Welcome to the team!',
+      successMsg: this.$t('teams.welcome_to_team'),
       team: [],
       teamcontact: [],
       stepperCurr: 1,
@@ -164,7 +163,7 @@ export default {
           .then(response => {
             if (response.data.message === 'NOT_FOUND') {
               this.teamNotFound = true
-              this.teamNotFoundMsg = 'Team not found'
+              this.teamNotFoundMsg = this.$t('teams.team_not_found')
               this.teamFound = false
             } else {
               this.teamNotFound = false
@@ -197,7 +196,7 @@ export default {
         .then(response => {
           if (response.data.message === 'ERROR') {
             this.teamNameError = true
-            this.teamNotFoundMsg = 'There was an error while creating the team'
+            this.teamNotFoundMsg = this.$t('teams.error_creating_team')
           } else {
             this.getTeams()
             this.stepperCurr = 4

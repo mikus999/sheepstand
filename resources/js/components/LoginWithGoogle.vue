@@ -23,7 +23,7 @@ export default {
 
   methods: {
     async login () {
-      const newWindow = openWindow('', this.$t('login'))
+      const newWindow = openWindow('', this.$t('auth.login'))
 
       const url = await this.$store.dispatch('auth/fetchOauthUrl', {
         provider: 'google'
