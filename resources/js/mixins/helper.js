@@ -4,27 +4,27 @@ const helper = {
       scheduleStatus: [
         { 
           value: 0,
-          text: this.$t('schedules.status_draft'), 
+          text: this.$t('schedules.status_0'), 
           color: 'yellow'
         },
         { 
           value: 1,
-          text: this.$t('schedules.status_published'), 
+          text: this.$t('schedules.status_1'), 
           color: 'blue'
         },
         { 
           value: 2,
-          text: this.$t('schedules.status_final'), 
+          text: this.$t('schedules.status_2'), 
           color: 'green'
         },
         { 
           value: 3,
-          text: this.$t('schedules.status_archived'), 
+          text: this.$t('schedules.status_3'), 
           color: 'red'
         },
         { 
           value: 4,
-          text: this.$t('schedules.status_unknown'), 
+          text: this.$t('schedules.status_4'), 
           color: 'grey'
         }
       ] 

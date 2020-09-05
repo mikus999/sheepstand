@@ -16,7 +16,7 @@
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>      
 
-      <v-slider v-model="schedData.status" min="0" :max="scheduleStatus.length-1" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
+      <v-slider v-model="schedData.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
         ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
       </v-slider>
     </v-row>
@@ -28,9 +28,10 @@
           <h6>{{ day.date }}</h6>
 
           <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
-            @end="moveShift" draggable=".shift" :id="day.id">
+            @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
+
               <!-- SHIFT CARDS -->
-              <v-card v-for="shift in day.list" :key="shift.id" :id="shift.id" class="shift mt-5" :color="shift.location.color_code">
+              <v-card v-for="shift in day.list" :key="shift.id" :id="shift.id" class="shift mt-5 handle" :color="shift.location.color_code">
                 <v-card-text class="shift-body text-center pa-0">
                   <v-row dense>
                     <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
@@ -74,7 +75,12 @@
                     </v-col>
                   </v-row>
                 </v-card-actions>
+              </v-card>
 
+              <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
+                <v-card-text class="text-center pa-0">
+                  <v-icon large class="pa-4">mdi-select-place</v-icon>
+                </v-card-text>
               </v-card>
 
               <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day, false)">
@@ -192,7 +198,7 @@ export default {
           id: null,
           date: '',
           start: '08:00',
-          end: '10:00',
+          end: '08:00',
           location: 1,
           participants: [1, 2],
           edit: false
@@ -304,7 +310,8 @@ export default {
         .then(response => {
           this.schedData = response.data
           this.date = moment(this.schedData.date_start).format("YYYY-MM-DD")
-
+          this.shiftDefaults.end = moment(this.shiftDefaults.start, 'HH:mm').add(this.formatJSON(this.team).default_shift_minutes, 'minutes').format("HH:mm")
+          this.shiftDefaults.participants = [this.formatJSON(this.team).default_participants_min, this.formatJSON(this.team).default_participants_max]
           this.getShiftData(response.data.date_start)
         })
 
@@ -509,5 +516,15 @@ export default {
 
   .swiper-container {
     width: 92%;
+  }
+
+  .no-shift {
+    border: 1px dashed #ffffff;
+    min-height: 150px;
+    vertical-align: middle;
+  }
+
+  .handle {
+    cursor: grab;
   }
 </style>
