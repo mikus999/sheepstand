@@ -31,13 +31,6 @@ class ScheduleController extends Controller
             'user_id' => $userid,
             'status' => 0,
             'date_start' => date($request->date_start), // YYYY-MM-DD
-            'availableday_mon' => 1,
-            'availableday_tues' => 1,
-            'availableday_wed' => 1,
-            'availableday_thur' => 1,
-            'availableday_fri' => 1,
-            'availableday_sat' => 1,
-            'availableday_sun' => 1
         ]);
 
 
@@ -65,13 +58,6 @@ class ScheduleController extends Controller
         $schedule = Schedule::find($id);
         $schedule->status = $request->status;
         $schedule->date_start = date($request->date_start); // YYYY-MM-DD
-        $schedule->availableday_mon = $request->availableday_mon;
-        $schedule->availableday_tues = $request->availableday_tues;
-        $schedule->availableday_wed = $request->availableday_wed;
-        $schedule->availableday_thur = $request->availableday_thur;
-        $schedule->availableday_fri = $request->availableday_fri;
-        $schedule->availableday_sat = $request->availableday_sat;
-        $schedule->availableday_sun = $request->availableday_sun;
         $schedule->save();
 
         return response()->json($schedule);
@@ -103,4 +89,15 @@ class ScheduleController extends Controller
 
         return response()->json($shiftcount);
     }
+
+
+    public function updateStatus(Request $request, $id)
+    {
+        $schedule = Schedule::find($id);
+        $schedule->status = $request->status;
+        $schedule->save();
+
+        return response()->json($schedule);
+    }
+
 }

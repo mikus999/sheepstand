@@ -11,13 +11,6 @@ class Schedule extends Model
         'user_id',
         'status',
         'date_start',
-        'availableday_mon',
-        'availableday_tues',
-        'availableday_wed',
-        'availableday_thur',
-        'availableday_fri',
-        'availableday_sat',
-        'availableday_sun',
         'schedule_template_id'
     ];
 

@@ -5,11 +5,20 @@
       <h1 class="display-1">
         {{ $t('schedules.schedule') }}: {{ schedData.date_start }}
       </h1>
+
+      <h1 class="display-1 ml-auto">
+        {{ $t('schedules.assignments') }}
+      </h1>
+      <v-icon class="display-1 pb-2 pl-2" @click="editAssignments">mdi-arrow-right</v-icon>
     </v-row>
 
     <v-row class="mt-5 mb-5">
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>      
+
+      <v-slider v-model="schedData.status" min="0" :max="scheduleStatus.length-1" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
+        ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
+      </v-slider>
     </v-row>
 
     <v-row>
@@ -174,7 +183,10 @@ export default {
       snack: false,
       snackText: '',
       snackColor: '',
-      schedData: [],
+      tickLabels: [],
+      schedData: {
+        status: 0
+      },
       locations: [],
       shiftDefaults: {
           id: null,
@@ -283,6 +295,7 @@ export default {
     initialize () {
       this.getSchedData()
       this.getLocations()
+      this.makeStatusLabels()
       this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
     },
 
@@ -316,6 +329,34 @@ export default {
           this.locations = response.data
           this.shiftDefaults.location = response.data.filter(location => location.default)[0].id
         })
+    },
+
+    makeStatusLabels () {
+      this.scheduleStatus.forEach((obj) => {
+        this.tickLabels.push(obj.text)
+      })
+    },
+
+    async updateScheduleStatus () {
+        await axios({
+          method: 'post',      
+          url: '/api/schedules/' + this.id + '/status/',
+          data: {
+            status: this.schedData.status
+          }
+        })
+        .then(response => {
+
+        })
+    },
+
+    editAssignments () {
+      this.$router.push({
+          name: 'schedules.assignments',
+          params: {
+              id: this.id
+          }
+      }) 
     },
 
     close () {

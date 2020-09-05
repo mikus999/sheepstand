@@ -1,6 +1,6 @@
 <template>
   <v-btn v-if="facebookAuth" class="m-2" @click="login">
-    <fa :icon="['fab', 'facebook']" /> <span class="pl-2">Facebook</span>
+    <v-icon small>mdi-facebook</v-icon> <span class="pl-2">Facebook</span>
   </v-btn>
 </template>
 

@@ -14,6 +14,7 @@
 
 <script>
 export default {
-  name: 'NotFound'
+  name: 'NotFound',
+  layout: 'vuetify'
 }
 </script>

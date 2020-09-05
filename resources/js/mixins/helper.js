@@ -1,4 +1,36 @@
 const helper = {
+  data () {
+    return {
+      scheduleStatus: [
+        { 
+          value: 0,
+          text: this.$t('schedules.status_draft'), 
+          color: 'yellow'
+        },
+        { 
+          value: 1,
+          text: this.$t('schedules.status_published'), 
+          color: 'blue'
+        },
+        { 
+          value: 2,
+          text: this.$t('schedules.status_final'), 
+          color: 'green'
+        },
+        { 
+          value: 3,
+          text: this.$t('schedules.status_archived'), 
+          color: 'red'
+        },
+        { 
+          value: 4,
+          text: this.$t('schedules.status_unknown'), 
+          color: 'grey'
+        }
+      ] 
+    }
+  },
+
   methods: {
     formatJSON (data) {
       if (data.name) {
@@ -7,36 +39,6 @@ const helper = {
         return JSON.parse(data)
       }
     },
-
-    getScheduleStatusText (status) {
-      switch (status) {
-        case '0':
-          return this.$t('schedules.status_draft')
-        case '1':
-          return this.$t('schedules.status_published')
-        case '2':
-          return this.$t('schedules.status_final')
-        case '3':
-          return this.$t('schedules.status_archived')
-        default:
-          return this.$t('schedules.status_unknown')
-      }
-    },
-
-    getScheduleStatusColor (status) {
-      switch (status) {
-        case '0':
-          return 'red'
-        case '1':
-          return 'blue'
-        case '2':
-          return 'green'
-        case '3':
-          return 'grey'
-        default:
-          return ''
-      }
-    }
   },
 
 }

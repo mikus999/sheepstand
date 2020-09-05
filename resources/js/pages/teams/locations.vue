@@ -101,7 +101,6 @@ import { mapGetters } from 'vuex'
 import Form from 'vform'
 import helper from '../../mixins/helper'
 import moment from 'moment'
-import UploadService from "../../plugins/fileupload";
 import { required } from 'vuelidate/lib/validators'
 
 export default {

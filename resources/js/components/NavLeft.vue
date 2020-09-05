@@ -18,10 +18,10 @@
       </v-list-item>
     </v-list>
 
-    <v-list flat  v-if="user">
+    <v-list flat v-if="user">
       <v-divider class="ma-1" />
 
-      <v-list-item router :to="{ name: 'home' }" class="text-decoration-none">
+      <v-list-item router :to="{ name: 'home' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-icon>
@@ -31,7 +31,7 @@
       </v-list-item>
 
       <!-- TEAMS -->
-      <v-list-group prepend-icon="mdi-account-group" no-action>
+      <v-list-group prepend-icon="mdi-account-group" no-action active-class="menu-selected-item">
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>
@@ -61,7 +61,7 @@
       </v-list-group>
 
       <!-- SCHEDULING -->
-      <v-list-group prepend-icon="mdi-calendar" v-if="hasTeam" no-action>
+      <v-list-group prepend-icon="mdi-calendar" v-if="hasTeam" no-action active-class="menu-selected-item">
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>
@@ -90,8 +90,27 @@
       </v-list-group>
 
 
+
+      <!-- TRANSLATION -->
+      <v-list-group prepend-icon="mdi-translate" v-if="isTranslator" no-action active-class="menu-selected-item">
+        <template v-slot:activator>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('menu.translation') }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </template>
+
+        <v-list-item router :to="{ name: 'translation.index' }" class="text-decoration-none">
+          <v-icon class="menu-subitem-icon">mdi-tooltip-edit</v-icon>
+          <v-list-item-title class="menu-subitem-label">{{ $t('menu.translation_manager') }}</v-list-item-title>
+        </v-list-item>
+      </v-list-group>
+
+
+
       <!-- ACCOUNT -->
-      <v-list-group prepend-icon="mdi-account" no-action>
+      <v-list-group prepend-icon="mdi-account-tie" no-action active-class="menu-selected-item">
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>{{ $t('menu.account') }}</v-list-item-title>
@@ -141,6 +160,7 @@ export default {
     return {
       drawer: null,
       langArr: [],
+      isTranslator: true,
     }
   },
 
@@ -238,5 +258,9 @@ export default {
   .menu-subitem-icon {
     font-size: 16pt !important;
     padding-right: 15px;
+  }
+
+  .menu-selected-item {
+    color: #ffffff;
   }
 </style>

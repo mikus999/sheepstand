@@ -56,7 +56,7 @@
           </template>
 
           <template v-slot:item.status="{ item }">
-            <div :class="getScheduleStatusColor(item.status)+'--text'">{{ getScheduleStatusText(item.status) }}</div>
+            <div :class="scheduleStatus[item.status].color+'--text'">{{ scheduleStatus[item.status].text }}</div>
           </template>
 
           <template v-slot:item.shifts_count="{ item }">
@@ -66,6 +66,9 @@
           <template v-slot:item.actions="{ item }">
             <v-icon small @click="editSched(item)" class="mr-2">
               mdi-pencil
+            </v-icon>
+            <v-icon small @click="editAssignments(item)" class="mr-2">
+              mdi-account-multiple-plus
             </v-icon>
             <v-icon small @click="deleteSched(item)" class="mr-2">
               mdi-delete
@@ -148,6 +151,15 @@ export default {
     editSched (schedule) {
       this.$router.push({
           name: 'schedules.edit',
+          params: {
+              id: schedule.id
+          }
+      }) 
+    },
+
+    editAssignments (schedule) {
+      this.$router.push({
+          name: 'schedules.assignments',
           params: {
               id: schedule.id
           }

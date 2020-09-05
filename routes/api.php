@@ -39,9 +39,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);
     Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']);
     Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts');
-    
+    Route::post('schedules/{id}/status', 'ScheduleController@updateStatus');
+
     // LOCATION routes
     Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');
+
+    // TRANSLATION routes
+    Route::post('translation/update', 'TranslationController@updateString');
+    Route::get('translation/permissions', 'TranslationController@getLanguages');
 
     // API Resource Routes
     Route::apiResource('teams', 'TeamController');

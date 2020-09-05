@@ -1,6 +1,6 @@
 <template>
   <v-btn v-if="googleAuth" class="m-2" @click="login">
-    <fa :icon="['fab', 'google']"/> <span class="pl-2">Google</span>
+    <v-icon small>mdi-google</v-icon> <span class="pl-2">Google</span>
   </v-btn>
 </template>
 

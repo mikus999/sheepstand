@@ -38,7 +38,10 @@ export default [
   { path: '/team/locations', name: 'teams.locations', component: page('teams/locations.vue') },
 
   { path: '/schedule/edit/:id', name: 'schedules.edit', component: page('schedules/edit.vue'), props: true },
+  { path: '/schedule/assignments/:id', name: 'schedules.assignments', component: page('schedules/assignments.vue'), props: true },
   { path: '/schedule/', name: 'schedules.index', component: page('schedules/index.vue') },
+
+  { path: '/translation', name: 'translation.index', component: page('translation/index.vue') },
 
   { path: '*', component: page('errors/404.vue') }
 ]
