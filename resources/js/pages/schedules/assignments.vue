@@ -37,10 +37,12 @@
 
           <template v-slot:item.assignments="{ item }">
 
-            <v-autocomplete v-model="shiftUsers[item.id]" :items="teamUsers" dense outlined chips auto-select-first hide-details multiple hide-selected
-                return-object item-text="name" :id="'shift'+item.id">
+            <v-autocomplete v-model="shiftUsers[item.id]" :items="teamUsers" dense outlined no-filter
+                auto-select-first hide-details multiple hide-selected
+                return-object item-text="name" item-value="id" :id="'shift'+item.id">
+
               <template v-slot:selection="data">
-                <v-chip small v-bind="data.attrs" :input-value="data.selected" close @click:close="removeShiftUser(data.item, item)">
+                <v-chip label small v-bind="data.attrs" :input-value="data.selected" close @click:close="removeShiftUser(data.item, item)">
                   {{ data.item.name }}
                 </v-chip>
               </template>
@@ -115,7 +117,6 @@ export default {
       user: 'auth/user',
       team: 'teams/getTeam',
     })
-    
   },
 
   created () {
