@@ -10,6 +10,11 @@ class Team extends Model
       'name',
       'code',
       'user_id',
+      'option_shift_request_autoapproval',
+      'option_shift_assignment_autoaccept',
+      'default_participants_min',
+      'default_participants_max',
+      'default_shift_minutes'
   ];
 
   public function users()
