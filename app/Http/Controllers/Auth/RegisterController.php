@@ -69,7 +69,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'user_code' => Helper::getUniqueCode(6, 'U-')
+            'user_code' => Helper::getUniqueCode(7, 'U-')
         ]);
     }
 }
