@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <NavLeft />
 
     <!-- Sizes your content based upon application components -->
@@ -27,6 +27,9 @@ export default {
   },
 
   computed: {
+    theme () {
+      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+    }
   },
 
   created () {

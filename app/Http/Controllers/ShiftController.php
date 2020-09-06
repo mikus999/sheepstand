@@ -19,6 +19,7 @@ class ShiftController extends Controller
 
     addUserToShift        ->  POST  ->  /schedules/joinshift ('user_id', 'shift_id')
     removeUserFromShift   ->  POST  ->  /schedules/leaveshift ('user_id', 'shift_id')
+    changeUserShiftStatus ->  POST  ->  /schedules/shiftuserstatus ('user_id', 'shift_id', 'status')
     */
 
 
@@ -98,10 +99,18 @@ class ShiftController extends Controller
     {
         $userid = $request->user_id;
         $shiftid = $request->shift_id;
+        $status = $request->status;
+
+        if (is_null($status)) {
+            $status = 0;
+            $request->status = $status;
+        }
 
         $user = User::find($userid);
         $user->shifts()->detach($shiftid); // First detach if already exists
         $user->shifts()->attach($shiftid);
+
+        $this->changeUserShiftStatus($request);
 
         $data = [
             'message' => 'Successfully added to shift!',
@@ -124,5 +133,23 @@ class ShiftController extends Controller
             'teams' => $user->shifts
         ];
         return response()->json($data);
+    }
+
+    public function changeUserShiftStatus(Request $request)
+    {
+        $userid = $request->user_id;
+        $shiftid = $request->shift_id;
+        $status = $request->status;
+
+        $user = User::find($userid);
+        $user->shifts()->updateExistingPivot($shiftid, ['status' => $status]);
+    }
+
+    public function getShiftUsers($id)
+    {
+        $shift = Shift::find($id);
+        $shiftusers = $shift->users()->get();
+
+        return response()->json($shiftusers);
     }
 }

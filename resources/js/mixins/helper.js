@@ -27,7 +27,35 @@ const helper = {
           text: this.$t('schedules.status_4'), 
           color: 'grey'
         }
-      ] 
+      ],
+
+      shiftStatus: [
+        { 
+          value: 0,
+          text: this.$t('shifts.status_0'), 
+          color: 'yellow'
+        },
+        { 
+          value: 1,
+          text: this.$t('shifts.status_1'), 
+          color: 'yellow'
+        },
+        { 
+          value: 2,
+          text: this.$t('shifts.status_2'), 
+          color: 'green'
+        },
+        { 
+          value: 3,
+          text: this.$t('shifts.status_3'), 
+          color: 'red'
+        },
+        { 
+          value: 4,
+          text: this.$t('shifts.status_4'), 
+          color: 'blue'
+        }
+      ]
     }
   },
 

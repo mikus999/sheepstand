@@ -1,15 +1,17 @@
 <template>
   <v-container>
     <v-row>
-      <v-icon class="display-1 pb-2 pr-2" @click="$router.go(-1)">mdi-arrow-left</v-icon>
+      <v-btn icon @click="$router.go(-1)" class="mr-2">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
       <h1 class="display-1">
         {{ $t('schedules.schedule') }}: {{ schedData.date_start }}
       </h1>
 
-      <h1 class="display-1 ml-auto">
+      <v-btn text class="ml-auto" x-large @click="editAssignments" v-show="schedData.status > 0">
         {{ $t('schedules.assignments') }}
-      </h1>
-      <v-icon class="display-1 pb-2 pl-2" @click="editAssignments">mdi-arrow-right</v-icon>
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
     </v-row>
 
     <v-row class="mt-5 mb-5">

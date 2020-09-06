@@ -140,6 +140,21 @@
         "success_delete_shift": "Shift was deleted successfully",
         "assignments": "Assignments"
     },
+    "shifts": {
+        "status_0": "PENDING USER APPROVAL",
+        "status_1": "PENDING ADMIN APPROVAL",
+        "status_2": "APPROVED",
+        "status_3": "REJECTED",
+        "status_4": "TRADE REQUESTED",
+        "date": "Date",
+        "day": "Day",
+        "time_start": "Start",
+        "time_end": "End",
+        "shift_time": "Shift Time",
+        "location": "Location",
+        "participants": "Participants",
+        "assignments": "Assignments"
+    },
     "translation": {
         "management_system": "Translation Management System"
     }

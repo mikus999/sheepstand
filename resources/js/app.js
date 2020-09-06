@@ -38,6 +38,12 @@ Vue.filter('formatTime', function (value) {
   }
 })
 
+Vue.filter('formatDay', function (value) {
+  if (value) {
+    return moment(String(value)).format('ddd, D MMM')
+  }
+})
+
 window.bus = new Vue()
 
 /* eslint-disable no-new */
