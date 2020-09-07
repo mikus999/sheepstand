@@ -33,12 +33,12 @@ const helper = {
         { 
           value: 0,
           text: this.$t('shifts.status_0'), 
-          color: 'yellow'
+          color: 'deep-orange'
         },
         { 
           value: 1,
           text: this.$t('shifts.status_1'), 
-          color: 'yellow'
+          color: 'deep-orange'
         },
         { 
           value: 2,
@@ -48,7 +48,7 @@ const helper = {
         { 
           value: 3,
           text: this.$t('shifts.status_3'), 
-          color: 'red'
+          color: 'red darken-4'
         },
         { 
           value: 4,

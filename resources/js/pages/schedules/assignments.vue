@@ -31,11 +31,9 @@
           </template>
 
           <template v-slot:item.participants="{ item }">
-            <v-chip small :color="item.users.length < item.min_participants ? 'red' : 'green'">
-              <v-icon x-small>mdi-arrow-collapse-down</v-icon>{{ item.min_participants }}
-            </v-chip>
-            <v-chip small :color="item.users.length > item.max_participants ? 'red' : 'green'">
-              <v-icon x-small>mdi-arrow-collapse-up</v-icon>{{ item.max_participants }}
+            <v-chip>
+              <v-avatar left size=12 :color="checkMinMax(item.min_participants, item.users.length, 'min')">{{ item.min_participants }}</v-avatar>
+              <v-avatar right size=12 :color="checkMinMax(item.max_participants, item.users.length, 'max')">{{ item.max_participants }}</v-avatar>
             </v-chip>
           </template>
 
@@ -45,10 +43,15 @@
                 hide-details multiple class="no-border"
                 return-object item-text="name" item-value="id" :id="'shift'+item.id">
 
+              <template v-slot:prepend-inner>
+                <v-chip small label color="grey darken-3">{{ item.users.length }}</v-chip>
+              </template>
+
               <template v-slot:selection="data">
-                <v-chip label small v-bind="data.attrs" :input-value="data.selected" close 
+                <v-chip small label v-bind="data.attrs" :input-value="data.selected" close
+                    :color="shiftStatus[item.users[data.index].pivot.status].color"
                     @click:close="removeShiftUser(data, item)">
-                  {{ data.item.name }}
+                  {{ data.item.name}}
                 </v-chip>
               </template>
 
@@ -214,16 +217,19 @@ export default {
     },
 
     checkMinMax (target, actual, minOrMax) {
-        var color = 'green'
+        var color = 'deep-orange'
         var outOfBounds = false
 
-        if (minOrMax = 'min') {
-          outOfBounds = actual < target ?  true : false
-        } else if (minOrMax = 'max') {
-          outOfBounds = actual > target ?  true : false
+        if (target !== actual) {
+          if (minOrMax === 'min') {
+            outOfBounds = actual < target ?  true : false
+          } else if (minOrMax === 'max') {
+            outOfBounds = actual > target ?  true : false
+          }
+
+          color = outOfBounds ? 'red darken-4' : 'green'
         }
 
-        color = outOfBounds ? 'red' : 'green'
         return color
       },
   }
