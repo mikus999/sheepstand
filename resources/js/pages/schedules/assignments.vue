@@ -31,30 +31,38 @@
           </template>
 
           <template v-slot:item.participants="{ item }">
-            <v-icon x-small>mdi-arrow-collapse-down</v-icon>{{ item.min_participants }}
-            <v-icon x-small class="ml-2">mdi-arrow-collapse-up</v-icon>{{ item.max_participants }}
+            <v-chip small :color="item.users.length < item.min_participants ? 'red' : 'green'">
+              <v-icon x-small>mdi-arrow-collapse-down</v-icon>{{ item.min_participants }}
+            </v-chip>
+            <v-chip small :color="item.users.length > item.max_participants ? 'red' : 'green'">
+              <v-icon x-small>mdi-arrow-collapse-up</v-icon>{{ item.max_participants }}
+            </v-chip>
           </template>
 
           <template v-slot:item.assignments="{ item }">
 
-            <v-autocomplete v-model="shiftUsers[item.id]" :items="teamUsers" dense outlined no-filter
-                auto-select-first hide-details multiple hide-selected
+            <v-select v-model="item.users" :items="teamUsers" dense
+                hide-details multiple class="no-border"
                 return-object item-text="name" item-value="id" :id="'shift'+item.id">
 
               <template v-slot:selection="data">
-                <v-chip label small v-bind="data.attrs" :input-value="data.selected" close @click:close="removeShiftUser(data.item, item)">
+                <v-chip label small v-bind="data.attrs" :input-value="data.selected" close 
+                    @click:close="removeShiftUser(data, item)">
                   {{ data.item.name }}
                 </v-chip>
               </template>
 
               <template v-slot:item="data">
-                <v-list-item-content @click="addShiftUser(data.item, item)">
-                  <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                <v-list-item-avatar>
+                  <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-content @click="addShiftUser(data, item)">
+                  <v-list-item-title>{{ data.item.name }}</v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>
               </template>
 
-            </v-autocomplete>
+            </v-select>
 
           </template>
         </v-data-table>
@@ -117,6 +125,8 @@ export default {
       user: 'auth/user',
       team: 'teams/getTeam',
     })
+
+    
   },
 
   created () {
@@ -144,23 +154,11 @@ export default {
       await axios.get('/api/schedules/' + this.id + '/shifts')
         .then(response => {
           this.shiftData = response.data
-
+          
           for (const shift of response.data) {
-            this.getShiftUsers(shift.id)
+            this.shiftUsers[shift.id] = shift.users
           }
-        })
-    },
-
-    async getShiftUsers (shift_id) {
-      await axios.get('/api/schedules/shiftusers/' + shift_id)
-        .then(response => {
-          this.shiftUsers[shift_id] = response.data
-          /*
-          this.shiftUsers[shift_id] = []
-          for (const user of response.data) {
-            this.shiftUsers[shift_id].push(user.id)
-          }
-          */
+          
         })
     },
 
@@ -172,7 +170,10 @@ export default {
 
     },
 
-    async removeShiftUser (user, shift) {
+    async removeShiftUser (data, shift) {
+      var user = data.item
+      var attrs = data.attrs
+
       await axios({
         method: 'post',      
         url: '/api/schedules/leaveshift',
@@ -180,21 +181,61 @@ export default {
           user_id: user.id,
           shift_id: shift.id,
         }
-      })   
+      })
+      .then(response => {
+        shift.users = response.data.shiftusers
+      })
     },
 
-    async addShiftUser (user, shift) {
-      await axios({
-        method: 'post',      
-        url: '/api/schedules/joinshift',
-        data: {
-          user_id: user.id,
-          shift_id: shift.id,
-          status: 0
-        }
-      })    
+    async addShiftUser (data, shift) {
+      var user = data.item
+      var attrs = data.attrs
+
+
+      if (attrs['aria-selected']==='true') {
+        this.removeShiftUser(data, shift)
+
+      } else {
+
+        await axios({
+          method: 'post',      
+          url: '/api/schedules/joinshift',
+          data: {
+            user_id: user.id,
+            shift_id: shift.id,
+            status: 0
+          }
+        })
+        .then(response => {
+          shift.users = response.data.shiftusers
+        })
+      }
+
     },
+
+    checkMinMax (target, actual, minOrMax) {
+        var color = 'green'
+        var outOfBounds = false
+
+        if (minOrMax = 'min') {
+          outOfBounds = actual < target ?  true : false
+        } else if (minOrMax = 'max') {
+          outOfBounds = actual > target ?  true : false
+        }
+
+        color = outOfBounds ? 'red' : 'green'
+        return color
+      },
   }
 }
 
 </script>
+
+<style>
+  .no-border.v-text-field>.v-input__control>.v-input__slot:before {
+      border-style: none;
+  }
+  .no-border.v-text-field>.v-input__control>.v-input__slot:after {
+      border-style: none;
+  }
+</style>

@@ -26,11 +26,12 @@ class ShiftController extends Controller
     public function index($scheduleid)
     {
         //$shifts = Schedule::find($scheduleid)->shifts;
-        $shifts = Shift::with('location')
+        $shifts = Shift::with('location', 'users')
                         ->where('shifts.schedule_id', $scheduleid)
                         ->orderBy('shifts.location_id')
                         ->orderBy('shifts.time_start')
                         ->get();
+
         return response()->json($shifts);
     }
 
@@ -112,9 +113,11 @@ class ShiftController extends Controller
 
         $this->changeUserShiftStatus($request);
 
+        $shiftusers = Shift::find($shiftid)->users()->get();
+
         $data = [
-            'message' => 'Successfully added to shift!',
-            'shifts' => $user->shifts
+            'shiftusers' => $shiftusers,
+            'usershifts' => $user->shifts
         ];
         return response()->json($data);
     }
@@ -128,9 +131,11 @@ class ShiftController extends Controller
         $user = User::find($userid);
         $user->shifts()->detach($shiftid); // First detach if already exists
 
+        $shiftusers = Shift::find($shiftid)->users()->get();
+
         $data = [
-            'message' => 'Successfully removed from shift!',
-            'teams' => $user->shifts
+            'shiftusers' => $shiftusers,
+            'usershifts' => $user->shifts
         ];
         return response()->json($data);
     }
