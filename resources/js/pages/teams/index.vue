@@ -22,61 +22,62 @@
         </v-tab>
 
 
-        <v-tabs-items v-model="tab">
+        <v-tabs-items v-model="tab" class="pt-10">
+
+          <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <form @submit.prevent="updateTeam">
-              <alert-success :form="form" :message="$t('general.info_updated')" />
+            <v-col cols=6>
 
-              <div class="form-group row">
-                <label class="col-md-2 col-form-label text-md-right">{{ $t('general.name') }}</label>
-                <div class="col-md-7">
-                  <input v-model="form.name" class="form-control" type="text" name="name">
-                </div>
-              </div>
+              <v-text-field v-model="teamData.name" name="name" :label="$t('teams.team_name')" @keyup="updateTeam"></v-text-field>
 
-              <div class="form-group row">
-                <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.team_code') }}</label>
-                <div class="col-md-7 col-form-label">
-                  {{ form.code }}
-                  <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('teams.reset_code') }}</a>
-                </div>
-              </div>
+              <v-text-field name="code" :label="$t('teams.team_code')" :value="teamData.code" readonly>
+                <template v-slot:append>
+                  <v-icon @click="resetCode" color="error">mdi-lock-reset</v-icon>
+                </template>
+              </v-text-field>
 
-              <div class="form-group row">
-                <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.date_created') }}</label>
-                <div class="col-md-7 col-form-label">
-                  {{ form.created_at | formatDate }}
-                </div>
-              </div>
+              <v-text-field name="team_date" :label="$t('teams.date_created')" :value="teamData.created_at | formatDate" readonly></v-text-field>
 
-              <!-- Submit Button -->
-              <v-row>
-                <v-col md="7" offset-md="2">
-                  <v-btn color="secondary" type="submit">
-                    {{ $t('general.update') }}
-                  </v-btn>
-                  <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
-                    {{ $t('teams.delete_team') }}
-                  </v-btn>       
-                </v-col>
-              </v-row>
-              
-            </form>
+
+              <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
+                {{ $t('teams.delete_team') }}
+              </v-btn>       
+
+            </v-col>
           </v-tab-item>
 
+
+          <!-- TAB: SETTINGS -->
           <v-tab-item value="tab-settings">
-            <v-switch v-model="teamData[sw.column]" v-for="sw in settings.switches" :key="sw.index" :value="teamData[sw.column]" :label="sw.text"
-               @change="changeSetting(sw.column)">
-            </v-switch>
+            <v-col cols=12>
+              <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
+              <v-divider></v-divider>
 
+              <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" :value="teamData[sw.column]" :label="sw.text"
+                @change="changeSetting(sw.column, 'bool')" class="pl-5">
+              </v-switch>
+
+              <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
+                <v-chip class="ml-5 mr-2">
+                  <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
+                  <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
+                  <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
+                </v-chip>
+                <v-label>{{ num.text }}</v-label>
+              </div>
+
+            </v-col>
           </v-tab-item>
 
+
+          <!-- TAB: USERS -->
           <v-tab-item value="tab-users">
             <v-data-table :headers="userHeaders" :items="userData">
               <template v-slot:top>
                 <v-toolbar flat>
                   <v-toolbar-title>{{ $t('general.users') }}</v-toolbar-title>
                   <v-spacer></v-spacer>
+
                   <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('teams.add_user') }}</v-btn>
@@ -99,7 +100,7 @@
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                        <v-btn color="blue darken-1" text @click="save">{{ $t('general.save') }}</v-btn>
+                        <v-btn color="blue darken-1" text @click="addUser">{{ $t('general.save') }}</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -165,11 +166,18 @@ export default {
         { text: this.$t('general.actions'), value: 'actions', sortable: false },
       ],
       settings: {
-        switches: [
-          { column: 'setting_shift_request_autoapproval', text: this.$t('teams.setting_shift_request_autoapproval') },
-          { column: 'setting_shift_assignment_autoaccept', text: this.$t('teams.setting_shift_assignment_autoaccept') },
-          { column: 'setting_shift_trade_autoapproval', text: this.$t('teams.setting_shift_trade_autoapproval') },
-        ]
+        shifts: {
+          switches: [
+            { column: 'setting_shift_request_autoapproval', text: this.$t('teams.setting_shift_request_autoapproval') },
+            { column: 'setting_shift_assignment_autoaccept', text: this.$t('teams.setting_shift_assignment_autoaccept') },
+            { column: 'setting_shift_trade_autoapproval', text: this.$t('teams.setting_shift_trade_autoapproval') },
+          ],
+          numbers: [
+            { column: 'default_participants_min', text: this.$t('teams.setting_default_participants_min'), step: 1 },
+            { column: 'default_participants_max', text: this.$t('teams.setting_default_participants_max'), step: 1 },
+            { column: 'default_shift_minutes', text: this.$t('teams.setting_default_shift_minutes'), step: 30 },
+          ]
+        }
       },
       userData: [],
       newUserCode: '',
@@ -217,9 +225,16 @@ export default {
     },
 
     async updateTeam () {
-      await axios.patch('/api/teams/' + this.form.id, this.form)
+      await axios({
+        method: 'patch',      
+        url: '/api/teams/' + this.formatJSON(this.team).id,
+        data: {
+          name: this.teamData.name,
+          user_id: this.teamData.user_id
+        }
+      })
 
-      this.setTeam(this.form.id)
+      this.setTeam(this.formatJSON(this.team).id)
       this.$store.dispatch('teams/fetchTeams')
     },
 
@@ -228,15 +243,15 @@ export default {
     },
 
     deleteTeam () {
-      axios.delete('/api/teams/' + this.form.id)
+      axios.delete('/api/teams/' + this.formatJSON(this.team).id)
       this.$store.dispatch('teams/fetchTeams')
       this.$router.push('/home')
     },
 
     async resetCode () {
-      await axios.get('/api/teams/resetcode/' + this.form.id)
+      await axios.get('/api/teams/resetcode/' + this.formatJSON(this.team).id)
         .then(response => {
-          this.form = response.data
+          this.teamData = response.data
         })
     },
 
@@ -257,20 +272,23 @@ export default {
         })
     },
 
-    deleteUser (user) {
-      const index = this.userData.indexOf(user.id)
+    async deleteUser (user) {
       if (confirm(this.$t('teams.confirm_remove_user'))) {
-        const formData = new FormData()
-        formData.append('user_id', user.id)
-        formData.append('team_id', this.formatJSON(this.team).id)
-        axios.post('/api/teams/leaveteam', formData)
-          .then(response => {
-            this.userData.splice(index, 1)  
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('teams.success_remove_user')
-          })
+        await axios({
+          method: 'post',      
+          url: '/api/teams/leaveteam',
+          data: {
+            team_id: this.formatJSON(this.team).id,
+            user_id: user.id
+          }
+        })
+        .then(response => {
+          this.getUserData()
 
+          this.snack = true
+          this.snackColor = 'success'
+          this.snackText = this.$t('teams.success_remove_user')
+        })
       }
     },
 
@@ -278,14 +296,22 @@ export default {
       this.dialog = false
     },
 
-    save () {
-      const formData = new FormData()
-      formData.append('user_code', this.newUserCode)
-      formData.append('team_id', this.formatJSON(this.team).id)
-      axios.post('/api/teams/jointeam', formData)
+    async addUser () {
+      await axios({
+          method: 'post',      
+          url: '/api/teams/jointeam',
+          data: {
+            team_id: this.formatJSON(this.team).id,
+            user_code: this.newUserCode
+          }
+        })
         .then(response => {
           if (!response.data.error) {
-            this.userData.push(response.data.user)
+            this.getUserData()
+
+            this.snack = true
+            this.snackColor = 'success'
+            this.snackText = this.$t('teams.success_add_user')
           } else {
             this.snack = true
             this.snackColor = 'error'
@@ -298,8 +324,14 @@ export default {
     },
 
 
-    async changeSetting (setting) {
-      const val = this.teamData[setting] === null ? '0' : '1'
+    async changeSetting (setting, valType) {
+      var val = ''
+
+      if (valType === 'bool') {
+        val = this.teamData[setting] === null ? '0' : '1'
+      } else {
+        val = this.teamData[setting]
+      }
 
       await axios({
         method: 'post',      

@@ -91,6 +91,7 @@
         "add_user": "Add User",
         "confirm_remove_user": "Are you sure you want to remove this user from the team?",
         "success_remove_user": "User successfully removed from team",
+        "success_add_user": "User sucessfully added to team",
         "join_existing_team": "Join an existing team",
         "enter_team_code": "Enter the code given to you by your administrator",
         "find_team": "Find Team",

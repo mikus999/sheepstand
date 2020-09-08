@@ -67,6 +67,18 @@ const helper = {
         return JSON.parse(data)
       }
     },
+
+    formatHoursMinutes (minutes) {
+      if (minutes >= 30) {
+        var newHours = Math.floor(minutes / 60);          
+        var newMinutes = minutes % 60;
+        newMinutes = newMinutes.toString().padStart(2, 0);
+        var newTime = newHours + ':' + newMinutes;
+      } else {
+        newTime = minutes
+      }
+      return newTime
+    }
   },
 
 }

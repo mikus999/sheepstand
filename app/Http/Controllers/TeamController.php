@@ -158,7 +158,7 @@ class TeamController extends Controller
       $user->teams()->detach($teamid);
 
       $data = [
-          'message' => 'Successfully left team!',
+          'users' => 'Successfully left team!',
           'teams' => $user->teams
       ];
       return response()->json($data);
