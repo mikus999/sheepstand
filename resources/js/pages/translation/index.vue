@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <h1 class="display-1">
         {{ $t('translation.management_system') }}

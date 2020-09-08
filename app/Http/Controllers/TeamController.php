@@ -164,6 +164,7 @@ class TeamController extends Controller
       return response()->json($data);
     }
 
+
     public function changeTeamCode($id)
     {
       $team = Team::find($id);
@@ -174,15 +175,15 @@ class TeamController extends Controller
       return response()->json($team);
     }
 
+
     public function findTeamByCode($code) {
       $team = Team::where('code',$code)->first();
       $user = [];
 
       if ($team) {
-        $message = 'SUCCESS';
-
         // Find team contact
         $user = User::find($team->user_id);
+        $message = 'SUCCESS';
       } else {
         $message = 'NOT_FOUND';
       }
@@ -195,10 +196,25 @@ class TeamController extends Controller
       return response()->json($data);
     }
 
+
     public function getTeamUsers($id)
-      {
-        $team = Team::find($id);
-  
-        return response()->json($team->users);
-      }
+    {
+      $team = Team::find($id);
+
+      return response()->json($team->users);
+    }
+
+
+    public function updateSetting(Request $request)
+    {
+      $teamid = $request->team_id;
+      $setting = $request->setting; // must match DB column name
+      $value = $request->value;
+
+      $team = Team::find($teamid);
+      $team->$setting = $value;
+      $team->save();
+
+      return response()->json($team);
+    }
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <h1 class="display-1">
         {{ $t('teams.team_settings') }}
@@ -7,104 +7,130 @@
     </v-row>
 
     <v-row>
-      <v-col md="12">
-        <form @submit.prevent="updateTeam">
-          <alert-success :form="form" :message="$t('general.info_updated')" />
+      <v-tabs v-model="tab" icons-and-text grow class="tab-links">
+        <v-tab href="#tab-general">
+          {{ $t('general.general') }}
+          <v-icon>mdi-information</v-icon>
+        </v-tab>
+        <v-tab href="#tab-settings">
+          {{ $t('general.settings') }}
+          <v-icon>mdi-cog</v-icon>
+        </v-tab>
+        <v-tab href="#tab-users">
+          {{ $t('general.users') }}
+          <v-icon>mdi-account-multiple</v-icon>
+        </v-tab>
 
-          <div class="form-group row">
-            <label class="col-md-2 col-form-label text-md-right">{{ $t('general.name') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.name" class="form-control" type="text" name="name">
-            </div>
-          </div>
 
-          <div class="form-group row">
-            <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.team_code') }}</label>
-            <div class="col-md-7 col-form-label">
-              {{ form.code }}
-              <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('teams.reset_code') }}</a>
-            </div>
-          </div>
+        <v-tabs-items v-model="tab">
+          <v-tab-item value="tab-general">
+            <form @submit.prevent="updateTeam">
+              <alert-success :form="form" :message="$t('general.info_updated')" />
 
-          <div class="form-group row">
-            <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.date_created') }}</label>
-            <div class="col-md-7 col-form-label">
-              {{ form.created_at | formatDate }}
-            </div>
-          </div>
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label text-md-right">{{ $t('general.name') }}</label>
+                <div class="col-md-7">
+                  <input v-model="form.name" class="form-control" type="text" name="name">
+                </div>
+              </div>
 
-          <!-- Submit Button -->
-          <v-row>
-            <v-col md="7" offset-md="2">
-              <v-btn color="secondary" type="submit">
-                {{ $t('general.update') }}
-              </v-btn>
-              <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
-                {{ $t('teams.delete_team') }}
-              </v-btn>       
-            </v-col>
-          </v-row>
-          
-        </form>
-      </v-col>
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.team_code') }}</label>
+                <div class="col-md-7 col-form-label">
+                  {{ form.code }}
+                  <a href="#" class="ml-4 inline-link-sm" @click.prevent="resetCode">{{ $t('teams.reset_code') }}</a>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label text-md-right">{{ $t('teams.date_created') }}</label>
+                <div class="col-md-7 col-form-label">
+                  {{ form.created_at | formatDate }}
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <v-row>
+                <v-col md="7" offset-md="2">
+                  <v-btn color="secondary" type="submit">
+                    {{ $t('general.update') }}
+                  </v-btn>
+                  <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
+                    {{ $t('teams.delete_team') }}
+                  </v-btn>       
+                </v-col>
+              </v-row>
+              
+            </form>
+          </v-tab-item>
+
+          <v-tab-item value="tab-settings">
+            <v-switch v-model="teamData[sw.column]" v-for="sw in settings.switches" :key="sw.index" :value="teamData[sw.column]" :label="sw.text"
+               @change="changeSetting(sw.column)">
+            </v-switch>
+
+          </v-tab-item>
+
+          <v-tab-item value="tab-users">
+            <v-data-table :headers="userHeaders" :items="userData">
+              <template v-slot:top>
+                <v-toolbar flat>
+                  <v-toolbar-title>{{ $t('general.users') }}</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-dialog v-model="dialog" max-width="500px">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('teams.add_user') }}</v-btn>
+                    </template>
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline">{{ $t('teams.add_user_to_team') }}</span>
+                      </v-card-title>
+
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col cols="12">
+                              <v-text-field v-model="newUserCode" :label="$t('account.user_code')"></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
+                        <v-btn color="blue darken-1" text @click="save">{{ $t('general.save') }}</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-toolbar>
+              </template>
+
+              <template v-slot:item.created_at="{ item }">
+                {{ item.created_at | formatDate }}
+              </template>
+
+              <template v-slot:item.actions="{ item }">
+                <v-icon small @click="deleteUser(item)">
+                  mdi-delete
+                </v-icon>
+              </template>
+            </v-data-table>
+          </v-tab-item>
+        </v-tabs-items>
+
+      </v-tabs>
     </v-row>
 
-    <v-row>
-      <v-col md="12">
-        <v-data-table :headers="userHeaders" :items="userData">
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>{{ $t('general.users') }}</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('teams.add_user') }}</v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="headline">{{ $t('teams.add_user_to_team') }}</span>
-                  </v-card-title>
 
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12">
-                          <v-text-field v-model="newUserCode" :label="$t('account.user_code')"></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
+    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+      {{ snackText }}
 
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">{{ $t('general.save') }}</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
+      <template v-slot:action="{ attrs }">
+        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
+      </template>
+    </v-snackbar>
 
-          <template v-slot:item.created_at="{ item }">
-            {{ item.created_at | formatDate }}
-          </template>
-
-          <template v-slot:item.actions="{ item }">
-            <v-icon small @click="deleteUser(item)">
-              mdi-delete
-            </v-icon>
-          </template>
-        </v-data-table>
-
-        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-          {{ snackText }}
-
-          <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-          </template>
-        </v-snackbar>
-      </v-col>
-    </v-row>  
   </v-container>
   
   
@@ -125,7 +151,8 @@ export default {
     return {
       dialog: false,
       hasError: false,
-      teamdata: [],
+      tab: null,
+      teamData: [],
       form: new Form({
         name: '',
         code: ''
@@ -137,6 +164,13 @@ export default {
         { text: this.$t('account.account_created'), value: 'created_at' },
         { text: this.$t('general.actions'), value: 'actions', sortable: false },
       ],
+      settings: {
+        switches: [
+          { column: 'setting_shift_request_autoapproval', text: this.$t('teams.setting_shift_request_autoapproval') },
+          { column: 'setting_shift_assignment_autoaccept', text: this.$t('teams.setting_shift_assignment_autoaccept') },
+          { column: 'setting_shift_trade_autoapproval', text: this.$t('teams.setting_shift_trade_autoapproval') },
+        ]
+      },
       userData: [],
       newUserCode: '',
       snack: false,
@@ -177,6 +211,7 @@ export default {
     getTeamData () {
       axios.get('/api/teams/' + this.formatJSON(this.team).id)
         .then(response => {
+          this.teamData = response.data
           this.form = response.data
         })
     },
@@ -260,7 +295,29 @@ export default {
 
       this.newUserCode = ''
       this.close()
-    }
+    },
+
+
+    async changeSetting (setting) {
+      const val = this.teamData[setting] === null ? '0' : '1'
+
+      await axios({
+        method: 'post',      
+        url: '/api/teams/settings/update',
+        data: {
+          team_id: this.formatJSON(this.team).id,
+          setting: setting,
+          value: val
+        }
+      })
+
+    },
   }
 }
 </script>
+
+<style scoped>
+  .tab-links a {
+    text-decoration: none;
+  }
+</style>

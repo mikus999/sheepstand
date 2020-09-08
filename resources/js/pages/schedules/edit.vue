@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <v-btn icon @click="$router.go(-1)" class="mr-2">
         <v-icon>mdi-arrow-left</v-icon>

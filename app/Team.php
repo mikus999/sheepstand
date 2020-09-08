@@ -10,8 +10,9 @@ class Team extends Model
       'name',
       'code',
       'user_id',
-      'option_shift_request_autoapproval',
-      'option_shift_assignment_autoaccept',
+      'setting_shift_request_autoapproval',
+      'setting_shift_assignment_autoaccept',
+      'setting_shift_trade_autoapproval',
       'default_participants_min',
       'default_participants_max',
       'default_shift_minutes'

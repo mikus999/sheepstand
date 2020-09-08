@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-card class="w-75 mx-auto" outlined>
         <v-stepper v-model="stepperCurr">
           <v-stepper-items>

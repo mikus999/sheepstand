@@ -217,7 +217,7 @@ export default {
     },
 
     checkMinMax (target, actual, minOrMax) {
-        var color = 'deep-orange'
+        var color = 'green darken-4'
         var outOfBounds = false
 
         if (target !== actual) {

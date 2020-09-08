@@ -12,6 +12,7 @@
         "email": "Email",
         "name": "Name",
         "home": "Home",
+        "general": "General",
         "settings": "Settings",
         "language": "Language",
         "administrators": "Administrators",
@@ -116,7 +117,13 @@
         "success_location_delete": "Location was deleted successfully",
         "success_location_update": "Location was updated successfully",
         "success_location_default": "Successfully changed default location",
-        "location_name_required": "Location name is required"
+        "location_name_required": "Location name is required",
+        "setting_shift_request_autoapproval": "Approve publisher shift requests automatically",
+        "setting_shift_assignment_autoaccept": "Assign shifts without pubisher approval",
+        "setting_shift_trade_autoapproval": "Approve publisher trade requests automatically",
+        "setting_default_participants_min": "Minimum number of participants per shift",
+        "setting_default_participants_max": "Maximum number of participants per shift",
+        "setting_default_shift_minutes": "Default shift length (minutes)"
     },
     "schedules": {
         "schedule": "Schedule",
