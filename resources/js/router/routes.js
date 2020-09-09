@@ -26,13 +26,7 @@ export default [
       middleware: teams
     }
   },
-  { path: '/settings',
-    component: page('settings/index.vue'),
-    children: [
-      { path: '', redirect: { name: 'settings.profile' } },
-      { path: 'profile', name: 'settings.profile', component: page('settings/profile.vue') },
-      { path: 'password', name: 'settings.password', component: page('settings/password.vue') }
-    ] },
+  { path: '/account/settings', name: 'account.index', component: page('account/index.vue') },
   { path: '/team/join', name: 'teams.join', component: page('teams/join.vue') },
   { path: '/team/settings', name: 'teams.index', component: page('teams/index.vue') },
   { path: '/team/locations', name: 'teams.locations', component: page('teams/locations.vue') },

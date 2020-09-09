@@ -21,8 +21,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('user/permissions', 'Auth\UserController@setPermissions');
     Route::post('user/roles', 'Auth\UserController@setRoles');
 
-    Route::patch('settings/profile', 'Settings\ProfileController@update');
-    Route::patch('settings/password', 'Settings\PasswordController@update');
+    // ACCOUNT routes
+    Route::patch('account/profile', 'Settings\ProfileController@update');
+    Route::patch('account/password', 'Settings\PasswordController@update');
 
     // TEAM routes
     Route::post('teams/jointeam', 'TeamController@addUserToTeam');

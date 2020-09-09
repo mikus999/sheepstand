@@ -7,7 +7,7 @@
     </v-row>
 
     <v-row>
-      <v-tabs v-model="tab" icons-and-text grow class="tab-links">
+      <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
         <v-tab href="#tab-general">
           {{ $t('general.general') }}
           <v-icon>mdi-information</v-icon>
@@ -28,7 +28,12 @@
           <v-tab-item value="tab-general">
             <v-col cols=6>
 
-              <v-text-field v-model="teamData.name" name="name" :label="$t('teams.team_name')" @keyup="updateTeam"></v-text-field>
+              <v-text-field v-model="teamData.name" name="name" :label="$t('teams.team_name')" @input.native="updateTeam($event)"
+                  :success="validation.name.success">
+                <template v-slot:append v-if="validation.name.success">
+                  <v-icon color="green">mdi-check-circle</v-icon>
+                </template>
+              </v-text-field>
 
               <v-text-field name="code" :label="$t('teams.team_code')" :value="teamData.code" readonly>
                 <template v-slot:append>
@@ -58,7 +63,7 @@
               </v-switch>
 
               <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
-                <v-chip class="ml-5 mr-2">
+                <v-chip class="ml-5 mr-2" color="primary">
                   <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
                   <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
                   <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
@@ -154,6 +159,12 @@ export default {
       hasError: false,
       tab: null,
       teamData: [],
+      validation: {
+        name: {
+          success: false, 
+          message: null
+        }
+      },
       form: new Form({
         name: '',
         code: ''
@@ -169,8 +180,8 @@ export default {
         shifts: {
           switches: [
             { column: 'setting_shift_request_autoapproval', text: this.$t('teams.setting_shift_request_autoapproval') },
-            { column: 'setting_shift_assignment_autoaccept', text: this.$t('teams.setting_shift_assignment_autoaccept') },
             { column: 'setting_shift_trade_autoapproval', text: this.$t('teams.setting_shift_trade_autoapproval') },
+            { column: 'setting_shift_assignment_autoaccept', text: this.$t('teams.setting_shift_assignment_autoaccept') },
           ],
           numbers: [
             { column: 'default_participants_min', text: this.$t('teams.setting_default_participants_min'), step: 1 },
@@ -224,7 +235,10 @@ export default {
         })
     },
 
-    async updateTeam () {
+    updateTeam: _.debounce(async function(e) {
+      this.validation[e.target.name].success = true
+      setTimeout(() => this.validation[e.target.name].success = false, 3000)
+
       await axios({
         method: 'patch',      
         url: '/api/teams/' + this.formatJSON(this.team).id,
@@ -236,7 +250,7 @@ export default {
 
       this.setTeam(this.formatJSON(this.team).id)
       this.$store.dispatch('teams/fetchTeams')
-    },
+    }, 1000),
 
     setTeam (teamid) {
       this.$store.dispatch('teams/setTeam', { teamid })

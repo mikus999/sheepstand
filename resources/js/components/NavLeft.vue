@@ -122,7 +122,7 @@
           <v-list-item-title class="menu-subitem-label">{{ $t('menu.change_password') }}</v-list-item-title>
         </v-list-item>
         
-        <v-list-item disabled class="text-decoration-none">
+        <v-list-item router :to="{ name: 'account.index' }" class="text-decoration-none">
           <v-icon class="menu-subitem-icon">mdi-account-cog</v-icon>
           <v-list-item-title class="menu-subitem-label">{{ $t('menu.account_settings') }}</v-list-item-title>
         </v-list-item>
