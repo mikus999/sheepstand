@@ -67,7 +67,7 @@
             <v-icon small @click="editSched(item)" class="mr-2">
               mdi-pencil
             </v-icon>
-            <v-icon small @click="editAssignments(item)" class="mr-2">
+            <v-icon small @click="editAssignments(item)" class="mr-2" :disabled="item.status < 1">
               mdi-account-multiple-plus
             </v-icon>
             <v-icon small @click="deleteSched(item)" class="mr-2">
