@@ -80,7 +80,8 @@
         "password_updated": "Your password has been updated!",
         "your_info": "Your Info",
         "user_code": "User Code",
-        "account_created": "Account Created"
+        "account_created": "Account Created",
+        "account_settings": "Account Settings"
     },
     "teams": {
         "team_settings": "Team Settings",

@@ -7,7 +7,7 @@
     </v-row>
 
     <v-row>
-      <v-col md="12">
+      <v-col cols="12">
         <v-data-table :headers="schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
           <template v-slot:top>
             <v-toolbar flat>

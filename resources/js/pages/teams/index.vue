@@ -357,6 +357,9 @@ export default {
         }
       })
 
+      // Load new settings into store object and cookie
+      this.setTeam(this.formatJSON(this.team).id)
+
     },
   }
 }

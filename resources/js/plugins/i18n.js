@@ -8,25 +8,27 @@ const i18n = new VueI18n({
   locale: 'en',
   fallbackLocale: 'en',
   silentFallbackWarn: true,
-  messages: {}
+  messages: loadLocaleMessages()
 })
 
-/**
- * @param {String} locale
- */
-export async function loadMessages (locale) {
-  if (Object.keys(i18n.getLocaleMessage(locale)).length === 0) {
-    const messages = await import(/* webpackChunkName: '' */ `~/lang/${locale}`)
-    i18n.setLocaleMessage(locale, messages)
-  }
 
-  if (i18n.locale !== locale) {
-    i18n.locale = locale
-  }
+
+function loadLocaleMessages() {
+  const locales = require.context(
+    "~/lang",
+    true,
+    /[A-Za-z0-9-_,\s]+\.json$/i
+  );
+  const messages = {};
+  locales.keys().forEach(key => {
+    const matched = key.match(/([A-Za-z0-9-_]+)\./i);
+    if (matched && matched.length > 1) {
+      const locale = matched[1];
+      messages[locale] = locales(key);
+    }
+  });
+  return messages;
 }
 
-;(async function () {
-  await loadMessages(store.getters['lang/locale'])
-})()
 
 export default i18n

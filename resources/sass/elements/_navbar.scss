@@ -1,7 +1,6 @@
 .navbar {
   font-weight: 600;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-  background-color: $color-primary;
 }
 
 .nav-item {
@@ -17,14 +16,11 @@
   .svg-inline--fa {
     font-size: 1.8rem;
   }
-  color: $color-light;
 }
 .nav-link:hover {
-  color: $color-secondary;
 }
 
 .navbar-brand, .navbar-brand:hover {
-  color: $color-light;
 }
 
 .navbar-icon {

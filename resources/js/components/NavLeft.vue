@@ -190,7 +190,7 @@ export default {
   methods: {
     setLocale (locale) {
       if (this.$i18n.locale !== locale) {
-        loadMessages(locale)
+        this.$i18n.locale = locale
         this.$store.dispatch('lang/setLocale', { locale })
       }
     },

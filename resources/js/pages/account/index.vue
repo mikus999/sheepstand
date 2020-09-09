@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <h1 class="display-1">
-        {{ $t('teams.team_settings') }}
+        {{ $t('account.account_settings') }}
       </h1>
     </v-row>
 
@@ -26,7 +26,7 @@
 
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <v-col cols=6>
+            <v-col cols=8>
               <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
                   :success="validation.name.success">
                 <template v-slot:append v-if="validation.name.success">
@@ -52,13 +52,13 @@
 
           <!-- TAB: SECURITY -->
           <v-tab-item value="tab-security">
-            <v-col cols=12>
-              <v-text-field v-model="password1" name="password1" :label="$t('auth.new_password')"
+            <v-col cols=8 offset=2>
+              <v-text-field v-model="password1" name="password1" :label="$t('auth.new_password')" 
                 :error-messages="passwordErrors" @blur="$v.password1.$touch()"
                 :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
                 ></v-text-field>
 
-              <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')"
+              <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')" 
                 :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
                 :append-icon="showPwd2 ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
                 ></v-text-field>
@@ -217,13 +217,14 @@ export default {
           method: 'patch',      
           url: '/api/account/password',
           data: {
+            user: this.user,
             password: this.password1
           }
         })
         .then(response => {
             this.snack = true
             this.snackColor = 'success'
-            this.snackText = this.$t('success_reset_password')
+            this.snackText = this.$t('auth.success_reset_password')
         });
       }
     }

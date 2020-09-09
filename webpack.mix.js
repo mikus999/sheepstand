@@ -6,7 +6,7 @@ require('vuetifyjs-mix-extension')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 mix
-  .js('resources/js/app.js', 'public/dist/js').vuetify()
+  .js('resources/js/app.js', 'public/dist/js').vuetify('vuetify-loader')
   .sass('resources/sass/app.scss', 'public/dist/css')
 
   .disableNotifications()

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <v-btn icon @click="$router.go(-1)" class="mr-2">
         <v-icon>mdi-arrow-left</v-icon>
@@ -206,7 +206,7 @@ export default {
           data: {
             user_id: user.id,
             shift_id: shift.id,
-            status: 0
+            status: this.formatJSON(this.team).setting_shift_assignment_autoaccept ? 2 : 0
           }
         })
         .then(response => {

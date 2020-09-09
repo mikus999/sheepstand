@@ -1,16 +1,17 @@
 $color-pack: false;
 
-@import 'variables';
+
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index';
 @import '~sweetalert2/src/sweetalert2';
 @import '~vuetify/src/styles/main.sass';
+@import '~vuetify/src/styles/styles.sass';
 @import '~swiper/css/swiper.css';
 
+@import 'variables';
 @import 'elements/card';
 @import 'elements/navbar';
 @import 'elements/buttons';
 @import 'elements/transitions';
 
 @import 'custom';
-
