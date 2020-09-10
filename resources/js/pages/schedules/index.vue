@@ -11,11 +11,11 @@
         <v-data-table :headers="schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
+              <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('schedules.create_new_schedule') }}</v-btn>
+                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on" :block="$vuetify.breakpoint.xs">{{ $t('schedules.create_new_schedule') }}</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>

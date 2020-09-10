@@ -9,15 +9,15 @@
     <v-row>
       <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
         <v-tab href="#tab-general">
-          {{ $t('general.general') }}
+          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
           <v-icon>mdi-information</v-icon>
         </v-tab>
         <v-tab href="#tab-settings">
-          {{ $t('general.settings') }}
+          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
           <v-icon>mdi-cog</v-icon>
         </v-tab>
         <v-tab href="#tab-users">
-          {{ $t('general.users') }}
+          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</span>
           <v-icon>mdi-account-multiple</v-icon>
         </v-tab>
 
@@ -26,7 +26,7 @@
 
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <v-col cols=6>
+            <v-col md=6>
 
               <v-text-field v-model="teamData.name" name="name" :label="$t('teams.team_name')" @input.native="updateTeam($event)"
                   :success="validation.name.success">

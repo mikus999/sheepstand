@@ -15,8 +15,8 @@
     </v-row>
 
     <v-row class="mt-5 mb-5">
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>      
+      <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
+      <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
 
       <v-slider v-model="schedData.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
         ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
@@ -247,18 +247,19 @@ export default {
         slidesPerView: 1,
         spaceBetween: 10,
         freeMode: false,
-        allowTouchMove: false,
+        allowTouchMove: true,
+        keyboard: {
+          enabled: true,
+        },
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev'
-        },
-        keyboard: {
-          enabled: true,
         },
         breakpoints: {
           640: {
             slidesPerView: 2,
             spaceBetween: 20,
+            allowTouchMove: false,
           },
           768: {
             slidesPerView: 3,
@@ -283,7 +284,7 @@ export default {
       return {
         animation: 200,
         group: "description",
-        disabled: false,
+        disabled: this.$vuetify.breakpoint.xs,
         ghostClass: "ghost"
       }
     },

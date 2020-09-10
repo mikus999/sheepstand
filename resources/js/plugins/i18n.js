@@ -5,7 +5,7 @@ import VueI18n from 'vue-i18n'
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
-  locale: 'en',
+  locale: store.getters['lang/locale'],
   fallbackLocale: 'en',
   silentFallbackWarn: true,
   messages: loadLocaleMessages()
@@ -13,7 +13,7 @@ const i18n = new VueI18n({
 
 
 
-function loadLocaleMessages() {
+ export function loadLocaleMessages() {
   const locales = require.context(
     "~/lang",
     true,

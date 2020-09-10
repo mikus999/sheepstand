@@ -1,13 +1,13 @@
 <template>
   <v-container fluid>
-    <v-card class="w-75 mx-auto" outlined>
+    <v-card class="mx-auto" max-width="600" outlined>
         <v-stepper v-model="stepperCurr">
           <v-stepper-items>
 
             <!-- STEP 1: JOIN OR CREATE A TEAM -->
             <v-stepper-content step="1">
               <v-row class="mt-5">
-                <v-col cols=6 class="mt-5 text-center border-right">
+                <v-col cols=12 class="mt-5 text-center border-right">
                   <h4>{{ $t('teams.join_existing_team') }}</h4>
                   <h6 class="text-muted">
                     {{ $t('teams.enter_team_code') }}
@@ -18,7 +18,7 @@
                   </v-btn>
                 </v-col>
 
-                <v-col cols=6 class="mt-5 text-center">
+                <v-col cols=12 class="mt-5 text-center">
                   <h4>{{ $t('teams.create_new_team') }}</h4>
                   <h6 class="text-muted">
                   </h6>

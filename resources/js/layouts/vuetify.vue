@@ -1,6 +1,8 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
-    <NavLeft />
+    <NavTop v-show="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
+    <NavLeft ref="drawer" />
+    <NavBottom v-show="$vuetify.breakpoint.mobile"/>
 
     <!-- Sizes your content based upon application components -->
     <v-main>
@@ -18,12 +20,16 @@
 </template>
 
 <script>
+import NavTop from '../components/NavTop.vue'
 import NavLeft from '../components/NavLeft.vue'
+import NavBottom from '../components/NavBottom.vue'
 
 export default {
 
   components: {
-    NavLeft
+    NavTop,
+    NavLeft,
+    NavBottom
   },
 
   computed: {

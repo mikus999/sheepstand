@@ -9,15 +9,15 @@
     <v-row>
       <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
         <v-tab href="#tab-general">
-          {{ $t('general.general') }}
+          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
           <v-icon>mdi-information</v-icon>
         </v-tab>
         <v-tab href="#tab-settings">
-          {{ $t('general.settings') }}
+          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
           <v-icon>mdi-cog</v-icon>
         </v-tab>
         <v-tab href="#tab-security">
-          {{ $t('general.security') }}
+          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.security') }}</span>
           <v-icon>mdi-security</v-icon>
         </v-tab>
 
@@ -26,7 +26,7 @@
 
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <v-col cols=8>
+            <v-col md=8>
               <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
                   :success="validation.name.success">
                 <template v-slot:append v-if="validation.name.success">
@@ -52,7 +52,7 @@
 
           <!-- TAB: SECURITY -->
           <v-tab-item value="tab-security">
-            <v-col cols=8 offset=2>
+            <v-col md=8 offset-md=2>
               <v-text-field v-model="password1" name="password1" :label="$t('auth.new_password')" 
                 :error-messages="passwordErrors" @blur="$v.password1.$touch()"
                 :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"

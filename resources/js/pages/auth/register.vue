@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-card class="w-75 mx-auto" outlined>
+  <v-container fluid>
+    <v-card class="mx-auto" max-width="600" outlined>
       <v-card-title>{{ $t('auth.register') }}</v-card-title>
       <v-card-text>
 

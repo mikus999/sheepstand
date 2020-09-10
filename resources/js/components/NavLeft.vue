@@ -1,6 +1,6 @@
 <template>
-  <v-navigation-drawer class="light-blue darken-4 white--text" :mini-variant="mini" dark permanent :expand-on-hover="mini" style="z-index: 500;" app>
-    <v-list flat class="mb-0 pb-0">
+  <v-navigation-drawer v-model="drawer" class="light-blue darken-4 white--text" dark style="z-index: 500;" app>
+    <v-list flat class="mb-0 pb-0" v-show="!isMobile">
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title">
@@ -18,8 +18,8 @@
       </v-list-item>
     </v-list>
 
-    <v-list flat v-if="user">
-      <v-divider class="ma-1" />
+    <v-list flat v-if="user" :dense="$vuetify.breakpoint.xs">
+      <v-divider class="ma-1" v-show="!isMobile"/>
 
       <v-list-item router :to="{ name: 'home' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
@@ -135,10 +135,14 @@
     </v-list>
 
     <template v-slot:append v-if="user">
+      <!-- LANGUAGE SELECTOR -->
       <div class="pa-2">
-        <v-select :items="langArr" :value="locale" @change="setLocale" outlined>
+        <v-select :items="langArr" :value="locale" @change="setLocale" outlined dense>
         </v-select>
       </div>
+
+
+      <!-- LOGOUT BUTTON -->
       <div class="pa-2">
         <v-btn block @click.prevent="logout">
           <v-icon>mdi-logout-variant</v-icon>
@@ -158,9 +162,9 @@ import { loadMessages } from '~/plugins/i18n'
 export default {
   data () {
     return {
-      drawer: null,
+      drawer: !this.$vuetify.breakpoint.mobile,
       langArr: [],
-      isTranslator: true,
+      isTranslator: true
     }
   },
 
@@ -176,6 +180,10 @@ export default {
 
     mini () {
       return this.$vuetify.breakpoint.mdAndDown;
+    },
+
+    isMobile () {
+      return this.$vuetify.breakpoint.mobile
     }
   },
 
