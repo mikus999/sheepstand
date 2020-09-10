@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation dark grow fixed class="light-blue darken-4 white--text" :horizontal="$vuetify.breakpoint.smAndUp">
+  <v-bottom-navigation dark grow fixed class="light-blue darken-4 white--text" :horizontal="$vuetify.breakpoint.smAndUp" app>
     <v-btn router :to="{ name: 'home' }" class="text-decoration-none">
       <span>{{ $t('menu.dashboard') }}</span>
       <v-icon>mdi-view-dashboard</v-icon>

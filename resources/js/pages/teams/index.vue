@@ -63,12 +63,14 @@
               </v-switch>
 
               <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
-                <v-chip class="ml-5 mr-2" color="primary">
-                  <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
-                  <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
-                  <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
-                </v-chip>
-                <v-label>{{ num.text }}</v-label>
+                <v-input class="ml-5">
+                  <v-chip color="primary" class="mr-3">
+                    <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
+                    <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
+                    <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
+                  </v-chip>
+                  <v-label class="float-right">{{ num.text }}</v-label>
+                </v-input>
               </div>
 
             </v-col>
