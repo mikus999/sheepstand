@@ -1,11 +1,11 @@
 <template>
-  <v-bottom-navigation dark grow fixed hide-on-scroll class="light-blue darken-4 white--text" :horizontal="$vuetify.breakpoint.smAndUp">
+  <v-bottom-navigation dark grow fixed class="light-blue darken-4 white--text" :horizontal="$vuetify.breakpoint.smAndUp">
     <v-btn router :to="{ name: 'home' }" class="text-decoration-none">
       <span>{{ $t('menu.dashboard') }}</span>
       <v-icon>mdi-view-dashboard</v-icon>
     </v-btn>
 
-    <v-btn router :to="{ name: 'schedules.index' }" class="text-decoration-none">
+    <v-btn router :to="{ name: 'schedules.index' }" class="text-decoration-none" v-if="hasTeam">
       <span>{{ $t('menu.scheduling') }}</span>
       <v-icon>mdi-calendar</v-icon>
     </v-btn>
@@ -19,9 +19,15 @@
 
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
 
 export default {
-  
+    computed: {
+      ...mapGetters({
+        user: 'auth/user',
+        hasTeam: 'teams/hasTeam',
+      }),
+    }
 }
 </script>

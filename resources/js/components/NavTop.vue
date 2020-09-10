@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar dark absolute dense class="light-blue darken-4 white--text text-decoration-none" app>
+  <v-app-bar dark fixed dense flat class="light-blue darken-4 white--text" app>
     <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')"></v-app-bar-nav-icon>
 
     <v-toolbar-title>

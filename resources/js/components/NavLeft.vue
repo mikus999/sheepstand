@@ -40,9 +40,9 @@
           </v-list-item-content>
         </template>
 
-        <v-subheader inset>{{ $t('menu.teams') }}</v-subheader>
+        <v-subheader inset v-if="hasTeam">{{ $t('menu.teams') }}</v-subheader>
 
-        <v-list-item>
+        <v-list-item v-if="hasTeam">
           <v-radio-group v-model="formatJSON(team).id" column dense class="mt-0">
               <v-radio v-for="t in teams" :key="t.id" :value="t.id" :label="t.name" @click.prevent="setTeam(t.id)" class="radio-sm"/>
           </v-radio-group>

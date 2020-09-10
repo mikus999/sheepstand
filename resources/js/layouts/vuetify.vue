@@ -2,7 +2,7 @@
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <NavTop v-show="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
     <NavLeft ref="drawer" />
-    <NavBottom v-show="$vuetify.breakpoint.mobile"/>
+    <NavBottom v-show="$vuetify.breakpoint.mobile && user"/>
 
     <!-- Sizes your content based upon application components -->
     <v-main>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import NavTop from '../components/NavTop.vue'
 import NavLeft from '../components/NavLeft.vue'
 import NavBottom from '../components/NavBottom.vue'
@@ -33,6 +34,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      user: 'auth/user',
+    }),
+
     theme () {
       return (this.$vuetify.theme.dark) ? 'dark' : 'light'
     }
