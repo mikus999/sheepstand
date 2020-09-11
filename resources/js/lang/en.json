@@ -28,7 +28,7 @@
     },
     "menu": {
         "dashboard": "Dashboard",
-        "teams": "Teams",
+        "team": "Team",
         "translation": "Translation",
         "translation_manager": "Editor",
         "team_settings": "Team Settings",

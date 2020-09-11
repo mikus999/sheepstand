@@ -1,8 +1,8 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
-    <NavTop v-show="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
+    <NavTop v-if="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
     <NavLeft ref="drawer" />
-    <NavBottom v-show="$vuetify.breakpoint.mobile && user"/>
+    <NavBottom v-if="$vuetify.breakpoint.mobile && user"/>
 
     <!-- Sizes your content based upon application components -->
     <v-main>

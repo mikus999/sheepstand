@@ -34,19 +34,10 @@
       <v-list-group prepend-icon="mdi-account-group" no-action active-class="menu-selected-item">
         <template v-slot:activator>
           <v-list-item-content>
-            <v-list-item-title>
-              {{ hasTeam ? formatJSON(team).name : $t('menu.teams')}}
-            </v-list-item-title>
+            <v-list-item-title>{{ $t('menu.team') }}</v-list-item-title>
           </v-list-item-content>
         </template>
 
-        <v-subheader inset v-if="hasTeam">{{ $t('menu.teams') }}</v-subheader>
-
-        <v-list-item v-if="hasTeam">
-          <v-radio-group v-model="formatJSON(team).id" column dense class="mt-0">
-              <v-radio v-for="t in teams" :key="t.id" :value="t.id" :label="t.name" @click.prevent="setTeam(t.id)" class="radio-sm"/>
-          </v-radio-group>
-        </v-list-item>
 
         <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" v-if="hasTeam">
           <v-icon class="menu-subitem-icon">mdi-cog</v-icon>
@@ -128,22 +119,43 @@
         </v-list-item>
 
         <v-list-item class="text-decoration-none">
+          <v-list-item-content>
           <v-switch v-model="$vuetify.theme.dark" hide-details :label="$t('menu.dark_theme')" color="black" class="radio-sm"></v-switch>
+          </v-list-item-content>
         </v-list-item>
       </v-list-group>
 
     </v-list>
 
     <template v-slot:append v-if="user">
+      <!-- TEAM SELECTOR -->
+      <div class="pa-1">
+        <v-select :items="teamsArr" :value="formatJSON(team).id" @change="setTeam($event)" outlined dense prepend-icon="mdi-account-group select-item">
+          <template v-slot:append-item>
+            <v-divider class="mb-2"></v-divider>
+
+            <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
+              <v-list-item-content>
+                <v-list-item-title>{{ $t('menu.join_another_team') }}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon>
+                <v-icon>mdi-account-multiple-plus</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </template>
+        </v-select>
+      </div>
+
+
       <!-- LANGUAGE SELECTOR -->
-      <div class="pa-2">
-        <v-select :items="langArr" :value="locale" @change="setLocale" outlined dense>
+      <div class="pa-1">
+        <v-select :items="langArr" :value="locale" @change="setLocale" outlined dense prepend-icon="mdi-translate">
         </v-select>
       </div>
 
 
       <!-- LOGOUT BUTTON -->
-      <div class="pa-2">
+      <div class="pa-1">
         <v-btn block @click.prevent="logout">
           <v-icon>mdi-logout-variant</v-icon>
           <span class="ml-3">{{ $t('auth.logout') }}</span>
@@ -164,6 +176,7 @@ export default {
     return {
       drawer: !this.$vuetify.breakpoint.mobile,
       langArr: [],
+      teamsArr: [],
       isTranslator: true
     }
   },
@@ -193,6 +206,7 @@ export default {
     }
 
     this.getLocalesArray()
+
   },
 
   methods: {
@@ -207,6 +221,12 @@ export default {
       for (const key in this.locales) {
         this.langArr.push({"text": this.locales[key], "value": key});
       }
+    },
+
+    getTeamsArray () {
+      this.teams.forEach ((item) => {
+        this.teamsArr.push({"text": item.name, "value": item.id});
+      })
     },
 
     setTeam (teamid) {
@@ -227,6 +247,9 @@ export default {
 
     async getTeams () {
       await this.$store.dispatch('teams/fetchTeams')
+      .then(result => {
+        this.getTeamsArray()
+      })
     },
 
     formatJSON (data) {
@@ -253,7 +276,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .radio-sm .v-label {
     font-size: 11pt;
     color: #ffffff;
@@ -264,11 +287,14 @@ export default {
   }
 
   .menu-subitem-icon {
-    font-size: 16pt !important;
     padding-right: 15px;
   }
 
   .menu-selected-item {
     color: #ffffff;
+  }
+
+  .v-input {
+    font-size: 10pt;
   }
 </style>
