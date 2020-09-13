@@ -100,7 +100,6 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 import Form from 'vform'
 import helper from '../../mixins/helper'
-import moment from 'moment'
 import { required } from 'vuelidate/lib/validators'
 
 export default {

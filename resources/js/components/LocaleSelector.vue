@@ -4,7 +4,7 @@
   
 
   <!-- IF MOBILE DEVICE, SHOW DROPDOWN MENU ON NAVBAR INSTEAD OF SELECT -->
-  <v-menu v-else bottom left>
+  <v-menu v-else offset-y bottom left>
     <template v-slot:activator="{ on, attrs }">
       <v-btn dark icon v-bind="attrs" v-on="on">
         <v-icon>mdi-translate</v-icon>
@@ -43,6 +43,7 @@ export default {
       if (this.$i18n.locale !== locale) {
         //loadMessages(locale)
         this.$i18n.locale = locale
+        this.moment.locale(locale)
         this.$store.dispatch('lang/setLocale', { locale })
       }
     }

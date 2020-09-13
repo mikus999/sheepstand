@@ -5,7 +5,7 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <h1 class="display-1">
-        {{ $t('schedules.schedule') }}: {{ schedData.date_start }}
+        {{ $t('schedules.schedule') }}: {{ schedData.date_start | formatDate}}
       </h1>
     </v-row>
 
@@ -30,31 +30,28 @@
             <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
           </template>
 
-          <template v-slot:item.participants="{ item }">
-            <v-chip>
-              <v-avatar left size=12 :color="checkMinMax(item.min_participants, item.users.length, 'min')">{{ item.min_participants }}</v-avatar>
-              <v-avatar right size=12 :color="checkMinMax(item.max_participants, item.users.length, 'max')">{{ item.max_participants }}</v-avatar>
-            </v-chip>
-          </template>
-
           <template v-slot:item.assignments="{ item }">
 
-            <v-select v-model="item.users" :items="teamUsers" dense
+            <v-select v-model="item.users" :items="teamUsers" :readonly="item.max_participants <= item.users.length"
                 hide-details multiple class="no-border"
                 return-object item-text="name" item-value="id" :id="'shift'+item.id">
 
+              <!-- NUMBER OF SHIFT ASSIGNMENTS -->
               <template v-slot:prepend-inner>
-                <v-chip small label color="grey darken-3">{{ item.users.length }}</v-chip>
+                <v-chip small label :color="checkMax(item.max_participants, item.users.length)">{{ item.users.length }}/{{ item.max_participants }}</v-chip>
               </template>
 
+              <!-- SELECTION SLOT: DISPLAYED IN TEXTBOX -->
               <template v-slot:selection="data">
                 <v-chip small label v-bind="data.attrs" :input-value="data.selected" close
-                    :color="shiftStatus[item.users[data.index].pivot.status].color"
+                    :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
                     @click:close="removeShiftUser(data, item)">
                   {{ data.item.name}}
                 </v-chip>
               </template>
 
+
+              <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
               <template v-slot:item="data">
                 <v-list-item-avatar>
                   <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
@@ -114,7 +111,6 @@ export default {
         { text: this.$t('shifts.day'), align: 'start', value: 'day' },
         { text: this.$t('shifts.shift_time'), align: 'start', value: 'shift_time' },
         { text: this.$t('shifts.location'), value: 'location', align: 'center'},
-        { text: this.$t('shifts.participants'), value: 'participants', align: 'center', sortable: false},
         { text: this.$t('shifts.assignments'), value: 'assignments', align: 'start', sortable: false, width: '50%'},
       ],
       teamUsers: [],
@@ -183,7 +179,7 @@ export default {
     async addShiftUser (data, shift) {
       var user = data.item
       var attrs = data.attrs
-
+      var status = this.team.setting_shift_assignment_autoaccept ? 2 : 0
 
       if (attrs['aria-selected']==='true') {
         this.removeShiftUser(data, shift)
@@ -196,28 +192,24 @@ export default {
           data: {
             user_id: user.id,
             shift_id: shift.id,
-            status: this.team.setting_shift_assignment_autoaccept ? 2 : 0
+            status: status
           }
         })
         .then(response => {
+          user.pivot.status = status
           shift.users = response.data.shiftusers
         })
       }
 
     },
 
-    checkMinMax (target, actual, minOrMax) {
-        var color = 'green darken-4'
-        var outOfBounds = false
+    checkMax (target, actual) {
+        var color = 'grey darken-3'
 
-        if (target !== actual) {
-          if (minOrMax === 'min') {
-            outOfBounds = actual < target ?  true : false
-          } else if (minOrMax === 'max') {
-            outOfBounds = actual > target ?  true : false
-          }
-
-          color = outOfBounds ? 'red darken-4' : 'green'
+        if (target === actual) {
+          color = 'green'
+        } else if (target < actual) {
+          color="red darken-4"
         }
 
         return color

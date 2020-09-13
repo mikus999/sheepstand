@@ -8,6 +8,7 @@ import VueLodash from 'vue-lodash'
 import Vuelidate from 'vuelidate'
 import lodash from 'lodash'
 import moment from 'moment'
+import 'moment/min/locales'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
@@ -26,23 +27,37 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 Vue.config.productionTip = false
 Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttribute('content')
 
+
+
+// Set moment options, locale, filters
+Vue.prototype.moment = moment
+moment.locale(store.getters['lang/locale'])
+
 Vue.filter('formatDate', function (value) {
   if (value) {
-    return moment(String(value)).format('DD.MM.YYYY')
+    return moment(String(value)).format('l')
   }
 })
 
 Vue.filter('formatTime', function (value) {
   if (value) {
-    return moment(String(value)).format('HH:mm')
+    return moment(String(value)).format('LT')
   }
 })
 
 Vue.filter('formatDay', function (value) {
   if (value) {
-    return moment(String(value)).format('ddd, D MMM')
+    return moment(String(value)).format('ddd, ll')
   }
 })
+
+Vue.filter('formatWeekdayShort', function (value) {
+  if (value) {
+    return moment(String(value)).format('ddd')
+  }
+})
+
+
 
 window.bus = new Vue()
 

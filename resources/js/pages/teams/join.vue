@@ -131,11 +131,12 @@
 
 <script>
 import axios from 'axios'
+import helper from '../../mixins/helper'
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
-
+  mixins: [helper],
   data () {
     return {
       userid: this.$userId,
@@ -147,7 +148,7 @@ export default {
       teamNameErrorMsg: '',
       teamFound: false,
       successMsg: this.$t('teams.welcome_to_team'),
-      team: [],
+      teamTemp: [],
       teamcontact: [],
       stepperCurr: 1,
       stepperMax: 4,
@@ -188,7 +189,7 @@ export default {
               this.teamNotFound = false
               this.teamNotFoundMsg = ''
               this.teamFound = true
-              this.team = response.data.team
+              this.teamTemp = response.data.team
               this.teamcontact = response.data.user
               this.stepperCurr = 2
             }
@@ -219,17 +220,13 @@ export default {
           } else {
             this.getTeams()
 
-          if (this.teams === undefined) {
-            this.setTeam(this.teams[0].id)
-          }
+            this.setTeam(response.data.team.id)
+
             this.stepperCurr = 4
           }
         })
     },
 
-    async getTeams () {
-      await this.$store.dispatch('teams/fetchTeams')
-    },
 
     clearForm () {
       this.teamNotFound = false
@@ -237,7 +234,7 @@ export default {
       this.teamNameError = false
       this.teamNameErrorMsg = ''
       this.teamFound = false
-      this.team = []
+      this.teamTemp = []
       this.teamcontact = []
       this.teamid = ''
       this.stepperCurr = 1

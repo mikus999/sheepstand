@@ -19,9 +19,9 @@ export default new Vuetify({
         accent: colors.lightBlue.accent4,
         background: colors.grey.darken4
       },
-      options: {
-        customProperties: true,
-      },
-    }
+    },
+    options: {
+      customProperties: true,
+    },
   }
 })

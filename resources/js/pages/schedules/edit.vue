@@ -5,7 +5,7 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <h1 class="display-1">
-        {{ $t('schedules.schedule') }}: {{ schedData.date_start }}
+        {{ $t('schedules.schedule') }}: {{ schedData.date_start | formatDate }}
       </h1>
 
       <v-btn text class="ml-auto" x-large @click="editAssignments" v-show="schedData.status > 0">
@@ -26,8 +26,8 @@
     <v-row>
       <swiper ref="mySwiper" :options="swiperOptions">
         <swiper-slide v-for="day in days7" :key="day.id" class="text-center">
-          <h4>{{ day.name }}</h4>
-          <h6>{{ day.date }}</h6>
+          <h4>{{ day.date | formatWeekdayShort }}</h4>
+          <h6>{{ day.date | formatDate }}</h6>
 
           <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
             @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
@@ -116,13 +116,13 @@
               <v-col cols=5>
                 <VueCtkDateTimePicker v-model="shiftData.start" id="timepickStart" 
                   only-time no-header no-label no-clear-button no-button
-                  format="HH:mm" formatted="HH:mm" minute-interval="15"  
+                  :format="timeFormat" formatted="HH:mm" minute-interval="15"  
                   :dark="this.$vuetify.theme.dark" class="text-center" />
               </v-col>
               <v-col cols=5>
                 <VueCtkDateTimePicker v-model="shiftData.end" id="timepickEnd" 
                   only-time no-header no-label no-clear-button no-button
-                  format="HH:mm" formatted="HH:mm" minute-interval="15" 
+                  :format="timeFormat" formatted="HH:mm" minute-interval="15" 
                   :dark="this.$vuetify.theme.dark" />
               </v-col>
             </v-row>
@@ -290,6 +290,9 @@ export default {
       }
     },
     
+    timeFormat() {
+      return moment.localeData().longDateFormat('LT')
+    }
   },
 
   created () {
@@ -308,7 +311,7 @@ export default {
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
           this.schedData = response.data
-          this.date = moment(this.schedData.date_start).format("YYYY-MM-DD")
+          this.date = moment(this.schedData.date_start)
           this.shiftDefaults.end = moment(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
           this.shiftDefaults.participants = [this.team.default_participants_min, this.team.default_participants_max]
           this.getShiftData(response.data.date_start)
@@ -319,10 +322,9 @@ export default {
     async getShiftData (date) {
       await axios.get('/api/schedules/' + this.id + '/shifts')
         .then(response => {
-
           // Loop through each day, show shifts
           this.days7.forEach ( function(item) {
-            item.date = moment(date).add(item.id, 'd').format("YYYY-MM-DD")
+            item.date = moment(date).add(item.id, 'd').format('YYYY-MM-DD')
             item.list = response.data.filter(shift => shift.time_start.includes(item.date))
           })
         })

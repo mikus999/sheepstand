@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Team;
 use App\User;
 use App\Location;
+use DB;
 use Helper;
 use Auth;
 
@@ -50,7 +51,7 @@ class TeamController extends Controller
       $user->teams()->attach($newteam);
 
       $data = [
-          'data' => $newteam,
+          'team' => $newteam,
           'status' => (bool) $newteam,
           'teamcode' => $teamcode,
           'message' => $newteam ? 'Team Created!' : 'ERROR',
@@ -153,9 +154,16 @@ class TeamController extends Controller
     {
       $userid = $request->user_id;
       $teamid = $request->team_id;
-
+      $team = Team::find($teamid);
       $user = User::find($userid);
+
       $user->teams()->detach($teamid);
+      
+      DB::table('shift_user')
+        ->whereIn('shift_id', $team->shifts->pluck('id'))
+        ->where('user_id', $userid)
+        ->delete();
+      
 
       $data = [
           'users' => 'Successfully left team!',

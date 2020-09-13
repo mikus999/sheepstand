@@ -15,7 +15,7 @@
   </v-select>
 
   <!-- IF MOBILE DEVICE, SHOW DROPDOWN MENU ON NAVBAR INSTEAD OF SELECT -->
-  <v-menu v-else bottom left>
+  <v-menu v-else offset-y bottom left>
     <template v-slot:activator="{ on, attrs }">
       <v-btn dark icon v-bind="attrs" v-on="on">
         <v-icon>mdi-account-group</v-icon>

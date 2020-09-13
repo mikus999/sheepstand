@@ -55,6 +55,10 @@
             </v-toolbar>
           </template>
 
+          <template v-slot:item.date_start="{ item }">
+            {{ item.date_start | formatDate }}
+          </template>
+
           <template v-slot:item.status="{ item }">
             <div :class="scheduleStatus[item.status].color+'--text'">{{ scheduleStatus[item.status].text }}</div>
           </template>
@@ -166,9 +170,11 @@ export default {
             this.snack = true
             this.snackColor = 'success'
             this.snackText = this.$t('schedules.success_delete_schedule')
+
+            this.getSchedData()
           })
 
-        this.getSchedData()
+
       }
     },
 
@@ -189,10 +195,11 @@ export default {
             this.snack = true
             this.snackColor = 'success'
             this.snackText = this.$t('schedules.success_create_schedule')
+
+            this.getSchedData()
           })
       }
 
-      this.getSchedData()
       this.newSchedDate = ''
       this.close()
     }

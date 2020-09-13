@@ -165,10 +165,6 @@ export default {
           message: null
         }
       },
-      form: new Form({
-        name: '',
-        code: ''
-      }),
       userHeaders: [
         { text: this.$t('general.name'), align: 'start', value: 'name' },
         { text: this.$t('general.email'), value: 'email' },
@@ -225,7 +221,6 @@ export default {
       axios.get('/api/teams/' + this.team.id)
         .then(response => {
           this.teamData = response.data
-          this.form = response.data
         })
     },
 

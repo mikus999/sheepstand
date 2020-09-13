@@ -17,12 +17,15 @@
       <v-col cols=12>
         <v-data-iterator :items="langSourceStrings" hide-default-footer disable-pagination>
           <template v-slot:default="props">
-            <v-row v-for="item in props.items" :key="item.key">
-              <v-col cols=6>
-                <v-text-field :label="item.key" :value="item.value" readonly></v-text-field>
-              </v-col>
-              <v-col cols=6>
-                <v-text-field :label="item.key" :value="langTargetStrings[props.items.indexOf(item)].value" placeholder="---"></v-text-field>
+            <v-row v-for="item in props.items" :key="item.key" class="mt-3">
+              <v-col cols=12>
+                <v-text-field :hint="item.key" v-model="langTargetStrings[props.items.indexOf(item)].value" placeholder="---" 
+                  persistent-hint :prefix="langTargetLocale.toUpperCase() + ': '" 
+                  @input.native="updateStrings($event)" :success="validation.name.success">
+                  <template v-slot:label>
+                    <span class="translation-label">EN: {{ item.value}}</span>
+                  </template>
+                </v-text-field>
               </v-col>
             </v-row>
           </template>
@@ -50,6 +53,15 @@ export default {
       langTargetCat: [],
       langSourceStrings: [],
       langTargetStrings: [],
+      langSourceLocale: 'en',
+      langTargetLocale: 'sr',
+      currSection: '',
+      validation: {
+        name: {
+          success: false, 
+          message: null
+        }
+      },
     }
   },
 
@@ -72,6 +84,7 @@ export default {
     },
 
     getStrings(key) {
+      this.currSection = key
       const tempSourceStrings = this.langSource[key]
       this.langSourceStrings = []
 
@@ -84,13 +97,36 @@ export default {
 
       Object.keys(tempSourceStrings).forEach (key => {
         this.langSourceStrings.push({"key": key, "value": tempSourceStrings[key]});
-        this.langTargetStrings.push({"key": key, "value": tempTargetStrings[key] === null ? '' : tempTargetStrings[key] });
+        this.langTargetStrings.push({"key": key, "value": tempTargetStrings[key] === undefined ? '' : tempTargetStrings[key] });
+      })
+    },
+
+    updateStrings: _.debounce(async function(e) {
+      this.validation[e.target.name].success = true
+      setTimeout(() => this.validation[e.target.name].success = false, 3000)
+
+      await axios({
+        method: 'post',      
+        url: '/api/translation/update',
+        data: {
+          section: this.currSection,
+          lang: this.langTargetLocale,
+          strings: this.langTargetStrings
+        }
       })
 
-    }
+      this.getTeams()
+    }, 1000),
 
   }
 
 
 }
 </script>
+
+
+<style scoped>
+  .translation-label {
+    color: var(--v-primary-base);
+  }
+</style>

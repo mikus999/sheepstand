@@ -14,7 +14,7 @@ class TranslationController extends Controller
     {
         // REQUEST object should include:
         //  'section' -> top level of json array (optional if key is not nested)
-        //  'key' -> nested translation key
+        //  'key' -> nested translation key (optional. if ommited the entire section will be replaced)
         //  'string' -> translated string
         //  'lang' -> target translation language where key should be updated (ie. 'en', 'es', 'ru', etc)
 
@@ -23,29 +23,48 @@ class TranslationController extends Controller
         $section = $request->section;
         $key = $request->key;
         $string = $request->string;
+        $strings = $request->strings;
         $lang = $request->lang;
         $filepath = 'resources/js/lang/' . $lang . '.json';
 
         // Read File
         $jsonString = file_get_contents(base_path($filepath));
-        $data = json_decode($jsonString, true);
+        $file = json_decode($jsonString, true);
 
 
-        // Update key
-        if ($section) {
-            $data[$section][$key] = $string;
-        } else {
-            $data[$key] = $string;
+        if ($string) {
+            if ($section) {
+                $file[$section][$key] = $string;
+            } else {
+                $file[$key] = $string;
+            };
+        } else if ($strings) {
+            $stringArr = array();
+            $stringArr = json_decode($strings);
+
+            foreach ($stringArr as $item) {
+                $key = $item->key;
+                $value = $item->value;
+
+                if ($section) {
+                    $file[$section][$key] = $value;
+                } else {
+                    $file[$key] = $value;
+                };
+            };
         };
-        
+
+
+
 
         // Write File
-        $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
+        $newJsonString = mb_convert_encoding(json_encode($file, JSON_PRETTY_PRINT), 'UTF-8', 'UTF-8');
         file_put_contents(base_path($filepath), stripslashes($newJsonString));
 
 
+
         $response = [
-            'data' => $data
+            'data' => $file
         ];
 
         return response()->json($response);
