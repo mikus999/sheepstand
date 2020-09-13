@@ -178,7 +178,7 @@ export default {
   methods: {
     
     async getData () {
-      await axios.get('/api/teams/' + this.formatJSON(this.team).id + '/locations/')
+      await axios.get('/api/teams/' + this.team.id + '/locations/')
         .then(response => {
           this.locationData = response.data
         })
@@ -187,7 +187,7 @@ export default {
     deleteLoc (loc) {
       const index = this.locationData.indexOf(loc.id)
       if (confirm('Are you sure you want to delete this location? This will also delete all shifts using this location.')) {
-        axios.delete('/api/teams/' + this.formatJSON(this.team).id + '/locations/' + loc.id)
+        axios.delete('/api/teams/' + this.team.id + '/locations/' + loc.id)
           .then(response => {
             this.locationData.splice(index, 1)  
             this.snack = true
@@ -206,7 +206,7 @@ export default {
     showDialog (data, edit) {
       if (!edit) {
         this.tempData = this.lodash.cloneDeep(this.defaultData)
-        this.tempData.team_id = this.formatJSON(this.team).id
+        this.tempData.team_id = this.team.id
       } else {
         this.tempData = this.lodash.cloneDeep(data)
       }
@@ -222,10 +222,10 @@ export default {
       if (!this.$v.$invalid) {
         if (!this.isEdit) {
           var aMethod = 'post'
-          var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/'
+          var aUrl = '/api/teams/' + this.team.id + '/locations/'
         } else {
           var aMethod = 'patch'
-          var aUrl = '/api/teams/' + this.formatJSON(this.team).id + '/locations/' + this.tempData.id
+          var aUrl = '/api/teams/' + this.team.id + '/locations/' + this.tempData.id
         }
 
         await axios({
@@ -249,7 +249,7 @@ export default {
     async updateDefault (locid) {
       await axios({
         method: 'post',      
-        url: '/api/teams/' + this.formatJSON(this.team).id + '/locations/' + locid + '/makedefault',
+        url: '/api/teams/' + this.team.id + '/locations/' + locid + '/makedefault',
         data: this.tempData
       })
       .then(response => {

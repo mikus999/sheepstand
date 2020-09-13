@@ -177,7 +177,7 @@ export default {
           this.$store.dispatch('teams/fetchTeams');
 
           // Redirect home.
-          this.$router.push({ name: 'home' })
+          this.$router.push({ name: 'teams.join' })
 
         }
       })

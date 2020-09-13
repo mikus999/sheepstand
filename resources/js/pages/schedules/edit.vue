@@ -159,8 +159,6 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
-import Form from 'vform'
 import draggable from 'vuedraggable'
 import moment from 'moment'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
@@ -264,14 +262,17 @@ export default {
           768: {
             slidesPerView: 3,
             spaceBetween: 30,
+            allowTouchMove: false,
           },
           1024: {
             slidesPerView: 4,
             spaceBetween: 40,
+            allowTouchMove: false,
           },
           1366: {
             slidesPerView: 5,
             spaceBetween: 40,
+            allowTouchMove: false,
           }
         }
       },
@@ -288,11 +289,6 @@ export default {
         ghostClass: "ghost"
       }
     },
-
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-    })
     
   },
 
@@ -313,8 +309,8 @@ export default {
         .then(response => {
           this.schedData = response.data
           this.date = moment(this.schedData.date_start).format("YYYY-MM-DD")
-          this.shiftDefaults.end = moment(this.shiftDefaults.start, 'HH:mm').add(this.formatJSON(this.team).default_shift_minutes, 'minutes').format("HH:mm")
-          this.shiftDefaults.participants = [this.formatJSON(this.team).default_participants_min, this.formatJSON(this.team).default_participants_max]
+          this.shiftDefaults.end = moment(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
+          this.shiftDefaults.participants = [this.team.default_participants_min, this.team.default_participants_max]
           this.getShiftData(response.data.date_start)
         })
 
@@ -334,7 +330,7 @@ export default {
     },
 
     async getLocations () {
-      await axios.get('/api/teams/' + this.formatJSON(this.team).id + '/locations')
+      await axios.get('/api/teams/' + this.team.id + '/locations')
         .then(response => {
           this.locations = response.data
           this.shiftDefaults.location = response.data.filter(location => location.default)[0].id

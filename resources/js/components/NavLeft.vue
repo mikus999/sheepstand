@@ -130,33 +130,19 @@
     <template v-slot:append v-if="user">
       <!-- TEAM SELECTOR -->
       <div class="pa-1">
-        <v-select :items="teamsArr" :value="formatJSON(team).id" @change="setTeam($event)" outlined dense prepend-icon="mdi-account-group select-item">
-          <template v-slot:append-item>
-            <v-divider class="mb-2"></v-divider>
-
-            <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
-              <v-list-item-content>
-                <v-list-item-title>{{ $t('menu.join_another_team') }}</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-icon>
-                <v-icon>mdi-account-multiple-plus</v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-          </template>
-        </v-select>
+        <TeamSelector v-if="!$vuetify.breakpoint.mobile" />
       </div>
 
 
       <!-- LANGUAGE SELECTOR -->
       <div class="pa-1">
-        <v-select :items="langArr" :value="locale" @change="setLocale" outlined dense prepend-icon="mdi-translate">
-        </v-select>
+        <LocaleSelector v-if="!$vuetify.breakpoint.mobile" />
       </div>
 
 
       <!-- LOGOUT BUTTON -->
       <div class="pa-1">
-        <v-btn block @click.prevent="logout">
+        <v-btn block @click.prevent="logout" v-if="!$vuetify.breakpoint.mobile">
           <v-icon>mdi-logout-variant</v-icon>
           <span class="ml-3">{{ $t('auth.logout') }}</span>
         </v-btn>
@@ -170,26 +156,27 @@ import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { loadMessages } from '~/plugins/i18n'
+import helper from '../mixins/helper'
+import TeamSelector from './TeamSelector'
+import LocaleSelector from './LocaleSelector'
+
 
 export default {
+  mixins: [helper],
+
+  components: {
+    TeamSelector,
+    LocaleSelector
+  },
+
   data () {
     return {
       drawer: !this.$vuetify.breakpoint.mobile,
-      langArr: [],
-      teamsArr: [],
       isTranslator: true
     }
   },
 
   computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-      teams: 'teams/getTeams',
-      hasTeam: 'teams/hasTeam',
-      locale: 'lang/locale',
-      locales: 'lang/locales'
-    }),
 
     mini () {
       return this.$vuetify.breakpoint.mdAndDown;
@@ -197,77 +184,8 @@ export default {
 
     isMobile () {
       return this.$vuetify.breakpoint.mobile
-    }
-  },
-
-  created () {
-    if (this.user) {
-      this.getTeams()
-    }
-
-    this.getLocalesArray()
-
-  },
-
-  methods: {
-    setLocale (locale) {
-      if (this.$i18n.locale !== locale) {
-        this.$i18n.locale = locale
-        this.$store.dispatch('lang/setLocale', { locale })
-      }
     },
 
-    getLocalesArray () {
-      for (const key in this.locales) {
-        this.langArr.push({"text": this.locales[key], "value": key});
-      }
-    },
-
-    getTeamsArray () {
-      this.teams.forEach ((item) => {
-        this.teamsArr.push({"text": item.name, "value": item.id});
-      })
-    },
-
-    setTeam (teamid) {
-      this.$store.dispatch('teams/setTeam', { teamid })
-      this.getTeams()
-
-      if (this.$router.currentRoute.name !== 'home') {
-        this.$router.push('/home')
-      }
-    },
-
-    getTeamInfo () {
-      axios.get('/api/teams')
-        .then(response => {
-          // this.currteam = response.data.teams[0]
-        })
-    },
-
-    async getTeams () {
-      await this.$store.dispatch('teams/fetchTeams')
-      .then(result => {
-        this.getTeamsArray()
-      })
-    },
-
-    formatJSON (data) {
-      if (data.name) {
-        return JSON.parse(JSON.stringify(data))
-      } else {
-        return JSON.parse(data)
-      }
-    },
-
-    async logout () {
-      // Log out the user.
-      await this.$store.dispatch('auth/logout')
-
-      // Redirect to login.
-      this.$router.push({ name: 'login' })
-    }
-  
   },
 
   toggleDarkMode () {

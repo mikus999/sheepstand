@@ -7,9 +7,17 @@
             <!-- STEP 1: JOIN OR CREATE A TEAM -->
             <v-stepper-content step="1">
               <v-row class="mt-5">
-                <v-col cols=12 class="mt-5 text-center border-right">
-                  <h4>{{ $t('teams.join_existing_team') }}</h4>
-                  <h6 class="text-muted">
+                <v-col cols=12 class="text-center">
+                  <h3>{{ $t('teams.join_existing_team') }}</h3>
+                  <blockquote class="blockquote text-muted">
+                    {{ $t('teams.what_is_a_team') }}
+                  </blockquote>
+                </v-col>
+              </v-row>
+
+              <v-row class="mt-2">
+                <v-col cols=12 class="text-center">
+                  <h6 class="mt-6">
                     {{ $t('teams.enter_team_code') }}
                   </h6>
                   <v-text-field v-model="teamid" label="TM-XXXXXXXX" outlined :error="teamNotFound" :error-messages="teamNotFoundMsg"></v-text-field>
@@ -17,15 +25,17 @@
                     {{ $t('teams.find_team') }}
                   </v-btn>
                 </v-col>
+              </v-row>
 
-                <v-col cols=12 class="mt-5 text-center">
-                  <h4>{{ $t('teams.create_new_team') }}</h4>
+              <v-divider class="my-13"></v-divider>
+
+              <v-row class="mb-6">
+                <v-col cols=12 class="text-center">
                   <h6 class="text-muted">
+                    <a @click.prevent="nextStep(3, $t('teams.confirm_create_new_team'))">
+                      {{ $t('teams.create_new_team') }}
+                    </a>
                   </h6>
-                  <v-btn color="secondary" @click.prevent="nextStep(3)">
-                    {{ $t('teams.get_started') }}
-                  </v-btn>
-
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -35,7 +45,7 @@
             <v-stepper-content step="2">
               <v-row>
                 <v-col cols=12 class="mt-5 text-center">
-                  <h4>{{ $t('teams.confirm_team_details') }}</h4>
+                  <h3>{{ $t('teams.confirm_team_details') }}</h3>
                   <h6 class="text-muted mb-5">
                     {{ $t('teams.confirm_team_message') }}
                   </h6>
@@ -86,10 +96,10 @@
             <v-stepper-content step="3">
               <v-row>
                 <v-col cols=12 class="mt-5 text-center">
-                  <h4 class="ma-3">{{ $t('teams.new_team_name') }}</h4>
-                  <h6 class="text-muted ma-3">
+                  <h3 class="ma-3">{{ $t('teams.new_team_name') }}</h3>
+                  <blockquote class="blockquote text-muted">
                     {{ $t('teams.new_team_name_help') }}
-                  </h6>
+                  </blockquote>
 
                   <v-text-field v-model="team_name" class="ma-3" :label="$t('teams.team_name')" outlined :error="teamNameError" :error-messages="teamNameErrorMsg"></v-text-field>
 
@@ -108,8 +118,8 @@
             <v-stepper-content step="4">
               <v-row>
                 <v-col cols=12 class="mt-5 text-center">
-                  <v-icon size="120" color="success">mdi-check-circle-outline</v-icon>
-                  <h1 class="display-3 ma-10">{{ successMsg }}</h1>
+                  <v-icon size="100" color="success">mdi-check-circle-outline</v-icon>
+                  <p class="ma-10"><span class="display-2">{{ successMsg }}</span></p>
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -148,9 +158,18 @@ export default {
   },
 
   methods: {
-    nextStep (n) {
-      if (n !== this.stepperMax) {
-        this.stepperCurr = n
+    nextStep (n, msg) {
+      var isNextStep = true
+      console.log(msg)
+
+      if (msg !== undefined) {
+        isNextStep = confirm(msg)
+      }
+
+      if (isNextStep) {
+        if (n !== this.stepperMax) {
+          this.stepperCurr = n
+        }
       }
     },
 
@@ -199,6 +218,10 @@ export default {
             this.teamNotFoundMsg = this.$t('teams.error_creating_team')
           } else {
             this.getTeams()
+
+          if (this.teams === undefined) {
+            this.setTeam(this.teams[0].id)
+          }
             this.stepperCurr = 4
           }
         })

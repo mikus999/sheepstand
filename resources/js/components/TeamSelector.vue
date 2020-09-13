@@ -1,75 +1,56 @@
 <template>
-  <div v-if="hasTeam" class="dropdown">
-    <a id="dropdownMenuLink" class="btn btn-primary dropdown-toggle w-100 text-left border-0" href="#" role="button"
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-    >
-      <fa icon="users" class="menu__icon" aria-hidden="true" />
-      {{ (formatJSON(team).name).slice(0,18) }}
-    </a>
+  <v-select v-if="!$vuetify.breakpoint.mobile" :items="teams" item-text="name" item-value="id" :value="team.id" @change="setTeam($event, 'home')" outlined dense prepend-icon="mdi-account-group select-item">
+    <template v-slot:append-item>
+      <v-divider class="mb-2"></v-divider>
 
-    <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
-      <a v-for="t in teams" :key="t.id" class="dropdown-item" href="#" @click.prevent="setTeam(t.id)">
-        {{ t.name }}
-      </a>
-      <div class="dropdown-divider"></div>
-      <router-link class="dropdown-item" :to="{ name: 'teams.join' }">
-        Join Team
-      </router-link>
-    </div>
-  </div>
+      <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.join_another_team') }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-icon>
+          <v-icon>mdi-account-multiple-plus</v-icon>
+        </v-list-item-icon>
+      </v-list-item>
+    </template>
+  </v-select>
 
-  <div v-else>
-    <router-link class="menu__link" :to="{ name: 'teams.join' }">
-      <fa icon="users" class="menu__icon" aria-hidden="true" />
-      Join Team
-    </router-link>
-  </div>
+  <!-- IF MOBILE DEVICE, SHOW DROPDOWN MENU ON NAVBAR INSTEAD OF SELECT -->
+  <v-menu v-else bottom left>
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn dark icon v-bind="attrs" v-on="on">
+        <v-icon>mdi-account-group</v-icon>
+      </v-btn>
+    </template>
+
+    <v-list>
+      <v-list-item v-for="t in teams" :key="t.id" @click="setTeam(t.id)">
+        <v-list-item-title>{{ t.name }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
+
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import axios from 'axios'
-import Cookies from 'js-cookie'
+import helper from '../mixins/helper'
 
 export default {
   name: 'TeamSelector',
+  mixins: [helper],
 
-  data: () => ({
-
-  }),
-
-  computed: {
-    ...mapGetters({
-      team: 'teams/getTeam',
-      teams: 'teams/getTeams',
-      hasTeam: 'teams/hasTeam'
-    })
-  },
-
-  mounted () {
-    // console.log(this.$store.getters['teams/getTeam'])
-  },
-
-  methods: {
-    setTeam (teamid) {
-      this.$store.dispatch('teams/setTeam', { teamid })
-    },
-
-    getTeamInfo () {
-      axios.get('/api/teams')
-        .then(response => {
-          // this.currteam = response.data.teams[0]
-        })
-    },
-
-    formatJSON (data) {
-      if (data.name) {
-        return JSON.parse(JSON.stringify(data))
-      } else {
-        return JSON.parse(data)
-      }
+  created () {
+    if (this.user) {
+      this.getTeams()
     }
-  }
+  },
 
 }
 </script>
+
+<style scoped>
+  .v-input {
+    font-size: 10pt;
+  }
+</style>

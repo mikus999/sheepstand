@@ -44,7 +44,7 @@
               <v-text-field name="team_date" :label="$t('teams.date_created')" :value="teamData.created_at | formatDate" readonly></v-text-field>
 
 
-              <v-btn v-b-modal.modal-confirm color="error" @click.prevent="confirmDeleteTeam">
+              <v-btn color="error" @click.prevent="deleteTeam">
                 {{ $t('teams.delete_team') }}
               </v-btn>       
 
@@ -146,8 +146,6 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
-import Form from 'vform'
 import helper from '../../mixins/helper'
 
 export default {
@@ -201,12 +199,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-      teams: 'teams/getTeams',
-      hasTeam: 'teams/hasTeam'
-    })
   },
   
   watch: {
@@ -223,14 +215,14 @@ export default {
   methods: {
 
     async getUserData () {
-      await axios.get('/api/teams/users/' + this.formatJSON(this.team).id)
+      await axios.get('/api/teams/users/' + this.team.id)
         .then(response => {
           this.userData = response.data
         })
     },
 
     getTeamData () {
-      axios.get('/api/teams/' + this.formatJSON(this.team).id)
+      axios.get('/api/teams/' + this.team.id)
         .then(response => {
           this.teamData = response.data
           this.form = response.data
@@ -243,48 +235,37 @@ export default {
 
       await axios({
         method: 'patch',      
-        url: '/api/teams/' + this.formatJSON(this.team).id,
+        url: '/api/teams/' + this.team.id,
         data: {
           name: this.teamData.name,
           user_id: this.teamData.user_id
         }
       })
 
-      this.setTeam(this.formatJSON(this.team).id)
-      this.$store.dispatch('teams/fetchTeams')
+      this.getTeams()
     }, 1000),
 
-    setTeam (teamid) {
-      this.$store.dispatch('teams/setTeam', { teamid })
-    },
+    async deleteTeam () {
+      if (confirm(this.$t('teams.confirm_delete_text'))) {
+        await axios.delete('/api/teams/' + this.team.id)
+          .then(response => {
+            this.getTeams()
 
-    deleteTeam () {
-      axios.delete('/api/teams/' + this.formatJSON(this.team).id)
-      this.$store.dispatch('teams/fetchTeams')
-      this.$router.push('/home')
+            if (this.teams.length == 0) {
+              this.$router.push({ name: 'teams.join' })
+            } else {
+              this.setTeam(this.teams[0].id)
+
+              this.$router.push('/home')
+            }
+          })
+      }
     },
 
     async resetCode () {
-      await axios.get('/api/teams/resetcode/' + this.formatJSON(this.team).id)
+      await axios.get('/api/teams/resetcode/' + this.team.id)
         .then(response => {
           this.teamData = response.data
-        })
-    },
-
-    confirmDeleteTeam () {
-      this.$bvModal.msgBoxConfirm(this.$t('teams.confirm_delete_text'), {
-        title: this.$t('teams.confirm_delete_team'),
-        okVariant: 'danger',
-        okTitle: this.$t('general.delete'),
-        cancelTitle: this.$t('general.cancel'),
-        footerClass: 'p-2',
-        hideHeaderClose: false,
-        centered: true
-      })
-        .then(value => {
-          if (value) {
-            this.deleteTeam()
-          }
         })
     },
 
@@ -294,7 +275,7 @@ export default {
           method: 'post',      
           url: '/api/teams/leaveteam',
           data: {
-            team_id: this.formatJSON(this.team).id,
+            team_id: this.team.id,
             user_id: user.id
           }
         })
@@ -317,7 +298,7 @@ export default {
           method: 'post',      
           url: '/api/teams/jointeam',
           data: {
-            team_id: this.formatJSON(this.team).id,
+            team_id: this.team.id,
             user_code: this.newUserCode
           }
         })
@@ -353,14 +334,14 @@ export default {
         method: 'post',      
         url: '/api/teams/settings/update',
         data: {
-          team_id: this.formatJSON(this.team).id,
+          team_id: this.team.id,
           setting: setting,
           value: val
         }
       })
 
       // Load new settings into store object and cookie
-      this.setTeam(this.formatJSON(this.team).id)
+      this.setTeam(this.team.id)
 
     },
   }

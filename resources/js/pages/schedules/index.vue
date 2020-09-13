@@ -91,7 +91,6 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
 import Form from 'vform'
 import helper from '../../mixins/helper'
 import moment from 'moment'
@@ -121,13 +120,6 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-    })
-  },
-
   created () {
     this.getSchedData()
   },
@@ -142,7 +134,7 @@ export default {
     },
 
     async getSchedData () {
-      await axios.get('/api/schedules/' + this.formatJSON(this.team).id)
+      await axios.get('/api/schedules/' + this.team.id)
         .then(response => {
           this.schedData = response.data
         })
@@ -190,7 +182,7 @@ export default {
 
         const formData = new FormData()
         formData.append('user_id', this.user.id)
-        formData.append('team_id', this.formatJSON(this.team).id)
+        formData.append('team_id', this.team.id)
         formData.append('date_start', this.newSchedDate)
         axios.post('/api/schedules', formData)
           .then(response => {

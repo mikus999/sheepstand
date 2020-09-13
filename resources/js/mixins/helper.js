@@ -1,4 +1,17 @@
+import { mapGetters, mapState } from 'vuex'
+
 const helper = {
+  computed: {
+    ...mapGetters({
+      user: 'auth/user',
+      team: 'teams/getTeam',
+      teams: 'teams/getTeams',
+      hasTeam: 'teams/hasTeam',
+      locale: 'lang/locale',
+      locales: 'lang/locales'
+    }),
+  },
+
   data () {
     return {
       scheduleStatus: [
@@ -78,7 +91,37 @@ const helper = {
         newTime = minutes
       }
       return newTime
-    }
+    },
+
+    setTeam (teamid, route) {
+      this.$store.dispatch('teams/setTeam', { teamid })
+      this.getTeams()
+
+      if (route !== undefined) {
+        if (this.$route.name !== route) { 
+          this.$router.push({ name: route })
+        }
+      }
+    },
+
+    async getTeams () {
+      await this.$store.dispatch('teams/fetchTeams')
+    },
+
+    setLocale (locale) {
+      if (this.$i18n.locale !== locale) {
+        this.$i18n.locale = locale
+        this.$store.dispatch('lang/setLocale', { locale })
+      }
+    },
+
+    async logout () {
+      // Log out the user.
+      await this.$store.dispatch('auth/logout')
+
+      // Redirect to login.
+      this.$router.push({ name: 'login' })
+    },
   },
 
 }

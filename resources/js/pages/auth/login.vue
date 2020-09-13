@@ -53,6 +53,7 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters, mapState } from 'vuex'
 import LoginWithGithub from '~/components/LoginWithGithub'
 import LoginWithGoogle from '~/components/LoginWithGoogle'
 import LoginWithFacebook from '~/components/LoginWithFacebook'
@@ -85,6 +86,11 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({
+      teams: 'teams/getTeams',
+      hasTeam: 'teams/hasTeam',
+    }),
+
     passwordErrors () {
       const errors = []
       if (!this.$v.password.$dirty) return errors
@@ -127,8 +133,13 @@ export default {
             // Fetch the teams.
             this.$store.dispatch('teams/fetchTeams');
 
-            // Redirect home.
-            this.$router.push({ name: 'home' })
+            // Redirect
+
+            if (this.hasTeam) {
+              this.$router.push({ name: 'home' })
+            } else {
+              this.$router.push({ name: 'teams.join' })
+            }
 
           }
         })

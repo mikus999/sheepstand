@@ -9,7 +9,7 @@ export const state = {
 }
 
 export const getters = {
-  getTeam: state => state.team,
+  getTeam: state => state.team.name ? JSON.parse(JSON.stringify(state.team)) : JSON.parse(state.team),
   getTeams: state => state.teams,
   hasTeam: state => state.hasTeam
 }

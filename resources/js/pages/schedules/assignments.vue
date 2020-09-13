@@ -84,7 +84,6 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
 import moment from 'moment'
 import helper from '../../mixins/helper'
 
@@ -123,15 +122,6 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-    })
-
-    
-  },
-
   created () {
     this.initialize()
   },
@@ -166,7 +156,7 @@ export default {
     },
 
     async getTeamUsers (date) {
-      await axios.get('/api/teams/users/' + this.formatJSON(this.team).id)
+      await axios.get('/api/teams/users/' + this.team.id)
         .then(response => {
           this.teamUsers = response.data
         })
@@ -206,7 +196,7 @@ export default {
           data: {
             user_id: user.id,
             shift_id: shift.id,
-            status: this.formatJSON(this.team).setting_shift_assignment_autoaccept ? 2 : 0
+            status: this.team.setting_shift_assignment_autoaccept ? 2 : 0
           }
         })
         .then(response => {

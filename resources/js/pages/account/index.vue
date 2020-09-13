@@ -89,7 +89,6 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
 import helper from '../../mixins/helper'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 
@@ -142,12 +141,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-      teams: 'teams/getTeams',
-      hasTeam: 'teams/hasTeam'
-    }),
     passwordErrors () {
       const errors = []
       if (!this.$v.password1.$dirty) return errors
@@ -201,7 +194,7 @@ export default {
         method: 'post',      
         url: '/api/teams/settings/update',
         data: {
-          team_id: this.formatJSON(this.team).id,
+          team_id: this.team.id,
           setting: setting,
           value: val
         }
