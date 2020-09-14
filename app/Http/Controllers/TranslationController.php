@@ -29,8 +29,8 @@ class TranslationController extends Controller
 
         // Read File
         $jsonString = file_get_contents(base_path($filepath));
+        $jsonString = mb_convert_encoding($jsonString, 'UTF-8');
         $file = json_decode($jsonString, true);
-
 
         if ($string) {
             if ($section) {
@@ -45,26 +45,34 @@ class TranslationController extends Controller
             foreach ($stringArr as $item) {
                 $key = $item->key;
                 $value = $item->value;
-
-                if ($section) {
-                    $file[$section][$key] = $value;
+                
+                if ($value !== '') {
+                    if ($section) {
+                        $file[$section][$key] = $value;
+                    } else {
+                        $file[$key] = $value;
+                    };
                 } else {
-                    $file[$key] = $value;
-                };
+                    if ($section) {
+                        unset($file[$section][$key]);
+                    } else {
+                        unset($file[$key]);
+                    };
+                }
             };
         };
 
 
-
-
         // Write File
-        $newJsonString = mb_convert_encoding(json_encode($file, JSON_PRETTY_PRINT), 'UTF-8', 'UTF-8');
-        file_put_contents(base_path($filepath), stripslashes($newJsonString));
+        $newJsonString = $file;
+        $newJsonString = json_encode($newJsonString, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $newJsonString = mb_convert_encoding($newJsonString, 'UTF-8');
+        file_put_contents(base_path($filepath), $newJsonString);
 
 
 
         $response = [
-            'data' => $file
+            'data' => $newJsonString
         ];
 
         return response()->json($response);

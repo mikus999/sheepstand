@@ -2,17 +2,17 @@
     "general": {
         "ok": "U redu",
         "cancel": "Odustati",
-        "save": "Sau010duvaj",
-        "delete": "Izbriu0161i",
-        "update": "Au017euriraj",
+        "save": "Sačuvaj",
+        "delete": "Izbriši",
+        "update": "Ažuriraj",
         "close": "Zatvori",
         "create": "Kreiraj",
         "error_alert_title": "Opa...",
         "error_alert_text": "Something went wrong! Please try again.",
         "email": "Mejl",
         "name": "Ime",
-        "home": "Pou010dentna",
-        "settings": "Podeu0161avanja",
+        "home": "Početna",
+        "settings": "Podešavanja",
         "language": "Jezik",
         "administrators": "Administratori",
         "users": "Koresnici",
@@ -25,43 +25,28 @@
         "test": "U redu",
         "ok2": "U redu",
         "okfjkdlasfajdksj": "U redu",
-        "okfds": "U redu"
+        "okfds": "U redu",
+        "password": "Lozinka"
     },
     "menu": {
         "dashboard": "Tabla",
-        "teams": "Timovi",
-        "team_settings": "Podeu0161avanja tima",
-        "join_another_team": "Prikljuu010di se timu",
+        "team_settings": "Podešavanja tima",
+        "join_another_team": "Priključi se timu",
         "scheduling": "Rasporedi",
         "assignments": "Dodeljavanja",
         "shift_planning": "Planiranje smena",
         "locations": "Lokacije",
         "account": "Nalog",
         "change_password": "Promeni lozinku",
-        "account_settings": "Podeu0161avanja naloga",
+        "account_settings": "Podešavanja naloga",
         "dark_theme": "Tamna tema",
-        "team": "",
-        "translation": "",
-        "translation_manager": ""
+        "team": "Tim789",
+        "translation": "Prevođenje"
     },
     "account": {
         "profile": "Nalog"
     },
-    "teams": {
-        "add_user": "Dodaj koresnika",
-        "dashboard": "Tabla2",
-        "team": "",
-        "translation": "",
-        "translation_manager": "",
-        "team_settings": "Podeu0161avanja tima",
-        "join_another_team": "Prikljuu010di se timu",
-        "scheduling": "Rasporedi",
-        "assignments": "Dodeljavanja",
-        "shift_planning": "Planiranje smena",
-        "locations": "Lokacije",
-        "account": "Nalog",
-        "change_password": "Promeni lozinku",
-        "account_settings": "Podeu0161avanja naloga",
-        "dark_theme": "Tamna tema"
+    "auth": {
+        "logout": "Odjavi se"
     }
 }
