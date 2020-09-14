@@ -24,7 +24,8 @@
         "go_back": "Go Back",
         "default": "Default",
         "min": "min",
-        "max": "max"
+        "max": "max",
+        "autosave": "Autosave"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -171,6 +172,10 @@
         "assignments": "Assignments"
     },
     "translation": {
-        "management_system": "Translation Management System"
+        "management_system": "Translation Management System",
+        "source_language": "Source Language",
+        "target_language": "Target Language",
+        "source": "Source",
+        "target": "Target"
     }
 }

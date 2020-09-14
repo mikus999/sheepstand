@@ -69,13 +69,23 @@ class TranslationController extends Controller
         $newJsonString = mb_convert_encoding($newJsonString, 'UTF-8');
         file_put_contents(base_path($filepath), $newJsonString);
 
+        $newJsonString = json_decode($newJsonString);
+
+        return response()->json($newJsonString);
+    }
 
 
-        $response = [
-            'data' => $newJsonString
-        ];
+    // GET
+    public function getStrings($lang)
+    {
+        $filepath = 'resources/js/lang/' . $lang . '.json';
 
-        return response()->json($response);
+        // Read File
+        $jsonString = file_get_contents(base_path($filepath));
+        $jsonString = json_decode($jsonString);
+
+
+        return response()->json($jsonString);
     }
 
 
@@ -86,4 +96,6 @@ class TranslationController extends Controller
 
         return response()->json($user->translator_languages);
     }
+
+
 }

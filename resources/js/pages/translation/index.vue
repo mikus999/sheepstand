@@ -4,18 +4,35 @@
       <h1 class="display-1">
         {{ $t('translation.management_system') }}
       </h1>
+
+      <div class="ml-auto">
+        <v-switch v-model="saveFab.autoSave" :label="$t('general.autosave')" @change="toggleAutoSave"></v-switch>
+      </div>
+    </v-row>
+
+    <v-row>
+      <v-col cols=6>
+        <span>{{ $t('translation.source_language')}}: EN</span>
+      </v-col>
+
+      <v-col cols=6>
+        <span>{{ $t('translation.target_language')}}</span>
+        <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
+          <v-radio v-for="lang in languages" :key="lang.id" :label="lang.language" :value="lang.language"></v-radio>
+        </v-radio-group>
+      </v-col>
     </v-row>
 
     <v-row>
       <v-col cols=12>
-        <v-select :items="langSourceCat" @change="getStrings($event)">
+        <v-select v-if="langTargetLocale !== null" :items="langSourceCat" @change="parseStrings($event)">
         </v-select>
       </v-col>
     </v-row>
     
     <v-row>
       <v-col cols=12>
-        <v-data-iterator :items="langSourceStrings" hide-default-footer disable-pagination>
+        <v-data-iterator v-if="currSection !== null" :items="langSourceStrings" hide-default-footer disable-pagination>
           <template v-slot:default="props">
             <v-row v-for="item in props.items" :key="item.key" class="mt-3">
               <v-col cols=12>
@@ -36,7 +53,7 @@
     <v-fab-transition>
       <v-btn :key="saveFab.icon" :color="saveFab.color" @click="saveNow" fab dark bottom right fixed>
         <span v-show="saveFab.showTime">{{ remaining }}</span>
-        <v-icon small>{{ saveFab.icon }}</v-icon>
+        <v-icon>{{ saveFab.icon }}</v-icon>
       </v-btn>
     </v-fab-transition>
 
@@ -58,15 +75,16 @@ export default {
 
   data () {
     return {
-      langSource: {},
-      langTarget: {},
+      languages: [],
+      langSource: [],
+      langTarget: [],
       langSourceCat: [],
       langTargetCat: [],
       langSourceStrings: [],
       langTargetStrings: [],
       langSourceLocale: 'en',
-      langTargetLocale: 'sr',
-      currSection: '',
+      langTargetLocale: null,
+      currSection: null,
       validation: {
         name: {
           success: false, 
@@ -77,6 +95,7 @@ export default {
         icon: 'mdi-content-save',
         color: 'primary',
         showTime: true,
+        autoSave: true,
         interval_ms: 30000,
         interval_ends: null,
         interval1_rem: null,
@@ -93,17 +112,49 @@ export default {
   },
 
   created () {
-    this.getMessages('en', 'sr')
-    this.getCategories()
+    this.getLanguages()
+    this.getStrings(this.langSourceLocale, true)
   },
 
   methods: {
-    getMessages(source, target) {
-      this.langSource = this.$i18n.messages[source]
-      this.langTarget = this.$i18n.messages[target]
+    async getLanguages() {
+      await axios({
+        method: 'get',      
+        url: '/api/translation/permissions',
+      })
+      .then(response => {
+        this.languages = response.data
+      })
+    },
+
+
+    getMessages() {
+      this.langTarget = []
+      this.langTargetStrings = []
+
+      this.getStrings(this.langTargetLocale, false)
+    },
+
+
+    async getStrings(lang, isSource) {
+      await axios({
+        method: 'get',      
+        url: '/api/translation/strings/' + lang,
+      })
+      .then(response => {
+        if (isSource) {
+          this.langSource = response.data
+        } else {
+          this.langTarget = response.data
+        }
+        this.getCategories()
+      })
     },
 
     getCategories() {
+      this.langSourceCat = []
+      this.langTargetCat = []
+
       Object.keys(this.langSource).forEach (key => {
         this.langSourceCat.push({"text": key, "value": key});
       })
@@ -113,8 +164,8 @@ export default {
       })
     },
 
-    getStrings(key) {
-      if (this.currSection !== '') {
+    parseStrings(key) {
+      if (this.currSection !== null) {
         this.updateStrings()
       }
 
@@ -134,7 +185,10 @@ export default {
         this.langTargetStrings.push({"key": key, "value": tempTargetStrings[key] === undefined ? '' : tempTargetStrings[key] });
       })
 
-      this.setSaveInterval()
+      if (this.saveFab.autoSave) {
+        this.setSaveInterval()
+      }
+      
     },
 
     setSaveInterval() {
@@ -161,26 +215,41 @@ export default {
 
     },
 
-    saveNow() {
-      this.startTimer()
-      this.updateStrings()
+    stopTimer() {
+      window.clearInterval(this.saveFab.interval1)
+      window.clearInterval(this.saveFab.interval2)
+
+      this.saveFab.interval_ends = null
+      this.saveFab.interval1_rem = null
+      this.saveFab.interval1 = null
+      this.saveFab.interval2 = null
+
+      this.toggleFab(true, false)
     },
+
+    saveNow() {
+      if (this.currSection !== null) {
+        this.stopTimer()
+        this.updateStrings()
+
+        if (this.saveFab.autoSave) {
+          this.setSaveInterval()
+        }
+      }
+    },
+
 
     async updateStrings() {
       const section = this.currSection
       const locale = this.langTargetLocale
       const strings = this.langTargetStrings
 
-      this.saveFab.color = 'green'
-      this.saveFab.icon = 'mdi-check-bold'
-      this.saveFab.showTime = false
+      this.toggleFab(false, false)
+      
       setTimeout(() => {
-        this.saveFab.color = 'primary'
-        this.saveFab.icon = 'mdi-content-save'
-        this.saveFab.showTime = true
+        this.toggleFab(true, this.saveFab.autoSave)
       }, 2000)
 
-      console.log('update')
       await axios({
         method: 'post',      
         url: '/api/translation/update',
@@ -190,9 +259,28 @@ export default {
           strings: JSON.stringify(strings)
         }
       })
+      .then(response => {
+        this.langTarget = response.data
+      })
 
     },
+    
+    toggleAutoSave(on) {
+      if (on) {
+        if (this.currSection !== null) {
+          this.setSaveInterval()
+          this.toggleFab(true, true)
+        }
+      } else {
+        this.stopTimer()
+      }
+    },
 
+    toggleFab(isSave, withTimer) {
+      this.saveFab.color = isSave ? 'primary' : 'green'
+      this.saveFab.icon = isSave ? 'mdi-content-save' : 'mdi-check-bold'
+      this.saveFab.showTime = withTimer
+    }
   }
 
 

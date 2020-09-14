@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // TRANSLATION routes
     Route::post('translation/update', 'TranslationController@updateString');
+    Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
     Route::get('translation/permissions', 'TranslationController@getLanguages');
 
     // API Resource Routes

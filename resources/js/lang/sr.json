@@ -22,10 +22,6 @@
         "default": "Default",
         "min": "min",
         "max": "max",
-        "test": "U redu",
-        "ok2": "U redu",
-        "okfjkdlasfajdksj": "U redu",
-        "okfds": "U redu",
         "password": "Lozinka"
     },
     "menu": {
@@ -40,7 +36,7 @@
         "change_password": "Promeni lozinku",
         "account_settings": "Podešavanja naloga",
         "dark_theme": "Tamna tema",
-        "team": "Tim789",
+        "team": "Tim",
         "translation": "Prevođenje"
     },
     "account": {
