@@ -4,6 +4,7 @@ const helper = {
   computed: {
     ...mapGetters({
       user: 'auth/user',
+      permissions: 'auth/permissions',
       team: 'teams/getTeam',
       teams: 'teams/getTeams',
       hasTeam: 'teams/hasTeam',
@@ -122,6 +123,15 @@ const helper = {
       // Redirect to login.
       this.$router.push({ name: 'login' })
     },
+
+    hasPermission (search) {
+      var index = this.permissions.findIndex(function(perm, index) {
+        if (perm.name == search)
+          return true
+      })
+
+      return (index >= 0)
+    }
   },
 
 }

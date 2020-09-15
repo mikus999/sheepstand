@@ -129,17 +129,15 @@ export default {
 
             // Fetch the user.
             this.$store.dispatch('auth/fetchUser')
-
+ 
+            // Fetch the permissions
+            this.$store.dispatch('auth/fetchPermissions')
+            
             // Fetch the teams.
             this.$store.dispatch('teams/fetchTeams');
 
             // Redirect
-
-            if (this.hasTeam) {
-              this.$router.push({ name: 'home' })
-            } else {
-              this.$router.push({ name: 'teams.join' })
-            }
+            this.$router.push({ name: 'home' })
 
           }
         })

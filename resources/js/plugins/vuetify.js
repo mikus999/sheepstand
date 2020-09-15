@@ -11,10 +11,11 @@ export default new Vuetify({
     dark: true,
     themes: {
       light: {
+        primary: colors.lightBlue.darken2,
         background: colors.white
       },
       dark: {
-        primary: colors.lightBlue.darken2,
+        primary: colors.lightBlue.lighten3,
         secondary: colors.lightBlue.darken4,
         accent: colors.lightBlue.accent4,
         background: colors.grey.darken4

@@ -8,6 +8,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
+use Auth;
 
 class UserController extends Controller
 {
@@ -26,7 +27,11 @@ class UserController extends Controller
     // GET
     public function getPermissions(Request $request)
     {
+      if ($request->user_id) {
         $user = User::find($request->user_id);
+      } else {
+        $user = Auth::user();
+      }
 
         return response()->json($user->getAllPermissions());
     }

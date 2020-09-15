@@ -8,32 +8,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import helper from '../mixins/helper'
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
-
-  components: {
-  },
-
-  data: () => ({
-  }),
-
-  metaInfo () {
-  },
-
-  computed: {
-  },
+  mixins: [helper],
 
   created () {
-  },
+    console.log(this.hasPermission('test'))
+    console.log(this.hasPermission('view_shifts'))
 
-  mounted () {
   },
-
-  methods: {
-  }
 
 }
 </script>

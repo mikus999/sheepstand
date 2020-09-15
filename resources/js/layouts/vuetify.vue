@@ -26,7 +26,6 @@ import NavLeft from '../components/NavLeft.vue'
 import NavBottom from '../components/NavBottom.vue'
 
 export default {
-
   components: {
     NavTop,
     NavLeft,
@@ -34,9 +33,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      user: 'auth/user',
-    }),
 
     theme () {
       return (this.$vuetify.theme.dark) ? 'dark' : 'light'

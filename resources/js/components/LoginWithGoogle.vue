@@ -46,6 +46,9 @@ export default {
 
       // Fetch the user.
       this.$store.dispatch('auth/fetchUser')
+ 
+      // Fetch the permissions
+      this.$store.dispatch('auth/fetchPermissions')
 
       // Fetch the teams.
       this.$store.dispatch('teams/fetchTeams');

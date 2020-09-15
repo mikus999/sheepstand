@@ -17,26 +17,33 @@ class RoleSeeder extends Seeder
       app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
       // create permissions
-      Permission::create(['name' => 'manage teams']);
-      Permission::create(['name' => 'manage users']);
-      Permission::create(['name' => 'manage schedules']);
-      Permission::create(['name' => 'manage locations']);
-      Permission::create(['name' => 'manage templates']);
-      Permission::create(['name' => 'assign shifts']);
-      Permission::create(['name' => 'approve shifts']);
-      Permission::create(['name' => 'edit translations']);
+      Permission::create(['name' => 'view_shifts']);
+      Permission::create(['name' => 'view_team']);
+      Permission::create(['name' => 'manage_team']);
+      Permission::create(['name' => 'view_locations']);
+      Permission::create(['name' => 'manage_locations']);
+      Permission::create(['name' => 'view_schedules']);
+      Permission::create(['name' => 'manage_schedules']);
+      Permission::create(['name' => 'view_assignments']);
+      Permission::create(['name' => 'manage_assignments']);
+      Permission::create(['name' => 'view_templates']);
+      Permission::create(['name' => 'manage_templates']);
+      Permission::create(['name' => 'manage_translation']);
 
       // create roles and assign created permissions
-      $role = Role::create(['name' => 'team-admin']);
-      $role->givePermissionTo('manage users', 'manage schedules', 'manage locations', 'manage templates', 'assign shifts', 'approve shifts');
+      $role = Role::create(['name' => 'publisher']);
+      $role->givePermissionTo('view_shifts');
 
-      $role = Role::create(['name' => 'scheduler']);
-      $role->givePermissionTo('manage schedules', 'assign shifts', 'approve shifts');
+      $role = Role::create(['name' => 'elder']);
+      $role->givePermissionTo('view_team', 'view_locations', 'view_schedules', 'view_assignments', 'view_templates');
+
+      $role = Role::create(['name' => 'team_admin']);
+      $role->givePermissionTo('manage_team', 'manage_locations', 'manage_schedules', 'manage_assignments', 'manage_templates');
 
       $role = Role::create(['name' => 'translator']);
-      $role->givePermissionTo('edit translations');
+      $role->givePermissionTo('manage_translation');
 
-      $role = Role::create(['name' => 'super-admin']);
+      $role = Role::create(['name' => 'super_admin']);
       $role->givePermissionTo(Permission::all());
     }
 }
