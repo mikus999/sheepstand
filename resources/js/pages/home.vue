@@ -16,8 +16,6 @@ export default {
   mixins: [helper],
 
   created () {
-    console.log(this.hasPermission('test'))
-    console.log(this.hasPermission('view_shifts'))
 
   },
 

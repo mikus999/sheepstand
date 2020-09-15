@@ -5,6 +5,7 @@ import routes from './routes'
 import Router from 'vue-router'
 import { sync } from 'vuex-router-sync'
 
+
 Vue.use(Meta)
 Vue.use(Router)
 
@@ -39,6 +40,8 @@ function createRouter () {
 
   return router
 }
+
+
 
 /**
  * Global router guard.
@@ -83,7 +86,61 @@ async function beforeEach (to, from, next) {
 
     next(...args)
   })
+
+  /**
+   * 
+   * Check permissions (roles, permissions)
+   * Check if the route is protected
+   * Then, wait for store to initialize
+   * Then, call 'checkPermissions' function
+   * 
+   */
+  if (to.meta.roles && (to.meta.roles.length > 0)) {
+    // First, wait for store to initialize
+    if (store.getters['auth/roles'] === null) {
+      store.watch(() => store.getters['auth/roles'], r => {
+        checkPermissions(to, from, next)
+      })
+    } else {
+      checkPermissions(to, from, next)
+    }
+
+  } else {
+    // If no roles or permissions are specified for the route, continue anyway
+      next() 
+  }
+
 }
+
+/**
+ * Check if user can access the protected route
+ * 
+ * @param {Route} to
+ * @param {Route} from
+ * @param {Function} next
+ */
+function checkPermissions (to, from, next) {
+  const routeRoles = to.meta.roles
+  const routePerms = to.meta.permissions
+
+  var isAllowed = false
+
+  const userRoles = store.getters['auth/roles']
+  Object.keys(userRoles).forEach(function(key) {
+    if (routeRoles.indexOf(userRoles[key]) >= 0) {
+      isAllowed = true
+    }
+  })
+
+  if (isAllowed) {
+    next()
+  } else {
+    next({ name: 'notfound' })
+  }
+}
+
+
+
 
 /**
  * Global after hook.

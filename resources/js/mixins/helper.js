@@ -4,6 +4,7 @@ const helper = {
   computed: {
     ...mapGetters({
       user: 'auth/user',
+      roles: 'auth/roles',
       permissions: 'auth/permissions',
       team: 'teams/getTeam',
       teams: 'teams/getTeams',

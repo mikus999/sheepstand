@@ -33,7 +33,12 @@ class UserController extends Controller
         $user = Auth::user();
       }
 
-        return response()->json($user->getAllPermissions());
+      $data = [
+        'roles' => $user->getRoleNames(),
+        'permissions' => $user->getAllPermissions()->pluck('name'),
+      ];
+
+      return response()->json($data);
     }
 
     // POST
@@ -53,13 +58,16 @@ class UserController extends Controller
               $user->syncPermissions($permission);
             }
 
-            $message = $user->getAllPermissions();
+            $data = [
+              'roles' => $user->getRoleNames(),
+              'permissions' => $user->getAllPermissions()->pluck('name'),
+            ];
 
         } else {
-          $message = 'Permission not found';
+          $data = 'Permission not found';
         }
 
-        return response()->json($message);
+        return response()->json($data);
     }
 
     // POST
@@ -79,12 +87,15 @@ class UserController extends Controller
               $user->syncRoles($role);
             }
 
-            $message = $user->getAllPermissions();
+            $data = [
+              'roles' => $user->getRoleNames(),
+              'permissions' => $user->getAllPermissions()->pluck('name'),
+            ];
 
         } else {
-            $message = 'Role not found';
+            $data = 'Role not found';
         }
 
-        return response()->json($message);
+        return response()->json($data);
     }
 }
