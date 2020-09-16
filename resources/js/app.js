@@ -7,13 +7,13 @@ import vuetify from '~/plugins/vuetify'
 import VueLodash from 'vue-lodash'
 import Vuelidate from 'vuelidate'
 import lodash from 'lodash'
-import moment from 'moment'
-import 'moment/min/locales'
+import dayjs from 'dayjs'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+import locales_de from 'dayjs/locale/de'
 
 // BootstrapVue
 Vue.use(BootstrapVue)
@@ -31,30 +31,30 @@ Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttrib
 
 
 // Set moment options, locale, filters
-Vue.prototype.moment = moment
-moment.locale(store.getters['lang/locale'])
+Vue.prototype.dayjs = dayjs
+dayjs.locale(store.getters['lang/locale'])
 
 Vue.filter('formatDate', function (value) {
   if (value) {
-    return moment(String(value)).format('l')
+    return dayjs(String(value)).format('l')
   }
 })
 
 Vue.filter('formatTime', function (value) {
   if (value) {
-    return moment(String(value)).format('LT')
+    return dayjs(String(value)).format('LT')
   }
 })
 
 Vue.filter('formatDay', function (value) {
   if (value) {
-    return moment(String(value)).format('ddd, ll')
+    return dayjs(String(value)).format('ddd, ll')
   }
 })
 
 Vue.filter('formatWeekdayShort', function (value) {
   if (value) {
-    return moment(String(value)).format('ddd')
+    return dayjs(String(value)).format('ddd')
   }
 })
 

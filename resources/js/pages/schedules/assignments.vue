@@ -73,7 +73,6 @@
 
 <script>
 import axios from 'axios'
-import moment from 'moment'
 import helper from '~/mixins/helper'
 
 
@@ -122,7 +121,7 @@ export default {
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
           this.schedData = response.data
-          this.date = moment(this.schedData.date_start).format("YYYY-MM-DD")
+          this.date = dayjs(this.schedData.date_start).format("YYYY-MM-DD")
 
         })
 

@@ -152,7 +152,6 @@
 <script>
 import axios from 'axios'
 import draggable from 'vuedraggable'
-import moment from 'moment'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import helper from '~/mixins/helper'
 
@@ -280,7 +279,7 @@ export default {
     },
     
     timeFormat() {
-      return moment.localeData().longDateFormat('LT')
+      return dayjs.localeData().longDateFormat('LT')
     }
   },
 
@@ -300,8 +299,8 @@ export default {
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
           this.schedData = response.data
-          this.date = moment(this.schedData.date_start)
-          this.shiftDefaults.end = moment(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
+          this.date = dayjs(this.schedData.date_start)
+          this.shiftDefaults.end = dayjs(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
           this.shiftDefaults.participants = [this.team.default_participants_min, this.team.default_participants_max]
           this.getShiftData(response.data.date_start)
         })
@@ -313,7 +312,7 @@ export default {
         .then(response => {
           // Loop through each day, show shifts
           this.days7.forEach ( function(item) {
-            item.date = moment(date).add(item.id, 'd').format('YYYY-MM-DD')
+            item.date = dayjs(date).add(item.id, 'd').format('YYYY-MM-DD')
             item.list = response.data.filter(shift => shift.time_start.includes(item.date))
           })
         })
@@ -365,10 +364,10 @@ export default {
 
       if (!isEdit) {
         this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
-        this.shiftData.date = moment(data.date).format("YYYY-MM-DD")
+        this.shiftData.date = dayjs(data.date).format("YYYY-MM-DD")
       } else {
           this.shiftData.id = data.id
-          this.shiftData.date = moment(data.time_start).format("YYYY-MM-DD")
+          this.shiftData.date = dayjs(data.time_start).format("YYYY-MM-DD")
           this.shiftData.start = this.$options.filters.formatTime(data.time_start)
           this.shiftData.end = this.$options.filters.formatTime(data.time_end)
           this.shiftData.location = data.location_id
@@ -381,11 +380,11 @@ export default {
 
 
     addShift () {
-      var tempStart = moment(this.shiftData.date + ' ' + this.shiftData.start).format('YYYY-MM-DD HH:mm:ss')
-      var tempEnd = moment(this.shiftData.date + ' ' + this.shiftData.end).format('YYYY-MM-DD HH:mm:ss')
+      var tempStart = dayjs(this.shiftData.date + ' ' + this.shiftData.start).format('YYYY-MM-DD HH:mm:ss')
+      var tempEnd = dayjs(this.shiftData.date + ' ' + this.shiftData.end).format('YYYY-MM-DD HH:mm:ss')
 
-      if (!moment(tempStart).isBefore(moment(tempEnd))) {
-        tempEnd = moment(tempStart).add(2, 'h').format('YYYY-MM-DD HH:mm:ss')
+      if (!dayjs(tempStart).isBefore(dayjs(tempEnd))) {
+        tempEnd = dayjs(tempStart).add(2, 'h').format('YYYY-MM-DD HH:mm:ss')
       }
 
       if (!this.shiftData.edit) {
@@ -427,8 +426,8 @@ export default {
         .then(response => {
           newShiftData = response.data
 
-          var tempStart = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
-          var tempEnd = moment(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
+          var tempStart = dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
+          var tempEnd = dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
 
           newShiftData.time_start = tempStart
           newShiftData.time_end = tempEnd

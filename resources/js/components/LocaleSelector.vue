@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import { loadMessages } from '~/plugins/i18n'
 import helper from '../mixins/helper'
 
 export default {
@@ -38,16 +37,6 @@ export default {
     }
   },
 
-  methods: {
-    setLocale (locale) {
-      if (this.$i18n.locale !== locale) {
-        //loadMessages(locale)
-        this.$i18n.locale = locale
-        this.moment.locale(locale)
-        this.$store.dispatch('lang/setLocale', { locale })
-      }
-    }
-  }
 
 }
 </script>

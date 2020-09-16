@@ -88,7 +88,6 @@
 import axios from 'axios'
 import Form from 'vform'
 import helper from '~/mixins/helper'
-import moment from 'moment'
 
 export default {
   middleware: 'auth',
@@ -169,7 +168,7 @@ export default {
 
     save () {
       if (this.newSchedDate !== '') {
-        this.newSchedDate = moment(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
+        this.newSchedDate = dayjs(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
 
         const formData = new FormData()
         formData.append('user_id', this.user.id)
