@@ -1,17 +1,27 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-btn icon @click="$router.go(-1)" class="mr-2">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <h1 class="display-1">
-        {{ $t('schedules.schedule') }}: {{ schedData.date_start | formatDate }}
-      </h1>
+      <PageTitle :title="$t('schedules.schedule')"></PageTitle>
+    </v-row>
 
-      <v-btn text class="ml-auto" x-large @click="editAssignments" v-show="schedData.status > 0">
-        {{ $t('schedules.assignments') }}
-        <v-icon right>mdi-arrow-right</v-icon>
-      </v-btn>
+    <v-row>
+      <v-col xs=1 sm=4 class="text-left" >
+        <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
+          <v-icon left>mdi-arrow-left</v-icon>
+          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
+        </v-btn>
+      </v-col>
+
+      <v-col xs=10 sm=4 class="text-center">
+        <span class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
+      </v-col>
+      
+      <v-col xs=1 sm=4 class="text-right">
+        <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedData.status > 0">
+          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
+          <v-icon right>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-col>
     </v-row>
 
     <v-row class="mt-5 mb-5">

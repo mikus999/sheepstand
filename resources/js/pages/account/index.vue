@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <h1 class="display-1">
-        {{ $t('account.account_settings') }}
-      </h1>
+      <PageTitle :title="$t('account.account_settings')"></PageTitle>
     </v-row>
 
     <v-row>

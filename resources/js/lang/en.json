@@ -155,7 +155,9 @@
         "new_shift": "New Shift",
         "confirm_delete_shift": "Are you sure you want to delete this shift?",
         "success_delete_shift": "Shift was deleted successfully",
-        "assignments": "Assignments"
+        "assignments": "Assignments",
+        "approvals": "Approvals",
+        "week_of": "Week of:"
     },
     "shifts": {
         "status_0": "PENDING USER APPROVAL",

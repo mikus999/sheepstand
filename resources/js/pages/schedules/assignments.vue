@@ -1,12 +1,27 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-btn icon @click="$router.go(-1)" class="mr-2">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <h1 class="display-1">
-        {{ $t('schedules.schedule') }}: {{ schedData.date_start | formatDate}}
-      </h1>
+      <PageTitle :title="$t('schedules.schedule')"></PageTitle>
+    </v-row>
+
+    <v-row>
+      <v-col xs=1 sm=4 class="text-left" >
+        <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
+          <v-icon left>mdi-arrow-left</v-icon>
+          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
+        </v-btn>
+      </v-col>
+
+      <v-col xs=10 sm=4 class="text-center">
+        <span class="text-h6">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
+      </v-col>
+      
+      <v-col xs=1 sm=4 class="text-right">
+        <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="">
+          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.approvals') }}</span>
+          <v-icon right>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-col>
     </v-row>
 
     <v-row>

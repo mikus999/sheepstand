@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <h1 class="display-1">
-        {{ $t('teams.team_settings') }}
-      </h1>
+      <PageTitle :title="$t('teams.team_settings')"></PageTitle>
     </v-row>
 
     <v-row>

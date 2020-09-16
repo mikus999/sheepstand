@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <h1 class="display-1">
-        {{ $tc('teams.cart_location', 1) }}
-      </h1>
+      <PageTitle :title="$tc('teams.cart_location', 1)"></PageTitle>
     </v-row>
 
     <v-row>

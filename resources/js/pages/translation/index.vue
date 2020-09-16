@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <h1 class="display-1">
-        {{ $t('translation.management_system') }}
-      </h1>
+      <PageTitle :title="$t('translation.management_system')"></PageTitle>
 
       <div class="ml-auto">
         <v-switch v-model="saveFab.autoSave" :label="$t('general.autosave')" @change="toggleAutoSave"></v-switch>
@@ -18,14 +16,14 @@
       <v-col cols=6>
         <span>{{ $t('translation.target_language')}}</span>
         <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
-          <v-radio v-for="lang in languages" :key="lang.id" :label="lang.language" :value="lang.language"></v-radio>
+          <v-radio v-for="lang in languages" :key="lang.id" :label="locales[lang.language]" :value="lang.language"></v-radio>
         </v-radio-group>
       </v-col>
     </v-row>
 
     <v-row>
       <v-col cols=12>
-        <v-select v-if="langTargetLocale !== null" :items="langSourceCat" @change="parseStrings($event)">
+        <v-select v-if="langTargetLocale !== null" v-model="currSection" :items="langSourceCat" @change="parseStrings($event)">
         </v-select>
       </v-col>
     </v-row>
@@ -130,6 +128,7 @@ export default {
     getMessages() {
       this.langTarget = []
       this.langTargetStrings = []
+      this.currSection = null
 
       this.getStrings(this.langTargetLocale, false)
     },

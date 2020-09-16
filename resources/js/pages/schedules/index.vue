@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <h1 class="display-1">
-        {{ $t('schedules.shift_schedules') }}
-      </h1>
+      <PageTitle :title="$t('schedules.shift_schedules')"></PageTitle>
     </v-row>
 
     <v-row>
