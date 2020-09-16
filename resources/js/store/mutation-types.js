@@ -16,3 +16,6 @@ export const FETCH_TEAMS = 'FETCH_TEAMS'
 export const SET_HASTEAM = 'SET_HASTEAM'
 
 // general.js
+
+// snackbar.js
+export const SHOW_MESSAGE = 'SHOW_MESSAGE'

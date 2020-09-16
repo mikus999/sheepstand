@@ -42,14 +42,6 @@
 
       </v-card-text>
     </v-card>
-
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -58,10 +50,12 @@ import axios from 'axios'
 import LoginWithGoogle from '~/components/LoginWithGoogle'
 import LoginWithFacebook from '~/components/LoginWithFacebook'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
+import helper from '~/mixins/helper'
 
 export default {
   layout: 'vuetify',
   middleware: 'guest',
+  mixins: [helper],
 
   components: {
     LoginWithGoogle,
@@ -82,9 +76,6 @@ export default {
     password2: '',
     showPwd: false,
     showPwd2: false,
-    snack: false,
-    snackText: '',
-    snackColor: '',
     mustVerifyEmail: false
   }),
 
@@ -143,9 +134,7 @@ export default {
             }
           })
           .catch(error => {
-              this.snack = true
-              this.snackColor = 'error'
-              this.snackText = "Error completing registration."
+            this.showSnackbar($t('auth.error_registration'), 'error')
           });
       }
     },
@@ -182,9 +171,7 @@ export default {
         }
       })
       .catch(error => {
-          this.snack = true
-          this.snackColor = 'error'
-          this.snackText = this.$t('auth.error_login')
+        this.showSnackbar($t('auth.error_login'), 'error')
       });
     }
   }

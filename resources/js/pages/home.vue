@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import helper from '../mixins/helper'
+import helper from '~/mixins/helper'
 
 export default {
   middleware: 'auth',

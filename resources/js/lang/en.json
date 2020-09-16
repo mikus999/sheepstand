@@ -74,7 +74,8 @@
         "email_required": "Email is required",
         "email_invalid": "Must be valid email",
         "credentials_incorrect": "Login credentials incorrect",
-        "error_login": "Error signing in"
+        "error_login": "Error signing in",
+        "error_registration": "Error completing registration"
     },
     "account": {
         "profile": "Profile",

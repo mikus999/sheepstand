@@ -68,21 +68,13 @@
         </v-data-table>
       </v-col>
     </v-row>
-
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios'
 import moment from 'moment'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 
 
 export default {
@@ -102,9 +94,6 @@ export default {
     return {
       dialog: false,
       date: '',
-      snack: false,
-      snackText: '',
-      snackColor: '',
       schedData: [],
       shiftData: [],
       shiftHeaders: [

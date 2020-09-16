@@ -129,16 +129,6 @@
 
       </v-tabs>
     </v-row>
-
-
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
-
   </v-container>
   
   
@@ -146,7 +136,7 @@
 
 <script>
 import axios from 'axios'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 
 export default {
   middleware: 'auth',
@@ -188,9 +178,6 @@ export default {
       },
       userData: [],
       newUserCode: '',
-      snack: false,
-      snackText: '',
-      snackColor: ''
     }
   },
 
@@ -276,10 +263,7 @@ export default {
         })
         .then(response => {
           this.getUserData()
-
-          this.snack = true
-          this.snackColor = 'success'
-          this.snackText = this.$t('teams.success_remove_user')
+          this.showSnackbar(this.$t('teams.success_remove_user'), 'success')
         })
       }
     },
@@ -300,14 +284,9 @@ export default {
         .then(response => {
           if (!response.data.error) {
             this.getUserData()
-
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('teams.success_add_user')
+            this.showSnackbar(this.$t('teams.success_add_user'), 'success')
           } else {
-            this.snack = true
-            this.snackColor = 'error'
-            this.snackText = response.data.message
+            this.showSnackbar(this.$t(response.data.message, 'error'))
           }
         })
 

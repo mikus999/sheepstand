@@ -11,9 +11,9 @@
         <v-data-table :headers="headers" :items="locationData" sort-by="default, name" sort-desc>
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>{{ $tc('teams.cart_location', 1) }}</v-toolbar-title>
+              <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $tc('teams.cart_location', 1) }}</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-btn color="secondary" class="mb-2" @click="showDialog(tempData, false)">{{ $t('teams.create_new_location') }}</v-btn>
+              <v-btn color="secondary" class="mb-2" @click="showDialog(tempData, false)" :block="$vuetify.breakpoint.xs">{{ $t('teams.create_new_location') }}</v-btn>
 
 
               <!-- NEW/EDIT DIALOG -->
@@ -82,14 +82,6 @@
           </template>
         </v-data-table>
 
-        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-          {{ snackText }}
-
-          <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-          </template>
-        </v-snackbar>
-
       </v-col>
     </v-row>
   </v-container>
@@ -99,7 +91,7 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import Form from 'vform'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 import { required } from 'vuelidate/lib/validators'
 
 export default {
@@ -137,10 +129,6 @@ export default {
       },
       locationData: [],
       menu: false,
-      snack: false,
-      snackText: '',
-      snackColor: '',
-
     }
   },
 
@@ -189,9 +177,7 @@ export default {
         axios.delete('/api/teams/' + this.team.id + '/locations/' + loc.id)
           .then(response => {
             this.locationData.splice(index, 1)  
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('teams.success_location_delete')
+            this.showSnackbar(this.$t('teams.success_location_delete'), 'success')
           })
 
       }
@@ -234,10 +220,7 @@ export default {
         })
         .then(response => {
           this.getData()
-
-          this.snack = true
-          this.snackColor = 'success'
-          this.snackText = this.$t('teams.success_location_update')
+          this.showSnackbar(this.$t('teams.success_location_update'), 'success')
         })
 
         this.close()
@@ -253,10 +236,7 @@ export default {
       })
       .then(response => {
         this.getData()
-
-        this.snack = true
-        this.snackColor = 'success'
-        this.snackText = this.$t('teams.success_location_default')
+        this.showSnackbar(this.$t('teams.success_location_default'), 'success')
       })
     }
 

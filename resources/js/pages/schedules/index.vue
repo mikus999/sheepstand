@@ -79,15 +79,6 @@
             </v-icon>
           </template>
         </v-data-table>
-
-        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-          {{ snackText }}
-
-          <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-          </template>
-        </v-snackbar>
-
       </v-col>
     </v-row>
   </v-container>
@@ -96,7 +87,7 @@
 <script>
 import axios from 'axios'
 import Form from 'vform'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 import moment from 'moment'
 
 export default {
@@ -118,9 +109,6 @@ export default {
       newSchedDate: '',
       date: new Date().toISOString().substr(0, 10),
       menu: false,
-      snack: false,
-      snackText: '',
-      snackColor: ''
     }
   },
 
@@ -167,10 +155,7 @@ export default {
       if (confirm(this.$t('schedules.confirm_delete_schedule'))) {
         axios.delete('/api/schedules/' + sched.id)
           .then(response => {
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('schedules.success_delete_schedule')
-
+            this.showSnackbar(this.$t('schedules.success_delete_schedule'), 'success')
             this.getSchedData()
           })
 
@@ -192,10 +177,7 @@ export default {
         formData.append('date_start', this.newSchedDate)
         axios.post('/api/schedules', formData)
           .then(response => {
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('schedules.success_create_schedule')
-
+            this.showSnackbar(this.$t('schedules.success_create_schedule'), 'success')
             this.getSchedData()
           })
       }

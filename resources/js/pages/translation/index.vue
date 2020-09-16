@@ -63,7 +63,7 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 
 export default {
   middleware: 'auth',

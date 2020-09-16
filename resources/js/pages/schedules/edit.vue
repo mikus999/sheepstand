@@ -146,14 +146,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -162,7 +154,7 @@ import axios from 'axios'
 import draggable from 'vuedraggable'
 import moment from 'moment'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 
 
 export default {
@@ -186,9 +178,6 @@ export default {
       dialog: false,
       date: '',
       menu: false,
-      snack: false,
-      snackText: '',
-      snackColor: '',
       tickLabels: [],
       schedData: {
         status: 0
@@ -492,9 +481,7 @@ export default {
       if (confirm(this.$t('schedules.confirm_delete_shift'))) {
         await axios.delete('/api/schedules/' + this.id + '/shifts/' + id)
           .then(response => {
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('schedules.success_delete_shift')
+            this.showSnackbar(this.$t('schedules.success_delete_shift'), 'success')
             this.getShiftData(this.date)
           })
 

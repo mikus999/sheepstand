@@ -131,7 +131,7 @@
 
 <script>
 import axios from 'axios'
-import helper from '../../mixins/helper'
+import helper from '~/mixins/helper'
 
 export default {
   middleware: 'auth',

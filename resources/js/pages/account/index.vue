@@ -72,19 +72,7 @@
 
       </v-tabs>
     </v-row>
-
-
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
-
   </v-container>
-  
-  
 </template>
 
 <script>
@@ -134,9 +122,6 @@ export default {
       password2: null,
       showPwd: false,
       showPwd2: false,
-      snack: false,
-      snackText: '',
-      snackColor: ''
     }
   },
 
@@ -215,9 +200,7 @@ export default {
           }
         })
         .then(response => {
-            this.snack = true
-            this.snackColor = 'success'
-            this.snackText = this.$t('auth.success_reset_password')
+            this.showSnackbar(this.$t('uth.success_reset_password'), 'success')
         });
       }
     }

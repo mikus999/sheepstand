@@ -132,6 +132,10 @@ const helper = {
       })
 
       return (index >= 0)
+    },
+
+    showSnackbar (content, color) {
+      this.$store.commit('snackbar/SHOW_MESSAGE', { content, color })
     }
   },
 

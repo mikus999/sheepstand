@@ -40,14 +40,6 @@
         </v-form>
       </v-card-text>
     </v-card>
-
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -58,11 +50,13 @@ import LoginWithGithub from '~/components/LoginWithGithub'
 import LoginWithGoogle from '~/components/LoginWithGoogle'
 import LoginWithFacebook from '~/components/LoginWithFacebook'
 import { required, email } from 'vuelidate/lib/validators'
+import helper from '~/mixins/helper'
 
 
 export default {
   layout: 'vuetify',
   middleware: 'guest',
+  mixins: [helper],
 
   components: {
     LoginWithGithub,
@@ -80,9 +74,6 @@ export default {
     password: '',
     remember: null,
     showPwd: false,
-    snack: false,
-    snackText: '',
-    snackColor: ''
   }),
 
   computed: {
@@ -142,9 +133,7 @@ export default {
           }
         })
         .catch(error => {
-            this.snack = true
-            this.snackColor = 'error'
-            this.snackText = this.$t('auth.credentials_incorrect')
+            this.showSnackbar(this.$t('auth.credentials_incorrect'), 'error')
         });
       }
     }

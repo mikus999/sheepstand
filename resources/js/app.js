@@ -15,13 +15,14 @@ import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 
-// Install BootstrapVue
+// BootstrapVue
 Vue.use(BootstrapVue)
-// Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin)
+
+// Vuelidate: for form validation
 Vue.use(Vuelidate)
 Vue.use(VueLodash, { lodash: lodash })
 
+// Date/Time Picker
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 Vue.config.productionTip = false

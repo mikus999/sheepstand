@@ -208,10 +208,6 @@ export default {
     padding-right: 15px;
   }
 
-  .menu-selected-item {
-    color: #ffffff;
-  }
-
   .v-input {
     font-size: 10pt;
   }

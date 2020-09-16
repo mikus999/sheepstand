@@ -2,6 +2,7 @@
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <NavTop v-if="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
     <NavLeft ref="drawer" />
+    <Snackbar></Snackbar>
     <NavBottom v-if="$vuetify.breakpoint.mobile && user"/>
 
     <!-- Sizes your content based upon application components -->
@@ -33,6 +34,9 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      user: 'auth/user'
+    }),
 
     theme () {
       return (this.$vuetify.theme.dark) ? 'dark' : 'light'
