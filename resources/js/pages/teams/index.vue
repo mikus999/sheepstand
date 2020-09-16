@@ -80,12 +80,12 @@
             <v-data-table :headers="userHeaders" :items="userData">
               <template v-slot:top>
                 <v-toolbar flat>
-                  <v-toolbar-title>{{ $t('general.users') }}</v-toolbar-title>
+                  <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</v-toolbar-title>
                   <v-spacer></v-spacer>
 
                   <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on">{{ $t('teams.add_user') }}</v-btn>
+                      <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on" :block="$vuetify.breakpoint.xs">{{ $t('teams.add_user') }}</v-btn>
                     </template>
                     <v-card>
                       <v-card-title>

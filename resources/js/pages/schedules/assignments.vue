@@ -48,7 +48,7 @@
           <template v-slot:item.assignments="{ item }">
 
             <v-select v-model="item.users" :items="teamUsers" :readonly="item.max_participants <= item.users.length"
-                hide-details multiple class="no-border"
+                hide-details multiple class="no-border" 
                 return-object item-text="name" item-value="id" :id="'shift'+item.id">
 
               <!-- NUMBER OF SHIFT ASSIGNMENTS -->
