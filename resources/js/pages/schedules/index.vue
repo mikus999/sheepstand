@@ -168,7 +168,7 @@ export default {
 
     save () {
       if (this.newSchedDate !== '') {
-        this.newSchedDate = dayjs(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
+        this.newSchedDate = this.$dayjs(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
 
         const formData = new FormData()
         formData.append('user_id', this.user.id)

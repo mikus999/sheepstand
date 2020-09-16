@@ -44,6 +44,8 @@ export default {
   },
 
   created () {
+    // Set the dayjs locale here. Must be after the vuex store AND dayjs locales are loaded completely
+    this.$dayjs.locale(this.$store.getters['lang/locale'])
   }
 }
 </script>

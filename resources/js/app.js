@@ -8,18 +8,21 @@ import VueLodash from 'vue-lodash'
 import Vuelidate from 'vuelidate'
 import lodash from 'lodash'
 import dayjs from 'dayjs'
+import localeData from 'dayjs/plugin/localeData'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
-import locales_de from 'dayjs/locale/de'
 
 // BootstrapVue
 Vue.use(BootstrapVue)
 
 // Vuelidate: for form validation
 Vue.use(Vuelidate)
+
+// VueLodash: for array manipulation
 Vue.use(VueLodash, { lodash: lodash })
 
 // Date/Time Picker
@@ -31,8 +34,10 @@ Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttrib
 
 
 // Set moment options, locale, filters
-Vue.prototype.dayjs = dayjs
-dayjs.locale(store.getters['lang/locale'])
+Vue.prototype.$dayjs = dayjs
+dayjs.extend(localeData)
+dayjs.extend(localizedFormat)
+
 
 Vue.filter('formatDate', function (value) {
   if (value) {

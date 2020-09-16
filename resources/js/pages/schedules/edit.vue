@@ -114,16 +114,31 @@
             <v-row class="mt-5">
               <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
               <v-col cols=5>
-                <VueCtkDateTimePicker v-model="shiftData.start" id="timepickStart" 
-                  only-time no-header no-label no-clear-button no-button
-                  :format="timeFormat" formatted="HH:mm" minute-interval="15"  
-                  :dark="this.$vuetify.theme.dark" class="text-center" />
+                <v-dialog ref="dialog1" v-model="time.start" :return-value.sync="shiftData.start" persistent width="290px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="shiftData.start" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
+                  </template>
+
+                  <v-time-picker v-if="time.start" v-model="shiftData.start" :format="timeFormat" full-width :allowed-minutes="allowedStep">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="time.start = false">{{ $t('general.cancel')}}</v-btn>
+                    <v-btn text color="primary" @click="$refs.dialog1.save(shiftData.start)">{{ $t('general.ok')}}</v-btn>
+                  </v-time-picker>
+                </v-dialog>
               </v-col>
               <v-col cols=5>
-                <VueCtkDateTimePicker v-model="shiftData.end" id="timepickEnd" 
-                  only-time no-header no-label no-clear-button no-button
-                  :format="timeFormat" formatted="HH:mm" minute-interval="15" 
-                  :dark="this.$vuetify.theme.dark" />
+                <v-dialog ref="dialog2" v-model="time.end" :return-value.sync="shiftData.end" persistent width="290px">
+      >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="shiftData.end" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
+                  </template>
+
+                  <v-time-picker v-if="time.end" v-model="shiftData.end" :format="timeFormat" full-width :allowed-minutes="allowedStep">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="time.end = false">{{ $t('general.cancel')}}</v-btn>
+                    <v-btn text color="primary" @click="$refs.dialog2.save(shiftData.end)">{{ $t('general.ok')}}</v-btn>
+                  </v-time-picker>
+                </v-dialog>
               </v-col>
             </v-row>
 
@@ -177,6 +192,10 @@ export default {
       dialog: false,
       date: '',
       menu: false,
+      time: {
+        start: false,
+        end: false
+      },
       tickLabels: [],
       schedData: {
         status: 0
@@ -278,8 +297,11 @@ export default {
       }
     },
     
-    timeFormat() {
-      return dayjs.localeData().longDateFormat('LT')
+    timeFormat () {
+      const localeTime = this.$dayjs().localeData().longDateFormat('LT')
+      const isAmPm = localeTime.indexOf('A') >= 0
+      console.log(localeTime)
+      return (isAmPm ? 'ampm' : '24hr')
     }
   },
 
@@ -299,8 +321,8 @@ export default {
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
           this.schedData = response.data
-          this.date = dayjs(this.schedData.date_start)
-          this.shiftDefaults.end = dayjs(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
+          this.date = this.$dayjs(this.schedData.date_start)
+          this.shiftDefaults.end = this.$dayjs(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
           this.shiftDefaults.participants = [this.team.default_participants_min, this.team.default_participants_max]
           this.getShiftData(response.data.date_start)
         })
@@ -311,8 +333,8 @@ export default {
       await axios.get('/api/schedules/' + this.id + '/shifts')
         .then(response => {
           // Loop through each day, show shifts
-          this.days7.forEach ( function(item) {
-            item.date = dayjs(date).add(item.id, 'd').format('YYYY-MM-DD')
+          this.days7.forEach ((item) => {
+            item.date = this.$dayjs(date).add(item.id, 'd').format('YYYY-MM-DD')
             item.list = response.data.filter(shift => shift.time_start.includes(item.date))
           })
         })
@@ -364,12 +386,12 @@ export default {
 
       if (!isEdit) {
         this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
-        this.shiftData.date = dayjs(data.date).format("YYYY-MM-DD")
+        this.shiftData.date = this.$dayjs(data.date).format("YYYY-MM-DD")
       } else {
           this.shiftData.id = data.id
-          this.shiftData.date = dayjs(data.time_start).format("YYYY-MM-DD")
-          this.shiftData.start = this.$options.filters.formatTime(data.time_start)
-          this.shiftData.end = this.$options.filters.formatTime(data.time_end)
+          this.shiftData.date = this.$dayjs(data.time_start).format("YYYY-MM-DD")
+          this.shiftData.start = this.$dayjs(data.time_start).format("HH:mm")
+          this.shiftData.end = this.$dayjs(data.time_end).format("HH:mm")
           this.shiftData.location = data.location_id
           this.shiftData.participants = [data.min_participants, data.max_participants]
       }
@@ -380,11 +402,11 @@ export default {
 
 
     addShift () {
-      var tempStart = dayjs(this.shiftData.date + ' ' + this.shiftData.start).format('YYYY-MM-DD HH:mm:ss')
-      var tempEnd = dayjs(this.shiftData.date + ' ' + this.shiftData.end).format('YYYY-MM-DD HH:mm:ss')
+      var tempStart = this.$dayjs(this.shiftData.date + ' ' + this.shiftData.start).format('YYYY-MM-DD HH:mm:ss')
+      var tempEnd = this.$dayjs(this.shiftData.date + ' ' + this.shiftData.end).format('YYYY-MM-DD HH:mm:ss')
 
-      if (!dayjs(tempStart).isBefore(dayjs(tempEnd))) {
-        tempEnd = dayjs(tempStart).add(2, 'h').format('YYYY-MM-DD HH:mm:ss')
+      if (!this.$dayjs(tempStart).isBefore(this.$dayjs(tempEnd))) {
+        tempEnd = this.$dayjs(tempStart).add(2, 'h').format('YYYY-MM-DD HH:mm:ss')
       }
 
       if (!this.shiftData.edit) {
@@ -426,8 +448,8 @@ export default {
         .then(response => {
           newShiftData = response.data
 
-          var tempStart = dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
-          var tempEnd = dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
+          var tempStart = this.$dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
+          var tempEnd = this.$dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
 
           newShiftData.time_start = tempStart
           newShiftData.time_end = tempEnd
@@ -486,6 +508,8 @@ export default {
 
       }
     },
+
+    allowedStep: m => m % 15 === 0,
   },
 
 }

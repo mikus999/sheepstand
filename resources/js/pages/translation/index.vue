@@ -204,12 +204,12 @@ export default {
     },
 
     startTimer() {
-      this.saveFab.interval_ends = dayjs().add(this.saveFab.interval_ms, 'ms');
+      this.saveFab.interval_ends = this.$dayjs().add(this.saveFab.interval_ms, 'ms');
 
       window.clearInterval(this.saveFab.interval2)
 
       this.saveFab.interval2 = window.setInterval(() => {
-        this.saveFab.interval1_rem = Math.round(dayjs().diff(this.saveFab.interval_ends) * -1 / 1000)
+        this.saveFab.interval1_rem = Math.round(this.$dayjs().diff(this.saveFab.interval_ends) * -1 / 1000)
       }, 1000)
 
     },
