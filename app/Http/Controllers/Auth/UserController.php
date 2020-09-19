@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\User;
+use App\Models\Role;
+use App\Permission;
+use App\Models\User;
+use App\Models\Team;
 use Auth;
 
 class UserController extends Controller
@@ -25,7 +25,7 @@ class UserController extends Controller
 
 
     // GET
-    public function getPermissions(Request $request)
+    public function getRoles(Request $request)
     {
       if ($request->user_id) {
         $user = User::find($request->user_id);
@@ -33,17 +33,85 @@ class UserController extends Controller
         $user = Auth::user();
       }
 
+      $roles_team = [];
+      $roles_global = [];
+
+      if ($request->team_id) {
+        $team = Team::find($request->team_id);
+        if ($team) {
+          $roles_team = $user->getRoles($team);
+        }
+      }
+
+      $roles_global = $user->getRoles();
+      $roles = array_merge($roles_team, $roles_global);
+
       $data = [
-        'roles' => $user->getRoleNames(),
-        'permissions' => $user->getAllPermissions()->pluck('name'),
+        'roles' => $roles
       ];
 
       return response()->json($data);
     }
 
+
+
+    // POST
+    public function setRoles(Request $request)
+    {
+        $user = User::find($request->user_id);
+        $role = $request->role;
+        $changetype = $request->changetype;
+        $teamScope = $request->team_id !== null;
+        $message = '';
+        $team = [];
+        $roles_team = [];
+        $roles_global = [];
+
+        if ($teamScope) {
+          $team = Team::find($request->team_id);
+        }
+
+        if (($teamScope && $team) || !$teamScope) {
+          if (!is_null(Role::where('name', $role)->first())) {
+            $roleObj = Role::where('name', $role)->first();
+
+            if ($changetype === 'add') {
+              $user->attachRole($roleObj, $teamScope ? $team : null);
+            } elseif ($changetype === 'remove') {
+              $user->detachRole($roleObj, $teamScope ? $team : null);
+            } elseif ($changetype === 'sync') {
+              $user->syncRoles([$roleObj], $teamScope ? $team : null);
+            }
+
+            if ($team) {
+              $roles_team = $user->getRoles($team);
+            }
+          }
+
+          $roles_global = $user->getRoles();
+          $roles = array_merge($roles_team, $roles_global);
+
+
+          $data = [
+            'roles' => $roles
+          ];
+
+        } else {
+            $data = 'Role not found';
+        }
+
+        return response()->json($data);
+    }
+
+
+
     // POST
     public function setPermissions(Request $request)
     {
+      /*
+       * NOT USING PERMISSIONS. USE ROLES INSTEAD.
+       * 
+       * 
         $user = User::find($request->user_id);
         $permission = $request->permission;
         $changetype = $request->changetype;
@@ -59,8 +127,8 @@ class UserController extends Controller
             }
 
             $data = [
-              'roles' => $user->getRoleNames(),
-              'permissions' => $user->getAllPermissions()->pluck('name'),
+              'roles' => [],
+              'permissions' => $user->allPermissions(),
             ];
 
         } else {
@@ -68,34 +136,8 @@ class UserController extends Controller
         }
 
         return response()->json($data);
+        */
     }
 
-    // POST
-    public function setRoles(Request $request)
-    {
-        $user = User::find($request->user_id);
-        $role = $request->role;
-        $changetype = $request->changetype;
-        $message = '';
 
-        if (!is_null(Role::where('name', $role)->first())) {
-            if ($changetype == 'add') {
-              $user->assignRole($role);
-            } elseif ($changetype == 'remove') {
-              $user->removeRole($role);
-            } elseif ($changetype == 'sync') {
-              $user->syncRoles($role);
-            }
-
-            $data = [
-              'roles' => $user->getRoleNames(),
-              'permissions' => $user->getAllPermissions()->pluck('name'),
-            ];
-
-        } else {
-            $data = 'Role not found';
-        }
-
-        return response()->json($data);
-    }
 }

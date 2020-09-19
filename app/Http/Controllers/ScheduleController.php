@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Schedule;
-use App\User;
+use App\Models\Schedule;
+use App\Models\User;
 use Auth;
 use DB;
 use Carbon\Carbon;

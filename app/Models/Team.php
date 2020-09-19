@@ -1,14 +1,18 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Laratrust\Models\LaratrustTeam;
 
-class Team extends Model
+class Team extends LaratrustTeam
 {
+  public $guarded = [];
+
   protected $fillable = [
     'name',
+    'display_name',
     'code',
+    'description',
     'user_id',
     'setting_shift_request_autoapproval',
     'setting_shift_assignment_autoaccept',
@@ -20,16 +24,16 @@ class Team extends Model
 
   public function users()
   {
-    return $this->belongsToMany('App\User');
+    return $this->belongsToMany('App\Models\User');
   }
 
   public function locations()
   {
-    return $this->hasMany('App\Location');
+    return $this->hasMany('App\Models\Location');
   }
 
   public function shifts()
   {
-    return $this->hasManyThrough('App\Shift', 'App\Schedule');
+    return $this->hasManyThrough('App\Models\Shift', 'App\Models\Schedule');
   }
 }

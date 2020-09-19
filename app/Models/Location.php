@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,10 +16,10 @@ class Location extends Model
 
 
   public function team() {
-      return $this->belongsTo('App\Team');
+      return $this->belongsTo('App\Models\Team');
   }
 
   public function shifts() {
-      return $this->hasMany('App\Shift');
+      return $this->hasMany('App\Models\Shift');
   }
 }

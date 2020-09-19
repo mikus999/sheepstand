@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use App\Team;
-use App\User;
-use App\Location;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\Location;
 use DB;
 use Helper;
 use Auth;
@@ -27,15 +27,21 @@ class TeamController extends Controller
 
 
 
-
+    /**
+     * 
+     *  CREATE NEW TEAM
+     * 
+     */
     public function store(Request $request)
     {
       $user = Auth::user();
       $userid = $user->id;
-      $teamcode = Helper::getUniqueCode(6, 'TM-');
+      $teamcode = Helper::getUniqueCode(6, 'team_code', 'TM-');
+      $teamUUID = Helper::getUniqueCode(12, 'team_name');
 
       $newteam = Team::create([
-          'name' => $request->name,
+          'name' => $teamUUID,
+          'display_name' => $request->display_name,
           'code' => $teamcode,
           'user_id' => $userid
       ]);
@@ -49,6 +55,11 @@ class TeamController extends Controller
       ]);
 
       $user->teams()->attach($newteam);
+
+
+      // ADD 'TEAM ADMIN' ROLE TO USER FOR THIS TEAM
+      $user->attachRole('team_admin', $newteam);
+
 
       $data = [
           'team' => $newteam,
@@ -74,9 +85,9 @@ class TeamController extends Controller
     public function update(Request $request, $id)
     {
       $team = Team::find($id);
-      $team->name = $request->name;
+      $team->display_name = $request->display_name;
       if ($request->newcode = true) {
-        $team->code = Helper::getUniqueCode(6, 'TM-');
+        $team->code = Helper::getUniqueCode(6, 'team_code', 'TM-');
       }
       $team->user_id = $request->user_id;
       $team->save();
@@ -101,6 +112,8 @@ class TeamController extends Controller
 
     // Custom Functions
 
+
+    
     public function addUserToTeam(Request $request)
     {
       $error = false;
@@ -122,6 +135,7 @@ class TeamController extends Controller
         if ($team) {
           $user->teams()->detach($team); // First detach if already exists
           $user->teams()->attach($team);
+          $user->attachRole('publisher', $team);
           $message = 'SUCCESS';
         } else {
           $error = true;
@@ -176,7 +190,7 @@ class TeamController extends Controller
     public function changeTeamCode($id)
     {
       $team = Team::find($id);
-      $teamcode = Helper::getUniqueCode(6, 'TM-');
+      $teamcode = Helper::getUniqueCode(6, 'team_code', 'TM-');
       $team->code = $teamcode;
       $team->save();
 

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Team;
-use App\User;
-use App\Location;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\Location;
 use App\File;
 use Helper;
 use Auth;

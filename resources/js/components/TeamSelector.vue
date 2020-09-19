@@ -1,5 +1,5 @@
 <template>
-  <v-select v-if="!$vuetify.breakpoint.mobile" :items="teams" item-text="name" item-value="id" :value="team.id" @change="setTeam($event, 'home')" outlined dense prepend-icon="mdi-account-group select-item">
+  <v-select v-if="!$vuetify.breakpoint.mobile" :items="teams" item-text="display_name" item-value="id" :value="team.id" @change="setTeam($event, 'home')" outlined dense prepend-icon="mdi-account-group select-item">
     <template v-slot:append-item>
       <v-divider class="mb-2"></v-divider>
 
@@ -24,7 +24,7 @@
 
     <v-list>
       <v-list-item v-for="t in teams" :key="t.id" @click="setTeam(t.id)">
-        <v-list-item-title>{{ t.name }}</v-list-item-title>
+        <v-list-item-title>{{ t.display_name }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>

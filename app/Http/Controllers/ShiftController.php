@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Shift;
-use App\Schedule;
-use App\User;
+use App\Models\Shift;
+use App\Models\Schedule;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ShiftController extends Controller

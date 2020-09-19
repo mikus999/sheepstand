@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Notifications\ResetPassword;
 use App\Notifications\VerifyEmail;
@@ -9,13 +9,13 @@ use Illuminate\Notifications\Notifiable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Traits\HasRoles;
-use App\Team;
+use App\Models\Team;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 {
+    use LaratrustUserTrait;
     use Notifiable;
-    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -58,18 +58,18 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function teams()
     {
-        return $this->belongsToMany('App\Team')->withTimeStamps();
+        return $this->belongsToMany('App\Models\Team')->withTimeStamps();
     }
 
 
     public function shifts()
     {
-        return $this->belongsToMany('App\Shift')->withPivot('status')->withTimeStamps();
+        return $this->belongsToMany('App\Models\Shift')->withPivot('status')->withTimeStamps();
     }
 
     public function translator_languages()
     {
-        return $this->hasMany('App\TranslatorLanguages');
+        return $this->hasMany('App\Models\TranslatorLanguages');
     }
 
 

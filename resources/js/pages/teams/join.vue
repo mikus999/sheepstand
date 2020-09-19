@@ -60,7 +60,7 @@
                   <v-row>
                     <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.team_name') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
-                      {{ team.name }}
+                      {{ team.display_name }}
                     </label>
                   </v-row>
 
@@ -211,7 +211,7 @@ export default {
       this.hasError = false
 
       const formData = new FormData()
-      formData.append('name', this.team_name)
+      formData.append('display_name', this.team_name)
       axios.post('/api/teams/', formData)
         .then(response => {
           if (response.data.message === 'ERROR') {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,22 +17,22 @@ class Schedule extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\Models\User');
     }
 
     public function team()
     {
-        return $this->belongsTo('App\Team');
+        return $this->belongsTo('App\Models\Team');
     }
 
     public function scheduletemplate()
     {
-        return $this->hasOne('App\ScheduleTemplate');
+        return $this->hasOne('App\Models\ScheduleTemplate');
     }
 
     public function shifts()
     {
-        return $this->hasMany('App\Shift');
+        return $this->hasMany('App\Models\Shift');
     }
 
 

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
-use App\TranslatorLanguages;
+use App\Models\User;
+use App\Models\TranslatorLanguages;
 use Auth;
 use DB;
 

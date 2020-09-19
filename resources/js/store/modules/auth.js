@@ -6,7 +6,6 @@ import * as types from '../mutation-types'
 export const state = {
   user: null,
   roles: null,
-  permissions: null,
   token: Cookies.get('token')
 }
 
@@ -14,7 +13,6 @@ export const state = {
 export const getters = {
   user: state => state.user,
   roles: state => state.roles,
-  permissions: state => state.permissions,
   token: state => state.token,
   check: state => state.user !== null
 }
@@ -35,9 +33,8 @@ export const mutations = {
     Cookies.remove('token')
   },
 
-  [types.FETCH_PERMISSIONS] (state, { roles, permissions }) {
+  [types.FETCH_ROLES] (state, { roles }) {
     state.roles = roles
-    state.permissions = permissions
   },
 
   [types.LOGOUT] (state) {
@@ -70,12 +67,19 @@ export const actions = {
 
   },
 
-  async fetchPermissions ({ commit }) {
-    await axios.get('/api/user/permissions')
+  async fetchRoles ({ commit }) {
+    teamid = JSON.parse(this.state.teams.team).id
+
+    await axios({
+      method: 'post',      
+      url: '/api/user/roles',
+      data: {
+        team_id: this.teamid
+      }
+    })
     .then(response => {
       const roles = response.data.roles
-      const permissions = response.data.permissions
-      commit(types.FETCH_PERMISSIONS, { roles: roles, permissions: permissions })
+      commit(types.FETCH_ROLES, { roles: roles })
     })
   },
 

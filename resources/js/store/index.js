@@ -4,19 +4,6 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 Vue.config.devtools = true
 
-/*
-import auth from './modules/auth';
-import lang from './modules/lang';
-import teams from './modules/teams';
-
-export default new Vuex.Store({
-  modules: {
-    auth: auth,
-    lang: lang,
-    teams: teams
-  }
-})
-*/
 
 // Load store modules dynamically.
 const requireContext = require.context('./modules', false, /.*\.js$/)

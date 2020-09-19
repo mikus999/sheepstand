@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,16 +17,16 @@ class Shift extends Model
 
     public function schedules()
     {
-        return $this->belongsTo('App\Schedule');
+        return $this->belongsTo('App\Models\Schedule');
     }
 
     public function location()
     {
-        return $this->belongsTo('App\Location');
+        return $this->belongsTo('App\Models\Location');
     }
 
     public function users()
     {
-        return $this->belongsToMany('App\User')->withPivot('status');
+        return $this->belongsToMany('App\Models\User')->withPivot('status');
     }
 }

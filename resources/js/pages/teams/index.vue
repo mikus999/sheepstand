@@ -26,7 +26,7 @@
           <v-tab-item value="tab-general">
             <v-col md=6>
 
-              <v-text-field v-model="teamData.name" name="name" :label="$t('teams.team_name')" @input.native="updateTeam($event)"
+              <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)"
                   :success="validation.name.success">
                 <template v-slot:append v-if="validation.name.success">
                   <v-icon color="green">mdi-check-circle</v-icon>
@@ -217,7 +217,7 @@ export default {
         method: 'patch',      
         url: '/api/teams/' + this.team.id,
         data: {
-          name: this.teamData.name,
+          name: this.teamData.display_name,
           user_id: this.teamData.user_id
         }
       })

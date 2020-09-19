@@ -6,7 +6,7 @@ use DB;
 
 class Helper
 {
-    public static function getUniqueCode($digits, $prefix = '', $suffix = '') {
+    public static function getUniqueCode($digits, $scope, $prefix = '', $suffix = '') {
         $returnstr = '';
         $is_unique = false;
 
@@ -26,7 +26,7 @@ class Helper
               $returnstr = $randomnum.$suffix;
           }
 
-          $is_unique = Helper::checkUniqueCode($returnstr);
+          $is_unique = Helper::checkUniqueCode($returnstr, $scope);
 
         //} while ($is_unique);
 
@@ -34,14 +34,16 @@ class Helper
         return $returnstr;
     }
 
-    public static function checkUniqueCode($code) {
+    public static function checkUniqueCode($code, $scope) {
       // Generate usercode and check for uniqueness
       $uniq = false;
 
-      if (!is_null(DB::table('users')->where("user_code",$code)->first()) ) {
-          $uniq = true;
-      } elseif (!is_null(DB::table('teams')->where("code",$code)->first()) ) {
-          $uniq = true;
+      if ($scope === 'user') {
+        $uniq = !is_null(DB::table('users')->where("user_code",$code)->first());
+      } elseif ($scope === 'team_code') {
+        $uniq = !is_null(DB::table('teams')->where("code",$code)->first());
+      } elseif ($scope === 'team_name') {
+        $uniq = !is_null(DB::table('teams')->where("name",$code)->first());
       }
 
       return $uniq;

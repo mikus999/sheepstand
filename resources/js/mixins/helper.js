@@ -5,7 +5,6 @@ const helper = {
     ...mapGetters({
       user: 'auth/user',
       roles: 'auth/roles',
-      permissions: 'auth/permissions',
       team: 'teams/getTeam',
       teams: 'teams/getTeams',
       hasTeam: 'teams/hasTeam',
@@ -108,6 +107,10 @@ const helper = {
 
     async getTeams () {
       await this.$store.dispatch('teams/fetchTeams')
+    },
+
+    async getRoles () {
+      await this.$store.dispatch('auth/fetchRoles')
     },
 
     setLocale (locale) {
