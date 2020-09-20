@@ -14,6 +14,7 @@ export const SET_LOCALE = 'SET_LOCALE'
 export const SET_TEAM = 'SET_TEAM'
 export const FETCH_TEAMS = 'FETCH_TEAMS'
 export const SET_HASTEAM = 'SET_HASTEAM'
+export const LOGOUT_TEAMS = 'LOGOUT_TEAMS'
 
 // general.js
 

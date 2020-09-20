@@ -6,7 +6,7 @@ function page (path) {
 }
 
 export default [
-  { path: '/', name: 'welcome', component: page('home.vue'), meta: { roles: [] } },
+  { path: '/', name: 'default', component: page('home.vue'), meta: { roles: [] } },
   { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: [] } },
 
   { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { roles: [] } },

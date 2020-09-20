@@ -46,7 +46,6 @@
 <script>
 import axios from 'axios'
 import { mapGetters, mapState } from 'vuex'
-import LoginWithGithub from '~/components/LoginWithGithub'
 import LoginWithGoogle from '~/components/LoginWithGoogle'
 import LoginWithFacebook from '~/components/LoginWithFacebook'
 import { required, email } from 'vuelidate/lib/validators'
@@ -59,7 +58,6 @@ export default {
   mixins: [helper],
 
   components: {
-    LoginWithGithub,
     LoginWithGoogle,
     LoginWithFacebook
   },
@@ -123,9 +121,6 @@ export default {
  
             // Fetch the teams.
             this.$store.dispatch('teams/fetchTeams');
-            
-            // Fetch the permissions
-            this.$store.dispatch('auth/fetchRoles')
             
             // Redirect
             this.$router.push({ name: 'home' })

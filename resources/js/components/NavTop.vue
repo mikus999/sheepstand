@@ -9,7 +9,7 @@
 
     <v-spacer />
 
-    <TeamSelector />
+    <TeamSelector v-if="hasTeam" />
     <LocaleSelector />
 
     <v-btn dark icon @click.prevent="logout">

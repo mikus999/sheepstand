@@ -39,6 +39,7 @@ export const mutations = {
 
   [types.LOGOUT] (state) {
     state.user = null
+    state.roles = null
     state.token = null
 
     Cookies.remove('token')
@@ -67,14 +68,12 @@ export const actions = {
 
   },
 
-  async fetchRoles ({ commit }) {
-    teamid = JSON.parse(this.state.teams.team).id
-
+  async fetchRoles ({ commit }, { teamid }) {
     await axios({
       method: 'post',      
       url: '/api/user/roles',
       data: {
-        team_id: this.teamid
+        team_id: teamid
       }
     })
     .then(response => {

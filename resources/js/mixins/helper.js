@@ -124,6 +124,7 @@ const helper = {
     async logout () {
       // Log out the user.
       await this.$store.dispatch('auth/logout')
+      await this.$store.dispatch('teams/logoutTeams')
 
       // Redirect to login.
       this.$router.push({ name: 'login' })

@@ -130,7 +130,7 @@
     <template v-slot:append v-if="user">
       <!-- TEAM SELECTOR -->
       <div class="pa-1">
-        <TeamSelector v-if="!$vuetify.breakpoint.mobile" />
+        <TeamSelector v-if="!$vuetify.breakpoint.mobile && hasTeam" />
       </div>
 
 

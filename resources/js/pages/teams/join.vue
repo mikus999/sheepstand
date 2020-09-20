@@ -53,14 +53,14 @@
                   <v-row>
                     <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.team_id') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
-                      {{ team.code }}
+                      {{ teamTemp.code }}
                     </label>
                   </v-row>
 
                   <v-row>
                     <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.team_name') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
-                      {{ team.display_name }}
+                      {{ teamTemp.display_name }}
                     </label>
                   </v-row>
 
@@ -137,6 +137,7 @@ export default {
   middleware: 'auth',
   layout: 'vuetify',
   mixins: [helper],
+
   data () {
     return {
       userid: this.$userId,

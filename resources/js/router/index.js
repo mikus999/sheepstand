@@ -10,7 +10,7 @@ Vue.use(Meta)
 Vue.use(Router)
 
 // The middleware for every page of the application.
-const globalMiddleware = ['locale', 'check-auth']
+const globalMiddleware = ['locale', 'check-auth', 'teams']
 
 // Load middleware modules dynamically.
 const routeMiddleware = resolveMiddleware(
@@ -40,7 +40,6 @@ function createRouter () {
 
   return router
 }
-
 
 
 /**
@@ -86,6 +85,7 @@ async function beforeEach (to, from, next) {
 
     next(...args)
   })
+
 
   /**
    * 
@@ -140,8 +140,6 @@ function checkPermissions (to, from, next) {
 }
 
 
-
-
 /**
  * Global after hook.
  *
@@ -154,6 +152,8 @@ async function afterEach (to, from, next) {
 
   router.app.$loading.finish()
 }
+
+
 
 /**
  * Call each middleware.

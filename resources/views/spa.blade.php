@@ -3,7 +3,6 @@ $config = [
     'appName' => config('app.name'),
     'locale' => $locale = app()->getLocale(),
     'locales' => config('app.locales'),
-    'githubAuth' => config('services.github.client_id'),
     'googleAuth' => config('services.google.client_id'),
     'facebookAuth' => config('services.facebook.client_id'),
     'environment' => config('app.env')
