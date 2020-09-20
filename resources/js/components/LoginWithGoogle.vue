@@ -44,12 +44,6 @@ export default {
         token: e.data.token
       })
 
-      // Fetch the user.
-      this.$store.dispatch('auth/fetchUser')
- 
-      // Fetch the teams.
-      this.$store.dispatch('teams/fetchTeams');
-
       // Redirect home.
       this.$router.push({ name: 'home' })
     }

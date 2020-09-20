@@ -17,7 +17,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
     Route::get('/user', 'Auth\UserController@current');
-    Route::post('user/roles', 'Auth\UserController@getRoles');
+    Route::post('user/roles/get', 'Auth\UserController@getRoles');
     Route::post('user/roles/set', 'Auth\UserController@setRoles');
     //Route::post('user/permissions', 'Auth\UserController@setPermissions');
 

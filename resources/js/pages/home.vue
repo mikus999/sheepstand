@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-
+      <h4>Home</h4>
 
     </v-row>
   </v-container>
@@ -15,7 +15,8 @@ export default {
   layout: 'vuetify',
   mixins: [helper],
 
-  created () {
+  mounted () {
+    console.log(this.myRoles)
   },
 
 }

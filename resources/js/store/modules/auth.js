@@ -68,10 +68,12 @@ export const actions = {
 
   },
 
-  async fetchRoles ({ commit }, { teamid }) {
+  async fetchRoles ({ commit, rootState }) {
+    const teamid = rootState.teams.team.id
+
     await axios({
       method: 'post',      
-      url: '/api/user/roles',
+      url: '/api/user/roles/get',
       data: {
         team_id: teamid
       }
