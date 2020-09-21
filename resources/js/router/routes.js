@@ -27,5 +27,7 @@ export default [
 
   { path: '/translation', name: 'translation.index', component: page('translation/index.vue'), meta: { roles: [] }},
 
-  { path: '/notfound', name: 'notfound', component: page('errors/404.vue') }
+  { path: '/notfound', name: 'notfound', component: page('errors/404.vue') },
+  { path: '/accessdenied', name: 'accessdenied', component: page('errors/403.vue') }
+
 ]

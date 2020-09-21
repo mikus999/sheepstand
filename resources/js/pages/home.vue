@@ -16,7 +16,6 @@ export default {
   mixins: [helper],
 
   mounted () {
-    console.log(this.myRoles)
   },
 
 }

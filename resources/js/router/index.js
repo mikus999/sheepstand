@@ -64,6 +64,7 @@ async function beforeEach (to, from, next) {
     }
   }
 
+
   if (components.length === 0) {
     return next()
   }
@@ -73,12 +74,14 @@ async function beforeEach (to, from, next) {
     router.app.$nextTick(() => router.app.$loading.start())
   }
 
-  // Get the middleware for all the matched components.
+  // Get the middleware for all the matched components and merge with globalMiddleware.
   const middleware = getMiddleware(components)
 
-  // Call each middleware.
+  // Call each middleware (global and component).
+
   callMiddleware(middleware, to, from, (...args) => {
     // Set the application layout only if "next()" was called with no args.
+
     if (args.length === 0) {
       router.app.setLayout(components[0].layout || '')
     }
@@ -87,57 +90,10 @@ async function beforeEach (to, from, next) {
   })
 
 
-  /**
-   * 
-   * Check permissions (roles, permissions)
-   * Check if the route is protected
-   * Then, wait for store to initialize
-   * Then, call 'checkPermissions' function
-   * 
-   */
-  if (to.meta.roles && (to.meta.roles.length > 0)) {
-    // First, wait for store to initialize
-    if (store.getters['auth/roles'] === null) {
-      store.watch(() => store.getters['auth/roles'], r => {
-        checkPermissions(to, from, next)
-      })
-    } else {
-      checkPermissions(to, from, next)
-    }
-
-  } else {
-    // If no roles or permissions are specified for the route, continue anyway
-      next() 
-  }
-
+  //next()
 }
 
-/**
- * Check if user can access the protected route
- * 
- * @param {Route} to
- * @param {Route} from
- * @param {Function} next
- */
-function checkPermissions (to, from, next) {
-  const routeRoles = to.meta.roles
-  const routePerms = to.meta.permissions
 
-  var isAllowed = false
-
-  const userRoles = store.getters['auth/roles']
-  Object.keys(userRoles).forEach(function(key) {
-    if (routeRoles.indexOf(userRoles[key]) >= 0) {
-      isAllowed = true
-    }
-  })
-
-  if (isAllowed) {
-    next()
-  } else {
-    next({ name: 'notfound' })
-  }
-}
 
 
 /**
@@ -155,6 +111,8 @@ async function afterEach (to, from, next) {
 
 
 
+
+
 /**
  * Call each middleware.
  *
@@ -167,6 +125,7 @@ function callMiddleware (middleware, to, from, next) {
   const stack = middleware.reverse()
 
   const _next = (...args) => {
+    console.log(args)
     // Stop if "_next" was called with an argument or the stack is empty.
     if (args.length > 0 || stack.length === 0) {
       if (args.length > 0) {
@@ -190,6 +149,10 @@ function callMiddleware (middleware, to, from, next) {
   _next()
 }
 
+
+
+
+
 /**
  * Resolve async components.
  *
@@ -202,6 +165,10 @@ function resolveComponents (components) {
   }))
 }
 
+
+
+
+
 /**
  * Merge the the global middleware with the components middleware.
  *
@@ -210,7 +177,6 @@ function resolveComponents (components) {
  */
 function getMiddleware (components) {
   const middleware = [...globalMiddleware]
-
   components.filter(c => c.middleware).forEach(component => {
     if (Array.isArray(component.middleware)) {
       middleware.push(...component.middleware)
@@ -221,6 +187,9 @@ function getMiddleware (components) {
 
   return middleware
 }
+
+
+
 
 /**
  * Scroll Behavior
@@ -249,6 +218,9 @@ function scrollBehavior (to, from, savedPosition) {
 
   return { x: 0, y: 0 }
 }
+
+
+
 
 /**
  * @param  {Object} requireContext

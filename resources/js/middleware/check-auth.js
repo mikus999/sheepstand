@@ -12,13 +12,17 @@ export default async (to, from, next) => {
       await store.dispatch('teams/fetchTeams');
 
     } catch (e) { }
+
   }
 
 
-  // Fetch roles (if logged in, but has not fetched roles)
-  if (store.getters['auth/roles'] === null && store.getters['auth/check']) {
-    //const team = await store.getters['teams/getTeam']
-    store.dispatch('auth/fetchRoles')
+  // If logged in and has user data
+  if (store.getters['auth/check']) {
+    // If role data has not been fetched
+    if (store.getters['auth/roles'] === null) {
+      //const team = await store.getters['teams/getTeam']
+      store.dispatch('auth/fetchRoles')
+    }
   }
 
   next()
