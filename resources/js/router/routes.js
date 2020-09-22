@@ -7,7 +7,7 @@ function page (path) {
 
 export default [
   { path: '/', name: 'default', component: page('home.vue'), meta: { roles: [] } },
-  { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: ['publisher'] } },
+  { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: [] } },
 
   { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { roles: [] } },
   { path: '/register', name: 'register', component: page('auth/register.vue'), meta: { roles: [] } },
@@ -25,7 +25,7 @@ export default [
   { path: '/schedule/assignments/:id', name: 'schedules.assignments', component: page('schedules/assignments.vue'), meta: { roles: [] }, props: true },
   { path: '/schedule/', name: 'schedules.index', component: page('schedules/index.vue'), meta: { roles: [] } },
 
-  { path: '/translation', name: 'translation.index', component: page('translation/index.vue'), meta: { roles: [] }},
+  { path: '/translation', name: 'translation.index', component: page('translation/index.vue'), meta: { roles: ['translator'] }},
 
   { path: '/notfound', name: 'notfound', component: page('errors/404.vue') },
   { path: '/accessdenied', name: 'accessdenied', component: page('errors/403.vue') }

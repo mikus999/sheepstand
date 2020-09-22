@@ -6,7 +6,8 @@ import * as types from '../mutation-types'
 export const state = {
   user: null,
   roles: null,
-  token: Cookies.get('token')
+  token: Cookies.get('token'),
+  isSuperAdmin: false
 }
 
 // getters
@@ -14,7 +15,8 @@ export const getters = {
   user: state => state.user,
   roles: state => state.roles,
   token: state => state.token,
-  check: state => state.user !== null
+  check: state => state.user !== null,
+  isSuperAdmin: state => state.roles.indexOf('super_admin') >= 0
 }
 
 // mutations

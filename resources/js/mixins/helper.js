@@ -1,16 +1,19 @@
 import { mapGetters, mapState } from 'vuex'
+import axios from 'axios'
+
 
 const helper = {
   computed: {
     ...mapGetters({
       user: 'auth/user',
       roles: 'auth/roles',
+      isSuperAdmin: 'auth/isSuperAdmin',
       team: 'teams/getTeam',
       teams: 'teams/getTeams',
       hasTeam: 'teams/hasTeam',
       locale: 'lang/locale',
       locales: 'lang/locales'
-    }),
+    })
   },
 
   data () {
@@ -71,6 +74,9 @@ const helper = {
         }
       ]
     }
+  },
+
+  created () {
   },
 
   methods: {

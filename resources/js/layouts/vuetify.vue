@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapGetters, mapState } from 'vuex'
 import NavTop from '../components/NavTop.vue'
 import NavLeft from '../components/NavLeft.vue'
@@ -46,6 +47,25 @@ export default {
   created () {
     // Set the dayjs locale here. Must be after the vuex store AND dayjs locales are loaded completely
     this.$dayjs.locale(this.$store.getters['lang/locale'])
+
+    // Get site roles and permissions and save them to session storage
+    this.getRolesWithPermissions()
+  },
+
+  methods: {
+    async getRolesWithPermissions () {
+      if (!sessionStorage.getItem('roles')) {
+        await axios({
+          method: 'get',      
+          url: '/api/roles'
+        })
+        .then(response => {
+          console.log('Roles fetched!')
+          sessionStorage.setItem('roles', JSON.stringify(response.data))
+        })
+      }
+    },
+
   }
 }
 </script>

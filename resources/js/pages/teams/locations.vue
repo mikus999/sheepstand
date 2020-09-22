@@ -93,7 +93,7 @@ import helper from '~/mixins/helper'
 import { required } from 'vuelidate/lib/validators'
 
 export default {
-  middleware: 'auth',
+  middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
 

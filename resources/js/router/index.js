@@ -52,63 +52,122 @@ function createRouter () {
 async function beforeEach (to, from, next) {
   let components = []
 
-  try {
-    // Get the matched components and resolve them.
-    components = await resolveComponents(
-      router.getMatchedComponents({ ...to })
-    )
-  } catch (error) {
-    if (/^Loading( CSS)? chunk (\d)+ failed\./.test(error.message)) {
-      window.location.reload(true)
-      return
-    }
-  }
 
 
-  if (components.length === 0) {
-    return next()
-  }
+  /**
+   * 
+   * Check permissions (roles, permissions)
+   * Check if the route is protected
+   * Then, wait for store to initialize
+   * Then, call 'checkPermissions' function
+   * 
+   */
+  var isAllowed = false
 
-  // Start the loading bar.
-  if (components[components.length - 1].loading !== false) {
-    router.app.$nextTick(() => router.app.$loading.start())
-  }
-
-  // Get the middleware for all the matched components and merge with globalMiddleware.
-  const middleware = getMiddleware(components)
-
-  // Call each middleware (global and component).
-
-  callMiddleware(middleware, to, from, (...args) => {
-    // Set the application layout only if "next()" was called with no args.
-
-    if (args.length === 0) {
-      router.app.setLayout(components[0].layout || '')
+  if ((to.meta.roles && to.meta.roles.length > 0)) {
+    // First, wait for store to initialize
+    if (store.getters['auth/roles'] === null) {
+      store.watch(() => store.getters['auth/roles'], r => {
+        isAllowed = checkPermissions(to, from, next)
+      })
+    } else {
+      isAllowed = checkPermissions(to, from, next)
     }
 
-    next(...args)
-  })
+  } else {
+    // If no roles or permissions are specified for the route, continue anyway
+    isAllowed = true
+  }
 
 
-  //next()
-}
+
+
+  if (!isAllowed) {
+    next({ name: 'accessdenied' })
+  } else {
+    try {
+      // Get the matched components and resolve them.
+      components = await resolveComponents(
+        router.getMatchedComponents({ ...to })
+      )
+    } catch (error) {
+      if (/^Loading( CSS)? chunk (\d)+ failed\./.test(error.message)) {
+        window.location.reload(true)
+        return
+      }
+    }
+
+
+    if (components.length === 0) {
+      return next()
+    }
+
+    // Start the loading bar.
+    if (components[components.length - 1].loading !== false) {
+      router.app.$nextTick(() => router.app.$loading.start())
+    }
+
+    // Get the middleware for all the matched components and merge with globalMiddleware.
+    const middleware = getMiddleware(components)
+
+    // Call each middleware (global and component).
+
+    callMiddleware(middleware, to, from, (...args) => {
+      // Set the application layout only if "next()" was called with no args.
+
+      if (args.length === 0) {
+        router.app.setLayout(components[0].layout || '')
+      }
+
+      next(...args)
+    })
+  }
+
+  }
+
+
+
+  /**
+   * Global after hook.
+   *
+   * @param {Route} to
+   * @param {Route} from
+   * @param {Function} next
+   */
+  async function afterEach (to, from, next) {
+    await router.app.$nextTick()
+
+    router.app.$loading.finish()
+  }
+
 
 
 
 
 /**
- * Global after hook.
- *
+ * Check if user can access the protected route
+ * 
  * @param {Route} to
  * @param {Route} from
  * @param {Function} next
  */
-async function afterEach (to, from, next) {
-  await router.app.$nextTick()
+function checkPermissions (to, from, next) {
+  const routeRoles = to.meta.roles
 
-  router.app.$loading.finish()
+  var isAllowed = store.getters['auth/isSuperAdmin']
+
+  // If the user is not a superadmin, check the roles
+  if (!isAllowed) {
+    const userRoles = store.getters['auth/roles']
+    Object.keys(userRoles).forEach(function(key) {
+      if (routeRoles.indexOf(userRoles[key]) >= 0) {
+        isAllowed = true
+      }
+    })
+  }
+
+  return isAllowed
 }
-
 
 
 
@@ -125,7 +184,6 @@ function callMiddleware (middleware, to, from, next) {
   const stack = middleware.reverse()
 
   const _next = (...args) => {
-    console.log(args)
     // Stop if "_next" was called with an argument or the stack is empty.
     if (args.length > 0 || stack.length === 0) {
       if (args.length > 0) {

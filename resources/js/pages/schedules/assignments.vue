@@ -92,7 +92,7 @@ import helper from '~/mixins/helper'
 
 
 export default {
-  middleware: 'auth',
+  middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
   props: {

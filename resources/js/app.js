@@ -65,6 +65,20 @@ Vue.filter('formatWeekdayShort', function (value) {
 
 
 
+// $CAN: permissions check prototype
+Vue.prototype.$can = function (permissions) {
+  const userRoles = $store.getters['auth/roles']
+
+  Object.keys(permissions).forEach(function(key) {
+    if (userRoles.indexOf(userRoles[key]) >= 0) {
+      isAllowed = true
+    }
+  })
+}
+
+
+
+
 window.bus = new Vue()
 
 /* eslint-disable no-new */
