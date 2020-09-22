@@ -49,7 +49,9 @@ export default {
     this.$dayjs.locale(this.$store.getters['lang/locale'])
 
     // Get site roles and permissions and save them to session storage
-    this.getRolesWithPermissions()
+    if (this.user) {
+      this.getRolesWithPermissions()
+    }
   },
 
   methods: {

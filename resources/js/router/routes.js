@@ -7,7 +7,7 @@ function page (path) {
 
 export default [
   { path: '/', name: 'default', component: page('home.vue'), meta: { roles: [] } },
-  { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: [] } },
+  { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: ['publisher'] } },
 
   { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { roles: [] } },
   { path: '/register', name: 'register', component: page('auth/register.vue'), meta: { roles: [] } },
