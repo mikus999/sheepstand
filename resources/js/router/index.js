@@ -64,22 +64,28 @@ async function beforeEach (to, from, next) {
    */
   var isAllowed = false
 
-  if ((to.meta.roles && to.meta.roles.length > 0)) {
-    // First, wait for store to initialize
-    if (store.getters['auth/roles'] === null) {
-      store.watch(() => store.getters['auth/roles'], r => {
+  const requiresRole = to.meta.roles !== undefined && to.meta.roles.length > 0
+  const requiresAuth = to.meta.auth !== undefined && to.meta.auth
+  
+  if (to.name !== 'accessdenied' && requiresAuth ) {
+    if (requiresRole) {
+      console.log(store.getters['auth/roles'])
+      // First, wait for store to initialize    
+      if (store.getters['auth/roles'] === null) {
+        await store.watch(() => store.getters['auth/roles'], roles => {
+          isAllowed = checkPermissions(to, from, next)
+        })
+      } else {
         isAllowed = checkPermissions(to, from, next)
-      })
-    } else {
-      isAllowed = checkPermissions(to, from, next)
-    }
+      }
 
+    } else {
+      // If no roles or permissions are specified for the route, continue anyway
+      isAllowed = true
+    }
   } else {
-    // If no roles or permissions are specified for the route, continue anyway
     isAllowed = true
   }
-
-
 
 
   if (!isAllowed) {
@@ -154,6 +160,7 @@ async function beforeEach (to, from, next) {
 function checkPermissions (to, from, next) {
   const routeRoles = to.meta.roles
 
+  
   var isAllowed = store.getters['auth/isSuperAdmin']
 
   // If the user is not a superadmin, check the roles
@@ -165,7 +172,6 @@ function checkPermissions (to, from, next) {
       }
     })
   }
-
   return isAllowed
 }
 

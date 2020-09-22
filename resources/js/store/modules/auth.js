@@ -58,31 +58,40 @@ export const actions = {
     commit(types.SAVE_TOKEN, payload)
   },
 
-  async fetchUser ({ commit }) {
-    try {
-      const { data } = await axios.get('/api/user')
-
-      commit(types.FETCH_USER_SUCCESS, { user: data })
-
-    } catch (e) {
-      commit(types.FETCH_USER_FAILURE)
-    }
-
+  fetchUser ({ commit }) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/user')
+      .then(response => {
+        const { data } = response
+        commit(types.FETCH_USER_SUCCESS, { user: data })
+        resolve()
+      })
+      .catch(error => {
+        commit(types.FETCH_USER_FAILURE)
+        reject()
+      })
+    })
   },
 
-  async fetchRoles ({ commit, rootState }) {
-    const teamid = rootState.teams.team.id
+  fetchRoles ({ commit, rootState }) {
+    return new Promise((resolve, reject) => {
+      const teamid = rootState.teams.team.id
 
-    await axios({
-      method: 'post',      
-      url: '/api/user/roles/get',
-      data: {
-        team_id: teamid
-      }
-    })
-    .then(response => {
-      const roles = response.data.roles
-      commit(types.FETCH_ROLES, { roles: roles })
+      axios({
+        method: 'post',      
+        url: '/api/user/roles/get',
+        data: {
+          team_id: teamid
+        }
+      })
+      .then(response => {
+        const roles = response.data.roles
+        commit(types.FETCH_ROLES, { roles: roles })
+        resolve()
+      })
+      .catch(error => {
+        reject()
+      })
     })
   },
 

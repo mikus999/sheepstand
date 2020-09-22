@@ -62,7 +62,6 @@ export default {
           url: '/api/roles'
         })
         .then(response => {
-          console.log('Roles fetched!')
           sessionStorage.setItem('roles', JSON.stringify(response.data))
         })
       }

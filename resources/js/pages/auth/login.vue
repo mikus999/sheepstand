@@ -115,15 +115,18 @@ export default {
               token: response.data.token,
               remember: this.remember
             })
-            
-            // Redirect
-            this.$router.push({ name: 'home' })
+
+            // Redirect home when store is initiated
+            this.$store.dispatch('general/init').then(() => {
+              this.$router.push({ name: 'home' })
+            })
 
           }
         })
         .catch(error => {
             this.showSnackbar(this.$t('auth.credentials_incorrect'), 'error')
         });
+            
       }
     }
   }

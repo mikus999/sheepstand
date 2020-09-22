@@ -35,8 +35,10 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchTeams ({ dispatch, commit }) {
-    await axios.get('/api/teams')
+  fetchTeams ({ dispatch, commit }) {
+    return new Promise((resolve, reject) => {
+
+      axios.get('/api/teams')
       .then(response => {
         commit(types.FETCH_TEAMS, response.data.teams)
         commit(types.SET_HASTEAM, response.data.teams.length)
@@ -44,7 +46,12 @@ export const actions = {
         if (state.team === null && state.hasTeam) {
           dispatch('setTeam', response.data.teams[0].id)
         }
+        resolve()
       })
+      .catch(error => {
+        reject()
+      })
+    })
   },
 
   async setTeam ({ commit }, { teamid }) {

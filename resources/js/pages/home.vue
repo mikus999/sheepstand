@@ -11,11 +11,12 @@
 import helper from '~/mixins/helper'
 
 export default {
-  middleware: 'auth',
+  middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
 
   created () {
+    /*
     const testPerm = 'manage_schedules'
     var isAllowed = false
     const siteRoles = JSON.parse(sessionStorage.getItem('roles'))
@@ -29,6 +30,7 @@ export default {
     })
 
     console.log(isAllowed)
+    */
   },
 
 }

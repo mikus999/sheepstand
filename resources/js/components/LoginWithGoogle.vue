@@ -44,8 +44,12 @@ export default {
         token: e.data.token
       })
 
-      // Redirect home.
-      this.$router.push({ name: 'home' })
+            
+      // Redirect home when store is initiated
+      this.$store.dispatch('general/init').then(() => {
+        this.$router.push({ name: 'home' })
+      })
+
     }
   }
 }
