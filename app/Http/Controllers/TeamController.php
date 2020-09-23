@@ -239,4 +239,26 @@ class TeamController extends Controller
 
       return response()->json($team);
     }
+
+
+    public function setDefault(Request $request)
+    {
+      $user = Auth::user();
+      $userid = $user->id;
+      $teamid = $request->teamid;
+
+      // Set 'default' for all team locations to 'false'
+      $affected = DB::table('team_user')->where('user_id', '=', $userid)->update(['default_team' => false]);
+
+      // Set the selected location 'default' to 'true'
+      $affected = DB::table('team_user')
+                    ->where([
+                      ['user_id', '=', $userid],
+                      ['team_id', '=', $teamid],
+                    ])
+                    ->update(['default_team' => true]);
+
+
+      return response()->json($affected);
+    }
 }

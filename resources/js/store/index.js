@@ -26,6 +26,8 @@ const modules = requireContext.keys()
 export default new Vuex.Store({
   modules,
   plugins: [
+    createPersistedState()
+    /*
     createPersistedState({ 
       storage: {
         getItem: (key) => ls.get(key),
@@ -33,5 +35,6 @@ export default new Vuex.Store({
         removeItem: (key) => ls.remove(key),
       }
     })
+    */
   ],
 })

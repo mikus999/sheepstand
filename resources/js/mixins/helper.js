@@ -8,9 +8,9 @@ const helper = {
       user: 'auth/user',
       roles: 'auth/roles',
       isSuperAdmin: 'auth/isSuperAdmin',
-      team: 'teams/getTeam',
-      teams: 'teams/getTeams',
-      hasTeam: 'teams/hasTeam',
+      teams: 'auth/teams',
+      team: 'auth/team',
+      hasTeam: 'auth/hasTeam',
       locale: 'lang/locale',
       locales: 'lang/locales'
     })
@@ -100,9 +100,8 @@ const helper = {
       return newTime
     },
 
-    setTeam (teamid, route) {
-      this.$store.dispatch('teams/setTeam', { teamid })
-      this.getTeams()
+    setTeam (team, route) {
+      this.$store.dispatch('auth/setTeam', team)
 
       if (route !== undefined) {
         if (this.$route.name !== route) { 
@@ -130,7 +129,6 @@ const helper = {
     async logout () {
       // Log out the user.
       await this.$store.dispatch('auth/logout')
-      await this.$store.dispatch('teams/logoutTeams')
 
       localStorage.removeItem('vuex');
 

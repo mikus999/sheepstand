@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('teams/findteam/{code}', 'TeamController@findTeamByCode');
     Route::get('teams/users/{id}', 'TeamController@getTeamUsers');
     Route::post('teams/settings/update', 'TeamController@updateSetting');
+    Route::post('teams/default/update', 'TeamController@setDefault');
 
     // SHIFT routes
     Route::post('schedules/joinshift', 'ShiftController@addUserToShift');

@@ -24,7 +24,7 @@ class Team extends LaratrustTeam
 
   public function users()
   {
-    return $this->belongsToMany('App\Models\User');
+    return $this->belongsToMany('App\Models\User')->withPivot('default_team');
   }
 
   public function locations()

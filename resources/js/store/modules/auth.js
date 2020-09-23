@@ -6,6 +6,8 @@ import * as types from '../mutation-types'
 export const state = {
   user: null,
   roles: null,
+  teams: null,
+  team: localStorage.getItem('team') ? localStorage.getItem('team') : null,
   token: Cookies.get('token'),
   isSuperAdmin: false
 }
@@ -14,9 +16,12 @@ export const state = {
 export const getters = {
   user: state => state.user,
   roles: state => state.roles,
+  teams: state => state.teams,
+  team: state => state.team,
+  hasTeam: state => state.hasTeam,
   token: state => state.token,
   check: state => state.user !== null,
-  isSuperAdmin: state => state.roles.indexOf('super_admin') >= 0
+  isSuperAdmin: state => state.user.roles['global'].indexOf('super_admin') >= 0
 }
 
 // mutations
@@ -28,6 +33,9 @@ export const mutations = {
 
   [types.FETCH_USER_SUCCESS] (state, { user }) {
     state.user = user
+    state.roles = user.roles
+    state.teams = user.teams
+    state.hasTeam = user.teams !== null
   },
 
   [types.FETCH_USER_FAILURE] (state) {
@@ -35,10 +43,14 @@ export const mutations = {
     Cookies.remove('token')
   },
 
+  [types.FETCH_TEAMS] (state, payload) {
+    state.teams = payload
+  },
+
   [types.FETCH_ROLES] (state, { roles }) {
     state.roles = roles
   },
-
+  
   [types.LOGOUT] (state) {
     state.user = null
     state.roles = null
@@ -49,7 +61,15 @@ export const mutations = {
 
   [types.UPDATE_USER] (state, { user }) {
     state.user = user
-  }
+  },
+
+  [types.SET_TEAM] (state, payload) {
+    state.team = payload
+  },
+
+  [types.SET_HASTEAM] (state, payload) {
+    state.hasTeam = payload > 0
+  },
 }
 
 // actions
@@ -64,6 +84,16 @@ export const actions = {
       .then(response => {
         const { data } = response
         commit(types.FETCH_USER_SUCCESS, { user: data })
+
+        const objTeams = data.teams
+        Object.keys(objTeams).forEach(function (item) {
+          var objTeam = objTeams[item]
+
+          if (objTeam.pivot.default_team === 1) {
+            // call setTeam
+          }
+        });
+
         resolve()
       })
       .catch(error => {
@@ -73,26 +103,21 @@ export const actions = {
     })
   },
 
-  fetchRoles ({ commit, rootState }) {
-    return new Promise((resolve, reject) => {
-      const teamid = rootState.teams.team.id
 
-      axios({
+  async setTeam ({ commit }, team) {  
+    if (team !== undefined) {
+      await axios({
         method: 'post',      
-        url: '/api/user/roles/get',
+        url: '/api/teams/default/update',
         data: {
-          team_id: teamid
+          teamid: team.id
         }
       })
       .then(response => {
-        const roles = response.data.roles
-        commit(types.FETCH_ROLES, { roles: roles })
-        resolve()
+        localStorage.setItem('team', team)
+        commit(types.SET_TEAM, team)
       })
-      .catch(error => {
-        reject()
-      })
-    })
+    }
   },
 
   updateUser ({ commit }, payload) {
