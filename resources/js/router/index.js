@@ -69,7 +69,7 @@ async function beforeEach (to, from, next) {
   
   if (to.name !== 'accessdenied' && requiresAuth ) {
     if (requiresRole) {
-      console.log(store.getters['auth/roles'])
+
       // First, wait for store to initialize    
       if (store.getters['auth/roles'] === null) {
         await store.watch(() => store.getters['auth/roles'], roles => {

@@ -132,6 +132,8 @@ const helper = {
       await this.$store.dispatch('auth/logout')
       await this.$store.dispatch('teams/logoutTeams')
 
+      localStorage.removeItem('vuex');
+
       // Redirect to login.
       this.$router.push({ name: 'login' })
     },
