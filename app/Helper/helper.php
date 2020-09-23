@@ -6,6 +6,25 @@ use DB;
 
 class Helper
 {
+    public static function getUserRoles($user) {
+
+      $teams = $user->teams;
+      $roles_global = $user->getRoles();
+      $roles_team = [];
+
+      if ($teams) {
+        foreach ($teams as $team) {
+          $teamid = $team->id;
+          $roles_team = $user->getRoles($team);
+          $roles[$teamid] = $roles_team;
+        }
+      }
+      $roles['global'] = $roles_global;
+
+
+      return $roles;
+    }
+
     public static function getUniqueCode($digits, $scope, $prefix = '', $suffix = '') {
         $returnstr = '';
         $is_unique = false;

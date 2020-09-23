@@ -9,6 +9,7 @@ use App\Permission;
 use App\Models\User;
 use App\Models\Team;
 use Auth;
+use Helper;
 
 class UserController extends Controller
 {
@@ -20,7 +21,12 @@ class UserController extends Controller
      */
     public function current(Request $request)
     {
-        return response()->json($request->user());
+        $user = $request->user();
+        $roles = Helper::getUserRoles($user);
+
+        $user['roles'] = $roles;
+
+        return response()->json($user);
     }
 
 

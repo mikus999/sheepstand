@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\User;
 use App\Models\Team;
 use Auth;
+use Helper;
 
 class SecurityController extends Controller
 {
@@ -31,26 +32,15 @@ class SecurityController extends Controller
     public function getRoles(Request $request)
     {
         if ($request->user_id) {
-        $user = User::find($request->user_id);
+          $user = User::find($request->user_id);
         } else {
-        $user = Auth::user();
+          $user = Auth::user();
         }
 
-        $roles_team = [];
-        $roles_global = [];
-
-        if ($request->team_id) {
-        $team = Team::find($request->team_id);
-        if ($team) {
-            $roles_team = $user->getRoles($team);
-        }
-        }
-
-        $roles_global = $user->getRoles();
-        $roles = array_merge($roles_team, $roles_global);
+        $roles = Helper::getUserRoles($user);
 
         $data = [
-        'roles' => $roles
+          'roles' => $roles
         ];
 
         return response()->json($data);
