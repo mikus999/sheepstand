@@ -58,7 +58,6 @@ async function beforeEach (to, from, next) {
    * 
    * Check permissions (roles, permissions)
    * Check if the route is protected
-   * Then, wait for store to initialize
    * Then, call 'checkPermissions' function
    * 
    */
@@ -67,23 +66,12 @@ async function beforeEach (to, from, next) {
   const requiresRole = to.meta.roles !== undefined && to.meta.roles.length > 0
   const requiresAuth = to.meta.auth !== undefined && to.meta.auth
   
-  if (to.name !== 'accessdenied' && requiresAuth ) {
-    if (requiresRole) {
-
-      // First, wait for store to initialize    
-      if (store.getters['auth/roles'] === null) {
-        await store.watch(() => store.getters['auth/roles'], roles => {
-          isAllowed = checkPermissions(to, from, next)
-        })
-      } else {
-        isAllowed = checkPermissions(to, from, next)
-      }
-
-    } else {
-      // If no roles or permissions are specified for the route, continue anyway
-      isAllowed = true
+  if (requiresAuth && requiresRole) {
+    if (store.getters['auth/roles'] !== null) {
+      isAllowed = checkPermissions(to, from, next)
     }
   } else {
+    // If the page does not require authorization or does not require role
     isAllowed = true
   }
 
@@ -159,18 +147,31 @@ async function beforeEach (to, from, next) {
  */
 function checkPermissions (to, from, next) {
   const routeRoles = to.meta.roles
+  const team = store.getters['auth/team']
+  const userRoles = store.getters['auth/roles']
+  const teamRoles = userRoles[team.id]
+  const globalRoles = userRoles['global']
 
-  
   var isAllowed = store.getters['auth/isSuperAdmin']
-
+  isAllowed = false
+  
   // If the user is not a superadmin, check the roles
   if (!isAllowed) {
-    const userRoles = store.getters['auth/roles']
-    Object.keys(userRoles).forEach(function(key) {
-      if (routeRoles.indexOf(userRoles[key]) >= 0) {
+    // First check the team roles
+    Object.keys(teamRoles).forEach(function(key) {
+      if (routeRoles.indexOf(teamRoles[key]) >= 0) {
         isAllowed = true
       }
     })
+
+    if (!isAllowed) {
+      // If team role not found, check global roles
+      Object.keys(globalRoles).forEach(function(key) {
+        if (routeRoles.indexOf(globalRoles[key]) >= 0) {
+          isAllowed = true
+        }
+      })
+    }
   }
   return isAllowed
 }

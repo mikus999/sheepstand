@@ -15,6 +15,7 @@ export const actions = {
   init ({ dispatch }) {
     return Promise.all([
       dispatch('auth/fetchUser', null, {root: true}),
+      dispatch('auth/fetchSiteRoles', null, {root: true}),
     ])
   }
 }

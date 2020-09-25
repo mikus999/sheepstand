@@ -6,22 +6,23 @@ import * as types from '../mutation-types'
 export const state = {
   user: null,
   roles: null,
+  siteRoles: null,
   teams: null,
   team: localStorage.getItem('team') ? localStorage.getItem('team') : null,
-  token: Cookies.get('token'),
-  isSuperAdmin: false
+  token: Cookies.get('token')
 }
 
 // getters
 export const getters = {
   user: state => state.user,
   roles: state => state.roles,
+  siteRoles: state => state.siteRoles,
   teams: state => state.teams,
   team: state => state.team,
   hasTeam: state => state.hasTeam,
   token: state => state.token,
   check: state => state.user !== null,
-  isSuperAdmin: state => state.user.roles['global'].indexOf('super_admin') >= 0
+  isSuperAdmin: state => state.roles['global'].indexOf('super_admin') >= 0
 }
 
 // mutations
@@ -47,8 +48,8 @@ export const mutations = {
     state.teams = payload
   },
 
-  [types.FETCH_ROLES] (state, { roles }) {
-    state.roles = roles
+  [types.FETCH_SITEROLES] (state, { siteRoles }) {
+    state.siteRoles = siteRoles
   },
   
   [types.LOGOUT] (state) {
@@ -103,6 +104,17 @@ export const actions = {
     })
   },
 
+  fetchSiteRoles ({ commit }) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/roles')
+      .then(response => {
+        commit(types.FETCH_SITEROLES, { siteRoles: response.data })
+
+        resolve()
+      })
+    })
+  },
+
 
   async setTeam ({ commit }, team) {  
     if (team !== undefined) {
@@ -114,7 +126,6 @@ export const actions = {
         }
       })
       .then(response => {
-        localStorage.setItem('team', team)
         commit(types.SET_TEAM, team)
       })
     }

@@ -221,7 +221,7 @@ export default {
           } else {
             this.getTeams()
 
-            this.setTeam(response.data.team.id)
+            this.setTeam(response.data.team)
 
             this.stepperCurr = 4
           }

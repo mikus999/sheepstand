@@ -16,21 +16,24 @@ export default {
   mixins: [helper],
 
   created () {
-    /*
+    
     const testPerm = 'manage_schedules'
     var isAllowed = false
-    const siteRoles = JSON.parse(sessionStorage.getItem('roles'))
-    const sitePermissions = siteRoles.map(p => p['permissions'])
-    sitePermissions.forEach(function (arrayItem) {
-      const arrayPermissions = arrayItem.map(t => t['name'])
+
+    const sitePermissions = this.siteRoles.map(p => p['permissions'])
+
+    sitePermissions.forEach(function (item) {
+      const arrayPermissions = item.map(t => t['name'])
       const result = arrayPermissions.indexOf(testPerm)
       if (result >= 0) {
+        console.log(this.siteRoles())
+
         isAllowed = true
       }
     })
 
     console.log(isAllowed)
-    */
+    
   },
 
 }

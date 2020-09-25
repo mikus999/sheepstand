@@ -23,7 +23,7 @@
     </template>
 
     <v-list>
-      <v-list-item v-for="t in teams" :key="t.id" @click="setTeam(t.id)">
+      <v-list-item v-for="t in teams" :key="t.id" @click="setTeam(t)">
         <v-list-item-title>{{ t.display_name }}</v-list-item-title>
       </v-list-item>
     </v-list>
