@@ -22,6 +22,7 @@ Vue.use(BootstrapVue)
 // Vuelidate: for form validation
 Vue.use(Vuelidate)
 
+
 // VueLodash: for array manipulation
 Vue.use(VueLodash, { lodash: lodash })
 
