@@ -105,13 +105,6 @@ const helper = {
       await this.$store.dispatch('auth/setTeam', team)
       await this.$store.dispatch('auth/fetchUser')
       this.$router.go()
-      /*
-      if (route !== undefined) {
-        if (this.$route.name !== route) { 
-          this.$router.push({ name: route })
-        }
-      }
-      */
     },
 
     async getTeams () {

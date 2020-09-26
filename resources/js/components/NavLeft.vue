@@ -52,7 +52,7 @@
       </v-list-group>
 
       <!-- SCHEDULING -->
-      <v-list-group prepend-icon="mdi-calendar" v-if="hasTeam" no-action active-class="menu-selected-item">
+      <v-list-group prepend-icon="mdi-calendar" v-if="hasTeam && $can(['view_schedules','manage_schedules'])" no-action active-class="menu-selected-item">
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>
@@ -83,7 +83,7 @@
 
 
       <!-- TRANSLATION -->
-      <v-list-group prepend-icon="mdi-translate" v-if="isTranslator" no-action active-class="menu-selected-item">
+      <v-list-group prepend-icon="mdi-translate" v-if="$can('manage_translation')" no-action active-class="menu-selected-item">
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>

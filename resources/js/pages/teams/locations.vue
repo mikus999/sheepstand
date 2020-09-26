@@ -131,10 +131,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      team: 'teams/getTeam',
-    }),
 
     swatchStyle() {
       const { color, menu } = this

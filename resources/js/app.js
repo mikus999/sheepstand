@@ -66,15 +66,54 @@ Vue.filter('formatWeekdayShort', function (value) {
 
 
 
-// $CAN: permissions check prototype
-Vue.prototype.$can = function (permissions) {
-  const userRoles = $store.getters['auth/roles']
+/**
+ * $CAN: permissions check prototype
+ * @param { string, array } permission Accepts permission(s) to check as either a string or an array of strings
+ * @return boolean Returns 'true' if user roles match any of the given permissions
+ */ 
+Vue.prototype.$can = function (permission) {
+  var rolesAllowed = []
+  var matchFound = false
 
-  Object.keys(permissions).forEach(function(key) {
-    if (userRoles.indexOf(userRoles[key]) >= 0) {
-      isAllowed = true
+  if (this.siteRoles !== null) {
+    // Find which roles contain this permission
+    this.siteRoles.forEach(item => {
+      const sitePermissions = item.permissions
+      const arrayPermissions = sitePermissions.map(t => t['name'])
+      var foundRole = false
+
+      if ((typeof permission) == 'string') {
+        // If this role contains the given permission
+        foundRole = arrayPermissions.indexOf(permission) >= 0
+      } else if ((typeof permission) == 'object') {
+        // If this role contains any of the given permissions
+        for (let perm of permission) {
+          foundRole = arrayPermissions.indexOf(perm) >= 0
+          if (foundRole) { break }
+        }
+      }
+
+      // If the role contains the permission(s), push it to the list of allowed roles for this resource
+      if (foundRole) {
+        var roleName = item.name
+        rolesAllowed.push(roleName)
+      }
+    })
+
+
+    // Now see if the user owns one of the roles above
+    // If any of the users' roles match any of the allowed roles for this resource, return 'true'
+    const teamRoles = this.team ? this.roles[this.team.id] : []
+    const globalRoles = this.roles['global']
+    const myRoles = teamRoles.concat(globalRoles)
+
+    for (let myRole of myRoles) {
+      matchFound = rolesAllowed.indexOf(myRole) >= 0
+      if (matchFound) { break }
     }
-  })
+  }
+
+  return matchFound
 }
 
 
@@ -82,7 +121,6 @@ Vue.prototype.$can = function (permissions) {
 
 window.bus = new Vue()
 
-/* eslint-disable no-new */
 new Vue({
   i18n,
   store,

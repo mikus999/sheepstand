@@ -85,6 +85,12 @@ export const actions = {
         const { data } = response
         commit(types.FETCH_USER_SUCCESS, { user: data })
 
+        
+        /**
+         *  If the user is already a member of at least one team... 
+         *    Check if one of his teams is marked as default. If so, call 'setTeam'
+         *    If no default team is found, call 'setTeam' with first team in array.
+         */
         const objTeams = data.teams
         var hasDefault = false
 
