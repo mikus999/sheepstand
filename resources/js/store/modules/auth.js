@@ -8,7 +8,7 @@ export const state = {
   roles: null,
   siteRoles: null,
   teams: null,
-  team: localStorage.getItem('team') ? localStorage.getItem('team') : null,
+  team: null,
   token: Cookies.get('token')
 }
 
@@ -19,7 +19,7 @@ export const getters = {
   siteRoles: state => state.siteRoles,
   teams: state => state.teams,
   team: state => state.team,
-  hasTeam: state => state.hasTeam,
+  hasTeam: state => state.teams.length > 0,
   token: state => state.token,
   check: state => state.user !== null,
   isSuperAdmin: state => state.roles['global'].indexOf('super_admin') >= 0
@@ -36,7 +36,6 @@ export const mutations = {
     state.user = user
     state.roles = user.roles
     state.teams = user.teams
-    state.hasTeam = user.teams !== null
   },
 
   [types.FETCH_USER_FAILURE] (state) {
@@ -54,7 +53,10 @@ export const mutations = {
   
   [types.LOGOUT] (state) {
     state.user = null
+    state.team = null
+    state.teams = null
     state.roles = null
+    state.siteRoles = null
     state.token = null
 
     Cookies.remove('token')
@@ -68,9 +70,6 @@ export const mutations = {
     state.team = payload
   },
 
-  [types.SET_HASTEAM] (state, payload) {
-    state.hasTeam = payload > 0
-  },
 }
 
 // actions
@@ -79,7 +78,7 @@ export const actions = {
     commit(types.SAVE_TOKEN, payload)
   },
 
-  fetchUser ({ commit }) {
+  fetchUser ({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       axios.get('/api/user')
       .then(response => {
@@ -87,13 +86,22 @@ export const actions = {
         commit(types.FETCH_USER_SUCCESS, { user: data })
 
         const objTeams = data.teams
-        Object.keys(objTeams).forEach(function (item) {
-          var objTeam = objTeams[item]
+        var hasDefault = false
 
-          if (objTeam.pivot.default_team === 1) {
-            // call setTeam
+        if (objTeams.length > 0) {
+          Object.keys(objTeams).forEach(function (item) {
+            var objTeam = objTeams[item]
+
+            if (objTeam.pivot.default_team === 1) {
+              hasDefault = true
+              dispatch('setTeam', objTeam)
+            }
+          });
+
+          if (!hasDefault) {
+            dispatch('setTeam', objTeams[0])
           }
-        });
+        }
 
         resolve()
       })

@@ -4,5 +4,6 @@
         "resources/lang",
         "resources/js/lang"
     ],
-    "i18n-ally.sourceLanguage": "en"
+    "i18n-ally.sourceLanguage": "en",
+    "vue3snippets.enable-compile-vue-file-on-did-save-code": false
 }
