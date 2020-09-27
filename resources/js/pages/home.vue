@@ -3,7 +3,7 @@
     <v-row>
       <h4>Home</h4>
 
-      <LocationMap></LocationMap>
+      <LocationMap fill="#ff0000"></LocationMap>
     </v-row>
   </v-container>
 </template>

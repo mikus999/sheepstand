@@ -2,12 +2,13 @@
 
   <gmap-map 
     ref="map" 
+    :map-type-id="mapType"
     :center="mapCenter" 
     :zoom="13" 
     style="width: 100%; height: 800px" 
     :options="{
       zoomControl: true,
-      mapTypeControl: true,
+      mapTypeControl: false,
       scaleControl: false,
       streetViewControl: false,
       rotateControl: false,
@@ -22,15 +23,26 @@
         <gmap-drawing-manager
           v-if="!readonly"
           position="MIDDLE_RIGHT"
-          :rectangle-options="rectangleOptions"
-          :circle-options="circleOptions"
-          :polygon-options="polygonOptions"
+          :rectangle-options="shapeOptions"
+          :circle-options="shapeOptions"
+          :polygon-options="shapeOptions"
           :shapes="shapes"
           @rightclick="handleClickForDelete()"
         >
           <template v-slot="on">
-            <v-toolbar dense>
-              <v-btn-toggle>
+            <v-toolbar dense dark>
+              <v-btn-toggle mandatory>
+                <v-btn @click="updateMapType('roadmap')">
+                  <v-icon>mdi-map</v-icon>
+                </v-btn>
+                <v-btn @click="updateMapType('satellite')">
+                  <v-icon>mdi-satellite</v-icon>
+                </v-btn>
+              </v-btn-toggle>
+
+              <v-spacer></v-spacer>
+
+              <v-item-group class="v-btn-toggle" right>
                 <v-btn @click="on.setDrawingMode('rectangle')">
                   <v-icon>mdi-vector-rectangle</v-icon>
                 </v-btn>
@@ -40,12 +52,13 @@
                 <v-btn @click="on.setDrawingMode('polygon')">
                   <v-icon>mdi-vector-polygon</v-icon>
                 </v-btn>
-              </v-btn-toggle>
-
-              <v-btn icon @click="on.deleteSelection()">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-
+                <v-btn @click="on.deleteSelection()">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+                <v-btn @click="showJSON()">
+                  <v-icon>mdi-marker</v-icon>
+                </v-btn>
+              </v-item-group>
             </v-toolbar>
           </template>
         </gmap-drawing-manager>
@@ -58,9 +71,22 @@
 export default {
   name: 'LocationMap',
   props: {
-    'readonly': false,
-    'width': '100%',
-    'height': '500px',
+    readonly: {
+      type: Boolean,
+      default: false
+    },
+    width: {
+      type: [String, Number],
+      default: '100%'
+    },
+    width: {
+      type: [String, Number],
+      default: '500px'
+    },
+    fill: {
+      type: String,
+      default: '#777777'
+    }
   },
 
   data () {
@@ -70,33 +96,13 @@ export default {
         lat: 1,
         lng: 1
       },
-      paths: [
-        [ {lat: 1.380, lng: 103.800}, {lat:1.380, lng: 103.810}, {lat: 1.390, lng: 103.810}, {lat: 1.390, lng: 103.800} ]
-      ],
+      paths: [],
       shapes: [],
-      rectangleOptions: {
-        fillColor: '#777',
+      shapeOptions: {
+        fillColor: this.fill,
         fillOpacity: 0.4,
         strokeWeight: 2,
-        strokeColor: '#999',
-        draggable: true,
-        editable: true,
-        clickable: true
-      },
-      circleOptions: {
-        fillColor: '#777',
-        fillOpacity: 0.4,
-        strokeWeight: 2,
-        strokeColor: '#999',
-        draggable: true,
-        editable: false,
-        clickable: true
-      },
-      polygonOptions: {
-        fillColor: '#777',
-        fillOpacity: 0.4,
-        strokeWeight: 2,
-        strokeColor: '#999',
+        strokeColor: '#999999',
         draggable: true,
         editable: true,
         clickable: true
@@ -106,6 +112,8 @@ export default {
       },
       mapDraggable: this.readonly,
       mapCursor: this.readonly ? null : 'default',
+      mapType: 'roadmap',
+      drawingMode: 0
     }
   },
 
@@ -128,7 +136,26 @@ export default {
           .removeAt($event.vertex)
 
     },
+
+    updateMapType (type) {
+      this.mapType = type
+    },
+
+    updateDrawingType (type) {
+      console.log(type)
+    },
+
+    showJSON () {
+      console.log(this.shapes)
+    }
   }
 
 }
 </script>
+
+<style scoped>
+.aa {
+  background: #424242 !important;
+}
+
+</style>
