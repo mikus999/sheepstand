@@ -5,6 +5,7 @@ $config = [
     'locales' => config('app.locales'),
     'googleAuth' => config('services.google.client_id'),
     'facebookAuth' => config('services.facebook.client_id'),
+    'googleMaps' => config('services.google.maps_id'),
     'environment' => config('app.env')
 ];
 @endphp
