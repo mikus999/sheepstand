@@ -10,6 +10,8 @@ import lodash from 'lodash'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import isoWeek from 'dayjs/plugin/isoWeek'
+import weekday from 'dayjs/plugin/weekday'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
@@ -47,7 +49,8 @@ Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttrib
 Vue.prototype.$dayjs = dayjs
 dayjs.extend(localeData)
 dayjs.extend(localizedFormat)
-
+dayjs.extend(isoWeek)
+dayjs.extend(weekday)
 
 Vue.filter('formatDate', function (value) {
   if (value) {

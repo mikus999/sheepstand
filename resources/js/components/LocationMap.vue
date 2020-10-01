@@ -113,7 +113,7 @@ export default {
       mapDraggable: this.readonly,
       mapCursor: this.readonly ? null : 'default',
       mapType: 'roadmap',
-      drawingMode: 0
+      drawingMode: 0,
     }
   },
 
@@ -131,10 +131,9 @@ export default {
 
   methods: {
     handleClickForDelete($event) {
-        this.$refs.polygon.$polygonObject.getPaths()
-          .getAt($event.path)
-          .removeAt($event.vertex)
-
+      this.$refs.polygon.$polygonObject.getPaths()
+        .getAt($event.path)
+        .removeAt($event.vertex)
     },
 
     updateMapType (type) {
@@ -146,10 +145,23 @@ export default {
     },
 
     showJSON () {
-      console.log(this.shapes)
+      this.$refs.map.$mapObject.data.add(this.shapes)
+      this.displayGeoJson()
+    },
+
+    displayGeoJson() {
+      var geoJson
+      var mapData = this.$refs.map.$mapObject.data
+
+      mapData.toGeoJson(geo => {
+        geoJson = JSON.stringify(geo, null, 2)
+        console.log(geoJson)
+
+      })
+
+      
     }
   }
-
 }
 </script>
 
