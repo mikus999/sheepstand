@@ -3,16 +3,11 @@
     <v-list flat class="mb-0 pb-0" v-show="!isMobile">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title">
-            <svg width="25" height="25" version="1.1" fill="currentColor" viewBox="0 0 12.7 12.7" xmlns="http://www.w3.org/2000/svg">
-              <g transform="scale(.98535 1.0149)" aria-label="C">
-                <path d="m11.445 9.3097q-1.6102 2.0742-4.4213 2.0742-2.3744 0-3.8891-1.501-1.5147-1.501-1.5147-3.7936 0-1.4192 0.69594-2.62 0.70959-1.2008 1.9514-1.8831 1.2418-0.68229 2.6746-0.68229 1.4465 0 2.5791 0.55948 1.1463 0.54584 1.9104 1.6102l-0.90063 0.69594q-1.4192-1.7194-3.507-1.7194-1.7057 0-2.9475 1.2008-1.2281 1.2008-1.2281 2.9475 0 1.733 1.2008 2.9066 1.2145 1.1599 3.1386 1.1599t3.3432-1.6512z"/>
-              </g>
-              <path transform="scale(.26458)" d="m22.486 10.08v15.014h3.2988v-0.009766h12.992v-3.2656h-12.992v-11.738h-3.2988z"/>
-            </svg>
+          <v-list-item-title>
+            <Logo width="30" height="30" class="mb-2 mr-1"/>
 
-            <span class="head-thick">CART</span>
-            <span class="head-thin ml-n1">PLAN</span>
+            <span class="head sheep">SHEEP</span>
+            <span class="head stand ml-n1">STAND</span>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -159,14 +154,15 @@ import { loadMessages } from '~/plugins/i18n'
 import helper from '../mixins/helper'
 import TeamSelector from './TeamSelector'
 import LocaleSelector from './LocaleSelector'
-
+import Logo from './Logo'
 
 export default {
   mixins: [helper],
 
   components: {
     TeamSelector,
-    LocaleSelector
+    LocaleSelector,
+    Logo
   },
 
   data () {

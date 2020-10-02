@@ -32,12 +32,19 @@
 }
 
 
-.head-thick {
-  font-family: 'Poppins';
-  font-weight: 800;
-}
+.head {
+  &.sheep {
+    font-family: 'Wendy One';
+    font-size: 1.7em;
+  }
 
-.head-thin {
-  font-family: 'Poppins';
-  font-weight: 100;
+  &.stand {
+    font-family: 'Wendy One';
+    font-size: 1.7em;
+    color: #d5d5d5;
+  }
+
+  &.small {
+    font-size: 1.1em;
+  }
 }

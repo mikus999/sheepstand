@@ -15,6 +15,9 @@ $config = [
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{csrf_token()}}">
+    <link rel="icon" href="{{ URL::asset('/favicon.ico') }}" type="image/x-icon"/>
+    <link rel="icon" href="{{ URL::asset('/favicon-16x16.png') }}" type="image/x-icon"/>
+    <link rel="icon" href="{{ URL::asset('/favicon-32x32.png') }}" type="image/x-icon"/>
 
     @if (Auth::check())
         <meta name="user_id" content="{{ Auth::user()->id }}" />
@@ -25,16 +28,12 @@ $config = [
     <title>{{ config('app.name') }}</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Wendy+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ mix('dist/css/app.css') }}">
 
     <!-- VUETIFY RESOURCES -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet"> 
-
-    <!-- Swiper resources
-    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
-    <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
-    -->
 
     <!--DevTools-->
     <script src="http://localhost:8098"></script>
