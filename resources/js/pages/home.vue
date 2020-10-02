@@ -6,9 +6,11 @@
 
     <v-row>
 
-      <v-toolbar flat>
+      <v-toolbar flat extended>
+        <v-select class="offset-md-3 col-md-6"></v-select>
+
         <template v-slot:extension>
-          <v-tabs v-model="tab" centered align-with-title>
+          <v-tabs v-model="tab" centered align-with-title fixed-tabs show-arrows>
             <v-tab v-for="n in daysOfWeek" :key="n">{{ n }}</v-tab>
           </v-tabs>
         </template>
