@@ -14,7 +14,10 @@ class ScheduleController extends Controller
 
     public function index($teamid)
     {
-        $schedules = Schedule::withCount('shifts')->where('team_id','=',$teamid)->get();
+        $schedules = Schedule::withCount('shifts')
+                        ->where('team_id','=',$teamid)
+                        ->orderBy('date_start', 'asc')
+                        ->get();
 
         return response()->json($schedules);
     }

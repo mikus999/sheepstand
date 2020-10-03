@@ -51,27 +51,32 @@ const helper = {
         { 
           value: 0,
           text: this.$t('shifts.status_0'), 
-          color: 'deep-orange'
+          color: 'deep-orange',
+          icon: 'mdi-account-clock'
         },
         { 
           value: 1,
           text: this.$t('shifts.status_1'), 
-          color: 'deep-orange'
+          color: 'deep-orange',
+          icon: 'mdi-account-clock'
         },
         { 
           value: 2,
           text: this.$t('shifts.status_2'), 
-          color: 'green'
+          color: 'green',
+          icon: 'mdi-account-check'
         },
         { 
           value: 3,
           text: this.$t('shifts.status_3'), 
-          color: 'red darken-4'
+          color: 'red darken-4',
+          icon: 'mdi-account-cancel'
         },
         { 
           value: 4,
           text: this.$t('shifts.status_4'), 
-          color: 'blue'
+          color: 'blue',
+          icon: 'mdi-account-convert'
         }
       ]
     }
