@@ -14,10 +14,15 @@ use Auth;
 class TeamController extends Controller
 {
 
+    /**
+     * 
+     * Return details of all teams user is member of
+     * 
+     */
     public function index()
     {
       $user = Auth::user();
-      $teams = User::find($user->id)->teams;
+      $teams = $user->teams;
 
       $data = [
           'teams' => $user->teams
@@ -29,7 +34,7 @@ class TeamController extends Controller
 
     /**
      * 
-     *  CREATE NEW TEAM
+     *  Create a new team
      * 
      */
     public function store(Request $request)
@@ -73,36 +78,69 @@ class TeamController extends Controller
 
 
 
-
+    /**
+     * 
+     * Return team details, only if user is member
+     * 
+     */
     public function show($id)
     {
-        $team = Team::find($id);
+        $user = Auth::user();
+        $team = $user->teams()->find($id);
         return response()->json($team);
     }
 
 
 
+    /**
+     * 
+     * Update team details
+     *  - ROLE: team_admin
+     * 
+     */
     public function update(Request $request, $id)
     {
-      $team = Team::find($id);
-      $team->display_name = $request->display_name;
-      if ($request->newcode = true) {
-        $team->code = Helper::getUniqueCode(6, 'team_code', 'TM-');
+      $user = Auth::user();
+      $team = $user->teams()->find($id);
+
+      if ($team) {
+        if ($user->hasRole('team_admin', $team)) {
+          $team->display_name = $request->display_name;
+          if ($request->newcode = true) {
+            $team->code = Helper::getUniqueCode(6, 'team_code', 'TM-');
+          }
+          $team->user_id = $request->user_id;
+          $team->save();
+        }
       }
-      $team->user_id = $request->user_id;
-      $team->save();
 
       return response()->json($team);
     }
 
 
-
+    /**
+     * 
+     * Destroy/delete team,
+     *  - ROLE: team_admin
+     * 
+     */
     public function destroy($id)
     {
-        Team::destroy($id);
+        $user = Auth::user();
+        $team = $user->teams->find($id);
+        $message = 'Access Denied';
+
+        if ($team) {
+          if ($user->hasRole('team_admin', $team)) {
+            Team::destroy($id);
+            $message = 'Team Deleted';
+          }
+        }
+
         $data = [
-            'message' => 'Team Deleted!',
+          'message' => $message,
         ];
+
         return response()->json($data);
 
     }
@@ -110,40 +148,56 @@ class TeamController extends Controller
 
 
 
-    // Custom Functions
 
 
-    
+    /**
+     * 
+     * Add a user to a team
+     *  - ROLE: team_admin, super_admin
+     * 
+     */
     public function addUserToTeam(Request $request)
     {
       $error = false;
+      $user = Auth::user();
 
-      if ($request->user_id) {
-        $user = User::find($request->user_id);
-      } elseif ($request->user_code) {
-        $user = User::where('user_code',$request->user_code)->first();
+      if (strlen($request->team_id)<7) {
+        $teamid = $request->team_id;
+        $team = Team::find($teamid);
+      } else {
+        $team = Team::where('code',$request->team_id)->first();
       }
 
-      if ($user) {
-        if (strlen($request->team_id)<7) {
-          $teamid = $request->team_id;
-          $team = Team::find($teamid);
-        } else {
-          $team = Team::where('code',$request->team_id)->first();
-        }
 
-        if ($team) {
-          $user->teams()->detach($team); // First detach if already exists
-          $user->teams()->attach($team);
-          $user->attachRole('publisher', $team);
-          $message = 'SUCCESS';
+      // Find the target user
+      if ($request->user_id) {
+        $targetUser = User::find($request->user_id);
+      } elseif ($request->user_code) {
+        $targetUser = User::where('user_code',$request->user_code)->first();
+      }
+
+
+      // Only Team Admins and Super Admins can add/remove users from a team
+      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+
+        // If the target user was found
+        if ($targetUser) {
+          if ($team) {
+            $targetUser->teams()->detach($team); // First detach if already exists
+            $targetUser->teams()->attach($team);
+            $targetUser->attachRole('publisher', $team);
+            $message = 'USER ADDED TO TEAM';
+          } else {
+            $error = true;
+            $message = 'TEAM NOT FOUND';
+          }
         } else {
           $error = true;
-          $message = 'NOT_FOUND';
+          $message = 'USER NOT FOUND';
         }
       } else {
         $error = true;
-        $message = 'USER NOT FOUND';
+        $message = 'Access Denied';
       }
 
 
@@ -156,48 +210,78 @@ class TeamController extends Controller
         $data = [
           'error' => $error,
           'message' => $message,
-          'teams' => $user->teams,
-          'user' => $user
+          'teams' => $targetUser->teams,
+          'user' => $targetUser
         ];
       }
       return response()->json($data);
     }
 
 
+
+    /**
+     * 
+     * Remove a user from a team
+     *  - ROLE: team_admin, super_admin
+     * 
+     */
     public function removeUserFromTeam(Request $request)
     {
       $userid = $request->user_id;
       $teamid = $request->team_id;
+      $user = Auth::user();
       $team = Team::find($teamid);
-      $user = User::find($userid);
+      $targetUser = User::find($userid);
 
-      $user->teams()->detach($teamid);
-      
-      DB::table('shift_user')
-        ->whereIn('shift_id', $team->shifts->pluck('id'))
-        ->where('user_id', $userid)
-        ->delete();
-      
+
+      // Only Team Admins and Super Admins can add/remove users from a team
+      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+        $targetUser->teams()->detach($teamid);
+        
+        // Remove user's shifts
+        DB::table('shift_user')
+          ->whereIn('shift_id', $team->shifts->pluck('id'))
+          ->where('user_id', $userid)
+          ->delete();
+      }
 
       $data = [
           'users' => 'Successfully left team!',
-          'teams' => $user->teams
+          'teams' => $targetUser->teams
       ];
       return response()->json($data);
     }
 
 
+
+
+    /**
+     * 
+     * Change the team code
+     *  - ROLE: team_admin, super_admin
+     * 
+     */
     public function changeTeamCode($id)
     {
+      $user = Auth::user();
       $team = Team::find($id);
-      $teamcode = Helper::getUniqueCode(6, 'team_code', 'TM-');
-      $team->code = $teamcode;
-      $team->save();
+
+      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+        $teamcode = Helper::getUniqueCode(6, 'team_code', 'TM-');
+        $team->code = $teamcode;
+        $team->save();
+      }
 
       return response()->json($team);
     }
 
 
+
+    /**
+     * 
+     * Find a team by the given code
+     * 
+     */
     public function findTeamByCode($code) {
       $team = Team::where('code',$code)->first();
       $user = [];
@@ -219,14 +303,32 @@ class TeamController extends Controller
     }
 
 
+    /**
+     * 
+     * Return all team users
+     *  - ROLE: elder, team_admin, super_admin
+     * 
+     */
     public function getTeamUsers($id)
     {
+      $user = Auth::user();
       $team = Team::find($id);
+      $teamUsers = [];
 
-      return response()->json($team->users);
+      if ($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null)) {
+        $teamUsers = $team->users;
+      }
+      
+      return response()->json($teamUsers);
     }
 
 
+    /**
+     * 
+     * Change a team setting
+     *  - ROLE: team_admin, super_admin
+     * 
+     */
     public function updateSetting(Request $request)
     {
       $teamid = $request->team_id;
@@ -241,6 +343,12 @@ class TeamController extends Controller
     }
 
 
+
+    /**
+     * 
+     * Set the user's default team
+     * 
+     */
     public function setDefault(Request $request)
     {
       $user = Auth::user();

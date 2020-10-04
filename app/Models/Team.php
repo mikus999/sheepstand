@@ -27,6 +27,11 @@ class Team extends LaratrustTeam
     return $this->belongsToMany('App\Models\User')->withPivot('default_team');
   }
 
+  public function schedules()
+  {
+    return $this->hasMany('App\Models\Schedules');
+  }
+
   public function locations()
   {
     return $this->hasMany('App\Models\Location');

@@ -61,6 +61,10 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         return $this->belongsToMany('App\Models\Team')->withPivot('default_team')->withTimeStamps();
     }
 
+    public function schedules()
+    {
+        return $this->hasManyThrough('App\Models\Schedule', 'App\Models\Team');
+    }
 
     public function shifts()
     {

@@ -3,6 +3,7 @@
 namespace App\Helper;
 
 use DB;
+use Auth;
 
 class Helper
 {
@@ -24,6 +25,8 @@ class Helper
 
       return $roles;
     }
+
+
 
     public static function getUniqueCode($digits, $scope, $prefix = '', $suffix = '') {
         $returnstr = '';
