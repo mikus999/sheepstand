@@ -20,9 +20,9 @@
 
     <v-divider class="mx-3"></v-divider>
 
-    <v-card-actions bottom>
-      <v-btn text outlined small>Apply</v-btn> <!-- change to 'Cancel' if pending -->
-      <v-btn text outlined small>Trade</v-btn>
+    <v-card-actions class="justify-center">
+      <v-btn text outlined>Apply</v-btn> <!-- change to 'Cancel' if pending -->
+      <v-btn text outlined>Trade</v-btn>
     </v-card-actions>
   </v-card>
 </template>
