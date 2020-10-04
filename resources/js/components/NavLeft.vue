@@ -4,7 +4,7 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title>
-            <Logo width="30" height="30" class="mb-2 mr-1"/>
+            <Logo width="35" height="35" class="mb-2 mr-1"/>
 
             <span class="head sheep">SHEEP</span>
             <span class="head stand ml-n1">STAND</span>

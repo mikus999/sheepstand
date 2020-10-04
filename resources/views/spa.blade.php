@@ -15,9 +15,15 @@ $config = [
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{csrf_token()}}">
-    <link rel="icon" href="{{ URL::asset('/favicon.ico') }}" type="image/x-icon"/>
-    <link rel="icon" href="{{ URL::asset('/favicon-16x16.png') }}" type="image/x-icon"/>
-    <link rel="icon" href="{{ URL::asset('/favicon-32x32.png') }}" type="image/x-icon"/>
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#084389">
+    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="theme-color" content="#084389">
+
 
     @if (Auth::check())
         <meta name="user_id" content="{{ Auth::user()->id }}" />
