@@ -297,7 +297,7 @@ export default {
       var val = ''
 
       if (valType === 'bool') {
-        val = this.teamData[setting] === null ? '0' : '1'
+        val = this.teamData[setting] === null ? 0 : 1
       } else {
         val = this.teamData[setting]
       }
@@ -311,10 +311,9 @@ export default {
           value: val
         }
       })
-
-      // Load new settings into store object and cookie
-      this.setTeam(this.team.id)
-
+      .then(response => {
+        this.$store.dispatch('auth/setTeam', response.data)
+      })
     },
   }
 }

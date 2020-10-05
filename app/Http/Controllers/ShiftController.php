@@ -175,7 +175,7 @@ class ShiftController extends Controller
     /**
      * 
      * Add a user to a shift
-     *  - ROLE: team_admin
+     *  - ROLE: team_admin, or user adding self
      * 
      */
     public function addUserToShift(Request $request)
@@ -192,12 +192,7 @@ class ShiftController extends Controller
         if ($schedule) {
             $team = $user->teams->find($schedule->team_id);
 
-            if ($user->hasRole('team_admin', $team)) {     
-
-                $userid = $request->user_id;
-                $shiftid = $request->shift_id;
-                $status = $request->status;
-
+            if ($user->hasRole('team_admin', $team) || $userid === $user->id) {                 
                 if (is_null($status)) {
                     $status = 0;
                     $request->status = $status;
@@ -226,7 +221,7 @@ class ShiftController extends Controller
     /**
      * 
      * Remove a user from a shift
-     *  - ROLE: team_admin
+     *  - ROLE: team_admin, or user removing self
      * 
      */
     public function removeUserFromShift(Request $request)
@@ -242,7 +237,7 @@ class ShiftController extends Controller
         if ($schedule) {
             $team = $user->teams->find($schedule->team_id);
 
-            if ($user->hasRole('team_admin', $team)) {     
+            if ($user->hasRole('team_admin', $team) || $userid === $user->id) {     
                 $targetUser = User::find($userid);
                 $targetUser->shifts()->detach($shiftid); // First detach if already exists
 
@@ -268,6 +263,7 @@ class ShiftController extends Controller
      */
     public function changeUserShiftStatus(Request $request)
     {
+        $data = ['message' => 'Access Denied'];
         $user = Auth::user();
         $userid = $request->user_id;
         $shiftid = $request->shift_id;
@@ -279,7 +275,16 @@ class ShiftController extends Controller
         if ($schedule) {
             $targetUser = User::find($userid);
             $targetUser->shifts()->updateExistingPivot($shiftid, ['status' => $status]);
+
+            $shiftusers = Shift::find($shiftid)->users()->get();
+            $data = [
+                'shiftusers' => $shiftusers
+            ];
         }
+
+
+        return response()->json($data);
+
     }
 
 

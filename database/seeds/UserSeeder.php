@@ -12,10 +12,10 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\User::class, 25)->create()->each(function ($user) {
+        factory(App\Models\User::class, 10)->create()->each(function ($user) {
             DB::table('team_user')->insert([
                 'user_id' => $user->id,
-                'team_id' => 21,
+                'team_id' => 26,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);

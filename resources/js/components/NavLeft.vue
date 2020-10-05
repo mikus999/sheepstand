@@ -13,7 +13,7 @@
       </v-list-item>
     </v-list>
 
-    <v-list flat v-if="user" :dense="$vuetify.breakpoint.xs">
+    <v-list v-if="user" dense>
       <v-divider class="ma-1" v-show="!isMobile"/>
 
       <v-list-item router :to="{ name: 'home' }" class="text-decoration-none" active-class="menu-selected-item">
@@ -25,104 +25,80 @@
         </v-list-item-content>
       </v-list-item>
 
-      <!-- TEAMS -->
-      <v-list-group prepend-icon="mdi-account-group" no-action active-class="menu-selected-item">
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t('menu.team') }}</v-list-item-title>
-          </v-list-item-content>
-        </template>
+      <v-list-item router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-calendar</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.shifts') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
-
-        <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" v-if="hasTeam">
-          <v-icon class="menu-subitem-icon">mdi-cog</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.team_settings') }}</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
-          <v-icon class="menu-subitem-icon">mdi-account-multiple-plus</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.join_another_team') }}</v-list-item-title>
-        </v-list-item>
-
-      </v-list-group>
-
-      <!-- SCHEDULING -->
-      <v-list-group prepend-icon="mdi-calendar" v-if="hasTeam && $can(['view_schedules','manage_schedules'])" no-action active-class="menu-selected-item">
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t('menu.scheduling') }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </template>
-
-        <v-list-item disabled class="text-decoration-none">
-          <v-icon class="menu-subitem-icon">mdi-account-details</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.assignments') }}</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none">
-          <v-icon class="menu-subitem-icon">mdi-calendar-clock</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.shift_planning') }}</v-list-item-title>
-        </v-list-item>
-
-        <v-divider inset />
-        <v-subheader inset>Settings</v-subheader>
-
-        <v-list-item router :to="{ name: 'teams.locations' }" class="text-decoration-none" v-if="hasTeam">
-          <v-icon class="menu-subitem-icon">mdi-map-marker-multiple</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.locations') }}</v-list-item-title>
-        </v-list-item>
-      </v-list-group>
-
-
-
-      <!-- TRANSLATION -->
-      <v-list-group prepend-icon="mdi-translate" v-if="$can('manage_translation')" no-action active-class="menu-selected-item">
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t('menu.translation') }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </template>
-
-        <v-list-item router :to="{ name: 'translation.index' }" class="text-decoration-none">
-          <v-icon class="menu-subitem-icon">mdi-tooltip-edit</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.translation_manager') }}</v-list-item-title>
-        </v-list-item>
-      </v-list-group>
-
-
-
-      <!-- ACCOUNT -->
-      <v-list-group prepend-icon="mdi-account-tie" no-action active-class="menu-selected-item">
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t('menu.account') }}</v-list-item-title>
-          </v-list-item-content>
-        </template>
-
-        <v-list-item disabled class="text-decoration-none">
-          <v-icon class="menu-subitem-icon">mdi-lock-reset</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.change_password') }}</v-list-item-title>
-        </v-list-item>
-        
-        <v-list-item router :to="{ name: 'account.index' }" class="text-decoration-none">
-          <v-icon class="menu-subitem-icon">mdi-account-cog</v-icon>
-          <v-list-item-title class="menu-subitem-label">{{ $t('menu.account_settings') }}</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item class="text-decoration-none">
-          <v-list-item-content>
-          <v-switch v-model="$vuetify.theme.dark" hide-details :label="$t('menu.dark_theme')" color="black" class="radio-sm"></v-switch>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-group>
-
+      <v-list-item router :to="{ name: 'account.index' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-account-tie</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.account') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
 
+
+
+
+    <v-list v-if="hasTeam && $can(['view_schedules','manage_schedules'])" dense>
+      <v-subheader>{{ $t('menu.team_admin')}}</v-subheader>
+
+      <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-calendar-clock</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.scheduling') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-cog</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.team_settings') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-item router :to="{ name: 'teams.locations' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-map-marker-multiple</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.locations') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+
+
+    <v-list v-if="$can('manage_translation')" dense>
+      <v-subheader>{{ $t('menu.site_admin')}}</v-subheader>
+
+      <v-list-item router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-translate</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.translation') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+
+
     <template v-slot:append v-if="user">
+      <div class="pa-1">
+        <v-switch v-model="$vuetify.theme.dark" hide-details color="black"></v-switch>
+      </div>
+
+
       <!-- TEAM SELECTOR -->
       <div class="pa-1">
         <TeamSelector v-if="!$vuetify.breakpoint.mobile && hasTeam" />
@@ -192,7 +168,7 @@ export default {
 
 <style scoped>
   .radio-sm .v-label {
-    font-size: 11pt;
+    font-size: 9pt;
     color: #ffffff;
   }
 

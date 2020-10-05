@@ -26,7 +26,7 @@
                       <v-text-field v-model="tempData.name" prepend-icon="mdi-form-textbox" :label="$t('teams.location_name')" 
                         :error-messages="nameErrors" @blur="$v.tempData.name.$touch()" />
 
-                      <v-menu v-model="menu" top nudge-bottom="105" nudge-left="16" :open-on-click="true" :close-on-content-click="true">
+                      <v-menu v-model="menu" top nudge-bottom="105" nudge-left="16" :open-on-click="true" :close-on-content-click="false">
                         <template v-slot:activator="{ on }">
                           <v-text-field v-model="tempData.color_code" :label="$t('teams.location_color_optional')" v-on="on" prepend-icon="mdi-palette" hide-details >
                               <template v-slot:prepend-inner>

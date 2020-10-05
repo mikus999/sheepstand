@@ -5,8 +5,8 @@
     <v-icon>mdi-view-dashboard</v-icon>
   </v-btn>
 
-  <v-btn router :to="{ name: 'schedules.index' }" class="text-decoration-none" v-if="hasTeam">
-    <span>{{ $t('menu.scheduling') }}</span>
+  <v-btn router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" v-if="hasTeam">
+    <span>{{ $t('menu.shifts') }}</span>
     <v-icon>mdi-calendar</v-icon>
   </v-btn>
 

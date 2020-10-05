@@ -310,7 +310,6 @@ export default {
     timeFormat () {
       const localeTime = this.$dayjs().localeData().longDateFormat('LT')
       const isAmPm = localeTime.indexOf('A') >= 0
-      console.log(localeTime)
       return (isAmPm ? 'ampm' : '24hr')
     }
   },
@@ -332,7 +331,7 @@ export default {
         .then(response => {
           this.schedData = response.data
           this.date = this.$dayjs(this.schedData.date_start)
-          this.shiftDefaults.end = this.$dayjs(this.shiftDefaults.start, 'HH:mm').add(this.team.default_shift_minutes, 'minutes').format("HH:mm")
+          this.shiftDefaults.end = this.$dayjs(this.$dayjs(this.date).format('L') + ' ' + this.shiftDefaults.start).add(this.team.default_shift_minutes, 'm').format("HH:mm")
           this.shiftDefaults.participants = [this.team.default_participants_min, this.team.default_participants_max]
           this.getShiftData(response.data.date_start)
         })

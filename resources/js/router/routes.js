@@ -29,6 +29,7 @@ export default [
   { path: '/schedule/edit/:id', name: 'schedules.edit', component: page('schedules/edit.vue'), meta: { roles: ['elder','team_admin'], auth: true }, props: true },
   { path: '/schedule/assignments/:id', name: 'schedules.assignments', component: page('schedules/assignments.vue'), meta: { roles: ['elder','team_admin'], auth: true }, props: true },
   { path: '/schedule/', name: 'schedules.index', component: page('schedules/index.vue'), meta: { roles: ['elder','team_admin'], auth: true } },
+  { path: '/shifts', name: 'schedules.shifts', component: page('schedules/shifts.vue'), meta: { roles: [], auth: true } },
 
   // TRANSLATION routes
   { path: '/translation', name: 'translation.index', component: page('translation/index.vue'), meta: { roles: ['translator'], auth: true }},
