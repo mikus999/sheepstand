@@ -1,6 +1,6 @@
 <template>
   <v-card outlined hover :width="width" :style="'background-color: ' + background">
-    <v-card-title class="justify-center" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
+    <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
       {{ shift.location.name }}
     </v-card-title>
 
@@ -16,16 +16,22 @@
         </div>
     </v-card-text>
 
-    <v-divider class="mx-3"></v-divider>
+    <v-divider class="ma-0"></v-divider>
 
-    <v-card-actions class="justify-center">
-      <v-btn :disabled="!showButton('request')" :color="(request && myShiftStatus) ? shiftStatus[myShiftStatus].color : ''" icon @click.stop="updateShiftUser">
-        <v-icon>mdi-hand-right</v-icon>
-      </v-btn>
+    <v-card-actions>
+      <v-row dense>
+        <v-col class="text-center">
+          <v-btn :disabled="!showButton('request')" :color="(request && myShiftStatus) ? '' : ''" icon @click.stop="updateShiftUser" class='me-2'>
+            <v-icon>{{ request ? 'mdi-account-minus' : 'mdi-account-plus' }}</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn :disabled="!showButton('trade')" :color="trade ? 'blue' : ''" icon @click.stop="updateTrade">
+            <v-icon>mdi-account-convert</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
-      <v-btn :disabled="!showButton('trade')" :color="trade ? 'blue' : ''" icon @click.stop="updateTrade">
-        <v-icon>mdi-account-switch</v-icon>
-      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -55,7 +61,7 @@ export default {
     },
     height: {
       type: [String, Number],
-      default: '150px'
+      default: '170px'
     },
   },
 
@@ -111,9 +117,9 @@ export default {
 
       switch (btn) {
         case 'request':
-          show = (this.schedule.status == 1) && !this.shiftFull
+          show = (this.schedule.status == 1 && (!this.shiftFull || this.request)) || (this.schedule.status == 2 && (this.myShiftStatus == 0 || this.myShiftStatus == 1))
           break;
-        
+
         case 'trade':
           show = (this.schedule.status == 2) && (this.myShiftStatus > 1)
           break;

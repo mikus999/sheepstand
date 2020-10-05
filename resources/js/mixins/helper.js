@@ -76,7 +76,7 @@ const helper = {
           value: 4,
           text: this.$t('shifts.status_4'), 
           color: 'blue',
-          icon: 'mdi-account-switch'
+          icon: 'mdi-account-convert'
         }
       ]
     }
