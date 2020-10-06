@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift');
     Route::post('schedules/shiftuserstatus', 'ShiftController@changeUserShiftStatus');
     Route::get('schedules/shiftusers/{id}', 'ShiftController@getShiftUsers');
+    Route::get('schedules/trades', 'ShiftController@getTradeRequests');
 
     // SCHEDULE routes
     Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);

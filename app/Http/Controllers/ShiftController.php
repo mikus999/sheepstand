@@ -311,4 +311,43 @@ class ShiftController extends Controller
 
         return response()->json($shiftusers);
     }
+
+
+
+
+
+    /**
+     * 
+     * Return all users assigned to a shift
+     *  - ROLE: team member
+     * 
+     */
+    public function getTradeRequests()
+    {
+        $user = Auth::user();
+        $date = date_create(now())->modify('-7 days');
+        $schedules = $user->schedules()
+                        ->where('date_start','>',$date)
+                        ->where('status','>',-1)
+                        ->get();
+        $shifts = Shift::with('users')
+                    ->whereIn('schedule_id', $schedules->pluck('id'))
+                    ->get();
+        $shiftusers = [];
+        
+        foreach ($shifts as $shift) {
+            foreach ($shift['users'] as $user) {
+                if ($user['pivot']['status'] == 4) {
+                    array_push($shiftusers, $user);
+                }
+            }
+        }
+
+        $data = [
+            'trades' => $shiftusers,
+        ];
+
+
+        return response()->json($data);
+    }
 }
