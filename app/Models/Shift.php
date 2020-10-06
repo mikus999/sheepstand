@@ -15,7 +15,7 @@ class Shift extends Model
       'max_participants'
     ];
 
-    public function schedules()
+    public function schedule()
     {
         return $this->belongsTo('App\Models\Schedule');
     }
@@ -28,5 +28,10 @@ class Shift extends Model
     public function users()
     {
         return $this->belongsToMany('App\Models\User')->withPivot('status');
+    }
+
+    public function trades()
+    {
+        return $this->belongsToMany('App\Models\User')->withPivot('status')->wherePivot('status',4);
     }
 }

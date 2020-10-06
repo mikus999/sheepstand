@@ -5,7 +5,7 @@
     </v-row>
 
     <v-row>
-      
+      <TradeRequests />
       
     </v-row>
   </v-container>
@@ -14,13 +14,15 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
+import TradeRequests from '~/components/TradeRequests.vue'
+
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
   components: {
-    
+    TradeRequests
   },
 
   data () {

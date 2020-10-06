@@ -175,7 +175,9 @@
         "shift_time": "Shift Time",
         "location": "Location",
         "participants": "Participants",
-        "assignments": "Assignments"
+        "assignments": "Assignments",
+        "trade_requests": "Trade Requests",
+        "confirm_trade": "Are you sure you want to accept this assignment?"
     },
     "translation": {
         "management_system": "Translation Management System",

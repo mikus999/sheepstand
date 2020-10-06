@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Shift;
 use App\Models\Schedule;
 use App\Models\User;
+use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use Auth;
 use Helper;
 
@@ -318,35 +320,64 @@ class ShiftController extends Controller
 
     /**
      * 
-     * Return all users assigned to a shift
+     * Return all open trade requests
      *  - ROLE: team member
      * 
      */
-    public function getTradeRequests()
+    public function getTradeRequests($teamid)
     {
+        $data = ['message' => 'Team Not Found'];
         $user = Auth::user();
-        $date = date_create(now())->modify('-7 days');
-        $schedules = $user->schedules()
-                        ->where('date_start','>',$date)
-                        ->where('status','>',-1)
-                        ->get();
-        $shifts = Shift::with('users')
-                    ->whereIn('schedule_id', $schedules->pluck('id'))
-                    ->get();
+        $team = Team::find($teamid);
         $shiftusers = [];
-        
-        foreach ($shifts as $shift) {
-            foreach ($shift['users'] as $user) {
-                if ($user['pivot']['status'] == 4) {
-                    array_push($shiftusers, $user);
-                }
-            }
+
+        if ($team) {
+            $date = date_create(now())->modify('-7 days');
+            $shiftusers = $team->shifts()
+                        ->with(['trades','schedule','location'])
+                        ->whereHas('trades')
+                        ->where('schedules.date_start','>',$date)
+                        ->where('schedules.status','>',0)
+                        ->get();
+
+
+            $data = [
+                'trades' => $shiftusers,
+            ];
         }
 
-        $data = [
-            'trades' => $shiftusers,
-        ];
+        return response()->json($data);
+    }
 
+    
+    /**
+     * 
+     * Return all open trade requests
+     *  - ROLE: team member
+     * 
+     */
+    public function makeTrade($teamid, Request $request)
+    {
+        $data = ['message' => 'Team Not Found'];
+        $user = Auth::user();
+        $targetUser = User::find($request->user_id);
+        $shift = Shift::find($request->shift_id);
+        $team = $user->teams->find($teamid);
+        $shiftusers = [];
+
+
+        if ($team) {
+            $targetUser->shifts()->detach($shift->id);
+            $user->shifts()->detach($shift->id);
+            $user->shifts()->attach($shift->id);
+            $user->shifts()->updateExistingPivot($shift->id, ['status' => 2]);
+
+            $shiftusers = $this->getTradeRequests($teamid);
+
+            $data = [
+                'trades' => $shiftusers->original,
+            ];
+        }
 
         return response()->json($data);
     }
