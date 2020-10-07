@@ -25,7 +25,8 @@
         "default": "Default",
         "min": "min",
         "max": "max",
-        "autosave": "Autosave"
+        "autosave": "Autosave",
+        "available": "Available"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -177,7 +178,9 @@
         "participants": "Participants",
         "assignments": "Assignments",
         "trade_requests": "Trade Requests",
-        "confirm_trade": "Are you sure you want to accept this assignment?"
+        "trade_click_to_accept": "Click on a name to accept the shift",
+        "confirm_trade": "Are you sure you want to accept this assignment?",
+        "success_trade_made": "Trade successful!"
     },
     "translation": {
         "management_system": "Translation Management System",

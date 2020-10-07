@@ -334,7 +334,7 @@ class ShiftController extends Controller
         if ($team) {
             $date = date_create(now())->modify('-7 days');
             $shiftusers = $team->shifts()
-                        ->with(['trades','schedule','location'])
+                        ->with(['trades','schedule','location','users'])
                         ->whereHas('trades')
                         ->where('schedules.date_start','>',$date)
                         ->where('schedules.status','>',0)
@@ -376,6 +376,75 @@ class ShiftController extends Controller
 
             $data = [
                 'trades' => $shiftusers->original,
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+
+    
+    /**
+     * 
+     * Show schedule, shift and trade statistics
+     *  - ROLE: team member
+     * 
+     */
+    public function showStatistics($teamid)
+    {
+        $data = ['message' => 'Team Not Found'];
+        $user = Auth::user();
+        $team = $user->teams->find($teamid);
+        $stats = [];
+        $totalShifts = 0;
+        $totalSpots = 0;
+        $availSpots = 0;
+        $shiftWithNeeds = 0;
+        $availTrades = 0;
+        $shiftWithTrades = 0;
+
+        if ($team) {
+
+            // Available shift spots, shifts with needs
+            $date = date_create(now())->modify('-7 days');
+
+            $shifts = $team->shifts()
+                        ->with('schedule')
+                        ->withCount(['users', 'trades'])
+                        ->where('schedules.date_start','>',$date)
+                        ->where('schedules.status','>',0)
+                        ->get();
+
+            $totalShifts = $shifts->count();
+            $totalSpots = $shifts->sum('max_participants');
+
+            foreach($shifts as $shift) {
+
+                $free = $shift->max_participants - $shift->users_count;
+                if ($free > 0) {
+                    $availSpots += $free;
+                    $shiftWithNeeds += 1;
+                }
+
+                if ($shift->trades_count > 0) {
+                    $availTrades += $shift->trades_count;
+                    $shiftWithTrades += 1;
+                }
+            };
+
+            $stats['total_shifts'] = $totalShifts;
+            $stats['total_spots'] = $totalSpots;
+            $stats['available_spots'] = $availSpots;
+            $stats['shifts_with_needs'] = $shiftWithNeeds;
+            $stats['available_trades'] = $availTrades;
+            $stats['shifts_with_trades'] = $shiftWithTrades;
+
+            
+
+
+
+            $data = [
+                'stats' => $stats,
             ];
         }
 

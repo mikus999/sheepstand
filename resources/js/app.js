@@ -19,6 +19,8 @@ import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import * as GmapVue from 'gmap-vue';
 
+
+
 // BootstrapVue
 Vue.use(BootstrapVue)
 

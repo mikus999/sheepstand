@@ -10,15 +10,22 @@
     </v-card-subtitle>
 
     <v-card-text :style="'overflow-y: auto; height: ' + height">
-        <div v-for="user in shift.users" :key="user.id" class="ma-2" disabled>
+        <div v-for="user in shift.users" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
           <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">{{ shiftStatus[user.pivot.status].icon }}</v-icon>
           <span :class="shiftStatus[user.pivot.status].color + '--text'">{{ user.name }}</span>
+        </div>
+
+        <div v-for="n in returnZero(shift.max_participants - shift.users.length)" :key="n" class="ma-2" disabled>
+          <div class="ml-n5 dashed-border rounded" width="100%">
+            <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
+            <span>{{ $t('general.available') }}</span>
+          </div>
         </div>
     </v-card-text>
 
     <v-divider class="ma-0"></v-divider>
 
-    <v-card-actions>
+    <v-card-actions v-if="!onlyinfo">
       <v-row dense>
         <v-col class="text-center">
           <v-btn :disabled="!showButton('request')" :color="(request && myShiftStatus) ? '' : ''" icon @click.stop="updateShiftUser" class='me-2'>
@@ -63,6 +70,10 @@ export default {
       type: [String, Number],
       default: '170px'
     },
+    onlyinfo: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data () {
@@ -190,7 +201,20 @@ export default {
       })
     },
 
+    returnZero (n) {
+      return n < 0 ? 0 : n
+    }
+
   }
 
 }
 </script>
+
+<style scoped>
+  .dashed-border 
+  {
+    border-style: dashed;
+    border-color: 'grey';
+    border-width: thin;
+  }
+</style>
