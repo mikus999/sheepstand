@@ -1,5 +1,23 @@
 <template>
-  <VueApexCharts :options="options" :series="series" height="500" width="500" />
+  <v-container fluid>
+    <v-row>
+      <v-toolbar flat>
+        <v-toolbar-title>
+          <v-icon left>mdi-gauge</v-icon>
+          {{ $t('general.statistics') }}
+        </v-toolbar-title>
+      </v-toolbar>
+    </v-row>
+    <v-row>
+      <v-col sm=6 lg=12 class="text-center">
+        <VueApexCharts :options="optionsPlaces" :series="seriesPlaces" height="350" width="350" />
+      </v-col>
+
+      <v-col sm=6 lg=12 class="text-center">
+        <VueApexCharts :options="optionsShifts" :series="seriesShifts" height="350" width="350" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -17,20 +35,47 @@ export default {
   data () {
     return {
       stats: [],
-      series: [],
-      options: {
+      seriesPlaces: [],
+      optionsPlaces: {
         chart: {
           height: 350,
           type: 'radialBar',
         },
-        colors: ['#2196F3','#FF1744'],
+        labels: ['Available Spots','Trades'],
+        colors: ['#2196F3','#00BCD4'],
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'vertical',
+            shadeIntensity: 0.5,
+            inverseColors: true,
+            opacityFrom: 1,
+            opacityTo: 1,
+            stops: [0, 100]
+          }
+        },
+        stroke: {
+          lineCap: 'round'
+        },
         plotOptions: {
           radialBar: {
             hollow: {
-              margin: 4,
+              margin: 0,
               size: '40%',
               background: '#222222',
               image: undefined,
+              position: 'front',
+              dropShadow: {
+                enabled: true,
+                top: 0,
+                left: 0,
+                blur: 4,
+                opacity: 0.24
+              }
+            },
+            track: {
+              background: ['#BBDEFB','#E0F7FA']
             },
             dataLabels: {
               name: {
@@ -45,7 +90,7 @@ export default {
               },
               total: {
                 show: true,
-                label: 'Total Shifts',
+                label: 'Total Spots',
                 fontSize: '14px',
                 color: '#ffffff',
                 formatter: (val) => {
@@ -55,7 +100,76 @@ export default {
             }
           }
         },
-        labels: ['Available Spots','Trades'],
+        stroke: {
+          lineCap: 'round'
+        },
+      },
+
+      seriesShifts: [],
+      optionsShifts: {
+        chart: {
+          height: 350,
+          type: 'radialBar',
+        },
+        labels: ['Shift with Needs','Shifts with Trades'],
+        colors: ['#2196F3','#00BCD4'],
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'vertical',
+            shadeIntensity: 0.5,
+            inverseColors: true,
+            opacityFrom: 1,
+            opacityTo: 1,
+            stops: [0, 100]
+          }
+        },
+        stroke: {
+          lineCap: 'round'
+        },
+        plotOptions: {
+          radialBar: {
+            hollow: {
+              margin: 0,
+              size: '40%',
+              background: '#222222',
+              image: undefined,
+              position: 'front',
+              dropShadow: {
+                enabled: true,
+                top: 0,
+                left: 0,
+                blur: 4,
+                opacity: 0.24
+              }
+            },
+            track: {
+              background: ['#BBDEFB','#E0F7FA']
+            },
+            dataLabels: {
+              name: {
+                fontSize: '14px',
+              },
+              value: {
+                fontSize: '14px',
+                color: '#ffffff',
+                formatter: (val) => {
+                  return Math.round((val/100) * this.stats.total_shifts)
+                }
+              },
+              total: {
+                show: true,
+                label: 'Total Shifts',
+                fontSize: '14px',
+                color: '#ffffff',
+                formatter: (val) => {
+                  return this.stats.total_shifts
+                }
+              }
+            },
+          },
+        }
       }
     }
   },
@@ -72,10 +186,13 @@ export default {
 
           const avail_spots_pct = (this.stats.available_spots / this.stats.total_spots) * 100
           const avail_trades_pct = (this.stats.available_trades / this.stats.total_spots) * 100
-          
-          this.series.push(avail_spots_pct)
-          this.series.push(avail_trades_pct)
+          this.seriesPlaces.push(avail_spots_pct)
+          this.seriesPlaces.push(avail_trades_pct)
 
+          const shifts_with_needs = (this.stats.shifts_with_needs / this.stats.total_shifts) * 100
+          const shifts_with_trades = (this.stats.shifts_with_trades / this.stats.total_shifts) * 100
+          this.seriesShifts.push(shifts_with_needs)
+          this.seriesShifts.push(shifts_with_trades)
         })
     },
 

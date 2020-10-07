@@ -432,11 +432,11 @@ class ShiftController extends Controller
                 }
             };
 
-            $stats['total_shifts'] = $totalShifts;
             $stats['total_spots'] = $totalSpots;
             $stats['available_spots'] = $availSpots;
-            $stats['shifts_with_needs'] = $shiftWithNeeds;
             $stats['available_trades'] = $availTrades;
+            $stats['total_shifts'] = $totalShifts;
+            $stats['shifts_with_needs'] = $shiftWithNeeds;
             $stats['shifts_with_trades'] = $shiftWithTrades;
 
             

@@ -7,7 +7,7 @@ export const state = {
   user: null,
   roles: null,
   siteRoles: null,
-  teams: null,
+  teams: [],
   team: null,
   token: Cookies.get('token')
 }

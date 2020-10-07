@@ -15,11 +15,12 @@
       </template>
 
       <template v-slot:item.day="{ item }">
-        {{ item.time_start | formatDay }}
+        {{ item.time_start | formatDay }}<br>
+        {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
       </template>
 
       <template v-slot:item.shift_time="{ item }">
-        {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
+        
       </template>
 
       <template v-slot:item.location="{ item }">
@@ -68,7 +69,6 @@ export default {
       headersShift: [
         { text: '', value: 'view', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
-        { text: this.$t('shifts.shift_time'), value: 'shift_time', align: 'left' },
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
         { text: this.$t('shifts.trade_requests'), value: 'tradewith', align: 'left' }
       ],

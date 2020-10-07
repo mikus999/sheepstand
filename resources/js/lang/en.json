@@ -26,7 +26,8 @@
         "min": "min",
         "max": "max",
         "autosave": "Autosave",
-        "available": "Available"
+        "available": "Available",
+        "statistics": "Statistics"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -177,6 +178,7 @@
         "location": "Location",
         "participants": "Participants",
         "assignments": "Assignments",
+        "my_shifts": "My Shifts",
         "trade_requests": "Trade Requests",
         "trade_click_to_accept": "Click on a name to accept the shift",
         "confirm_trade": "Are you sure you want to accept this assignment?",
