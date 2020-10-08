@@ -4,7 +4,7 @@
       <PageTitle :title="$t('account.account_settings')"></PageTitle>
     </v-row>
 
-    <v-row>
+    <v-card width="100%">
       <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
         <v-tab href="#tab-general">
           <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
@@ -69,7 +69,7 @@
         </v-tabs-items>
 
       </v-tabs>
-    </v-row>
+    </v-card>
   </v-container>
 </template>
 

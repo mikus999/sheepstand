@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-card width="100%">
     <v-toolbar flat extended height="80">
       <v-select outlined v-model="schedule" :items="schedules" item-value="id" item-text="date_start" return-object
         @change="getShiftData" prepend-icon="mdi-calendar-week-begin" :label="$t('schedules.week_of')" class="mt-10">
@@ -24,7 +24,7 @@
         </v-row>
       </v-tab-item>
     </v-tabs-items>
-  </v-container>
+  </v-card>
 </template>
 
 <script>

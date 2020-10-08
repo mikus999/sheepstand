@@ -1,23 +1,22 @@
 <template>
-  <v-container fluid>
-    <v-row>
+  <v-card>
       <v-toolbar flat>
         <v-toolbar-title>
           <v-icon left>mdi-gauge</v-icon>
           {{ $t('general.statistics') }}
         </v-toolbar-title>
       </v-toolbar>
-    </v-row>
+
     <v-row>
       <v-col sm=6 lg=12 class="text-center">
-        <VueApexCharts :options="optionsPlaces" :series="seriesPlaces" height="350" width="350" />
+        <VueApexCharts :options="optionsPlaces" :series="seriesPlaces" width="100%" />
       </v-col>
 
       <v-col sm=6 lg=12 class="text-center">
-        <VueApexCharts :options="optionsShifts" :series="seriesShifts" height="350" width="350" />
+        <VueApexCharts :options="optionsShifts" :series="seriesShifts" width="100%" />
       </v-col>
     </v-row>
-  </v-container>
+  </v-card>
 </template>
 
 <script>

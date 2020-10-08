@@ -4,106 +4,112 @@
       <PageTitle :title="$t('schedules.schedule')"></PageTitle>
     </v-row>
 
-    <v-row>
-      <v-col xs=1 sm=4 class="text-left" >
-        <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-          <v-icon left>mdi-arrow-left</v-icon>
-          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
-        </v-btn>
-      </v-col>
+    <v-card width="100%">
+      <v-row>
+        <v-col xs=1 sm=4 class="text-left" >
+          <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
+            <v-icon left>mdi-arrow-left</v-icon>
+            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
+          </v-btn>
+        </v-col>
 
-      <v-col xs=10 sm=4 class="text-center">
-        <span class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
-      </v-col>
-      
-      <v-col xs=1 sm=4 class="text-right">
-        <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedData.status > 0">
-          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
-          <v-icon right>mdi-arrow-right</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+        <v-col xs=10 sm=4 class="text-center">
+          <span class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
+        </v-col>
+        
+        <v-col xs=1 sm=4 class="text-right">
+          <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedData.status > 0">
+            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
+            <v-icon right>mdi-arrow-right</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
-    <v-row class="mt-5 mb-5">
-      <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
-      <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
+      <v-row class="my-5">
+        <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
+        <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
 
-      <v-slider v-model="schedData.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
-        ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
-      </v-slider>
-    </v-row>
+        <v-col>
+          <v-slider v-model="schedData.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
+            ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
+          </v-slider>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <swiper ref="mySwiper" :options="swiperOptions">
-        <swiper-slide v-for="day in days7" :key="day.id" class="text-center">
-          <h4>{{ day.date | formatWeekdayShort }}</h4>
-          <h6>{{ day.date | formatDate }}</h6>
+      <v-row>
+        <v-col>
+          <swiper ref="mySwiper" :options="swiperOptions">
+            <swiper-slide v-for="day in days7" :key="day.id" class="text-center">
+              <h4>{{ day.date | formatWeekdayShort }}</h4>
+              <h6>{{ day.date | formatDate }}</h6>
 
-          <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
-            @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
+              <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
+                @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
 
-              <!-- SHIFT CARDS -->
-              <v-card v-for="shift in day.list" :key="shift.id" :id="shift.id" class="shift mt-5 handle" :color="shift.location.color_code">
-                <v-card-text class="shift-body text-center pa-0">
-                  <v-row dense>
-                    <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
-                    <v-col cols=8 class="font-weight-bold">{{ shift.location.name }}</v-col>
-                  </v-row>
-                  <v-row dense>
-                    <v-col cols=2><v-icon small>mdi-clock</v-icon></v-col>
-                    <v-col cols=8 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
-                  </v-row>
-                  <v-row dense>
-                    <v-col cols=2><v-icon small>mdi-account-tie</v-icon></v-col>
-                    <v-col cols=3 offset="1">
-                      <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
-                      <span>{{ $t('general.min') }}</span>
-                    </v-col>
-                    <v-col cols=2>
-                      <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
-                      <span>{{ $t('general.max') }}</span>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                
-                <v-divider class="pa-0 ma-0" />
+                  <!-- SHIFT CARDS -->
+                  <v-card v-for="shift in day.list" :key="shift.id" :id="shift.id" class="shift mt-5 handle" :color="shift.location.color_code">
+                    <v-card-text class="shift-body text-center pa-0">
+                      <v-row dense>
+                        <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
+                        <v-col cols=8 class="font-weight-bold">{{ shift.location.name }}</v-col>
+                      </v-row>
+                      <v-row dense>
+                        <v-col cols=2><v-icon small>mdi-clock</v-icon></v-col>
+                        <v-col cols=8 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
+                      </v-row>
+                      <v-row dense>
+                        <v-col cols=2><v-icon small>mdi-account-tie</v-icon></v-col>
+                        <v-col cols=3 offset="1">
+                          <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
+                          <span>{{ $t('general.min') }}</span>
+                        </v-col>
+                        <v-col cols=2>
+                          <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
+                          <span>{{ $t('general.max') }}</span>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                    
+                    <v-divider class="pa-0 ma-0" />
 
-                <v-card-actions class="pa-0">
-                  <v-row dense>
-                    <v-col>
-                      <v-btn icon @click="showShiftDialog(shift, true)">
-                        <v-icon small>mdi-pencil</v-icon>
-                      </v-btn>
-                    </v-col>
-                    <v-col>
-                      <v-btn icon @click="deleteShift(shift.id)">
-                        <v-icon small>mdi-delete</v-icon>
-                      </v-btn>
-                    </v-col>
-                    <v-col>
-                      <v-btn icon @click="duplicateShift(shift.id)">
-                        <v-icon small>mdi-content-duplicate</v-icon>
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-card-actions>
-              </v-card>
+                    <v-card-actions class="pa-0">
+                      <v-row dense>
+                        <v-col>
+                          <v-btn icon @click="showShiftDialog(shift, true)">
+                            <v-icon small>mdi-pencil</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col>
+                          <v-btn icon @click="deleteShift(shift.id)">
+                            <v-icon small>mdi-delete</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col>
+                          <v-btn icon @click="duplicateShift(shift.id)">
+                            <v-icon small>mdi-content-duplicate</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-card-actions>
+                  </v-card>
 
-              <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
-                <v-card-text class="text-center pa-0">
-                  <v-icon large class="pa-4">mdi-select-place</v-icon>
-                </v-card-text>
-              </v-card>
+                  <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
+                    <v-card-text class="text-center pa-0">
+                      <v-icon large class="pa-4">mdi-select-place</v-icon>
+                    </v-card-text>
+                  </v-card>
 
-              <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day, false)">
-                <v-card-text class="text-center pa-0">
-                  <v-icon large class="pa-4">mdi-plus-box</v-icon>
-                </v-card-text>
-              </v-card>
-          </draggable>
-        </swiper-slide>
-      </swiper>
-    </v-row>
+                  <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day, false)">
+                    <v-card-text class="text-center pa-0">
+                      <v-icon large class="pa-4">mdi-plus-box</v-icon>
+                    </v-card-text>
+                  </v-card>
+              </draggable>
+            </swiper-slide>
+          </swiper>
+        </v-col>
+      </v-row>
+    </v-card>
 
     <!-- NEW/EDIT SHIFT DIALOG -->
     <v-dialog v-model="dialog" max-width="500px">
@@ -138,7 +144,6 @@
               </v-col>
               <v-col cols=5>
                 <v-dialog ref="dialog2" v-model="time.end" :return-value.sync="shiftData.end" persistent width="290px">
-      >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field v-model="shiftData.end" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
                   </template>
@@ -171,6 +176,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
   </v-container>
 </template>
 

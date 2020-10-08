@@ -1,6 +1,6 @@
 $color-pack: false;
 
-
+@import 'variables'; // Must be first in list
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index';
 @import '~sweetalert2/src/sweetalert2';
@@ -8,7 +8,6 @@ $color-pack: false;
 @import '~vuetify/src/styles/styles.sass';
 @import '~swiper/css/swiper.css';
 
-@import 'variables';
 @import 'elements/card';
 @import 'elements/navbar';
 @import 'elements/buttons';

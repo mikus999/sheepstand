@@ -8,46 +8,48 @@
       </div>
     </v-row>
 
-    <v-row>
-      <v-col cols=6>
-        <span>{{ $t('translation.source_language')}}: EN</span>
-      </v-col>
+    <v-card width="100%">
+      <v-row>
+        <v-col cols=6>
+          <span>{{ $t('translation.source_language')}}: EN</span>
+        </v-col>
 
-      <v-col cols=6>
-        <span>{{ $t('translation.target_language')}}</span>
-        <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
-          <v-radio v-for="lang in languages" :key="lang.id" :label="locales[lang.language]" :value="lang.language"></v-radio>
-        </v-radio-group>
-      </v-col>
-    </v-row>
+        <v-col cols=6>
+          <span>{{ $t('translation.target_language')}}</span>
+          <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
+            <v-radio v-for="lang in languages" :key="lang.id" :label="locales[lang.language]" :value="lang.language"></v-radio>
+          </v-radio-group>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols=12>
-        <v-select v-if="langTargetLocale !== null" v-model="currSection" :items="langSourceCat" @change="parseStrings($event)">
-        </v-select>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols=12>
+          <v-select v-if="langTargetLocale !== null" v-model="currSection" :items="langSourceCat" @change="parseStrings($event)">
+          </v-select>
+        </v-col>
+      </v-row>
+      
+      <v-row>
+        <v-col cols=12>
+          <v-data-iterator v-if="currSection !== null" :items="langSourceStrings" hide-default-footer disable-pagination>
+            <template v-slot:default="props">
+              <v-row v-for="item in props.items" :key="item.key" class="mt-3">
+                <v-col cols=12>
+                  <v-text-field :hint="item.key" v-model="langTargetStrings[props.items.indexOf(item)].value" placeholder="---" 
+                    persistent-hint :prefix="langTargetLocale.toUpperCase() + ': '">
+                    <template v-slot:label>
+                      <span class="translation-label">EN: {{ item.value}}</span>
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+            </template>
+          </v-data-iterator>
+        </v-col>   
+
+      </v-row>
+    </v-card>
     
-    <v-row>
-      <v-col cols=12>
-        <v-data-iterator v-if="currSection !== null" :items="langSourceStrings" hide-default-footer disable-pagination>
-          <template v-slot:default="props">
-            <v-row v-for="item in props.items" :key="item.key" class="mt-3">
-              <v-col cols=12>
-                <v-text-field :hint="item.key" v-model="langTargetStrings[props.items.indexOf(item)].value" placeholder="---" 
-                  persistent-hint :prefix="langTargetLocale.toUpperCase() + ': '">
-                  <template v-slot:label>
-                    <span class="translation-label">EN: {{ item.value}}</span>
-                  </template>
-                </v-text-field>
-              </v-col>
-            </v-row>
-          </template>
-        </v-data-iterator>
-      </v-col>   
-
-    </v-row>
-
     <v-fab-transition>
       <v-btn :key="saveFab.icon" :color="saveFab.color" @click="saveNow" fab dark bottom right fixed>
         <span v-show="saveFab.showTime">{{ remaining }}</span>

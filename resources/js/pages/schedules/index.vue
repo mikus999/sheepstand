@@ -4,81 +4,79 @@
       <PageTitle :title="$t('schedules.shift_schedules')"></PageTitle>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-        <v-data-table :headers="schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on" :block="$vuetify.breakpoint.xs">{{ $t('schedules.create_new_schedule') }}</v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="headline">{{ $t('schedules.create_new_schedule') }}</span>
-                  </v-card-title>
+    <v-card width="100%">
+      <v-data-table :headers="schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-dialog v-model="dialog" max-width="500px">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on" :block="$vuetify.breakpoint.xs">{{ $t('schedules.create_new_schedule') }}</v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ $t('schedules.create_new_schedule') }}</span>
+                </v-card-title>
 
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12">
-                          <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
-                            transition="scale-transition" offset-y min-width="290px">
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+                          transition="scale-transition" offset-y min-width="290px">
 
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field v-model="newSchedDate" :label="$t('schedules.choose_start_date')" prepend-icon="mdi-calendar" readonly
-                                v-bind="attrs" v-on="on"></v-text-field>
-                            </template>
-                            <v-date-picker v-model="newSchedDate" no-title scrollable first-day-of-week="1">
-                              <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
-                              <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
-                            </v-date-picker>
-                          </v-menu>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field v-model="newSchedDate" :label="$t('schedules.choose_start_date')" prepend-icon="mdi-calendar" readonly
+                              v-bind="attrs" v-on="on"></v-text-field>
+                          </template>
+                          <v-date-picker v-model="newSchedDate" no-title scrollable first-day-of-week="1">
+                            <v-spacer></v-spacer>
+                            <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
+                            <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
+                          </v-date-picker>
+                        </v-menu>
 
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
 
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">{{ $t('general.create') }}</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">{{ $t('general.create') }}</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
 
-          <template v-slot:item.date_start="{ item }">
-            {{ item.date_start | formatDate }}
-          </template>
+        <template v-slot:item.date_start="{ item }">
+          {{ item.date_start | formatDate }}
+        </template>
 
-          <template v-slot:item.status="{ item }">
-            <div :class="scheduleStatus[item.status].color+'--text'">{{ scheduleStatus[item.status].text }}</div>
-          </template>
+        <template v-slot:item.status="{ item }">
+          <div :class="scheduleStatus[item.status].color+'--text'">{{ scheduleStatus[item.status].text }}</div>
+        </template>
 
-          <template v-slot:item.shifts_count="{ item }">
-            {{ item.shifts_count }}
-          </template>
-          
-          <template v-slot:item.actions="{ item }">
-            <v-icon small @click="editSched(item)" class="mr-2">
-              mdi-pencil
-            </v-icon>
-            <v-icon small @click="editAssignments(item)" class="mr-2" :disabled="item.status < 1">
-              mdi-account-multiple-plus
-            </v-icon>
-            <v-icon small @click="deleteSched(item)" class="mr-2">
-              mdi-delete
-            </v-icon>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
+        <template v-slot:item.shifts_count="{ item }">
+          {{ item.shifts_count }}
+        </template>
+        
+        <template v-slot:item.actions="{ item }">
+          <v-icon small @click="editSched(item)" class="mr-2">
+            mdi-pencil
+          </v-icon>
+          <v-icon small @click="editAssignments(item)" class="mr-2" :disabled="item.status < 1">
+            mdi-account-multiple-plus
+          </v-icon>
+          <v-icon small @click="deleteSched(item)" class="mr-2">
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-data-table>
+    </v-card>
   </v-container>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-card>
     <v-data-table :headers="headersShift" :items="trades" disable-sort width="100%">
       <template v-slot:top>
         <v-toolbar flat>
@@ -44,7 +44,7 @@
     <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
       <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px"></ShiftCard>
     </v-overlay>
-  </v-container>
+  </v-card>
 </template>
 
 <script>

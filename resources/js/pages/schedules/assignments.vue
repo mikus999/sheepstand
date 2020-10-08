@@ -4,85 +4,87 @@
       <PageTitle :title="$t('schedules.schedule')"></PageTitle>
     </v-row>
 
-    <v-row>
-      <v-col xs=1 sm=4 class="text-left" >
-        <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-          <v-icon left>mdi-arrow-left</v-icon>
-          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
-        </v-btn>
-      </v-col>
+    <v-card width="100%">
+      <v-row>
+        <v-col xs=1 sm=4 class="text-left" >
+          <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
+            <v-icon left>mdi-arrow-left</v-icon>
+            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
+          </v-btn>
+        </v-col>
 
-      <v-col xs=10 sm=4 class="text-center">
-        <span class="text-h6">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
-      </v-col>
-      
-      <v-col xs=1 sm=4 class="text-right">
-        <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="">
-          <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.approvals') }}</span>
-          <v-icon right>mdi-arrow-right</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+        <v-col xs=10 sm=4 class="text-center">
+          <span class="text-h6">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
+        </v-col>
+        
+        <v-col xs=1 sm=4 class="text-right">
+          <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="">
+            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.approvals') }}</span>
+            <v-icon right>mdi-arrow-right</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col md="12">
-        <v-data-table :headers="shiftHeaders" :items="shiftData" sort-by="time_start" sort-asc>
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>{{ $t('schedules.assignments') }}</v-toolbar-title>
-            </v-toolbar>
-          </template>
+      <v-row>
+        <v-col md="12">
+          <v-data-table :headers="shiftHeaders" :items="shiftData" sort-by="time_start" sort-asc>
+            <template v-slot:top>
+              <v-toolbar flat>
+                <v-toolbar-title>{{ $t('schedules.assignments') }}</v-toolbar-title>
+              </v-toolbar>
+            </template>
 
-          <template v-slot:item.day="{ item }">
-            {{ item.time_start | formatDay }}
-          </template>
+            <template v-slot:item.day="{ item }">
+              {{ item.time_start | formatDay }}
+            </template>
 
-          <template v-slot:item.shift_time="{ item }">
-            {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
-          </template>
+            <template v-slot:item.shift_time="{ item }">
+              {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
+            </template>
 
-          <template v-slot:item.location="{ item }">
-            <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
-          </template>
+            <template v-slot:item.location="{ item }">
+              <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
+            </template>
 
-          <template v-slot:item.assignments="{ item }">
+            <template v-slot:item.assignments="{ item }">
 
-            <v-select v-model="item.users" :items="teamUsers" :readonly="((item.max_participants <= item.users.length) || !$can('manage_schedules'))"
-                hide-details multiple class="no-border"
-                return-object item-text="name" item-value="id" :id="'shift'+item.id">
+              <v-select v-model="item.users" :items="teamUsers" :readonly="((item.max_participants <= item.users.length) || !$can('manage_schedules'))"
+                  hide-details multiple class="no-border"
+                  return-object item-text="name" item-value="id" :id="'shift'+item.id">
 
-              <!-- NUMBER OF SHIFT ASSIGNMENTS -->
-              <template v-slot:prepend-inner>
-                <v-chip small label :color="checkMax(item.max_participants, item.users.length)">{{ item.users.length }}/{{ item.max_participants }}</v-chip>
-              </template>
+                <!-- NUMBER OF SHIFT ASSIGNMENTS -->
+                <template v-slot:prepend-inner>
+                  <v-chip small label :color="checkMax(item.max_participants, item.users.length)">{{ item.users.length }}/{{ item.max_participants }}</v-chip>
+                </template>
 
-              <!-- SELECTION SLOT: DISPLAYED IN TEXTBOX -->
-              <template v-slot:selection="data">
-                <v-chip small label v-bind="data.attrs" :input-value="data.selected" close
-                    :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
-                    @click:close="removeShiftUser(data, item)">
-                  {{ data.item.name}}
-                </v-chip>
-              </template>
+                <!-- SELECTION SLOT: DISPLAYED IN TEXTBOX -->
+                <template v-slot:selection="data">
+                  <v-chip small label v-bind="data.attrs" :input-value="data.selected" close
+                      :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
+                      @click:close="removeShiftUser(data, item)">
+                    {{ data.item.name}}
+                  </v-chip>
+                </template>
 
 
-              <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
-              <template v-slot:item="data">
-                <v-list-item-avatar>
-                  <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
-                </v-list-item-avatar>
-                <v-list-item-content @click="addShiftUser(data, item)">
-                  <v-list-item-title>{{ data.item.name }}</v-list-item-title>
-                  <v-list-item-subtitle></v-list-item-subtitle>
-                </v-list-item-content>
-              </template>
+                <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
+                <template v-slot:item="data">
+                  <v-list-item-avatar>
+                    <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content @click="addShiftUser(data, item)">
+                    <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+                    <v-list-item-subtitle></v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
 
-            </v-select>
+              </v-select>
 
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 

@@ -78,7 +78,7 @@
     "sass-loader": "^9.0.3",
     "vue-cli-plugin-vuetify": "~2.0.7",
     "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.3.0",
+    "vuetify-loader": "^1.4.3",
     "vuetifyjs-mix-extension": "0.0.11",
     "webpack-bundle-analyzer": "^3.8.0"
   }

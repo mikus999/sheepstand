@@ -1,14 +1,14 @@
 const path = require('path')
 const fs = require('fs-extra')
 const mix = require('laravel-mix')
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 require('laravel-mix-versionhash')
-require('vuetifyjs-mix-extension')
+// require('vuetifyjs-mix-extension')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 mix
-  .js('resources/js/app.js', 'public/dist/js').vuetify('vuetify-loader')
+  .js('resources/js/app.js', 'public/dist/js')
   .sass('resources/sass/app.scss', 'public/dist/css')
-
   .disableNotifications()
 
 if (mix.inProduction()) {
@@ -23,6 +23,7 @@ if (mix.inProduction()) {
 mix.webpackConfig({
   plugins: [
     // new BundleAnalyzerPlugin()
+    new VuetifyLoaderPlugin()
   ],
   resolve: {
     extensions: ['.js', '.json', '.vue'],
