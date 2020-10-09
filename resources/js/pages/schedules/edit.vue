@@ -46,64 +46,22 @@
               <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
                 @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
 
-                  <!-- SHIFT CARDS -->
-                  <v-card v-for="shift in day.list" :key="shift.id" :id="shift.id" class="shift mt-5 handle" :color="shift.location.color_code">
-                    <v-card-text class="shift-body text-center pa-0">
-                      <v-row dense>
-                        <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
-                        <v-col cols=8 class="font-weight-bold">{{ shift.location.name }}</v-col>
-                      </v-row>
-                      <v-row dense>
-                        <v-col cols=2><v-icon small>mdi-clock</v-icon></v-col>
-                        <v-col cols=8 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
-                      </v-row>
-                      <v-row dense>
-                        <v-col cols=2><v-icon small>mdi-account-tie</v-icon></v-col>
-                        <v-col cols=3 offset="1">
-                          <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
-                          <span>{{ $t('general.min') }}</span>
-                        </v-col>
-                        <v-col cols=2>
-                          <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
-                          <span>{{ $t('general.max') }}</span>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                    
-                    <v-divider class="pa-0 ma-0" />
+                  <ShiftEditCard v-for="shift in day.list" :key="shift.id" :shift="shift" :schedule="schedData" v-on:shift-update="getSchedData()" />                  
 
-                    <v-card-actions class="pa-0">
-                      <v-row dense>
-                        <v-col>
-                          <v-btn icon @click="showShiftDialog(shift, true)">
-                            <v-icon small>mdi-pencil</v-icon>
-                          </v-btn>
-                        </v-col>
-                        <v-col>
-                          <v-btn icon @click="deleteShift(shift.id)">
-                            <v-icon small>mdi-delete</v-icon>
-                          </v-btn>
-                        </v-col>
-                        <v-col>
-                          <v-btn icon @click="duplicateShift(shift.id)">
-                            <v-icon small>mdi-content-duplicate</v-icon>
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-card-actions>
+                  <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
+                  <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day, false)">
+                    <v-card-text class="text-center pa-0">
+                      <v-icon large class="pa-4">mdi-plus-box</v-icon>
+                    </v-card-text>
                   </v-card>
 
+                  <!-- Show placeholder card if there are now shifts for this day -->
                   <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
                     <v-card-text class="text-center pa-0">
                       <v-icon large class="pa-4">mdi-select-place</v-icon>
                     </v-card-text>
                   </v-card>
 
-                  <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day, false)">
-                    <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">mdi-plus-box</v-icon>
-                    </v-card-text>
-                  </v-card>
               </draggable>
             </swiper-slide>
           </swiper>
@@ -112,70 +70,9 @@
     </v-card>
 
     <!-- NEW/EDIT SHIFT DIALOG -->
-    <v-dialog v-model="dialog" max-width="500px">
-      <v-card>
-        <v-card-title class="text-center">
-          <span class="headline">{{ $t('schedules.new_shift') }} - {{ shiftData.date | formatDate }}</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols=2><v-icon>mdi-map-marker</v-icon></v-col>
-              <v-col cols=10>
-                <v-select v-model="shiftData.location" :items="locations" item-value="id" item-text="name" outlined dense />
-              </v-col>
-            </v-row>
-            
-            <v-row class="mt-5">
-              <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
-              <v-col cols=5>
-                <v-dialog ref="dialog1" v-model="time.start" :return-value.sync="shiftData.start" persistent width="290px">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="shiftData.start" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
-                  </template>
-
-                  <v-time-picker v-if="time.start" v-model="shiftData.start" :format="timeFormat" full-width :allowed-minutes="allowedStep">
-                    <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="time.start = false">{{ $t('general.cancel')}}</v-btn>
-                    <v-btn text color="primary" @click="$refs.dialog1.save(shiftData.start)">{{ $t('general.ok')}}</v-btn>
-                  </v-time-picker>
-                </v-dialog>
-              </v-col>
-              <v-col cols=5>
-                <v-dialog ref="dialog2" v-model="time.end" :return-value.sync="shiftData.end" persistent width="290px">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="shiftData.end" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
-                  </template>
-
-                  <v-time-picker v-if="time.end" v-model="shiftData.end" :format="timeFormat" full-width :allowed-minutes="allowedStep">
-                    <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="time.end = false">{{ $t('general.cancel')}}</v-btn>
-                    <v-btn text color="primary" @click="$refs.dialog2.save(shiftData.end)">{{ $t('general.ok')}}</v-btn>
-                  </v-time-picker>
-                </v-dialog>
-              </v-col>
-            </v-row>
-
-            <v-row class="mt-10">
-              <v-col cols=2><v-icon>mdi-account-tie</v-icon></v-col>
-              <v-col cols=10>
-                <v-range-slider v-model="shiftData.participants" :thumb-size="16" thumb-label="always"
-                  min="1" max="8" ticks="always" tick-size="4" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="secondary" text @click="close">{{ $t('general.close') }}</v-btn>
-          <v-btn color="secondary" text @click="addShift">
-            {{ shiftData.edit ? $t('general.save') : $t('general.create') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
+      <ShiftNewCard :shift="shiftDefaults" :schedule="schedData" width="300px" />
+    </v-overlay>
 
   </v-container>
 </template>
@@ -185,6 +82,8 @@ import axios from 'axios'
 import draggable from 'vuedraggable'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import helper from '~/mixins/helper'
+import ShiftEditCard from '~/components/ShiftEditCard.vue'
+import ShiftNewCard from '~/components/ShiftNewCard.vue'
 
 
 export default {
@@ -200,11 +99,14 @@ export default {
   components: {
     draggable,
     Swiper,
-    SwiperSlide
+    SwiperSlide,
+    ShiftEditCard,
+    ShiftNewCard
   },
 
   data () {
     return {
+      shiftOverlay: false,
       dialog: false,
       date: '',
       menu: false,
@@ -216,15 +118,15 @@ export default {
       schedData: {
         status: 0
       },
-      locations: [],
       shiftDefaults: {
           id: null,
-          date: '',
-          start: '08:00',
-          end: '08:00',
-          location: 1,
-          participants: [1, 2],
-          edit: false
+          time_start: null,
+          time_end: null,
+          min_participants: 2,
+          max_participants: 3,
+          location: {
+            id: 1,
+          },
       },
       shiftData: [],
       days7: [
@@ -327,7 +229,6 @@ export default {
   methods: {
     initialize () {
       this.getSchedData()
-      this.getLocations()
       this.makeStatusLabels()
       this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
     },
@@ -337,32 +238,21 @@ export default {
         .then(response => {
           this.schedData = response.data
           this.date = this.$dayjs(this.schedData.date_start)
-          this.shiftDefaults.end = this.$dayjs(this.$dayjs(this.date).format('L') + ' ' + this.shiftDefaults.start).add(this.team.default_shift_minutes, 'm').format("HH:mm")
-          this.shiftDefaults.participants = [this.team.default_participants_min, this.team.default_participants_max]
-          this.getShiftData(response.data.date_start)
-        })
+          this.shiftDefaults.time_start = this.$dayjs(this.date).format('L') + ' 08:00'
+          this.shiftDefaults.time_end = this.$dayjs(this.shiftDefaults.time_start).add(this.team.default_shift_minutes, 'm').format("HH:mm")
+          this.shiftDefaults.min_participants = this.team.default_participants_min
+          this.shiftDefaults.max_participants = this.team.default_participants_max
 
-    },
-
-    async getShiftData (date) {
-      await axios.get('/api/schedules/' + this.id + '/shifts')
-        .then(response => {
           // Loop through each day, show shifts
           this.days7.forEach ((item) => {
-            item.date = this.$dayjs(date).add(item.id, 'd').format('YYYY-MM-DD')
-            item.list = response.data.filter(shift => shift.time_start.includes(item.date))
+            item.date = this.$dayjs(response.data.date_start).add(item.id, 'd').format('YYYY-MM-DD')
+            item.list = response.data.shifts.filter(shift => shift.time_start.includes(item.date))
           })
+
         })
 
     },
 
-    async getLocations () {
-      await axios.get('/api/teams/' + this.team.id + '/locations')
-        .then(response => {
-          this.locations = response.data
-          this.shiftDefaults.location = response.data.filter(location => location.default)[0].id
-        })
-    },
 
     makeStatusLabels () {
       this.scheduleStatus.forEach((obj) => {
@@ -392,10 +282,6 @@ export default {
       }) 
     },
 
-    close () {
-      this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
-      this.dialog = false
-    },
 
     showShiftDialog (data, isEdit) {
 
@@ -413,43 +299,6 @@ export default {
 
       this.shiftData.edit = isEdit
       this.dialog = true
-    },
-
-
-    addShift () {
-      var tempStart = this.$dayjs(this.shiftData.date + ' ' + this.shiftData.start).format('YYYY-MM-DD HH:mm:ss')
-      var tempEnd = this.$dayjs(this.shiftData.date + ' ' + this.shiftData.end).format('YYYY-MM-DD HH:mm:ss')
-
-      if (!this.$dayjs(tempStart).isBefore(this.$dayjs(tempEnd))) {
-        tempEnd = this.$dayjs(tempStart).add(2, 'h').format('YYYY-MM-DD HH:mm:ss')
-      }
-
-      if (!this.shiftData.edit) {
-        const formData = new FormData()
-        formData.append('location_id', this.shiftData.location)
-        formData.append('time_start', tempStart)
-        formData.append('time_end', tempEnd)
-        formData.append('min_participants', this.shiftData.participants[0])
-        formData.append('max_participants', this.shiftData.participants[1])
-
-        axios.post('/api/schedules/' + this.id + '/shifts', formData)
-          .then(response => {
-            this.getShiftData(this.date)
-            this.close()  
-          })
-
-      } else {
-        var newShift = []
-        newShift.id = this.shiftData.id
-        newShift.location_id = this.shiftData.location
-        newShift.time_start = tempStart
-        newShift.time_end = tempEnd
-        newShift.min_participants = this.shiftData.participants[0]
-        newShift.max_participants = this.shiftData.participants[1]
-
-        this.updateShift(newShift)
-      }
-
     },
 
 
@@ -473,7 +322,6 @@ export default {
         })
     },
 
-
     async updateShift (data) {
       await axios({
         method: 'patch',      
@@ -487,44 +335,14 @@ export default {
         }
       })
       .then(response => {
-        this.getShiftData(this.date)
-        this.close()  
+        this.getSchedData(this.date)
       })
     },
     
-
-    async duplicateShift (id) {
-      var newShiftData = []
-
-      await axios.get('/api/schedules/' + this.id + '/shifts/' + id)
-        .then(response => {
-          newShiftData = response.data
-
-          const formData = new FormData()
-          formData.append('location_id', newShiftData.location_id)
-          formData.append('time_start', newShiftData.time_start)
-          formData.append('time_end', newShiftData.time_end)
-          formData.append('min_participants', newShiftData.min_participants)
-          formData.append('max_participants', newShiftData.max_participants)
-          axios.post('/api/schedules/' + this.id + '/shifts', formData)
-            .then(response => {
-              this.getShiftData(this.date)
-            })
-        })
-    },
-    
-    async deleteShift (id) {
-      if (confirm(this.$t('schedules.confirm_delete_shift'))) {
-        await axios.delete('/api/schedules/' + this.id + '/shifts/' + id)
-          .then(response => {
-            this.showSnackbar(this.$t('schedules.success_delete_shift'), 'success')
-            this.getShiftData(this.date)
-          })
-
-      }
+    showShiftOverlay(shift) {
+      this.shiftOverlay = true
     },
 
-    allowedStep: m => m % 15 === 0,
   },
 
 }
