@@ -16,12 +16,12 @@
         <v-row class="mt-5">
           <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
           <v-col cols=5>
-            <v-dialog ref="dialog1" v-model="time.start.show" :return-value.sync="time.start.value" persistent width="290px">
+            <v-dialog ref="dialog1" v-model="time.start.show" persistent width="290px">
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field v-model="shift.time_start" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
+                <v-text-field v-model="time.start.value" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
               </template>
 
-              <v-time-picker v-if="time.start" v-model="shift.time_start" :format="timeFormat" full-width :allowed-minutes="allowedStep">
+              <v-time-picker v-if="time.start.show" v-model="time.start.value" :format="timeFormat" full-width :allowed-minutes="allowedStep">
                 <v-spacer></v-spacer>
                 <v-btn text color="primary" @click="time.start.show = false">{{ $t('general.cancel')}}</v-btn>
                 <v-btn text color="primary" @click="$refs.dialog1.save(time.start.value)">{{ $t('general.ok')}}</v-btn>
@@ -29,12 +29,12 @@
             </v-dialog>
           </v-col>
           <v-col cols=5>
-            <v-dialog ref="dialog2" v-model="time.end.show" :return-value.sync="time.end.value" persistent width="290px">
+            <v-dialog ref="dialog2" v-model="time.end.show" persistent width="290px">
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field v-model="shift.time_end" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
+                <v-text-field v-model="time.end.value" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
               </template>
 
-              <v-time-picker v-if="time.end" v-model="shift.time_end" :format="timeFormat" full-width :allowed-minutes="allowedStep">
+              <v-time-picker v-if="time.end.show" v-model="time.end.value" :format="timeFormat" full-width :allowed-minutes="allowedStep">
                 <v-spacer></v-spacer>
                 <v-btn text color="primary" @click="time.end.show = false">{{ $t('general.cancel')}}</v-btn>
                 <v-btn text color="primary" @click="$refs.dialog2.save(time.start.value)">{{ $t('general.ok')}}</v-btn>
@@ -123,6 +123,8 @@ export default {
   
   created () {
     this.getLocations()
+    this.time.start.value = this.$dayjs(this.shift.time_start).format('HH:mm')
+    this.time.end.value = this.$dayjs(this.shift.time_end).format('HH:mm')
     this.participants = [this.shift.min_participants, this.shift.max_participants]
   },
 
@@ -132,68 +134,57 @@ export default {
       await axios.get('/api/teams/' + this.team.id + '/locations')
         .then(response => {
           this.locations = response.data
+
+          if (!this.edit) {
+            this.shift.location_id = this.locations[0].id
+          }
         })
     },
 
     close () {
-      this.dialog = false
+      this.$emit('close')
     },
 
 
-    addShift () {
-      var tempStart = this.$dayjs(this.shiftData.date + ' ' + this.shiftData.start).format('YYYY-MM-DD HH:mm:ss')
-      var tempEnd = this.$dayjs(this.shiftData.date + ' ' + this.shiftData.end).format('YYYY-MM-DD HH:mm:ss')
+    async addShift () {
+      var tempStart = this.$dayjs(this.shift.time_start).format('L') + ' ' + this.time.start.value
+      var tempEnd = this.$dayjs(this.shift.time_end).format('L') + ' ' + this.time.end.value
 
       if (!this.$dayjs(tempStart).isBefore(this.$dayjs(tempEnd))) {
-        tempEnd = this.$dayjs(tempStart).add(2, 'h').format('YYYY-MM-DD HH:mm:ss')
+        tempEnd = this.$dayjs(tempStart).add(this.team.default_shift_minutes, 'm')
       }
 
-      if (!this.shiftData.edit) {
-        const formData = new FormData()
-        formData.append('location_id', this.shiftData.location)
-        formData.append('time_start', tempStart)
-        formData.append('time_end', tempEnd)
-        formData.append('min_participants', this.shiftData.participants[0])
-        formData.append('max_participants', this.shiftData.participants[1])
+      tempStart = this.$dayjs(tempStart).format('YYYY-MM-DD HH:mm:ss')
+      tempEnd = this.$dayjs(tempEnd).format('YYYY-MM-DD HH:mm:ss')
 
-        axios.post('/api/schedules/' + this.id + '/shifts', formData)
-          .then(response => {
-            this.getShiftData(this.date)
-            this.close()  
-          })
 
+      if (this.edit) {
+        var method = 'PATCH'
+        var url = '/api/schedules/' + this.schedule.id + '/shifts/' + this.shift.id
       } else {
-        var newShift = []
-        newShift.id = this.shiftData.id
-        newShift.location_id = this.shiftData.location
-        newShift.time_start = tempStart
-        newShift.time_end = tempEnd
-        newShift.min_participants = this.shiftData.participants[0]
-        newShift.max_participants = this.shiftData.participants[1]
-
-        this.updateShift(newShift)
+        var method = 'POST'
+        var url = '/api/schedules/' + this.schedule.id + '/shifts'
       }
 
-    },
 
-
-    async updateShift (data) {
       await axios({
-        method: 'patch',      
-        url: '/api/schedules/' + this.id + '/shifts/' + data.id,
+        method: method,      
+        url: url,
         data: {
-          location_id: data.location_id,
-          time_start: data.time_start,
-          time_end: data.time_end,
-          min_participants: data.min_participants,
-          max_participants: data.max_participants
+          location_id: this.shift.location_id,
+          time_start: tempStart,
+          time_end: tempEnd,
+          min_participants: this.participants[0],
+          max_participants: this.participants[1]
         }
       })
       .then(response => {
-        this.getShiftData(this.date)
+        this.$emit('update', response.data.schedule)
         this.close()  
       })
+
     },
+
 
     allowedStep: m => m % 15 === 0,
 

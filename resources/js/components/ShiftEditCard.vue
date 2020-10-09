@@ -27,7 +27,7 @@
     <v-card-actions class="pa-0">
       <v-row dense>
         <v-col>
-          <v-btn icon @click="showShiftOverlay(shift)">
+          <v-btn icon @click="showShiftDialog()">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </v-col>
@@ -45,9 +45,9 @@
     </v-card-actions>
 
 
-    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
-      <ShiftNewCard :shift="shift" :schedule="schedule" edit width="300px" />
-    </v-overlay>
+    <v-dialog :value="dialog" @click:outside="closeShiftDialog()" width="500px">
+      <ShiftNewCard :shift="shift" :schedule="schedule" edit v-on:update="$emit('update', $event)" v-on:close="closeShiftDialog()" />
+    </v-dialog>
   </v-card>
 </template>
 
@@ -85,7 +85,7 @@ export default {
 
   data () {
     return {
-      shiftOverlay: false,
+      dialog: false,
 
     }
   },
@@ -111,7 +111,7 @@ export default {
           formData.append('max_participants', newShiftData.max_participants)
           axios.post('/api/schedules/' + this.schedule.id + '/shifts', formData)
             .then(response => {
-              this.$emit('shift-update')
+              this.$emit('update', response.data.schedule)
             })
         })
     },
@@ -121,14 +121,18 @@ export default {
         await axios.delete('/api/schedules/' + this.schedule.id + '/shifts/' + id)
           .then(response => {
             this.showSnackbar(this.$t('schedules.success_delete_shift'), 'success')
-            this.$emit('shift-update')
+            this.$emit('update', response.data.schedule)
           })
 
       }
     },
 
-    showShiftOverlay(shift) {
-      this.shiftOverlay = true
+    showShiftDialog () {
+      this.dialog = true
+    },
+
+    closeShiftDialog () {
+      this.dialog = false
     },
 
   }

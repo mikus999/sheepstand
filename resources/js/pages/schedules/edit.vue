@@ -14,11 +14,11 @@
         </v-col>
 
         <v-col xs=10 sm=4 class="text-center">
-          <span class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedData.date_start | formatDate }}</span>
+          <span class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</span>
         </v-col>
         
         <v-col xs=1 sm=4 class="text-right">
-          <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedData.status > 0">
+          <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedule.status > 0">
             <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
             <v-icon right>mdi-arrow-right</v-icon>
           </v-btn>
@@ -30,7 +30,7 @@
         <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
 
         <v-col>
-          <v-slider v-model="schedData.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedData.status].color"
+          <v-slider v-model="schedule.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedule.status].color"
             ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
           </v-slider>
         </v-col>
@@ -46,10 +46,10 @@
               <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
                 @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
 
-                  <ShiftEditCard v-for="shift in day.list" :key="shift.id" :shift="shift" :schedule="schedData" v-on:shift-update="getSchedData()" />                  
+                  <ShiftEditCard v-for="shift in day.list" :key="shift.id" :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" />                  
 
                   <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
-                  <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day, false)">
+                  <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
                     <v-card-text class="text-center pa-0">
                       <v-icon large class="pa-4">mdi-plus-box</v-icon>
                     </v-card-text>
@@ -69,10 +69,10 @@
       </v-row>
     </v-card>
 
-    <!-- NEW/EDIT SHIFT DIALOG -->
-    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
-      <ShiftNewCard :shift="shiftDefaults" :schedule="schedData" width="300px" />
-    </v-overlay>
+    <!-- NEW SHIFT DIALOG -->
+    <v-dialog :value="dialog" @click:outside="closeShiftDialog()" width="500px">
+      <ShiftNewCard :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" v-on:close="closeShiftDialog()" />
+    </v-dialog>
 
   </v-container>
 </template>
@@ -115,7 +115,8 @@ export default {
         end: false
       },
       tickLabels: [],
-      schedData: {
+      shift: [],
+      schedule: {
         status: 0
       },
       shiftDefaults: {
@@ -124,11 +125,8 @@ export default {
           time_end: null,
           min_participants: 2,
           max_participants: 3,
-          location: {
-            id: 1,
-          },
+          location_id: null
       },
-      shiftData: [],
       days7: [
         { name: "Mon", 
           id:0, 
@@ -228,29 +226,38 @@ export default {
 
   methods: {
     initialize () {
-      this.getSchedData()
+      this.getSchedule()
       this.makeStatusLabels()
-      this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
+      this.shift = this.lodash.cloneDeep(this.shiftDefaults)
     },
 
-    async getSchedData () {
+    async getSchedule () {
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
-          this.schedData = response.data
-          this.date = this.$dayjs(this.schedData.date_start)
-          this.shiftDefaults.time_start = this.$dayjs(this.date).format('L') + ' 08:00'
-          this.shiftDefaults.time_end = this.$dayjs(this.shiftDefaults.time_start).add(this.team.default_shift_minutes, 'm').format("HH:mm")
-          this.shiftDefaults.min_participants = this.team.default_participants_min
-          this.shiftDefaults.max_participants = this.team.default_participants_max
-
-          // Loop through each day, show shifts
-          this.days7.forEach ((item) => {
-            item.date = this.$dayjs(response.data.date_start).add(item.id, 'd').format('YYYY-MM-DD')
-            item.list = response.data.shifts.filter(shift => shift.time_start.includes(item.date))
-          })
-
+          this.schedule = response.data
+          this.parseSchedule()
         })
 
+    },
+
+
+    parseSchedule () {
+      this.date = this.$dayjs(this.schedule.date_start)
+      this.shiftDefaults.time_start = this.$dayjs(this.date).format('L') + ' 08:00'
+      this.shiftDefaults.time_end = this.$dayjs(this.shiftDefaults.time_start).add(this.team.default_shift_minutes, 'm')
+      this.shiftDefaults.min_participants = this.team.default_participants_min
+      this.shiftDefaults.max_participants = this.team.default_participants_max
+
+      // Loop through each day, show shifts
+      this.days7.forEach ((item) => {
+        item.date = this.$dayjs(this.schedule.date_start).add(item.id, 'd').format('YYYY-MM-DD')
+        item.list = this.schedule.shifts.filter(shift => shift.time_start.includes(item.date))
+      })
+    },
+
+    updateSchedule (sched) {
+      this.schedule = sched
+      this.parseSchedule()
     },
 
 
@@ -265,7 +272,7 @@ export default {
           method: 'post',      
           url: '/api/schedules/' + this.id + '/status/',
           data: {
-            status: this.schedData.status
+            status: this.schedule.status
           }
         })
         .then(response => {
@@ -283,22 +290,16 @@ export default {
     },
 
 
-    showShiftDialog (data, isEdit) {
-
-      if (!isEdit) {
-        this.shiftData = this.lodash.cloneDeep(this.shiftDefaults)
-        this.shiftData.date = this.$dayjs(data.date).format("YYYY-MM-DD")
-      } else {
-          this.shiftData.id = data.id
-          this.shiftData.date = this.$dayjs(data.time_start).format("YYYY-MM-DD")
-          this.shiftData.start = this.$dayjs(data.time_start).format("HH:mm")
-          this.shiftData.end = this.$dayjs(data.time_end).format("HH:mm")
-          this.shiftData.location = data.location_id
-          this.shiftData.participants = [data.min_participants, data.max_participants]
-      }
-
-      this.shiftData.edit = isEdit
+    showShiftDialog (data) {
+      this.shift = this.lodash.cloneDeep(this.shiftDefaults)
+      this.shift.time_start = this.$dayjs(data.date).format('L') + ' 08:00'
+      this.shift.time_end = this.$dayjs(this.shift.time_start).add(this.team.default_shift_minutes, 'm')
       this.dialog = true
+    },
+
+
+    closeShiftDialog () {
+      this.dialog = false
     },
 
 
@@ -335,7 +336,8 @@ export default {
         }
       })
       .then(response => {
-        this.getSchedData(this.date)
+        this.schedule = response.data.schedule
+        this.parseSchedule()
       })
     },
     

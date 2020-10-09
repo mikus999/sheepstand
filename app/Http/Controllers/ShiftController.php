@@ -81,7 +81,8 @@ class ShiftController extends Controller
                 ]);
 
                 $data = [
-                    'data' => $shift,
+                    'shift' => $shift,
+                    'schedule' => Schedule::with('shifts')->find($scheduleid),
                     'status' => (bool) $shift,
                     'message' => $shift ? 'Shift Created!' : 'Error Creating Shift',
                 ];
@@ -138,9 +139,15 @@ class ShiftController extends Controller
                 $shift->max_participants = $request->max_participants;
                 $shift->save();
             }
+
+            $data = [
+                'shift' => $shift,
+                'schedule' => Schedule::with('shifts')->find($scheduleid),
+            ];
         }
 
-        return response()->json($shift);
+
+        return response()->json($data);
     }
 
 
@@ -162,11 +169,13 @@ class ShiftController extends Controller
 
             if ($user->hasRole('team_admin', $team)) {        
                 Shift::destroy($shiftid);
-                $data = [
-                    'message' => 'Location Deleted!',
-                ];
             }
+
+            $data = [
+                'schedule' => Schedule::with('shifts')->find($scheduleid),
+            ];
         }
+
 
         return response()->json($data);
     }
