@@ -459,4 +459,28 @@ class ShiftController extends Controller
 
         return response()->json($data);
     }
+
+
+    /**
+     * 
+     * Show user's shifts for ALL TEAMS
+     *  - ROLE: authenticated user
+     * 
+     *  GET -> /user/shifts
+     * 
+     */
+    public function userAllShifts()
+    {
+        $user = Auth::user();
+        $shifts = [];
+
+        if ($user) {
+            $shifts = $user->shifts()
+                        ->with('schedule', 'location')
+                        ->get();
+        }
+        
+        return response()->json($shifts);
+    }
+
 }

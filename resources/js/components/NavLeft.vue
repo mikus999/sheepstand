@@ -84,7 +84,7 @@
 
       <v-list-item router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-translate</v-icon>
+          <v-icon>mdi-message-cog</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.translation') }}</v-list-item-title>

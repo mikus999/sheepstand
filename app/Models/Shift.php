@@ -17,7 +17,7 @@ class Shift extends Model
 
     public function schedule()
     {
-        return $this->belongsTo('App\Models\Schedule');
+        return $this->belongsTo('App\Models\Schedule')->with('team');
     }
 
     public function location()

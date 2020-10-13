@@ -184,7 +184,8 @@
         "trade_requests": "Trade Requests",
         "trade_click_to_accept": "Click on a name to accept the shift",
         "confirm_trade": "Are you sure you want to accept this assignment?",
-        "success_trade_made": "Trade successful!"
+        "success_trade_made": "Trade successful!",
+        "show_all_teams": "Show for all my teams"
     },
     "translation": {
         "management_system": "Translation Management System",

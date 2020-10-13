@@ -37,6 +37,10 @@
                         <v-card-text class="pa-0">
                           <v-color-picker v-model="tempData.color_code" mode="hexa" flat />
                         </v-card-text>
+                        <v-card-actions>
+                          <v-spacer />
+                          <v-btn text @click="menu = false">{{ $t('general.ok') }}</v-btn>
+                        </v-card-actions>
                       </v-card>
                     </v-menu>
                     
@@ -49,8 +53,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="secondary" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                  <v-btn color="secondary" text @click="createOrUpdate">
+                  <v-btn color="grey" text @click="close">{{ $t('general.cancel') }}</v-btn>
+                  <v-btn color="primary" text @click="createOrUpdate">
                     {{ isEdit ? $t('general.save') : $t('general.create') }}
                   </v-btn>
                 </v-card-actions>
