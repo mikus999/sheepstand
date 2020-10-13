@@ -3,6 +3,7 @@
     <NavTop v-if="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
     <NavLeft ref="drawer" />
     <Snackbar></Snackbar>
+    <ConfirmBox ref="confirm"></ConfirmBox>
     <NavBottom v-if="$vuetify.breakpoint.mobile && user"/>
 
     <!-- Sizes your content based upon application components -->
@@ -52,6 +53,10 @@ export default {
     if (this.user) {
       this.getRolesWithPermissions()
     }
+  },
+
+  mounted () {
+    this.$root.$confirm = this.$refs.confirm.open
   },
 
   methods: {

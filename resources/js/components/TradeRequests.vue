@@ -89,7 +89,7 @@ export default {
     },
 
     async makeTrade (trade) {
-      if (confirm(this.$t('shifts.confirm_trade'))) {
+      if (await this.$root.$confirm(this.$t('shifts.confirm_trade'), null, 'primary')) {
         await axios({
           method: 'post',      
           url: '/api/teams/' + this.team.id + '/trades',

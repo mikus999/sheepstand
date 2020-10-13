@@ -163,10 +163,10 @@ export default {
         })
     },
 
-    deleteLoc (loc) {
+    async deleteLoc (loc) {
       const index = this.locationData.indexOf(loc.id)
-      if (confirm('Are you sure you want to delete this location? This will also delete all shifts using this location.')) {
-        axios.delete('/api/teams/' + this.team.id + '/locations/' + loc.id)
+      if (await this.$root.$confirm(this.$t('teams.confirm_location_delete'), null, 'error')) {
+        await axios.delete('/api/teams/' + this.team.id + '/locations/' + loc.id)
           .then(response => {
             this.locationData.splice(index, 1)  
             this.showSnackbar(this.$t('teams.success_location_delete'), 'success')

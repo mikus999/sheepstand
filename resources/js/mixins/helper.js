@@ -149,7 +149,7 @@ const helper = {
 
     showSnackbar (content, color) {
       this.$store.commit('snackbar/SHOW_MESSAGE', { content, color })
-    }
+    },
   },
 
 }

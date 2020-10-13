@@ -27,7 +27,8 @@
         "max": "max",
         "autosave": "Autosave",
         "available": "Available",
-        "statistics": "Statistics"
+        "statistics": "Statistics",
+        "confirm": "Please Confirm"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -129,6 +130,7 @@
         "location_color_optional": "Display Color (optional)",
         "location_map": "Map/Route File",
         "location_map_optional": "Map/Route File (optional)",
+        "confirm_location_delete": "Are you sure you want to delete this location? This will also delete all shifts using this location.",
         "success_location_delete": "Location was deleted successfully",
         "success_location_update": "Location was updated successfully",
         "success_location_default": "Successfully changed default location",

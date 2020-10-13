@@ -160,12 +160,12 @@ export default {
   },
 
   methods: {
-    nextStep (n, msg) {
+    async nextStep (n, msg) {
       var isNextStep = true
       console.log(msg)
 
       if (msg !== undefined) {
-        isNextStep = confirm(msg)
+        isNextStep = await this.$root.$confirm(msg, null, 'primary')
       }
 
       if (isNextStep) {

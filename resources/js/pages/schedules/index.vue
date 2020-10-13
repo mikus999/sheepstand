@@ -145,10 +145,10 @@ export default {
       }) 
     },
 
-    deleteSched (sched) {
+    async deleteSched (sched) {
       const index = this.schedData.indexOf(sched.id)
-      if (confirm(this.$t('schedules.confirm_delete_schedule'))) {
-        axios.delete('/api/schedules/' + sched.id)
+      if (await this.$root.$confirm(this.$t('schedules.confirm_delete_schedule'), null, 'error')) {
+        await axios.delete('/api/schedules/' + sched.id)
           .then(response => {
             this.showSnackbar(this.$t('schedules.success_delete_schedule'), 'success')
             this.getSchedData()

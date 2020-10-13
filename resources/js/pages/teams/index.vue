@@ -226,7 +226,7 @@ export default {
     }, 1000),
 
     async deleteTeam () {
-      if (confirm(this.$t('teams.confirm_delete_text'))) {
+      if (await this.$root.$confirm(this.$t('teams.confirm_delete_text'), null, 'error')) {
         await axios.delete('/api/teams/' + this.team.id)
           .then(response => {
             this.getTeams()
@@ -250,7 +250,7 @@ export default {
     },
 
     async deleteUser (user) {
-      if (confirm(this.$t('teams.confirm_remove_user'))) {
+      if (await this.$root.$confirm(this.$t('teams.confirm_remove_user'), null, 'error')) {
         await axios({
           method: 'post',      
           url: '/api/teams/leaveteam',

@@ -117,7 +117,7 @@ export default {
     },
     
     async deleteShift (id) {
-      if (confirm(this.$t('schedules.confirm_delete_shift'))) {
+      if (await this.$root.$confirm(this.$t('schedules.confirm_delete_shift'), null, 'error')) {
         await axios.delete('/api/schedules/' + this.schedule.id + '/shifts/' + id)
           .then(response => {
             this.showSnackbar(this.$t('schedules.success_delete_shift'), 'success')
