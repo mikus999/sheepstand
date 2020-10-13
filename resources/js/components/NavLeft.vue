@@ -167,20 +167,18 @@ export default {
 </script>
 
 <style scoped>
+$list-item-title-font-size
+
   .radio-sm .v-label {
     font-size: 9pt;
     color: #ffffff;
   }
 
-  .menu-subitem-label {
-    font-size: 11pt;
-  }
-
-  .menu-subitem-icon {
-    padding-right: 15px;
-  }
-
   .v-input {
     font-size: 10pt;
   }
+</style>
+
+<style lang="scss" scoped>
+  //$list-item-title-font-size: 16pt;
 </style>

@@ -472,11 +472,14 @@ class ShiftController extends Controller
     public function userAllShifts()
     {
         $user = Auth::user();
+        $date = date_create(now())->modify('-7 days');
         $shifts = [];
 
         if ($user) {
             $shifts = $user->shifts()
-                        ->with('schedule', 'location')
+                        ->with('schedule', 'location', 'users')
+                        ->where('time_start','>',$date)
+                        ->orderBy('time_start')
                         ->get();
         }
         
