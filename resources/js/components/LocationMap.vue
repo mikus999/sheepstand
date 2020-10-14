@@ -19,9 +19,11 @@
     }"
     @rightclick="handleClickForDelete"
     >
+      <!--
       <template #visible>
         <gmap-drawing-manager
           v-if="!readonly"
+          ref="dm"
           position="MIDDLE_RIGHT"
           :rectangle-options="shapeOptions"
           :circle-options="shapeOptions"
@@ -63,6 +65,7 @@
           </template>
         </gmap-drawing-manager>
       </template>
+      -->
   </gmap-map>
 
 </template>
@@ -114,6 +117,7 @@ export default {
       mapCursor: this.readonly ? null : 'default',
       mapType: 'roadmap',
       drawingMode: 0,
+      polygons: [],
     }
   },
 
@@ -127,6 +131,10 @@ export default {
        this.mapCenter.lng = position.coords.longitude;
     }, null, this.locatorOptions)
 
+  },
+
+  mounted () {
+    this.loadMapDrawingManager()
   },
 
   methods: {
@@ -153,14 +161,62 @@ export default {
       var geoJson
       var mapData = this.$refs.map.$mapObject.data
 
+      
       mapData.toGeoJson(geo => {
         geoJson = JSON.stringify(geo, null, 2)
         console.log(geoJson)
+        console.log(geo)
 
       })
 
-      
-    }
+    },
+
+    savePolygon(paths) {
+      this.polygons.push(paths);
+      console.log(this.polygons)
+    },
+    
+    loadMapDrawingManager() {    
+      let self = this;
+      this.$refs.map.$mapPromise.then((mapObject) => {
+        const drawingManager = new google.maps.drawing.DrawingManager({
+          drawingControl: true,
+          drawingControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+              drawingModes: [
+                google.maps.drawing.OverlayType.MARKER,
+                google.maps.drawing.OverlayType.RECTANGLE,
+                google.maps.drawing.OverlayType.CIRCLE,
+                google.maps.drawing.OverlayType.POLYGON,
+              ]
+          }
+        });
+        
+        drawingManager.setMap(this.$refs.map.$mapObject); 
+
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', (event) => {
+          if (event.type == 'rectangle') {
+            var paths = event.overlay.getBounds();
+          } else if (event.type == 'polygon') {
+            var paths = event.overlay.getPaths().getArray();
+          } else if (event.type == 'marker') {
+            var paths = event.overlay.getPosition();
+          } else if (event.type == 'circle') {
+            var paths = event.overlay.getRadius();
+          }
+          console.log(event.overlay)
+          // Get overlay paths
+          // Remove overlay from map
+          //event.overlay.setMap(null);
+
+          // Disable drawingManager
+          drawingManager.setDrawingMode(null);
+
+          // Create Polygon
+          //self.savePolygon(paths);
+        });
+      });
+    },
   }
 }
 </script>
