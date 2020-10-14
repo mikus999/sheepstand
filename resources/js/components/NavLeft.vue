@@ -167,8 +167,6 @@ export default {
 </script>
 
 <style scoped>
-$list-item-title-font-size
-
   .radio-sm .v-label {
     font-size: 9pt;
     color: #ffffff;
@@ -177,8 +175,8 @@ $list-item-title-font-size
   .v-input {
     font-size: 10pt;
   }
-</style>
 
-<style lang="scss" scoped>
-  //$list-item-title-font-size: 16pt;
+  .v-list-item__title {
+    font-size: 1.0rem !important;
+  }
 </style>

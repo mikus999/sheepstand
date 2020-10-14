@@ -33,7 +33,6 @@ $config = [
 
     <title>{{ config('app.name') }}</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Wendy+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ mix('dist/css/app.css') }}">
 
     <!-- VUETIFY RESOURCES -->

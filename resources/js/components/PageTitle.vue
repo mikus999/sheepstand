@@ -1,10 +1,10 @@
 <template>
   <div class="mb-6">
-    <div v-if="$vuetify.breakpoint.xs" class="text-h6">
+    <div v-if="$vuetify.breakpoint.xs" class="header-xs">
       {{ title }}
     </div>
 
-    <div v-else class="text-h4">
+    <div v-else class="header-smAndUp">
       {{ title }}
     </div>
   </div>
@@ -16,3 +16,17 @@ export default {
   props: ['title']
 }
 </script>
+
+<style lang="scss">
+  .header-xs {
+    font-size: 1.25rem;
+    font-weight: 500;
+    font-family: 'Raleway', sans-serif !important;
+  }
+
+  .header-smAndUp {
+    font-size: 2.125rem;
+    font-weight: 400;
+    font-family: 'Raleway', sans-serif !important;
+  }
+</style>

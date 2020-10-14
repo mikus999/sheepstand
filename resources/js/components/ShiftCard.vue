@@ -10,6 +10,7 @@
     </v-card-subtitle>
 
     <v-card-text :style="'overflow-y: auto; height: ' + height">
+        <div v-if="onlyinfo" class="text-overline">{{ $t('shifts.participants') }}</div>
         <div v-for="user in shift.users" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
           <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">{{ shiftStatus[user.pivot.status].icon }}</v-icon>
           <span :class="shiftStatus[user.pivot.status].color + '--text'">{{ user.name }}</span>
@@ -20,6 +21,10 @@
             <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
             <span>{{ $t('general.available') }}</span>
           </div>
+        </div>
+
+        <div v-if="onlyinfo" class="mt-8">
+          MAP
         </div>
     </v-card-text>
 

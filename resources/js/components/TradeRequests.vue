@@ -10,9 +10,6 @@
         </v-toolbar>
       </template>
 
-      <template v-slot:item.view="{ item }">
-        <v-icon small @click="showShiftOverlay(item)">mdi-magnify</v-icon>
-      </template>
 
       <template v-slot:item.day="{ item }">
         {{ item.time_start | formatDay }}<br>
@@ -39,10 +36,14 @@
            {{ trade.name }}
         </v-chip>
       </template>
+
+      <template v-slot:item.view="{ item }">
+        <v-icon @click="showShiftOverlay(item)">mdi-card-account-details-outline</v-icon>
+      </template>
     </v-data-table>
 
     <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
-      <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px"></ShiftCard>
+      <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px" height="100%"></ShiftCard>
     </v-overlay>
   </v-card>
 </template>
@@ -67,10 +68,10 @@ export default {
       schedule: null,
       trades: [],
       headersShift: [
-        { text: '', value: 'view', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
-        { text: this.$t('shifts.trade_requests'), value: 'tradewith', align: 'left' }
+        { text: this.$t('shifts.trade_requests'), value: 'tradewith', align: 'left' },
+        { text: '', value: 'view', align: 'left' }
       ],
     }
   },
