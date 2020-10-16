@@ -17,63 +17,59 @@
       draggable: readonly,
       draggableCursor: 'default'
     }"
-    @rightclick="handleClickForDelete"
     >
-      <!--
+    
       <template #visible>
-        <gmap-drawing-manager
-          v-if="!readonly"
-          ref="dm"
-          position="MIDDLE_RIGHT"
-          :rectangle-options="shapeOptions"
-          :circle-options="shapeOptions"
-          :polygon-options="shapeOptions"
-          :shapes="shapes"
-          @rightclick="handleClickForDelete()"
-        >
-          <template v-slot="on">
-            <v-toolbar dense dark>
-              <v-btn-toggle mandatory>
-                <v-btn @click="updateMapType('roadmap')">
-                  <v-icon>mdi-map</v-icon>
-                </v-btn>
-                <v-btn @click="updateMapType('satellite')">
-                  <v-icon>mdi-satellite</v-icon>
-                </v-btn>
-              </v-btn-toggle>
+        <v-toolbar dense dark>
+          <v-btn-toggle mandatory>
+            <v-btn @click="updateMapType('roadmap')">
+              <v-icon>mdi-map</v-icon>
+            </v-btn>
+            <v-btn @click="updateMapType('satellite')">
+              <v-icon>mdi-satellite</v-icon>
+            </v-btn>
+          </v-btn-toggle>
 
-              <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
 
-              <v-item-group class="v-btn-toggle" right>
-                <v-btn @click="on.setDrawingMode('rectangle')">
-                  <v-icon>mdi-vector-rectangle</v-icon>
-                </v-btn>
-                <v-btn @click="on.setDrawingMode('circle')">
-                  <v-icon>mdi-vector-circle</v-icon>
-                </v-btn>
-                <v-btn @click="on.setDrawingMode('polygon')">
-                  <v-icon>mdi-vector-polygon</v-icon>
-                </v-btn>
-                <v-btn @click="on.deleteSelection()">
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-                <v-btn @click="showJSON()">
-                  <v-icon>mdi-marker</v-icon>
-                </v-btn>
-              </v-item-group>
-            </v-toolbar>
-          </template>
-        </gmap-drawing-manager>
+          <v-item-group class="v-btn-toggle" right>
+            <v-btn @click="changeDrawingMode('marker')">
+              <v-icon>mdi-map-marker</v-icon>
+            </v-btn>
+            <v-btn @click="changeDrawingMode('rectangle')">
+              <v-icon>mdi-vector-rectangle</v-icon>
+            </v-btn>
+            <v-btn @click="changeDrawingMode('polygon')">
+              <v-icon>mdi-vector-polygon</v-icon>
+            </v-btn>
+            <v-btn @click="">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+            <v-btn @click="saveShapes()">
+              <v-icon>mdi-content-save</v-icon>
+            </v-btn>
+            <v-btn @click="loadGeoJSON()">
+              <v-icon>mdi-upload</v-icon>
+            </v-btn>
+          </v-item-group>
+        </v-toolbar>
       </template>
-      -->
+
   </gmap-map>
 
 </template>
 
 <script>
+import axios from 'axios'
+import helper from '~/mixins/helper'
+
 export default {
   name: 'LocationMap',
+  mixins: [helper],
   props: {
+    location: {
+      type: Object,
+    },
     readonly: {
       type: Boolean,
       default: false
@@ -99,7 +95,6 @@ export default {
         lat: 1,
         lng: 1
       },
-      paths: [],
       shapes: [],
       shapeOptions: {
         fillColor: this.fill,
@@ -110,6 +105,10 @@ export default {
         editable: true,
         clickable: true
       },
+      markerOptions: {
+        draggable: true,
+        clickable: true
+      },
       locatorOptions: {
         enableHighAccuracy: true,
       },
@@ -117,7 +116,9 @@ export default {
       mapCursor: this.readonly ? null : 'default',
       mapType: 'roadmap',
       drawingMode: 0,
-      polygons: [],
+      dataLayer: null,
+      geoJson: null,
+      drawingManager: null
     }
   },
 
@@ -138,82 +139,199 @@ export default {
   },
 
   methods: {
-    handleClickForDelete($event) {
-      this.$refs.polygon.$polygonObject.getPaths()
-        .getAt($event.path)
-        .removeAt($event.vertex)
-    },
-
     updateMapType (type) {
       this.mapType = type
     },
 
-    updateDrawingType (type) {
-      console.log(type)
+    changeDrawingMode (mode) {
+      this.drawingManager.setDrawingMode(mode)
     },
 
-    showJSON () {
-      this.$refs.map.$mapObject.data.add(this.shapes)
-      this.displayGeoJson()
-    },
-
-    displayGeoJson() {
-      var geoJson
-      var mapData = this.$refs.map.$mapObject.data
-
+    loadGeoJSON() {
+      var jsonData = JSON.parse(this.location.map)
+      var dataLayer = this.$refs.map.$mapObject.data
       
-      mapData.toGeoJson(geo => {
-        geoJson = JSON.stringify(geo, null, 2)
-        console.log(geoJson)
-        console.log(geo)
+      dataLayer.setStyle({
+        editable: true,
+        clickable: true,
+        draggable: true
+      })
+      
+      var features = dataLayer.addGeoJson(jsonData)
+      dataLayer.addListener('rightclick', (event) => {
+        dataLayer.remove(event.feature)
+      });
+    },
 
+    saveShapes () {
+      var dataLayer = this.$refs.map.$mapObject.data
+
+      dataLayer.toGeoJson((obj) => {
+        console.log(obj)
+        this.saveToDB(obj)
+      });
+    },
+
+    /*
+    shapesToGeoJSON() {
+      const drawingManager = this.$refs.dm
+      var dataLayer = new google.maps.Data()
+      var geoJson = null
+
+      this.shapes.forEach ((shape) => {
+
+        switch (shape.type) {
+          case 'marker':
+            dataLayer.add(new google.maps.Data.Feature({
+              geometry: new google.maps.Data.Point(shape.overlay.getPosition())
+            }));
+            break
+
+          case 'rectangle':
+            var b = shape.overlay.getBounds(),
+              p = [b.getSouthWest(), {
+                  lat: b.getSouthWest().lat(),
+                  lng: b.getNorthEast().lng()
+                },
+                b.getNorthEast(), {
+                  lng: b.getSouthWest().lng(),
+                  lat: b.getNorthEast().lat()
+                }
+              ]
+            dataLayer.add(new google.maps.Data.Feature({
+              geometry: new google.maps.Data.Polygon([p])
+            }));
+            break
+
+          case 'polygon':
+            dataLayer.add(new google.maps.Data.Feature({
+              geometry: new google.maps.Data.Polygon([shape.overlay.getPath().getArray()])
+            }));
+            break
+          
+          case 'polyline':
+            dataLayer.add(new google.maps.Data.Feature({
+              geometry: new google.maps.Data.LineString(shape.overlay.getPath().getArray())
+            }));
+            break
+
+          case 'circle':
+            dataLayer.add(new google.maps.Data.Feature({
+              properties: {
+                radius: shape.overlay.getRadius()
+              },
+              geometry: new google.maps.Data.Point(shape.overlay.getCenter())
+            }));
+            break
+
+        }
+
+        dataLayer.toGeoJson((obj) => {
+          this.saveToDB(obj)
+        });
+
+      });
+    },
+    */
+
+    async saveToDB (mapData) {
+      var tempData = this.lodash.cloneDeep(this.location)
+      var aMethod = 'patch'
+      var aUrl = '/api/teams/' + this.team.id + '/locations/' + tempData.id
+
+      tempData.map = mapData
+
+      await axios({
+        method: aMethod,      
+        url: aUrl,
+        data: tempData
+      })
+      .then(response => {
+        this.location = response.data
+        this.showSnackbar(this.$t('teams.success_location_update'), 'success')
       })
 
     },
 
-    savePolygon(paths) {
-      this.polygons.push(paths);
-      console.log(this.polygons)
-    },
     
     loadMapDrawingManager() {    
       let self = this;
+
       this.$refs.map.$mapPromise.then((mapObject) => {
-        const drawingManager = new google.maps.drawing.DrawingManager({
-          drawingControl: true,
-          drawingControlOptions: {
-              position: google.maps.ControlPosition.RIGHT_CENTER,
-              drawingModes: [
-                google.maps.drawing.OverlayType.MARKER,
-                google.maps.drawing.OverlayType.RECTANGLE,
-                google.maps.drawing.OverlayType.CIRCLE,
-                google.maps.drawing.OverlayType.POLYGON,
-              ]
+        
+        this.drawingManager = new google.maps.drawing.DrawingManager({
+          drawingControl: false,
+          polygonOptions: {
+            draggable: true,
+            clickable: true,
+            editable: true
+          },
+          rectangleOptions: {
+            draggable: true,
+            clickable: true,
+            editable: true
           }
         });
         
-        drawingManager.setMap(this.$refs.map.$mapObject); 
 
-        google.maps.event.addListener(drawingManager, 'overlaycomplete', (event) => {
-          if (event.type == 'rectangle') {
-            var paths = event.overlay.getBounds();
-          } else if (event.type == 'polygon') {
-            var paths = event.overlay.getPaths().getArray();
-          } else if (event.type == 'marker') {
-            var paths = event.overlay.getPosition();
-          } else if (event.type == 'circle') {
-            var paths = event.overlay.getRadius();
+        //const drawingManager = this.$refs.dm
+        this.drawingManager.setMap(this.$refs.map.$mapObject)
+
+
+        google.maps.event.addListener(this.drawingManager, 'overlaycomplete', (event) => {
+          var dataLayer = this.$refs.map.$mapObject.data;
+
+          switch (event.type) {
+            case 'marker':
+              dataLayer.add(new google.maps.Data.Feature({
+                geometry: new google.maps.Data.Point(event.overlay.getPosition())
+              }));
+              break
+
+            case 'rectangle':
+              var b = event.overlay.getBounds(),
+                p = [b.getSouthWest(), {
+                    lat: b.getSouthWest().lat(),
+                    lng: b.getNorthEast().lng()
+                  },
+                  b.getNorthEast(), {
+                    lng: b.getSouthWest().lng(),
+                    lat: b.getNorthEast().lat()
+                  }
+                ]
+              dataLayer.add(new google.maps.Data.Feature({
+                geometry: new google.maps.Data.Polygon([p])
+              }));
+              break
+
+            case 'polygon':
+              dataLayer.add(new google.maps.Data.Feature({
+                geometry: new google.maps.Data.Polygon([event.overlay.getPath().getArray()])
+              }));
+              break
+            
+            case 'polyline':
+              dataLayer.add(new google.maps.Data.Feature({
+                geometry: new google.maps.Data.LineString(event.overlay.getPath().getArray())
+              }));
+              break
+
+            case 'circle':
+              dataLayer.add(new google.maps.Data.Feature({
+                properties: {
+                  radius: event.overlay.getRadius()
+                },
+                geometry: new google.maps.Data.Point(event.overlay.getCenter())
+              }));
+              break
+
           }
-          console.log(event.overlay)
-          // Get overlay paths
-          // Remove overlay from map
-          //event.overlay.setMap(null);
+
+          console.log(dataLayer)
 
           // Disable drawingManager
-          drawingManager.setDrawingMode(null);
+          this.drawingManager.setDrawingMode(null);
 
-          // Create Polygon
-          //self.savePolygon(paths);
         });
       });
     },

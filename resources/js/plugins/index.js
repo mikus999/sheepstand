@@ -1,2 +1,2 @@
 import './axios'
-import 'bootstrap'
+//import 'bootstrap'

@@ -12,7 +12,7 @@ import localeData from 'dayjs/plugin/localeData'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import weekday from 'dayjs/plugin/weekday'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+//import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
@@ -22,7 +22,7 @@ import * as GmapVue from 'gmap-vue';
 
 
 // BootstrapVue
-Vue.use(BootstrapVue)
+//Vue.use(BootstrapVue)
 
 // Vuelidate: for form validation
 Vue.use(Vuelidate)

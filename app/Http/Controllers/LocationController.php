@@ -69,7 +69,7 @@ class LocationController extends Controller
         $location = Location::find($locid);
         $location->name = $request->name;
         $location->color_code = $request->color_code;
-        $location->map = null;
+        $location->map = $request->map;
         $location->save();
 
         return response()->json($location);
