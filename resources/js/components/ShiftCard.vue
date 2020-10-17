@@ -1,6 +1,7 @@
 <template>
   <v-card outlined hover :width="width" :style="'background-color: ' + background">
-    <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
+    <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')"
+        @click="showLocationOverlay">
       {{ shift.location.name }}
     </v-card-title>
 
@@ -23,8 +24,7 @@
           </div>
         </div>
 
-        <div v-if="onlyinfo" class="mt-8">
-          MAP
+        <div class="mt-8">
         </div>
     </v-card-text>
 
@@ -45,6 +45,10 @@
       </v-row>
 
     </v-card-actions>
+
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false">
+      <LocationMap :location="shift.location" :fill="shift.location.color_code" readonly />
+    </v-overlay>
   </v-card>
 </template>
 
@@ -52,10 +56,14 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
+import LocationMap from '~/components/LocationMap.vue'
 
 export default {
   name: 'ShiftCard',
   mixins: [helper],
+  components: {
+    LocationMap
+  },
   props: {
     shift: {
       type: Object
@@ -84,7 +92,8 @@ export default {
   data () {
     return {
       request: false,
-      trade: false
+      trade: false,
+      locationOverlay: false
     }
   },
 
@@ -178,6 +187,10 @@ export default {
         this.shift.users = response.data.shiftusers
       })
 
+    },
+
+    showLocationOverlay() {
+      this.locationOverlay = true
     },
 
 

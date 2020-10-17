@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
 
-    <LocationMap :location="location" />
+    <LocationMap v-if="location" :location="location" :fill="location.color_code"  />
     
   </v-container>
 </template>
