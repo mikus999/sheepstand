@@ -133,19 +133,23 @@ export default {
   },
 
   created () {
-    navigator.geolocation.getCurrentPosition(position => {
-       this.center = latLng(position.coords.latitude, position.coords.longitude)
-    }, null, this.locatorOptions)
 
   },
 
   methods: {
     onMapReady() {
       this.map = this.$refs.map.mapObject
+      this.getPosition()
       this.loadDrawControl()
     },
 
     
+    getPosition() {
+      navigator.geolocation.getCurrentPosition(position => {
+       this.center = latLng(position.coords.latitude, position.coords.longitude)
+      }, null, this.locatorOptions)
+    },
+
     loadDrawControl() {    
       this.drawControl = new L.Control.Draw({
         draw: false
@@ -161,16 +165,23 @@ export default {
         var layer = e.layer
 
         // Shape event handlers
-        layer.on('click', (me) => {
-          me.sourceTarget.editing.enable()
+        layer.on('click', (e) => {
+          L.DomEvent.stopPropagation(e)
+          console.log(e.sourceTarget.editing.enabled)
+          if (e.sourceTarget.editing.enabled) {
+            e.sourceTarget.editing.disable()
+          } else {
+            e.sourceTarget.editing.enable()
+          }
         })
+
         this.map.addLayer(layer)
       });
 
-      this.map.on('click'), (e) => {
-        this.map.stopPropagation(e);
-        //this.clearSelection()
-      }
+      
+      this.map.on('click', (e) => {
+        this.clearSelection()
+      })
     },
 
 
