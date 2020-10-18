@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
 
-    <LocationMap v-if="location" :location="location" :fill="location.color_code"  />
+    <Leaflet v-if="location" :location="location" :fill="location.color_code" width="100%" height="800px"/>
     
   </v-container>
 </template>
@@ -9,14 +9,14 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
-import LocationMap from '~/components/LocationMap.vue'
+import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
   components: {
-    LocationMap
+    Leaflet
   },
   
   data () {
