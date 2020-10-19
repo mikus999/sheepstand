@@ -8,6 +8,9 @@
         <v-btn @click="updateMapType('satellite')">
           <v-icon>mdi-satellite</v-icon>
         </v-btn>
+        <v-btn @click="getPosition()">
+          <v-icon>mdi-crosshairs-gps</v-icon>
+        </v-btn>
       </v-btn-toggle>
 
       <v-spacer></v-spacer>
@@ -22,12 +25,15 @@
         <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
           <v-icon>mdi-vector-polygon</v-icon>
         </v-btn>
+        <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
+          <v-icon>mdi-vector-circle</v-icon>
+        </v-btn>
       </v-item-group>
 
       <v-spacer></v-spacer>
 
       <v-item-group class="v-btn-toggle" right>
-        <v-btn @click="deleteSelection(selectedShape)">
+        <v-btn @click="deleteSelection()">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
         <v-btn @click="saveShapes()" :input-value="isChanged" active-class="save-btn">
@@ -55,11 +61,18 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
-import L from 'leaflet'
-import { latLng } from "leaflet"
-import { LMap, LTileLayer, LControl } from 'vue2-leaflet'
+import 'leaflet/dist/leaflet.css'
+import L, { latLng } from 'leaflet'
+import { LMap, LTileLayer, LControl, LMarker } from 'vue2-leaflet'
 import drawControl from 'leaflet-draw'
-import * as mykey from './helpers/leaflet-providers.js'
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: '/dist/images/leaflet/marker-icon-2x.png',
+  iconUrl: '/dist/images/leaflet/marker-icon.png',
+  shadowUrl: '/dist/images/leaflet/marker-shadow.png'
+});
 
 export default {
   name: 'Leaflet',
@@ -68,6 +81,7 @@ export default {
     LMap,
     LTileLayer,
     LControl,
+    LMarker
   },
   props: {
     location: {
@@ -99,7 +113,6 @@ export default {
       edited: null,
       center: latLng(1, 1),
       zoom: 13,
-      shapes: null,
       shapeOptions: {
         fillColor: this.fill,
         fillOpacity: 0.4,
@@ -107,11 +120,13 @@ export default {
         weight: 2,
         color: '#999999',
         editable: true,
-        clickable: true
+        clickable: true,
+        bubblingMouseEvents: false
       },
       markerOptions: {
         draggable: true,
-        clickable: true
+        clickable: true,
+        bubblingMouseEvents: false
       },
       locatorOptions: {
         enableHighAccuracy: true,
@@ -125,7 +140,10 @@ export default {
       selectedShape: null,
       isChanged: null,
       drawingManager: null,
-      drawControl: null
+      shapes: null,
+      drawControl: null,
+      drawMode: null,
+      drawFeature: null,
     }
   },
 
@@ -133,7 +151,6 @@ export default {
   },
 
   created () {
-
   },
 
   methods: {
@@ -150,37 +167,64 @@ export default {
       }, null, this.locatorOptions)
     },
 
+    recenterMap() {
+      this.map.fitBounds(this.shapes.getBounds())
+    },
+
+
     loadDrawControl() {    
       this.drawControl = new L.Control.Draw({
         draw: false
       })
-
       this.map.addControl(this.drawControl)
 
 
+      this.shapes = new L.FeatureGroup()
+      this.map.addLayer(this.shapes)
 
-      // Map event handlers
+
+      // Map event handlers (mouse)
       this.map.on(L.Draw.Event.CREATED, (e) => {
         var type = e.type
         var layer = e.layer
 
         // Shape event handlers
-        layer.on('click', (e) => {
-          L.DomEvent.stopPropagation(e)
-          console.log(e.sourceTarget.editing.enabled)
-          if (e.sourceTarget.editing.enabled) {
-            e.sourceTarget.editing.disable()
-          } else {
-            e.sourceTarget.editing.enable()
-          }
-        })
+        this.setShapeEvents(layer)
 
-        this.map.addLayer(layer)
+        this.shapes.addLayer(layer)
+        this.drawMode = null
       });
 
       
       this.map.on('click', (e) => {
         this.clearSelection()
+      })
+
+
+      // Map event handlers (keyboard)
+      document.addEventListener('keydown', (event) => {
+        switch (event.key) {
+          case 'Delete': 
+          case 'Backspace':
+            this.deleteSelection()
+            break
+
+          case 'Escape':
+            this.clearSelection()
+            break
+        }
+      })
+
+
+      // Load existing features
+      this.loadGeoJSON()
+    },
+
+
+    setShapeEvents(shape) {
+      shape.on('click', (e) => {
+        L.DomEvent.stopPropagation(e)
+        this.setSelection(e.sourceTarget)
       })
     },
 
@@ -199,105 +243,86 @@ export default {
     },
 
     changeDrawingMode (mode) {
-      switch (mode) {
-        case 'polygon':
-          new L.Draw.Polygon(this.map, this.shapeOptions).enable()
-          break
-        case 'rectangle':
-          new L.Draw.Rectangle(this.map, this.shapeOptions).enable()
-          break
-        case 'circle':
-          new L.Draw.Circle(this.map, this.shapeOptions).enable()
-          break
-        case 'marker':
-          new L.Draw.Marker(this.map, this.shapeOptions).enable()
-          break
+      if (this.drawMode === mode) {
+        this.drawMode = null
+        this.drawFeature.disable()
+        this.drawFeature = null
+      } else {
+        if (this.drawFeature !== null) {
+          this.drawFeature.disable()
+          this.drawFeature = null
+        }
+        switch (mode) {
+          case 'polygon':
+            this.drawFeature = new L.Draw.Polygon(this.map, this.shapeOptions)
+            break
+          case 'rectangle':
+            this.drawFeature = new L.Draw.Rectangle(this.map, this.shapeOptions)
+            break
+          case 'circle':
+            this.drawFeature = new L.Draw.Circle(this.map, this.shapeOptions)
+            break
+          case 'marker':
+            this.drawFeature = new L.Draw.Marker(this.map, this.markerOptions)
+            break
+        }
+
+        this.drawMode = mode
+        this.drawFeature.enable()
       }
 
     },
 
     isActiveButton (mode) {
       var isActive = null
-
-      if (this.drawingManager !== null) {
-        if (this.drawingManager.drawingMode === mode) {
+      if (this.drawMode !== null) {
+        if (this.drawMode === mode) {
           isActive = true
         }
       }
-
       return isActive
     },
 
     revertChanges () {
-      var dataLayer = this.$refs.map.$mapObject.data
-      
-      // First, remove all current features from the map
-      dataLayer.forEach(function(feature) {
-        dataLayer.remove(feature);
-      });
+      this.shapes.clearLayers()
 
       // Then, load features again
       this.loadGeoJSON()
-
-      // Finally, reset the save button
-      this.isChanged = null
     },
 
     loadGeoJSON() {
-      var dataLayer = this.$refs.map.$mapObject.data
-      dataLayer.setStyle({
-        fillColor: this.fill,
-        fillOpacity: 0.4,
-        editable: false,
-        clickable: true,
-        draggable: false
-      })
-      
+     
       if (this.location.map !== null) {
         var jsonData = JSON.parse(this.location.map)
-        var features = dataLayer.addGeoJson(jsonData)
-
-        this.recenterMap(features)
+        var features = L.geoJson(jsonData, {
+            style: this.shapeOptions,
+            onEachFeature: this.loadFeature
+        })
       }
+      console.log(jsonData)
 
+      this.recenterMap()
       this.isChanged = null
     },
 
-    recenterMap (features) {
-      if (features.length > 0) {
-        var bounds = new google.maps.LatLngBounds()
-        features.forEach((feature) => {
-          var geo = feature.getGeometry()
-          geo.forEachLatLng((latlng) => {
-            var lat = latlng.lat()
-            var lng = latlng.lng()
-
-            var points = new google.maps.LatLng(lat, lng);
-            bounds.extend(points);
-          })
-        })
-        this.$refs.map.$mapObject.fitBounds(bounds)
-      }
+    loadFeature(feature, layer) {
+      this.setShapeEvents(layer)
+      this.shapes.addLayer(layer)
     },
+
 
     saveShapes () {
-      var dataLayer = this.$refs.map.$mapObject.data
-
-      dataLayer.toGeoJson((obj) => {
-        this.saveToDB(obj)
-      });
-
-
+      this.saveToDB()
     },
 
-    async saveToDB (mapData) {
+    async saveToDB () {
       var tempData = this.lodash.cloneDeep(this.location)
       var aMethod = 'patch'
       var aUrl = '/api/teams/' + this.team.id + '/locations/' + tempData.id
 
       var mapStr = null
-      if (mapData.features.length > 0) {
-        mapStr = JSON.stringify(mapData)
+      if (this.shapes.getLayers().length > 0) {
+        mapStr = JSON.stringify(this.shapes.toGeoJSON())
       }
 
       this.location.map = mapStr
@@ -309,8 +334,7 @@ export default {
         data: tempData
       })
       .then(response => {
-        var features = new google.maps.Data().addGeoJson(mapData)
-        this.recenterMap(features)
+        this.recenterMap()
         this.showSnackbar(this.$t('teams.success_location_update'), 'success')
         this.isChanged = null
       })
@@ -318,25 +342,28 @@ export default {
     },
 
     setSelection (shape) {
-      var dataLayer = this.$refs.map.$mapObject.data;
-      dataLayer.revertStyle();
-      dataLayer.overrideStyle(shape, {
-        editable: true,
-        draggable: true
-      })
-      this.selectedShape = shape
+      this.clearSelection()
+
+      if (shape.editing.enabled()) {
+        this.selectedShape = null
+        shape.editing.disable()
+      } else {
+        this.selectedShape = shape
+        shape.editing.enable()
+      }
     },
 
     clearSelection () {
-      this.map.eachLayer((layer) => {
+      this.shapes.eachLayer((layer) => {
         layer.editing.disable()
       })
+      this.selectedShape = null
+      this.drawMode = null
     },
 
-    deleteSelection (shape) {
+    deleteSelection () {
       if (this.selectedShape !== null) {
-        var dataLayer = this.$refs.map.$mapObject.data;
-        dataLayer.remove(shape)
+        this.shapes.removeLayer(this.selectedShape)
         this.selectedShape = null
       }
     },

@@ -29,7 +29,7 @@ mix.webpackConfig({
     extensions: ['.js', '.json', '.vue'],
     alias: {
       '~': path.join(__dirname, './resources/js'),
-      '@': path.join(__dirname, './resources')
+      '@': path.join(__dirname, './resources'),
     }
   },
   output: {
@@ -40,11 +40,11 @@ mix.webpackConfig({
 
 mix.then(() => {
   if (!mix.config.hmr) {
-    process.nextTick(() => publishAseets())
+    process.nextTick(() => publishAssets())
   }
 })
 
-function publishAseets () {
+function publishAssets () {
   const publicDir = path.resolve(__dirname, './public')
 
   if (mix.inProduction()) {
