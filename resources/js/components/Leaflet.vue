@@ -185,8 +185,16 @@ export default {
 
       // Map event handlers (mouse)
       this.map.on(L.Draw.Event.CREATED, (e) => {
-        var type = e.type
+        var type = e.layerType
         var layer = e.layer
+        var feature = layer.feature = layer.feature || {}
+        feature.type = "Feature"
+        feature.properties = feature.properties || {}
+        feature.properties["shape"] = type
+
+        if (type == 'circle') {
+          feature.properties["radius"] = layer.getRadius()
+        }
 
         // Shape event handlers
         this.setShapeEvents(layer)
@@ -296,7 +304,14 @@ export default {
         var jsonData = JSON.parse(this.location.map)
         var features = L.geoJson(jsonData, {
             style: this.shapeOptions,
-            onEachFeature: this.loadFeature
+            pointToLayer: (feature, latlng) => {
+              if (feature.properties.radius) {
+                return new L.Circle(latlng, feature.properties.radius);
+              } else {
+                return new L.Marker(latlng);
+              }
+            },
+            onEachFeature: this.loadFeature,
         })
       }
       console.log(jsonData)
@@ -306,6 +321,9 @@ export default {
     },
 
     loadFeature(feature, layer) {
+      if (feature.properties.shape === 'rectangle') {
+        layer = new L.Rectangle(layer.getLatLngs())
+      }
       this.setShapeEvents(layer)
       this.shapes.addLayer(layer)
     },
