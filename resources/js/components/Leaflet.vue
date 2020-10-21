@@ -69,9 +69,9 @@ import drawControl from 'leaflet-draw'
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/dist/images/leaflet/marker-icon-2x.png',
-  iconUrl: '/dist/images/leaflet/marker-icon.png',
-  shadowUrl: '/dist/images/leaflet/marker-shadow.png'
+  iconRetinaUrl: '/images/leaflet/marker-icon-2x.png',
+  iconUrl: '/images/leaflet/marker-icon.png',
+  shadowUrl: '/images/leaflet/marker-shadow.png'
 });
 
 export default {
