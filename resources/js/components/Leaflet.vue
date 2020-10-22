@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-toolbar dense dark>
+  <div ref="mainDiv">
+    <v-toolbar v-if="!readonly" dense dark>
       <v-btn-toggle mandatory>
         <v-btn @click="updateMapType('roadmap')">
           <v-icon>mdi-map</v-icon>
@@ -8,7 +8,7 @@
         <v-btn @click="updateMapType('satellite')">
           <v-icon>mdi-satellite</v-icon>
         </v-btn>
-        <v-btn @click="getPosition()">
+        <v-btn @click="getMyPosition()">
           <v-icon>mdi-crosshairs-gps</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -45,6 +45,10 @@
       </v-item-group>
     </v-toolbar>
 
+    <v-btn v-else icon :style="closeBtn" color="primary" @click="$emit('close')">
+      <v-icon>mdi-close</v-icon>
+    </v-btn>
+
     <l-map 
       ref="map" 
       :center="center" 
@@ -58,6 +62,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
@@ -65,6 +70,9 @@ import 'leaflet/dist/leaflet.css'
 import L, { latLng } from 'leaflet'
 import { LMap, LTileLayer, LControl, LMarker } from 'vue2-leaflet'
 import drawControl from 'leaflet-draw'
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
+import 'leaflet-fullscreen/dist/Leaflet.fullscreen'
+
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -131,6 +139,12 @@ export default {
       locatorOptions: {
         enableHighAccuracy: true,
       },
+      closeBtn: {
+        display: 'fixed',
+        top: '50px',
+        left: '50px',
+        zIndex: '500'
+      },
       mapDraggable: this.readonly,
       mapCursor: this.readonly ? null : 'default',
       mapType: 'roadmap',
@@ -153,15 +167,21 @@ export default {
   created () {
   },
 
+  mounted () {
+    this.closeBtn.left = (this.$refs.mainDiv.clientWidth - 50) + 'px'
+  },
+
   methods: {
     onMapReady() {
       this.map = this.$refs.map.mapObject
-      this.getPosition()
+      if (this.location.map === null) {
+        this.getMyPosition()
+      }
       this.loadDrawControl()
     },
 
     
-    getPosition() {
+    getMyPosition() {
       navigator.geolocation.getCurrentPosition(position => {
        this.center = latLng(position.coords.latitude, position.coords.longitude)
       }, null, this.locatorOptions)
@@ -177,6 +197,8 @@ export default {
         draw: false
       })
       this.map.addControl(this.drawControl)
+
+      this.map.addControl(new L.Control.Fullscreen());
 
 
       this.shapes = new L.FeatureGroup()
@@ -230,10 +252,12 @@ export default {
 
 
     setShapeEvents(shape) {
-      shape.on('click', (e) => {
-        L.DomEvent.stopPropagation(e)
-        this.setSelection(e.sourceTarget)
-      })
+      if (!this.readonly) {
+        shape.on('click', (e) => {
+          L.DomEvent.stopPropagation(e)
+          this.setSelection(e.sourceTarget)
+        })
+      }
     },
 
 
@@ -314,7 +338,6 @@ export default {
             onEachFeature: this.loadFeature,
         })
       }
-      console.log(jsonData)
 
       this.recenterMap()
       this.isChanged = null
@@ -391,6 +414,7 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .aa {
   background: #424242 !important;
@@ -422,5 +446,6 @@ export default {
     animation:blink normal 1.5s infinite ease-in-out;
     /* Opera */
 }
+
 
 </style>

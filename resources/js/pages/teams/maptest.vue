@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
 
-    <Leaflet v-if="location" :location="location" :fill="location.color_code" width="100%" height="800px"/>
+    <Leaflet v-if="location" :location="location" :fill="location.color_code" width="100%" height="800px" readonly/>
     
   </v-container>
 </template>

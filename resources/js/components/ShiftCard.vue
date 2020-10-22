@@ -1,7 +1,6 @@
 <template>
   <v-card outlined hover :width="width" :style="'background-color: ' + background">
-    <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')"
-        @click="showLocationOverlay">
+    <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
       {{ shift.location.name }}
     </v-card-title>
 
@@ -33,6 +32,11 @@
     <v-card-actions v-if="!onlyinfo">
       <v-row dense>
         <v-col class="text-center">
+          <v-btn icon @click.stop="showLocationOverlay" class="me-2" :disabled="shift.location.map === null">
+            <v-icon>mdi-map-search</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col class="text-center">
           <v-btn :disabled="!showButton('request')" :color="(request && myShiftStatus) ? '' : ''" icon @click.stop="updateShiftUser" class='me-2'>
             <v-icon>{{ request ? 'mdi-account-minus' : 'mdi-account-plus' }}</v-icon>
           </v-btn>
@@ -47,7 +51,8 @@
     </v-card-actions>
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false">
-      <LocationMap :location="shift.location" :fill="shift.location.color_code" readonly />
+      <Leaflet :location="shift.location" :fill="shift.location.color_code" :width="mapWidth" height="500px" readonly 
+          v-on:close="locationOverlay = false" v-on:click.native.stop/>
     </v-overlay>
   </v-card>
 </template>
@@ -56,13 +61,13 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
-import LocationMap from '~/components/LocationMap.vue'
+import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   name: 'ShiftCard',
   mixins: [helper],
   components: {
-    LocationMap
+    Leaflet
   },
   props: {
     shift: {
@@ -134,6 +139,11 @@ export default {
 
       return result
     },
+
+    mapWidth() {
+      var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+      return newWidth
+    }
   },
 
   methods: {
@@ -235,4 +245,5 @@ export default {
     border-color: 'grey';
     border-width: thin;
   }
+
 </style>
