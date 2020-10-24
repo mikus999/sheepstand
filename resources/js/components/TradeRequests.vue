@@ -56,7 +56,6 @@ import ShiftCard from '~/components/ShiftCard.vue'
 export default {
   name: 'TradeRequests',
   mixins: [helper],
-  props: {},
   components: {
     ShiftCard
   },
@@ -77,7 +76,16 @@ export default {
   },
 
   created () {
-    this.getTrades()
+    if (this.team) {
+      this.getTrades()
+    } else {
+      const unsubscribe = this.$store.subscribe((mutation, state) => {
+        if(mutation.type === 'auth/SET_TEAM') {
+          this.getTrades()
+          unsubscribe()
+        }
+      })
+    }
   },
 
   methods: {
@@ -86,7 +94,6 @@ export default {
         .then(response => {
           this.trades = response.data.trades
         })
-
     },
 
     async makeTrade (trade) {

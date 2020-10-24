@@ -1,17 +1,11 @@
 <template>
   <div ref="mainDiv">
     <v-toolbar v-if="!readonly" dense dark>
-      <v-btn-toggle mandatory>
-        <v-btn @click="updateMapType('roadmap')">
-          <v-icon>mdi-map</v-icon>
+      <v-item-group class="v-btn-toggle">
+        <v-btn @click="updateMapType()">
+          <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
         </v-btn>
-        <v-btn @click="updateMapType('satellite')">
-          <v-icon>mdi-satellite</v-icon>
-        </v-btn>
-        <v-btn @click="getMyPosition()">
-          <v-icon>mdi-crosshairs-gps</v-icon>
-        </v-btn>
-      </v-btn-toggle>
+      </v-item-group>
 
       <v-spacer></v-spacer>
 
@@ -45,7 +39,7 @@
       </v-item-group>
     </v-toolbar>
 
-    <v-btn v-else icon :style="closeBtn" color="primary" @click="$emit('close')">
+    <v-btn v-else fab small :style="closeBtn" color="primary" @click="$emit('close')">
       <v-icon>mdi-close</v-icon>
     </v-btn>
 
@@ -122,7 +116,7 @@ export default {
       center: latLng(1, 1),
       zoom: 13,
       shapeOptions: {
-        fillColor: this.fill,
+        fillColor: this.getFill,
         fillOpacity: 0.4,
         stroke: true,
         weight: 2,
@@ -162,6 +156,9 @@ export default {
   },
 
   computed: {
+    getFill() {
+      return this.fill ? this.fill : this.location.color_code
+    }
   },
 
   created () {
@@ -261,15 +258,17 @@ export default {
     },
 
 
-    updateMapType (type) {
-      switch (type) {
-        case 'roadmap':
+    updateMapType () {
+      switch (this.mapType) {
+        case 'satellite':
           this.url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
           this.attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          this.mapType = 'roadmap'
           break
-        case 'satellite':
+        case 'roadmap':
           this.url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 	        this.attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          this.mapType = 'satellite'
           break
       }
     },
@@ -337,9 +336,10 @@ export default {
             },
             onEachFeature: this.loadFeature,
         })
+
+        this.recenterMap()
       }
 
-      this.recenterMap()
       this.isChanged = null
     },
 

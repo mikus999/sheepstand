@@ -1,7 +1,6 @@
 <template>
   <v-card>
-    <v-data-table :headers="headers" :items="shifts" disable-sort 
-       width="100%">
+    <v-data-table :headers="headers" :items="shifts" disable-sort width="100%">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
@@ -21,7 +20,7 @@
       </template>
 
       <template v-slot:item.location="{ item }">
-        <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
+        <v-chip label small :color="item.location.color_code" @click="showLocationOverlay(item)">{{ item.location.name }}</v-chip>
       </template>
 
       <template v-slot:item.view="{ item }">
@@ -33,6 +32,11 @@
     <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
       <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px" height="100%"></ShiftCard>
     </v-overlay>
+
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false">
+      <Leaflet :location="location" :width="mapWidth" height="500px" readonly 
+          v-on:close="locationOverlay = false" v-on:click.native.stop/>
+    </v-overlay>
   </v-card>
 </template>
 
@@ -41,21 +45,26 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import ShiftCard from '~/components/ShiftCard.vue'
+import Leaflet from '~/components/Leaflet.vue'
+
 
 export default {
   name: 'MyShifts',
   mixins: [helper],
   props: {},
   components: {
-    ShiftCard
+    ShiftCard,
+    Leaflet
   },
 
   data () {
     return {
       expanded: [],
       shiftOverlay: false,
+      locationOverlay: false,
       shift: null,
       schedule: null,
+      location: null,
       shifts: [],
       shiftsAll: [],
       allTeams: false,
@@ -65,6 +74,13 @@ export default {
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
         { text: '', value: 'view' },
       ],
+    }
+  },
+
+  computed: {
+    mapWidth() {
+      var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+      return newWidth
     }
   },
 
@@ -96,7 +112,13 @@ export default {
       this.shift = shift
       this.schedule = shift.schedule
       this.shiftOverlay = true
-    }
+    },
+    
+    showLocationOverlay(shift) {
+      this.location = shift.location
+      this.locationOverlay = true
+    },
+
   }
 }
 

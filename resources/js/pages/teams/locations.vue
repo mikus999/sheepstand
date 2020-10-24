@@ -67,6 +67,10 @@
         <template v-slot:item.color_code="{ item }">
           <v-chip :color="item.color_code" small>{{ item.color_code }}</v-chip>
         </template>
+      
+        <template v-slot:item.map="{ item }">
+          <v-chip label small @click="showLocationOverlay(item)">Edit Map</v-chip>
+        </template>
 
         <template v-slot:item.default="{ item }">
           <v-icon v-if="item.default" color="green">mdi-check-circle</v-icon>
@@ -84,6 +88,12 @@
       </v-data-table>
 
     </v-card>
+    
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false">
+      <Leaflet :location="location" :width="mapWidth" height="500px"  
+          v-on:close="locationOverlay = false" v-on:click.native.stop/>
+    </v-overlay>
+
   </v-container>
 </template>
 
@@ -93,11 +103,15 @@ import { mapGetters } from 'vuex'
 import Form from 'vform'
 import helper from '~/mixins/helper'
 import { required } from 'vuelidate/lib/validators'
+import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
+  components: {
+    Leaflet
+  },
 
   validations: {
     tempData: {
@@ -109,6 +123,7 @@ export default {
     return {
       dialog: false,
       isEdit: false,
+      locationOverlay: false,
       headers: [
         { text: this.$t('teams.location_name'), align: 'start', value: 'name' },
         { text: this.$t('teams.location_color'), value: 'color_code', align: 'center', sortable: false},
@@ -128,6 +143,7 @@ export default {
         name: null
       },
       locationData: [],
+      location: null,
       menu: false,
     }
   },
@@ -152,6 +168,11 @@ export default {
       !this.$v.tempData.name.required && errors.push(this.$t('teams.location_name_required'))
       return errors
     },
+
+    mapWidth() {
+      var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+      return newWidth
+    }
   },
 
   created () {
@@ -234,7 +255,12 @@ export default {
         this.getData()
         this.showSnackbar(this.$t('teams.success_location_default'), 'success')
       })
-    }
+    },
+
+    showLocationOverlay(location) {
+      this.location = location
+      this.locationOverlay = true
+    },
 
   }
 }

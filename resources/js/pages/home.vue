@@ -7,7 +7,7 @@
     <v-row>
     </v-row>
 
-    <v-row>
+    <v-row v-if="user">
       <v-col cols=12 lg=8>
         <MyShifts />
 

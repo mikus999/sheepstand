@@ -2,14 +2,10 @@
   <v-navigation-drawer v-model="drawer" class="light-blue darken-4 white--text" dark style="z-index: 500;" app>
     <v-list flat class="mb-0 pb-0" v-show="!isMobile">
       <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title>
-            <Logo width="35" height="35" class="mb-2 mr-1"/>
+        <Logo width="35" height="35" class="mb-1 mr-2"/>
 
-            <span class="head sheep">SHEEP</span>
-            <span class="head stand ml-n1">STAND</span>
-          </v-list-item-title>
-        </v-list-item-content>
+        <span class="head sheep">SHEEP<span class="head stand">STAND</span></span>
+        
       </v-list-item>
     </v-list>
 
@@ -47,7 +43,7 @@
 
 
 
-    <v-list v-if="hasTeam && $can(['view_schedules','manage_schedules'])" dense>
+    <v-list v-if="user && hasTeam && $can(['view_schedules','manage_schedules'])" dense>
       <v-subheader>{{ $t('menu.team_admin')}}</v-subheader>
 
       <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none" active-class="menu-selected-item">
@@ -79,7 +75,7 @@
     </v-list>
 
 
-    <v-list v-if="$can('manage_translation')" dense>
+    <v-list v-if="user && $can('manage_translation')" dense>
       <v-subheader>{{ $t('menu.site_admin')}}</v-subheader>
 
       <v-list-item router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
@@ -101,7 +97,7 @@
 
       <!-- TEAM SELECTOR -->
       <div class="pa-1">
-        <TeamSelector v-if="!$vuetify.breakpoint.mobile && hasTeam" />
+        <TeamSelector v-if="!$vuetify.breakpoint.mobile && user && hasTeam" />
       </div>
 
 
@@ -177,6 +173,6 @@ export default {
   }
 
   .v-list-item__title {
-    font-size: 1.0rem !important;
+    font-size: 0.9rem !important;
   }
 </style>

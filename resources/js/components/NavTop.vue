@@ -3,8 +3,7 @@
     <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')"></v-app-bar-nav-icon>
 
     <v-toolbar-title>
-      <span class="head sheep small">SHEEP</span>
-      <span class="head stand small ml-n1">STAND</span>
+      <span class="head sheep small">SHEEP<span class="head stand">STAND</span></span>
     </v-toolbar-title>
 
     <v-spacer />

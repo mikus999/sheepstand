@@ -37,18 +37,9 @@ axios.interceptors.response.use(response => response, error => {
   }
 
   if (status === 401 && store.getters['auth/check']) {
-    Swal.fire({
-      type: 'warning',
-      title: i18n.t('auth.token_expired_alert_title'),
-      text: i18n.t('auth.token_expired_alert_text'),
-      reverseButtons: true,
-      confirmButtonText: i18n.t('general.ok'),
-      cancelButtonText: i18n.t('general.cancel')
-    }).then(() => {
+      // Token is expired. Logout user and redirect to login
       store.commit('auth/LOGOUT')
-
       router.push({ name: 'login' })
-    })
   }
 
   return Promise.reject(error)

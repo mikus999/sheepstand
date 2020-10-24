@@ -174,7 +174,16 @@ export default {
   },
   
   created () {
-    this.getStats()
+    if (this.team) {
+      this.getStats()
+    } else {
+      const unsubscribe = this.$store.subscribe((mutation, state) => {
+        if(mutation.type === 'auth/SET_TEAM') {
+          this.getStats()
+          unsubscribe()
+        }
+      })
+    }
   },
 
   methods: {
