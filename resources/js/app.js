@@ -20,6 +20,9 @@ import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import * as GmapVue from 'gmap-vue';
 
 
+// Load .env variables to process.env
+//require('dotenv').config()
+
 
 // BootstrapVue
 //Vue.use(BootstrapVue)
