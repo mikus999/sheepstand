@@ -6,11 +6,27 @@
     </p>
     <p>
       <v-text-field v-model="code" id="txtCode"></v-text-field>
-      <v-btn @click="signIn">Sign In</v-btn>
+      <v-btn @click="signIn" class="primary">Sign In</v-btn>
+      <v-btn @click="signOut">Sign Out</v-btn>
+      <v-btn @click="getUserInfo">Get User Info</v-btn>
     </p>
 
     <p>
-      <v-btn @click="getUserInfo">Get User Info</v-btn>
+      
+    </p>
+
+    <v-divider />
+
+    <p>
+      <v-btn @click="createSuperGroup">Create Group</v-btn>
+      <v-btn @click="deleteSuperGroup">Delete Group</v-btn>
+    </p>
+
+    <v-divider />
+
+    <p>
+      <v-btn @click="botJoinSelf">Bot Joins Self</v-btn>
+      <v-btn @click="botAdd">Add a Bot</v-btn>
     </p>
   </v-container>
 </template>

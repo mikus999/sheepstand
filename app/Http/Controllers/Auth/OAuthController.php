@@ -8,6 +8,7 @@ use App\OAuthProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Http\Request;
 
 class OAuthController extends Controller
 {
@@ -60,6 +61,30 @@ class OAuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => $this->guard()->getPayload()->get('exp') - time(),
         ]);
+    }
+
+
+    /**
+     * Obtain the user information from the provider using access token.
+     *
+     * @param  string $driver
+     * @return \Illuminate\Http\Response
+     */
+    public function getTokenFromMobile($provider, Request $request)
+    {
+        $user = Socialite::driver($provider)->stateless()->userFromToken($request->code);
+        $user = $this->findOrCreateUser($provider, $user);
+        
+        $this->guard()->setToken(
+            $token = $this->guard()->login($user)
+        );
+
+        return response()->json([
+          'token' => $token,
+          'token_type' => 'bearer',
+          'expires_in' => $this->guard()->getPayload()->get('exp') - time(),
+        ]);
+
     }
 
     /**

@@ -9,7 +9,9 @@ export const state = {
   siteRoles: null,
   teams: [],
   team: null,
-  token: Cookies.get('token')
+  token: Cookies.get('token'),
+  tgUser: null, // Telegram user logged in
+  tgGroup: null, // Telegram group for team
 }
 
 // getters
@@ -21,6 +23,8 @@ export const getters = {
   team: state => state.team,
   hasTeam: state => state.teams.length > 0,
   token: state => state.token,
+  tgUser: state => state.tgUser,
+  tgGroup: state => state.tgGroup,
   check: state => state.user !== null,
   isSuperAdmin: state => state.roles['global'].indexOf('super_admin') >= 0
 }
@@ -70,6 +74,13 @@ export const mutations = {
     state.team = payload
   },
 
+  [types.SET_TGUSER] (state, payload) {
+    state.tgUser = payload
+  },
+
+  [types.SET_TGGROUP] (state, payload) {
+    state.tgGroup = payload
+  },
 }
 
 // actions
@@ -147,6 +158,14 @@ export const actions = {
 
   updateUser ({ commit }, payload) {
     commit(types.UPDATE_USER, payload)
+  },
+
+  updateTGUser ({ commit }, payload) {
+    commit(types.SET_TGUSER, payload)
+  },
+
+  updateTGGroup ({ commit }, payload) {
+    commit(types.SET_TGGROUP, payload)
   },
 
   async logout ({ commit }) {

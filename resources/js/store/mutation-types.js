@@ -8,6 +8,8 @@ export const FETCH_SITEROLES = 'FETCH_SITEROLES'
 export const UPDATE_USER = 'UPDATE_USER'
 export const SET_TEAM = 'SET_TEAM'
 export const FETCH_TEAMS = 'FETCH_TEAMS'
+export const SET_TGUSER = 'SET_TGUSER'
+export const SET_TGGROUP = 'SET_TGGROUP'
 
 // lang.js
 export const SET_LOCALE = 'SET_LOCALE'

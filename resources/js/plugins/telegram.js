@@ -1,4 +1,5 @@
 import { MTProto, getSRPParams } from '@mtproto/core'
+import { mapGetters } from 'vuex'
 
 const mtproto = {
   data () {
@@ -6,8 +7,18 @@ const mtproto = {
       mtproto: null,
       api_id: '1963687',
       api_hash: '756735263dc2835ebfd1e02dfdf5dcbd',
+      bot_token: '1363093542:AAFVY3NrG95hkINydWq5EumOuI4QwApNIXI',
+      bot_id: '1363093542',
+      bot_hash: '11592732920764892291',
       phone_hash: null,
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      tgUser: 'auth/tgUser',
+      tgGroup: 'auth/tgGroup'
+    })
   },
 
   created () {
@@ -20,6 +31,8 @@ const mtproto = {
     this.mtproto.updateInitConnectionParams({
       app_version: '10.0.0',
     })
+
+    console.log(this.mtproto)
   },
 
   methods: {
@@ -27,6 +40,7 @@ const mtproto = {
       return this.mtproto.call(method, params, options)
         .then(result => {
           this.phone_hash = result.phone_code_hash
+          return result
         })
         .catch(async error => {
           const { error_code, error_message } = error
@@ -52,11 +66,45 @@ const mtproto = {
     },
 
     sendCode() {
+      this.call('auth.logOut')
       this.call('auth.sendCode', {
         phone_number: this.phoneNum,
         settings: {
           _: 'codeSettings',
         },
+      })
+    },
+
+    botJoinSelf () {
+      this.call('auth.logOut')
+
+      this.call('auth.importBotAuthorization', {
+        api_id: this.api_id,
+        api_hash: this.api_hash,
+        bot_auth_token: this.bot_token
+      })
+      .then(result => {
+      })
+    },
+
+    botAdd () {
+      const botUser = {
+        _: 'inputUser',
+        user_id: this.bot_id,
+        access_hash: this.bot_hash
+      }
+      const channel = {
+        _: 'inputChannel',
+        channel_id: this.tgGroup.id,
+        access_hash: this.tgGroup.access_hash
+      };
+     
+      this.call('channels.inviteToChannel', {
+        channel: channel,
+        users: [botUser]
+      })
+      .then(update => {
+        console.log(update)
       })
     },
 
@@ -67,7 +115,7 @@ const mtproto = {
         phone_code_hash: this.phone_hash,
       })
       .then(result => {
-        console.log(result)
+        this.$store.dispatch('auth/updateTGUser', result.user)
       })
       .catch(error => {
         if (error.error_message === 'SESSION_PASSWORD_NEEDED') {
@@ -92,6 +140,11 @@ const mtproto = {
       })
     },
 
+    signOut () {
+      this.call('auth.logOut')
+      this.$store.dispatch('auth/updateTGUser', null)
+    },
+
     getPassword() {
       this.call('account.getPassword');
     },
@@ -108,16 +161,37 @@ const mtproto = {
     },
 
     getUserInfo () {
-      this.call('help.getUserInfo', {
-        user_id: {
-          _: 'inputUserSelf',
-        },
+      console.log(this.tgUser)
+    },
+
+    createSuperGroup () {
+      this.call('channels.createChannel', {
+        broadcast: false,
+        megagroup: true,
+        title: 'Test Team Group',
+        about: 'Communication from SheepStand'
       })
       .then(result => {
-        console.log(result)
+        const group = result.chats[0]
+        this.$store.dispatch('auth/updateTGGroup', group)
       })
       
     },
+
+    deleteSuperGroup () {
+      const channel = {
+        _: 'inputChannel',
+        channel_id: this.tgGroup.id,
+        access_hash: this.tgGroup.access_hash
+      };
+
+      this.call('channels.deleteChannel', {
+        channel: channel
+      })
+      .then(result => {
+        this.$store.dispatch('auth/updateTGGroup', null)
+      })
+    }
   }
 }
 
