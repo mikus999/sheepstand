@@ -124,19 +124,13 @@
             <v-btn text @click="cancelSetup">Close</v-btn>
           </v-col>
         </v-row>
-
-
-        <v-card class="mb-12" height="200px">
-          Congratulations! Notifications have been enabled on your account. 
-          You can now access notification settings on the Team Settings page.
-        </v-card>
-        <v-btn text @click="cancelSetup">Close</v-btn>
       </v-stepper-content>
     </v-stepper>
 
 
 
     <p>
+      <v-btn @click="getChannelInfo">Get Channel Info</v-btn>
       <v-btn @click="signOut">Sign Out</v-btn>
       <v-btn @click="deleteSuperGroup">Delete Group</v-btn>
     </p>

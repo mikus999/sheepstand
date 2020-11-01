@@ -1,5 +1,6 @@
 import { MTProto, getSRPParams } from '@mtproto/core'
 import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 const mtproto = {
   data () {
@@ -167,7 +168,7 @@ const mtproto = {
           })
           .then(result => {
             console.log(result)
-            //this.stepperGo(5)
+            this.stepperGo(5)
           })
           .catch(error => {
             console.log(error)
@@ -195,6 +196,8 @@ const mtproto = {
         this.$store.dispatch('auth/updateTGGroup', group)
 
         this.botAdd()
+        this.updateDB()
+
         this.stepperGo(6)
       })
       .catch(error => {
@@ -220,7 +223,6 @@ const mtproto = {
 
     async botAdd () {
       const bot = await this.getBotInfo()
-      console.log(bot)
 
       const botUser = {
         _: 'inputUser',
@@ -238,7 +240,7 @@ const mtproto = {
         users: [botUser]
       })
       .then(update => {
-        console.log(update)
+        //console.log(update)
       })
     },
 
@@ -255,6 +257,65 @@ const mtproto = {
       })
     },
 
+    async updateDB (channel_id, access_hash) {
+      await axios({
+        method: 'post',      
+        url: '/api/teams/' + this.team.id + '/notificationsettings',
+        data: {
+          channel_id: this.tgGroup.id,
+          access_hash: this.tgGroup.access_hash,
+        }
+      })
+    },
+
+
+    async getChannelInfo () {
+      
+      this.call('auth.importBotAuthorization', {
+        api_id: this.api_id,
+        api_hash: this.api_hash,
+        bot_auth_token: this.bot_token
+      })
+      
+
+      await axios({
+        method: 'get',      
+        url: '/api/teams/' + this.team.id + '/notificationsettings',
+      })
+      .then(response => {
+        const settings = response.data.settings
+        
+        // Create an invitation link
+        const peerChannel = {
+          _: 'inputPeerChannel',
+          channel_id: settings.telegram_channel_id,
+          access_hash: settings.telegram_access_hash
+        };
+        console.log(peerChannel)
+
+        this.call('messages.exportChatInvite', {
+          peer: peerChannel
+        })
+        .then(result => {
+          console.log(result)
+        })
+        
+        const channel = {
+          _: 'inputChannel',
+          channel_id: settings.telegram_channel_id,
+          access_hash: settings.telegram_access_hash
+        };
+
+        this.call('channels.getFullChannel', {
+          channel: channel
+        })
+        .then(result => {
+          console.log(result.full_chat)
+        })          
+        
+      })
+
+    }
   }
 }
 

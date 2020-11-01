@@ -41,4 +41,9 @@ class Team extends LaratrustTeam
   {
     return $this->hasManyThrough('App\Models\Shift', 'App\Models\Schedule');
   }
+
+  public function notificationsettings()
+  {
+      return $this->hasOne('App\Models\NotificationSetting');
+  }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Location;
+use App\Models\NotificationSetting;
 use DB;
 use Helper;
 use Auth;
@@ -57,6 +58,12 @@ class TeamController extends Controller
         'color_code' => '#000000',
         'map' => null,
         'default' => true
+      ]);
+
+      $notification = NotificationSetting::create([
+        'team_id' => $newteam->id,
+        'telegram_channel_id' => '',
+        'telegram_access_hash' => ''
       ]);
 
       $user->teams()->attach($newteam);
