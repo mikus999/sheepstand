@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const mix = require('laravel-mix')
+require('dotenv').config();
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 require('laravel-mix-versionhash')
 // require('vuetifyjs-mix-extension')
