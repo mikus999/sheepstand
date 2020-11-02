@@ -150,6 +150,67 @@ const helper = {
     showSnackbar (content, color) {
       this.$store.commit('snackbar/SHOW_MESSAGE', { content, color })
     },
+
+
+    getOS () {
+      const userAgent = window.navigator.userAgent
+      const platform = window.navigator.platform
+      const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K', 'darwin']
+      const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE']
+      const iosPlatforms = ['iPhone', 'iPad', 'iPod']
+      var os = null
+      var link = null
+      var osDetails = { 
+        name: null, 
+        icon: null
+      }
+
+          
+      if (macosPlatforms.indexOf(platform) !== -1) {
+        osDetails.name = 'macOS'
+        osDetails.icon = 'mdi-apple'
+      } else if (iosPlatforms.indexOf(platform) !== -1) {
+        osDetails.name = 'iOS'
+        osDetails.icon = 'mdi-apple'
+      } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        osDetails.name = 'Windows'
+        osDetails.icon = 'mdi-windows'
+      } else if (/Android/.test(userAgent)) {
+        osDetails.name = 'Android'
+        osDetails.icon = 'mdi-android'
+      } else if (!os && /Linux/.test(platform)) {
+        osDetails.name = 'Linux'
+        osDetails.icon = 'mdi-linux'
+      } else {
+        osDetails.name = 'Unknown'
+        osDetails.icon = 'mdi-help-circle'
+      }
+
+      return osDetails;
+    },
+
+    getTelegramLink (os) {
+      const dlLink_android = 'https://telegram.org/dl/android'
+      const dlLink_ios = 'https://telegram.org/dl/ios'
+      const dlLink_other = 'https://telegram.org/apps'
+      const dlLink_desktop = 'https://desktop.telegram.org'
+      const dlLink_macos = 'https://macos.telegram.org'
+
+      switch (os) {
+        case 'macOS':
+          return dlLink_macos
+        case 'Windows':
+        case 'Linux':
+          return dlLink_desktop
+        case 'Android':
+          return dlLink_android
+        case 'iOS':
+          return dlLink_ios
+        default:
+          return dlLink_other
+      }
+    }
+
   },
 
 }

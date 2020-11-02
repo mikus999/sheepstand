@@ -28,7 +28,8 @@
         "autosave": "Autosave",
         "available": "Available",
         "statistics": "Statistics",
-        "confirm": "Please Confirm"
+        "confirm": "Please Confirm",
+        "error": "Error"
     },
     "menu": {
         "dashboard": "Dashboard",

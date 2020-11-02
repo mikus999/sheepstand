@@ -1,5 +1,5 @@
 // Components
-
+import NotificationJoin from '~/components/NotificationJoin.vue'
 
 function page (path) {
   return () => import(/* webpackChunkName: '' */ `~/pages/${path}`).then(m => m.default || m)
@@ -25,7 +25,8 @@ export default [
   { path: '/team/settings', name: 'teams.index', component: page('teams/index.vue'), meta: { roles: ['elder','team_admin'], auth: true } },
   { path: '/team/locations', name: 'teams.locations', component: page('teams/locations.vue'), meta: { roles: ['elder','team_admin'], auth: true } },
   { path: '/team/maptest', name: 'teams.maptest', component: page('teams/maptest.vue'), meta: { roles: [], auth: true } },
-  { path: '/team/notifications', name: 'teams.notifications', component: page('teams/notifications.vue'), meta: { roles: [], auth: true } },
+  { path: '/team/notifications', name: 'notifications.setup', component: page('teams/notifications.vue'), meta: { roles: [], auth: true } },
+  { path: '/team/notifications/join', name: 'notifications.join', component: NotificationJoin, meta: { roles: [], auth: true } },
 
   // SCHEDULE routes
   { path: '/schedule/edit/:id', name: 'schedules.edit', component: page('schedules/edit.vue'), meta: { roles: ['elder','team_admin'], auth: true }, props: true },

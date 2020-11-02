@@ -39,8 +39,6 @@ const mtproto = {
     this.mtproto.updateInitConnectionParams({
       app_version: '10.0.0',
     })
-
-    console.log(this.mtproto)
   },
 
   methods: {
@@ -68,6 +66,8 @@ const mtproto = {
 
             return this.call(method, params, options)
           }
+
+          this.error_msg = error_message
 
           return Promise.reject(error);
         })
@@ -188,8 +188,8 @@ const mtproto = {
       this.call('channels.createChannel', {
         broadcast: false,
         megagroup: true,
-        title: 'Test Team Group',
-        about: 'Communication from SheepStand'
+        title: this.group_name,
+        about: this.group_desc
       })
       .then(result => {
         const group = result.chats[0]
