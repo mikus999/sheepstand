@@ -2,6 +2,7 @@
 <v-container fluid>
   <v-card class="mx-auto" max-width="600" outlined>
     <v-card-title>
+      <v-icon left>mdi-account-multiple-plus</v-icon>
       {{ $t('teams.join_existing_team') }}
     </v-card-title>
 
@@ -13,17 +14,17 @@
           <v-stepper-content step="1">
             <v-row class="mt-5">
               <v-col cols=12 class="text-center">
-                <h3>{{ $t('teams.join_existing_team') }}</h3>
+                <h3>{{ $t('teams.what_is_a_team') }}</h3>
                 <p class="text-muted my-8">
-                  {{ $t('teams.what_is_a_team') }}
+                  {{ $t('teams.team_explanation') }}
                 </p>
-                <p class="text-muted my-8">
+                <p class="text-muted my-8 font-weight-bold">
                   {{ $t('teams.enter_team_code') }}
                 </p>
 
                 <v-text-field v-model="teamid" class="my-16" label="TM-XXXXXXXX" outlined :error="teamNotFound" :error-messages="teamNotFoundMsg"></v-text-field>
 
-                <v-btn color="primary" @click.prevent="findTeam">
+                <v-btn color="primary" class="mb-8 mt-n8" @click.prevent="findTeam">
                   {{ $t('teams.find_team') }}
                 </v-btn>
               </v-col>
@@ -83,7 +84,7 @@
 
                 <br><br>
 
-                <v-btn id="cancel" @click.prevent="clearForm">
+                <v-btn text id="cancel" @click.prevent="clearForm">
                   {{ $t('general.go_back') }}
                 </v-btn>
 
@@ -105,7 +106,7 @@
 
                 <v-text-field v-model="team_name" class="ma-3" :label="$t('teams.team_name')" outlined :error="teamNameError" :error-messages="teamNameErrorMsg"></v-text-field>
 
-                <v-btn id="cancel" @click.prevent="clearForm">
+                <v-btn text id="cancel" @click.prevent="clearForm">
                   {{ $t('general.go_back') }}
                 </v-btn>
                 <v-btn color="primary" @click.prevent="createTeam">
@@ -119,32 +120,50 @@
           <v-stepper-content step="4">
             <v-row>
               <v-col cols=12 class="mt-5 text-center">
-                <h3 class="ma-3">
+                <h1 class="ma-3">
                   <v-icon size="30" color="success">mdi-check-circle-outline</v-icon>
                   {{ this.$t('teams.welcome_to_team') }}
-                </h3>
+                </h1>
 
                 <v-divider class="my-16" />
 
                 <div class="text-muted my-8">
+
                   <!-- Tasks for team administrator -->
                   <div v-if="isNewTeam">
-                    Notifications can now be enabled for your team.
-                    This allows team members
-                    Would you like to setup notifications for your new team?
+                    <h3>{{ $t('notifications.setup_notifications_now') }}</h3>
+
+                    <p class="text-muted my-8">
+                      {{ $t('notifications.feature_explanation_team')}}
+                    </p>
+
+                    <v-btn text id="cancel" router :to="{ name: 'teams.index' }">
+                      {{ $t('general.later') }}
+                    </v-btn>
+                    <v-btn color="primary" router :to="{ name: 'notifications.setup' }">
+                      {{ $t('notifications.setup_now') }}
+                    </v-btn>
                   </div>
 
                   <!-- Tasks for new team member -->
                   <div v-if="!isNewTeam">
-                    View available schedules
-                    Subscribe to notifications for this team
+                    <h3>{{ $t('notifications.subscribe_notifications_now') }}</h3>
+
+                    <p class="text-muted my-8">
+                      {{ $t('notifications.feature_explanation_user')}}
+                    </p>
+
+                    <v-btn text id="cancel" router :to="{ name: 'home' }">
+                      {{ $t('general.later') }}
+                    </v-btn>
+                    <v-btn color="primary" router :to="{ name: 'notifications.join' }">
+                      {{ $t('notifications.subscribe_now') }}
+                    </v-btn>
                   </div>
                 </div>
               </v-col>
             </v-row>
           </v-stepper-content>
-
-          <!-- STEP 5: NOTIFICATIONS -->
 
         </v-stepper-items>
       </v-stepper>
@@ -174,7 +193,7 @@ export default {
       teamFound: false,
       teamTemp: [],
       teamcontact: [],
-      stepperCurr: 4,
+      stepperCurr: 1,
       stepperMax: 4,
       isNewTeam: false,
     }

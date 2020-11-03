@@ -24,6 +24,7 @@
     "go_back": "Go Back",
     "continue": "Continue",
     "default": "Default",
+    "later": "Later",
     "min": "min",
     "max": "max",
     "autosave": "Autosave",
@@ -108,8 +109,9 @@
     "success_remove_user": "User successfully removed from team",
     "success_add_user": "User sucessfully added to team",
     "join_existing_team": "Join a team",
-    "what_is_a_team": "A team is a group of publishers who work together in public witnessing. For example, this could be your congregation, a special metropolitan witnessing project, or service group",
-    "enter_team_code": "Enter the code given to you by the brothers overseeing your team",
+    "what_is_a_team": "What is a team?",
+    "team_explanation": "A team is a group of publishers who work together in public witnessing. For example, this could be your congregation, a special metropolitan witnessing project, or service group",
+    "enter_team_code": "To join an existing team, enter the code given to you by the brothers overseeing your team.",
     "find_team": "Find Team",
     "create_new_team": "Or, create a new team",
     "confirm_create_new_team": "Please confirm that you are responsible for overseeing public witnessing and want to create a new team.",
@@ -199,11 +201,12 @@
   "notifications": {
     "notification_setup": "Notifications Setup",
     "lets_setup_notifications": "Let's setup notifications for your team",
-    "feature_explanation": "Enabling this feature ensures your team is notified about trade offers, new schedules, etc.",
+    "feature_explanation_team": "Enabling this feature ensures your team is notified about trade offers, new schedules, etc.",
+    "feature_explanation_user": "Enabling this feature ensures you are notified about trade offers, new schedules, etc.",
     "sheepstand_uses_telegram": "SheepStand uses Telegram for notifications. Telegram is a free and secure messaging app, similar to Viber and WhatsApp.",
     "if_no_telegram_account": "If you do not already have a Telegram account, you can download the app from the link below and sign up.",
     "after_telegram_signup": "After signing up for an account, or if you are already a Telegram user, continue to the next step.",
-    "i_have_telegram": "I have a Telegram account",
+    "i_have_telegram": "I have Telegram",
     "signin_to_telegram": "Sign In to Telegram",
     "enter_telegram_phone_number": "Please enter the phone number linked to your Telegram account. A code will be sent to this number in order to sign in.",
     "enter_login_code": "Enter the Login Code",
@@ -213,6 +216,11 @@
     "telegram_signedin": "Great! You're signed in to Telegram",
     "create_telegram_group": "Now let's create a Telegram group for your team. Team members can then join the group in order to receive notifications.",
     "setup_complete": "Setup Complete!",
-    "notifications_now_enabled": "Congratulations! Notifications have been enabled on your account. You can now access notification settings on the Team Settings page."
+    "notifications_now_enabled": "Congratulations! Notifications have been enabled on your account. You can now access notification settings on the Team Settings page.",
+    "enable_notifications": "You can now enable notifications",
+    "setup_notifications_now": "Would you like to setup notifications now?",
+    "subscribe_notifications_now": "Would you like to subscribe to notifications now?",
+    "setup_now": "Setup Now",
+    "subscribe_now": "Subscribe Now"
   }
 }

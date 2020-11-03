@@ -1,76 +1,77 @@
 <template>
-  <v-card class="mx-auto" max-width="600" outlined>
-    <v-card-title>
-      Enable Notifications
-    </v-card-title>
+<v-card class="mx-auto" max-width="600" outlined>
+  <v-card-title>
+    <v-icon left>mdi-telegram</v-icon>
+    Enable Notifications
+  </v-card-title>
 
-    <v-card-text>
-      <v-stepper v-model="step">
-        <v-stepper-items>
-          <v-stepper-content step="1">
-            <v-row>
-              <v-col cols=12 class="my-5 text-center">
-                <h3 class="ma-3">Notifiations using <v-icon class="ml-2 mr-1">mdi-telegram</v-icon> Telegram</h3>
-                <p class="text-muted my-8">
-                  Enabling this feature ensures you will be notified about trade offers, new schedules, etc.
-                </p>
-                <p class="text-muted my-8">
-                  SheepStand uses Telegram for notifications.
-                  Telegram is a free and secure messaging app, similar to Viber and WhatsApp.
-                  If you do not already have a Telegram account, you can download the app from the link below and sign up.
-                </p>
-                <p class="my-8">
-                  <TelegramDL />
-                </p>
-                <p class="text-muted my-8">
-                  After signing up for an account, or if you are already a Telegram user, continue to the next step.
-                </p>
-                        
-                <v-btn color="primary" @click="step = 2">I have a Telegram account</v-btn>
-              </v-col>
-            </v-row>
-          </v-stepper-content>
+  <v-card-text>
+    <v-stepper v-model="step">
+      <v-stepper-items>
+        <v-stepper-content step="1">
+          <v-row>
+            <v-col cols=12 class="my-5 text-center">
+              <h3 class="ma-3">Notifications using Telegram</h3>
+              <p class="text-muted my-8">
+                {{ $t('notifications.feature_explanation_user') }}
+              </p>
+              <p class="text-muted my-8">
+                SheepStand uses Telegram for notifications.
+                Telegram is a free and secure messaging app, similar to Viber and WhatsApp.
+                If you do not already have a Telegram account, you can download the app from the link below and sign up.
+              </p>
+              <p class="my-8">
+                <DownloadTelegram />
+              </p>
+              <p class="text-muted my-8">
+                After signing up for an account, or if you are already a Telegram user, continue to the next step.
+              </p>
 
-          <v-stepper-content step="2">
-            <v-row>
-              <v-col cols=12 class="my-5 text-center">
-                <h3 class="ma-3">Scan or Click to Join</h3>
-                <p class="text-muted my-8">
-                  Scan or click the QR Code with your device where Telegram is installed.
-                </p>
+              <v-btn color="primary" @click="step = 2">I have Telegram</v-btn>
+            </v-col>
+          </v-row>
+        </v-stepper-content>
 
-                <div class="my-16 text-center">
-                  <a :href="qr_value" target="_blank" class="text-decoration-none">
-                    <qrcode-vue :value="qr_value" :size="qr_size" level="H" class="mx-auto"></qrcode-vue>
-                  </a>
-                </div>
+        <v-stepper-content step="2">
+          <v-row>
+            <v-col cols=12 class="my-5 text-center">
+              <h3 class="ma-3">Scan or Click to Join</h3>
+              <p class="text-muted my-8">
+                Scan or click the QR Code below using the device where Telegram is installed.
+              </p>
 
-                <v-btn text @click="cancelSetup">Cancel</v-btn>
-              </v-col>
-            </v-row>
-          </v-stepper-content>
-        </v-stepper-items>
-      </v-stepper>
-    </v-card-text>
-  </v-card>
+              <div class="my-16 text-center">
+                <a :href="qr_value" target="_blank" class="text-decoration-none">
+                  <qrcode-vue :value="qr_value" :size="qr_size" level="H" class="mx-auto"></qrcode-vue>
+                </a>
+              </div>
+
+              <v-btn text @click="cancelSetup">Cancel</v-btn>
+            </v-col>
+          </v-row>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
+  </v-card-text>
+</v-card>
 </template>
 
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
-import TelegramDL from '~/components/TelegramDL'
+import DownloadTelegram from '~/components/DownloadTelegram'
 import QrcodeVue from 'qrcode.vue'
 
 export default {
   name: 'NotificationJoin',
   mixins: [helper],
   components: {
-    TelegramDL,
+    DownloadTelegram,
     QrcodeVue
   },
 
-  data () {
+  data() {
     return {
       step: 1,
       qr_value: 'https://telegram.org',

@@ -1,6 +1,7 @@
 <template>
 <v-card class="mx-auto" max-width="600" outlined>
   <v-card-title>
+    <v-icon left>mdi-telegram</v-icon>
     {{ $t('notifications.notification_setup') }}
   </v-card-title>
 
@@ -12,14 +13,14 @@
             <v-col cols=12 class="my-5 text-center">
               <h3 class="ma-3">{{ $t('notifications.lets_setup_notifications') }}</h3>
               <p class="text-muted my-8">
-                {{ $t('notifications.feature_explanation') }}
+                {{ $t('notifications.feature_explanation_team') }}
               </p>
               <p class="text-muted my-8">
                 {{ $t('notifications.sheepstand_uses_telegram') }}
                 {{ $t('notifications.if_no_telegram_account') }}
               </p>
               <p class="my-8">
-                <TelegramDL />
+                <DownloadTelegram />
               </p>
               <p class="text-muted my-8">
                 {{ $t('notifications.after_telegram_signup') }}
@@ -142,7 +143,7 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
-import TelegramDL from '~/components/TelegramDL'
+import DownloadTelegram from '~/components/DownloadTelegram'
 import CodeInput from "vue-verification-code-input"
 import {
   MazPhoneNumberInput
@@ -155,7 +156,7 @@ export default {
   name: 'NotificationSetup',
   mixins: [helper, mtproto],
   components: {
-    TelegramDL,
+    DownloadTelegram,
     MazPhoneNumberInput,
     CodeInput
   },
