@@ -134,6 +134,9 @@
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
+
+    <v-btn @click="botAdd">Add Bot</v-btn>
+    <v-btn @click="getGroupLink(1195525455)">Get Group Link</v-btn>
   </v-card-text>
 
 </v-card>
@@ -168,7 +171,9 @@ export default {
   },
 
   created() {
-
+    this.mtInitialize()
+    this.group_name = this.team.display_name
+    this.group_desc = 'SheepStand.com notifications'
   },
 
   methods: {

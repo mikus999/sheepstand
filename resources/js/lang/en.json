@@ -31,7 +31,8 @@
     "available": "Available",
     "statistics": "Statistics",
     "confirm": "Please Confirm",
-    "error": "Error"
+    "error": "Error",
+    "status": "Status"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -199,6 +200,7 @@
     "target": "Target"
   },
   "notifications": {
+    "notifications": "Notifications",
     "notification_setup": "Notifications Setup",
     "lets_setup_notifications": "Let's setup notifications for your team",
     "feature_explanation_team": "Enabling this feature ensures your team is notified about trade offers, new schedules, etc.",

@@ -10,6 +10,7 @@ class NotificationSetting extends Model
         'team_id',
         'telegram_channel_id',
         'telegram_access_hash',
+        'telegram_group_link',
         'setting_notify_trade_requests',
         'setting_notify_trade_filled',
         'setting_notify_schedule_open',

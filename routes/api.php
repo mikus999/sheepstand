@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('teams/default/update', 'TeamController@setDefault');
     Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings');
     Route::post('teams/{id}/notificationsettings', 'NotificationController@updateTelegram');
+    Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink');
+    Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink');
 
     // SHIFT routes
     Route::post('schedules/joinshift', 'ShiftController@addUserToShift');

@@ -65,7 +65,7 @@ import QrcodeVue from 'qrcode.vue'
 
 export default {
   name: 'NotificationJoin',
-  mixins: [helper],
+  mixins: [helper, mtproto],
   components: {
     DownloadTelegram,
     QrcodeVue
@@ -79,7 +79,28 @@ export default {
     }
   },
 
+  created() {
+    this.mtInitialize()
+    this.initializeQRCode()
+  },
+
   methods: {
+    async initializeQRCode() {
+      await this.getGroupLink()
+        .then(result => {
+
+          if (result == null || result == '') {
+            this.setGroupLink(this.team.notificationsettings.telegram_channel_id)
+              .then(link => {
+                this.qr_value = link
+              })
+          } else {
+            this.qr_value = result
+          }
+
+        })
+    },
+
     cancelSetup() {
       this.step = 1
     },

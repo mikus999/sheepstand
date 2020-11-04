@@ -23,10 +23,9 @@ class TeamController extends Controller
     public function index()
     {
       $user = Auth::user();
-      $teams = $user->teams;
 
       $data = [
-          'teams' => $user->teams
+          'teams' => $user->teams()->with('notificationsettings')->get()
       ];
       return response()->json($data);
     }
@@ -93,7 +92,7 @@ class TeamController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $team = $user->teams()->find($id);
+        $team = $user->teams()->with('notificationsettings')->find($id);
         return response()->json($team);
     }
 

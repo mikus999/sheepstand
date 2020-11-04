@@ -11,6 +11,7 @@ const mtproto = {
       bot_token: process.env.MIX_TELEGRAM_BOT_TOKEN,
       bot_id: process.env.MIX_TELEGRAM_BOT_ID,
       bot_name: '@SheepStand_Bot',
+      bot_api_base: 'https://api.telegram.org/bot' + process.env.MIX_TELEGRAM_BOT_TOKEN + '/',
       phone_num: null,
       phone_hash: null,
       login_code: null,
@@ -30,18 +31,23 @@ const mtproto = {
   },
 
   created () {
-    this.mtproto = new MTProto({ 
-      api_id: this.api_id,
-      api_hash: this.api_hash,
-      test: false
-    })
 
-    this.mtproto.updateInitConnectionParams({
-      app_version: '10.0.0',
-    })
   },
 
   methods: {
+    async mtInitialize () {
+
+      this.mtproto = new MTProto({ 
+        api_id: this.api_id,
+        api_hash: this.api_hash,
+        test: false
+      })
+  
+      this.mtproto.updateInitConnectionParams({
+        app_version: '10.0.0',
+      })
+    },
+
     call(method, params, options = {}) {
       return this.mtproto.call(method, params, options)
         .then(result => {
@@ -167,11 +173,9 @@ const mtproto = {
             },
           })
           .then(result => {
-            console.log(result)
             this.stepperGo(5)
           })
           .catch(error => {
-            console.log(error)
             this.error_msg = error.error_message
           })
         })
@@ -196,7 +200,7 @@ const mtproto = {
         this.$store.dispatch('auth/updateTGGroup', group)
 
         this.botAdd()
-        this.updateDB()
+        this.updateDB(group)
 
         this.stepperGo(6)
       })
@@ -221,6 +225,7 @@ const mtproto = {
       })
     },
 
+
     async botAdd () {
       const bot = await this.getBotInfo()
 
@@ -233,16 +238,63 @@ const mtproto = {
         _: 'inputChannel',
         channel_id: this.tgGroup.id,
         access_hash: this.tgGroup.access_hash
-      };
-     
+      }
+      const adminRights = {
+        _: 'chatAdminRights',
+        change_info: true,
+        post_messages: true,
+        edit_messages: true,
+        delete_messages: true,
+        ban_users: true,
+        invite_users: true,
+        pin_messages: true,
+        add_admins: true        
+      }
+      var photo = {}
+      this.call('photos.getUserPhotos', {
+        user_id: {
+          _: 'inputUser',
+          user_id: bot.id,
+          access_hash: bot.access_hash
+        }
+      })
+      .then(photos => {
+        const p = photos.photos[0]
+        photo = {
+          _: 'inputChatPhoto',
+          id: {
+            _: 'inputPhoto',
+            id: p.id,
+            access_hash: p.access_hash,
+            file_reference: p.file_reference
+          }
+        }
+      })
+
+
+
+      // Add the bot to the channel
       this.call('channels.inviteToChannel', {
         channel: channel,
         users: [botUser]
       })
       .then(update => {
-        //console.log(update)
+        // Make the bot an admin
+        this.call('channels.editAdmin', {
+          channel: channel,
+          user_id: botUser,
+          admin_rights: adminRights,
+          rank: ''
+        })
+
+        // Change group picture
+        this.call('channels.editPhoto', {
+          channel: channel,
+          photo: photo
+        })
       })
     },
+
 
     async getBotInfo () {
       return new Promise((resolve, reject) => {
@@ -257,27 +309,69 @@ const mtproto = {
       })
     },
 
-    async updateDB (channel_id, access_hash) {
+
+    async updateDB (group) {
       await axios({
         method: 'post',      
         url: '/api/teams/' + this.team.id + '/notificationsettings',
         data: {
-          channel_id: this.tgGroup.id,
-          access_hash: this.tgGroup.access_hash,
+          channel_id: group.id,
+          access_hash: group.access_hash
         }
+      })
+      .then(response => {
+        this.getGroupLink(response.data.telegram_channel_id)
       })
     },
 
 
-    async getChannelInfo () {
-      
+    async setGroupLink(channel_id) {
+      const chat_id = '-100' + channel_id
+      const url = this.bot_api_base + 'exportChatInviteLink?chat_id=' + chat_id
+
+      await axios({
+        method: 'get',      
+        url: url,
+      })
+      .then(response => {
+        const link = response.data.result
+
+        axios({
+          method: 'post',      
+          url: '/api/teams/' + this.team.id + '/grouplink',
+          data: {
+            group_link: link
+          }
+        })
+
+        return link
+      })
+    },
+
+    async getGroupLink() {
+      var link = null
+
+      await axios({
+        method: 'get',      
+        url: '/api/teams/' + this.team.id + '/grouplink',
+      })
+      .then(response => {
+        link = response.data.link
+      })
+
+      return link
+    },
+
+    async signInBot() {
       this.call('auth.importBotAuthorization', {
         api_id: this.api_id,
         api_hash: this.api_hash,
         bot_auth_token: this.bot_token
       })
-      
+    },
 
+    async getChannelInfo () {
+      
       await axios({
         method: 'get',      
         url: '/api/teams/' + this.team.id + '/notificationsettings',
@@ -299,19 +393,7 @@ const mtproto = {
         .then(result => {
           console.log(result)
         })
-        
-        const channel = {
-          _: 'inputChannel',
-          channel_id: settings.telegram_channel_id,
-          access_hash: settings.telegram_access_hash
-        };
-
-        this.call('channels.getFullChannel', {
-          channel: channel
-        })
-        .then(result => {
-          console.log(result.full_chat)
-        })          
+            
         
       })
 
