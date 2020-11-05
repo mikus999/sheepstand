@@ -25,7 +25,7 @@
           <v-row>
             <v-col cols=12 class="text-center">
               <!-- Submit Button -->
-              <v-btn type="submit" @click.prevent="register" color="secondary">
+              <v-btn type="submit" @click.prevent="register" color="primary" block>
                 {{ $t('auth.register') }}
               </v-btn>
             </v-col>
@@ -33,7 +33,8 @@
 
           <v-row>
             <v-col cols=12 class="text-center">
-              <span class="h6 mr-2">{{ $t('auth.login_with') }}:</span><br>
+              <p class="my-8"><span class="h6">{{ $t('auth.login_with') }}:</span></p>
+
               <login-with-google />
               <login-with-facebook />
             </v-col>

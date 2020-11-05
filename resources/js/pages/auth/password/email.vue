@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-card class="w-75 mx-auto" outlined>
+  <v-container fluid>
+    <v-card class="mx-auto" max-width="600" outlined>
       <v-card-title>{{ $t('auth.reset_password') }}</v-card-title>
       <v-card-text>
         <v-form >
@@ -11,7 +11,7 @@
           <v-row>
             <v-col cols=12 class="text-center">
               <!-- Submit Button -->
-              <v-btn type="submit" @click.prevent="sendLink" color="secondary">
+              <v-btn type="submit" @click.prevent="sendLink" color="primary" block>
                 {{ $t('auth.send_password_reset_link') }}
               </v-btn>
             </v-col>

@@ -56,7 +56,7 @@
   "auth": {
     "token_expired_alert_title": "Session Expired!",
     "token_expired_alert_text": "Please log in again to continue.",
-    "login": "Log In",
+    "login": "Sign In",
     "register": "Register",
     "page_not_found": "Page Not Found",
     "logout": "Logout",
