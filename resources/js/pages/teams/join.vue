@@ -264,7 +264,7 @@ export default {
           } else {
             this.getTeams()
 
-            this.setTeam(response.data.team)
+            this.setTeam(response.data.team, 'self')
 
             this.stepperCurr = 4
             this.isNewTeam = true
