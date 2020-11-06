@@ -136,15 +136,18 @@ class NotificationController extends Controller
       $user = Auth::user();
       $team = $user->teams()->find($id);
       $settings = $team->notificationsettings;
+      $channel_id = '';
       $link = '';
 
       if ($team) {
         if ($settings) {
+          $channel_id = $settings->telegram_channel_id;
           $link = $settings->telegram_group_link;
         };
       }
 
       $data = [
+        'channel_id' => $channel_id,
         'link' => $link
       ];
 

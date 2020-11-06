@@ -212,6 +212,7 @@
     "signin_to_telegram": "Sign In to Telegram",
     "enter_telegram_phone_number": "Please enter the phone number linked to your Telegram account. A code will be sent to this number in order to sign in.",
     "enter_login_code": "Enter the Login Code",
+    "resend_login_code": "Resend code via SMS",
     "get_telegram_login_code": "Open Telegram on your device and find the login code you were sent. Enter the code below.",
     "enter_telegram_password": "Enter your Telegram Password",
     "2FA_explanation": "It looks like you enabled 2-Factor Authentication on your account. Please enter you 2FA password to sign in.",

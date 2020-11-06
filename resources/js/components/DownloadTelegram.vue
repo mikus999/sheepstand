@@ -1,7 +1,7 @@
 <template>
-<v-btn class="m-2" large :href="dlLink" target="_blank">
-  <v-icon large>{{ osDetails.icon }}</v-icon>
-  <span class="pl-3">Download for </span>
+<v-btn class="ma-2 pa-2" :large="$vuetify.breakpoint.smAndUp" :href="dlLink" target="_blank">
+  <v-icon :large="$vuetify.breakpoint.smAndUp">{{ osDetails.icon }}</v-icon>
+  <span class="pl-2">Download for </span>
   <span class="pl-1"><b>{{ osDetails.name }}</b></span>
 </v-btn>
 </template>

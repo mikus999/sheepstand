@@ -40,7 +40,14 @@
               </p>
 
               <div class="my-16">
-                <MazPhoneNumberInput v-model="phone_num" show-code-on-list size="lg" :dark="$vuetify.theme.dark" fetch-country />
+                  <VueTelInput 
+                    v-model="phone_num"
+                    enabled-country-code
+                    valid-characters-only
+                    dynamic-placeholder
+                    mode="international"
+                    wrapper-classes="tel-dropdown-dark" 
+                    :input-classes="$vuetify.theme.dark ? 'tel-input-dark' : ''" />
               </div>
 
               <p class="text-muted mb-8 mt-n12 red--text" v-if="error_msg">
@@ -62,7 +69,17 @@
               </p>
 
               <div class="my-16 text-center">
-                <CodeInput v-model="login_code" :fields="5" @complete="codeInputComplete" class="mx-auto" />
+                <CodeInput 
+                  v-model="login_code" 
+                  :fields="5" 
+                  @complete="codeInputComplete" 
+                  :fieldWidth="$vuetify.breakpoint.xsOnly ? 40 : 58" 
+                  :fieldHeight="$vuetify.breakpoint.xsOnly ? 38 : 54" 
+                  class="mx-auto" />
+
+                  <p class="my-4">
+                    <a @click="resendCode" class="primary--text"><v-icon small class="mr-1 primary--text">mdi-refresh</v-icon>{{$t('notifications.resend_login_code')}}</a>
+                  </p>
               </div>
 
               <p class="text-muted mb-8 mt-n12 red--text" v-if="error_msg">
@@ -134,9 +151,6 @@
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
-
-    <v-btn @click="botAdd">Add Bot</v-btn>
-    <v-btn @click="getGroupLink(1195525455)">Get Group Link</v-btn>
   </v-card-text>
 
 </v-card>
@@ -148,25 +162,22 @@ import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
 import DownloadTelegram from '~/components/DownloadTelegram'
 import CodeInput from "vue-verification-code-input"
-import {
-  MazPhoneNumberInput
-} from 'maz-ui'
-import 'maz-ui/lib/scss/base.scss'
-import 'maz-ui/lib/scss/maz-input.scss'
-import 'maz-ui/lib/scss/maz-phone-number-input.scss'
+import { VueTelInput } from 'vue-tel-input'
 
 export default {
   name: 'NotificationSetup',
   mixins: [helper, mtproto],
   components: {
     DownloadTelegram,
-    MazPhoneNumberInput,
+    VueTelInput,
     CodeInput
   },
 
   data() {
     return {
       showPwd: false,
+      codeWidth: this.$vuetify.breakpoint.xsOnly ? 40 : 58,
+      codeHeight: this.$vuetify.breakpoint.xsOnly ? 38 : 54,
     }
   },
 
@@ -195,5 +206,13 @@ export default {
   color: #0288D1 !important;
   font-weight: bold;
   font-size: 24pt !important;
+}
+
+.tel-input-dark {
+  color: #fcfcfc;
+}
+
+.tel-dropdown-dark {
+  color: #000000;
 }
 </style>

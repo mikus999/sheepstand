@@ -100,6 +100,17 @@ const mtproto = {
       })
     },
 
+    //resend login code by another medium (ie. SMS)
+    resendCode() { 
+      this.call('auth.resendCode', {
+        phone_number: this.phone_num,
+        phone_code_hash: this.phone_hash
+      })
+      .catch(error => {
+        this.error_msg = error.error_message
+      })
+    },
+
     signIn() {
       this.call('auth.signIn', {
         phone_code: this.login_code,
@@ -319,36 +330,39 @@ const mtproto = {
           access_hash: group.access_hash
         }
       })
-      .then(response => {
-        this.getGroupLink(response.data.telegram_channel_id)
-      })
+      
+      //await this.setGroupLink(group.id)
+
     },
 
 
     async setGroupLink(channel_id) {
       const chat_id = '-100' + channel_id
       const url = this.bot_api_base + 'exportChatInviteLink?chat_id=' + chat_id
+      var link = null
 
       await axios({
         method: 'get',      
         url: url,
       })
       .then(response => {
-        const link = response.data.result
+        link = response.data.result
 
         axios({
-          method: 'post',      
+          method: 'post',
           url: '/api/teams/' + this.team.id + '/grouplink',
           data: {
             group_link: link
           }
         })
 
-        return link
       })
+
+      return link
     },
 
     async getGroupLink() {
+      var channel_id = null
       var link = null
 
       await axios({
@@ -356,10 +370,16 @@ const mtproto = {
         url: '/api/teams/' + this.team.id + '/grouplink',
       })
       .then(response => {
+        channel_id = response.data.channel_id
         link = response.data.link
       })
 
-      return link
+      const data = {
+        channel_id: channel_id,
+        link: link
+      }
+
+      return data
     },
 
     async signInBot() {

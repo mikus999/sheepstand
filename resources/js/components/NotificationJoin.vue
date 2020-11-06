@@ -1,5 +1,5 @@
 <template>
-<v-card class="mx-auto" max-width="600" outlined>
+<v-card class="mx-auto" :max-width="width" outlined>
   <v-card-title>
     <v-icon left>mdi-telegram</v-icon>
     Enable Notifications
@@ -70,6 +70,12 @@ export default {
     DownloadTelegram,
     QrcodeVue
   },
+  props: {
+    width: {
+      type: Number,
+      default: 600
+    }
+  },
 
   data() {
     return {
@@ -89,13 +95,15 @@ export default {
       await this.getGroupLink()
         .then(result => {
 
-          if (result == null || result == '') {
-            this.setGroupLink(this.team.notificationsettings.telegram_channel_id)
+          if (result.link == null || result.link == '' || result.link == undefined) {
+
+            this.setGroupLink(result.channel_id)
               .then(link => {
                 this.qr_value = link
               })
+
           } else {
-            this.qr_value = result
+            this.qr_value = result.link
           }
 
         })
