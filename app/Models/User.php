@@ -76,6 +76,15 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         return $this->hasMany('App\Models\TranslatorLanguages');
     }
 
+    public function alerts()
+    {
+      return $this->hasManyThrough('App\Models\Alert', 'App\Models\Team');
+    }
+
+
+
+
+
 
     /**
      * Get the profile photo URL attribute.

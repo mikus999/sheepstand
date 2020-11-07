@@ -16,6 +16,7 @@ class AddTableAlerts extends Migration
       Schema::create('alerts', function (Blueprint $table) {
         $table->id();
         $table->bigInteger('team_id')->nullable()->unsigned(); // 'teams.id' (optional)
+        $table->string('for_roles', 200)->nullable();
         $table->string('message_text', 200)->nullable();
         $table->string('message_i18n_string', 200)->nullable();
         $table->string('link_text', 50)->nullable();
@@ -26,6 +27,8 @@ class AddTableAlerts extends Migration
         $table->string('icon', 50)->nullable();
         $table->boolean('dismissable')->default(true);
         $table->boolean('outlined')->default(false);
+        $table->boolean('show_banner')->default(false);
+        $table->datetime('display_until')->nullable();
         $table->timestamps();
 
         $table->foreign('team_id')

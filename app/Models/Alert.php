@@ -8,6 +8,7 @@ class Alert extends Model
 {
   protected $fillable = [
     'team_id',
+    'for_roles',
     'message_text',
     'message_i18n_string',
     'link_text',
@@ -17,12 +18,19 @@ class Alert extends Model
     'type',
     'icon',
     'dismissable',
-    'outlined'
+    'outlined',
+    'show_banner',
+    'display_until'
   ];
+
+  public function alerts_public()
+  {
+    return $this->where('team_id','=',null);
+  }
 
   public function teams()
   {
-      return $this->belongsToMany('App\Models\Team')->withTimeStamps();
+      return $this->belongsTo('App\Models\Team')->withTimeStamps();
   }
 
   public function users()

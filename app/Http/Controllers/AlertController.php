@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Alert;
 use Illuminate\Http\Request;
+use App\Models\Alert;
+use App\Models\User;
+use DB;
+use Helper;
+use Auth;
+
 
 class AlertController extends Controller
 {
@@ -14,7 +19,14 @@ class AlertController extends Controller
      */
     public function index()
     {
-        //
+      $user = Auth::user();
+
+      $data = [
+        'alerts' => $user->alerts()->get(),
+        'alerts_public' => Alert::all()
+      ];
+      return response()->json($data);
+
     }
 
 
