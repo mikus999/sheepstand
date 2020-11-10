@@ -32,7 +32,10 @@
     "statistics": "Statistics",
     "confirm": "Please Confirm",
     "error": "Error",
-    "status": "Status"
+    "status": "Status",
+    "color": "Color",
+    "type": "Type",
+    "icon": "Icon"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -225,5 +228,16 @@
     "subscribe_notifications_now": "Would you like to subscribe to notifications now?",
     "setup_now": "Setup Now",
     "subscribe_now": "Subscribe Now"
+  },
+  "alerts": {
+    "alerts": "Alerts",
+    "create_new_alert": "Create New Alert",
+    "message_text": "Alert Message",
+    "link_text": "Link Display Text",
+    "named_route": "Page for Link",
+    "dismissable": "Can be dismissed",
+    "outlined": "Use outlined style",
+    "show_as_banner": "Show as a banner on dashboard",
+    "display_until": "Display message until"
   }
 }
