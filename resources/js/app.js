@@ -136,6 +136,31 @@ Vue.prototype.$can = function (permission) {
 }
 
 
+/**
+ * $IS: roles check prototype
+ * @param { string, array } roles Accepts role(s) to check as either a string or an array of strings
+ * @return boolean Returns 'true' if user roles match any of the given roles
+ */ 
+Vue.prototype.$is = function (rolesAllowed) {
+  var matchFound = false
+
+  if (this.siteRoles !== null) {
+
+    // Now see if the user owns one of the roles above
+    // If any of the users' roles match any of the allowed roles for this resource, return 'true'
+    const teamRoles = this.team ? this.roles[this.team.id] : []
+    const globalRoles = this.roles['global']
+    const myRoles = teamRoles.concat(globalRoles)
+
+    for (let myRole of myRoles) {
+      matchFound = rolesAllowed.indexOf(myRole) >= 0
+      if (matchFound) { break }
+    }
+  }
+
+  return matchFound
+}
+
 
 
 window.bus = new Vue()

@@ -35,7 +35,8 @@
     "status": "Status",
     "color": "Color",
     "type": "Type",
-    "icon": "Icon"
+    "icon": "Icon",
+    "optional": "Optional"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -238,6 +239,9 @@
     "dismissable": "Can be dismissed",
     "outlined": "Use outlined style",
     "show_as_banner": "Show as a banner on dashboard",
-    "display_until": "Display message until"
+    "display_until": "Display message until",
+    "banner_options": "Banner Options",
+    "custom_color": "Use custom color",
+    "type": "Alert Type"
   }
 }
