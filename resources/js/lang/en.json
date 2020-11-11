@@ -7,6 +7,7 @@
     "update": "Update",
     "close": "Close",
     "create": "Create",
+    "clear": "Clear",
     "error_alert_title": "Oops...",
     "error_alert_text": "Something went wrong! Please try again.",
     "email": "Email",
@@ -36,7 +37,7 @@
     "color": "Color",
     "type": "Type",
     "icon": "Icon",
-    "optional": "Optional"
+    "optional": "optional"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -236,6 +237,7 @@
     "messages": "Messages",
     "create_new_message": "Create New Message",
     "message_text": "Message Text",
+    "message_text_i18n": "i18n string (For system messages only)",
     "link_text": "Link Display Text",
     "named_route": "Page for Link",
     "dismissable": "Can be dismissed",
@@ -246,6 +248,10 @@
     "display_until": "Display message until",
     "banner_options": "Banner Options",
     "custom_color": "Use custom color",
-    "type": "Message Type"
+    "type": "Message Type",
+    "inbox": "Inbox"
+  },
+  "system_messages": {
+    "new_schedule_available": "A new schedule is available. Click here to view."
   }
 }

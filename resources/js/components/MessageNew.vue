@@ -5,9 +5,59 @@
     </v-card-title>
 
     <v-card-text>
-      <v-text-field v-model="message_text" :label="$t('messages.message_text')" />
-      <v-text-field v-model="link_text" :label="$t('messages.link_text')" />
-      <v-select v-model="named_route" :label="$t('messages.named_route')" :items="routes" item-text="path" item-value="name" />
+      <v-radio-group
+        v-model="system_message"
+        v-if="$is('super_admin')"
+        row>
+        <v-radio label="Local Message" :value="false"></v-radio>
+        <v-radio label="System Message" :value="true"></v-radio>
+      </v-radio-group>
+
+      <v-text-field v-model="message_text" v-if="!system_message" :label="$t('messages.message_text')" />
+
+      <v-select 
+        v-model="message_text_i18n" 
+        v-if="system_message"
+        :label="$t('messages.message_text_i18n')" 
+        :items="i18n_strings" 
+        item-text="text" 
+        item-value="value" 
+        menu-props="overflowY"
+        clearable />
+
+      <v-select 
+        v-model="named_route" 
+        :label="$t('messages.named_route') + ' (' + $t('general.optional') + ')'" 
+        :items="routes" 
+        item-text="path" 
+        item-value="name" 
+        clearable />
+
+      <v-menu
+        ref="date_menu"
+        v-model="date_menu"
+        :close-on-content-click="true"
+        transition="scale-transition"
+        offset-y
+        min-width="290px"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="display_until"
+            :label="$t('messages.display_until') + ' (' + $t('general.optional') + ')'"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+            clearable
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          ref="picker"
+          v-model="display_until"
+        ></v-date-picker>
+      </v-menu>
+
 
       <v-switch v-model="show_inbox" :label="$t('messages.show_in_inbox')" />
       <v-switch v-model="send_telegram" :label="$t('messages.send_to_telegram')" :disabled="!notificationsEnabled" />
@@ -25,7 +75,7 @@
 
           <v-switch v-model="custom_color" :label="$t('messages.custom_color')" />
           <v-menu 
-            v-model="menu" 
+            v-model="color_menu" 
             v-if="custom_color"
             top 
             nudge-bottom="105" 
@@ -39,8 +89,7 @@
                 :label="$t('general.color') + ' (' + $t('general.optional') + ')'" 
                 v-on="on" 
                 prepend-icon="mdi-palette" 
-                hide-details 
-                >
+                hide-details>
 
                 <template v-slot:prepend-inner>
                   <v-icon :color="color_code">mdi-square-rounded</v-icon>
@@ -65,7 +114,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="menu = false">{{ $t('general.ok') }}</v-btn>
+                <v-btn text @click="color_menu = false">{{ $t('general.ok') }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-menu>
@@ -74,26 +123,29 @@
             <v-alert 
               :type="type"
               :color="custom_color ? color_code : null"
-              :icon="icon"
               :dismissible="dismissable"
               :outlined="outlined"
               border="left"
               dense
-              prominent
             >
-              <v-row align="center">
-                <v-col class="grow py-0">
-                  {{ message_text }}
-                </v-col>
-                <v-col v-if="link_text !== null && link_text !== ''" class="shrink py-0">
-                  <v-btn>{{ link_text }}</v-btn>
-                </v-col>
-              </v-row>
+              {{ system_message ? $t(message_text_i18n) : message_text }}
+
+              <template v-slot:append v-if="named_route != null && named_route != ''">
+                <v-icon style="color: inherit !important;">mdi-open-in-new</v-icon>
+              </template>
+
             </v-alert>
           </div>
         </v-card-text>
       </v-card>
     </v-card-text>
+
+    <v-card-actions>
+      <div class="mx-auto">
+      <v-btn text @click="clearForm()">{{ $t('general.clear') }}</v-btn>
+      <v-btn color="primary" @click="createMessage()">{{ $t('general.create') }}</v-btn>
+      </div>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -112,8 +164,11 @@ export default {
   
   data () {
     return {
-      menu: false,
+      color_menu: false,
+      date_menu: false,
+      system_message: false,
       message_text: null,
+      message_text_i18n: null,
       link_text: null,
       named_route: null,
       custom_color: false,
@@ -126,6 +181,7 @@ export default {
       send_telegram: false,
       show_banner: true,
       display_until: null,
+      i18n_strings: [],
       routes: [],
       types: [
         'success',
@@ -140,6 +196,7 @@ export default {
     this.send_telegram = this.notificationsEnabled
 
     this.getRoutes()
+    this.getStrings()
   },
 
   methods: {
@@ -152,6 +209,52 @@ export default {
           })
         }
       })
+    },
+
+    async getStrings() {
+      await axios({
+        method: 'get',      
+        url: '/api/translation/strings/en',
+      })
+      .then(response => {
+          const enStrings = response.data
+          const tempStrings = enStrings["system_messages"]
+
+          Object.keys(tempStrings).forEach (key2 => {
+            const tempKey = 'system_messages.' + key2
+            const tempValue = tempStrings[key2]
+            this.i18n_strings.push({"value": tempKey, "text": tempValue});
+          })
+      })
+    },
+
+    async createMessage() {
+      await axios({
+        method: 'POST',      
+        url: '/api/messages',
+        data: {
+          team_id: this.system_message ? null : this.team.id,
+          for_roles: null,
+          system_message: this.system_message,
+          message_text: this.system_message ? null : this.message_text,
+          message_i18n_string: !this.system_message? null : this.message_text_i18n,
+          named_route: this.named_route,
+          color: this.custom_color ? this.color_code : null,
+          type: this.type,
+          icon: this.icon,
+          dismissable: this.dismissable,
+          outlined: this.outlined,
+          show_banner: this.show_banner,
+          display_until: this.display_until 
+        }
+      })
+      .then(response => {
+        
+      })
+    },
+
+    clearForm() {
+
     }
   }
 }

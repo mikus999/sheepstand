@@ -9,6 +9,7 @@ class Message extends Model
   protected $fillable = [
     'team_id',
     'for_roles',
+    'system_message',
     'message_text',
     'message_i18n_string',
     'link_text',

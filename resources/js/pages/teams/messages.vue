@@ -6,6 +6,7 @@
       </v-col>
 
       <v-col cols=12 md=6>
+        <MessageList />
       </v-col>
     </v-row>
   </v-container>
@@ -15,13 +16,15 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import MessageNew from '~/components/MessageNew.vue'
+import MessageList from '~/components/MessageList.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
   components: {
-    MessageNew
+    MessageNew,
+    MessageList
   },
   
   data () {
