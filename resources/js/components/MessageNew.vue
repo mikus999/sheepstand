@@ -9,6 +9,8 @@
       <v-text-field v-model="link_text" :label="$t('messages.link_text')" />
       <v-select v-model="named_route" :label="$t('messages.named_route')" :items="routes" item-text="path" item-value="name" />
 
+      <v-switch v-model="show_inbox" :label="$t('messages.show_in_inbox')" />
+      <v-switch v-model="send_telegram" :label="$t('messages.send_to_telegram')" :disabled="!notificationsEnabled" />
       <v-switch v-model="show_banner" :label="$t('messages.show_as_banner')" />
       
       <v-card v-if="show_banner" outlined class="pa-8">
@@ -75,15 +77,16 @@
               :icon="icon"
               :dismissible="dismissable"
               :outlined="outlined"
+              border="left"
+              dense
+              prominent
             >
               <v-row align="center">
-                <v-col cols="12">
+                <v-col class="grow py-0">
                   {{ message_text }}
                 </v-col>
-                <v-col cols="12">
-                  <div v-if="link_text !== null && link_text !== ''" class="text-center">
-                    <v-btn class="mx-auto">{{ link_text }}</v-btn>
-                  </div>
+                <v-col v-if="link_text !== null && link_text !== ''" class="shrink py-0">
+                  <v-btn>{{ link_text }}</v-btn>
                 </v-col>
               </v-row>
             </v-alert>
@@ -119,6 +122,8 @@ export default {
       icon: null,
       dismissable: true,
       outlined: true,
+      show_inbox: true,
+      send_telegram: false,
       show_banner: true,
       display_until: null,
       routes: [],
@@ -132,6 +137,8 @@ export default {
   },
 
   created () {
+    this.send_telegram = this.notificationsEnabled
+
     this.getRoutes()
   },
 

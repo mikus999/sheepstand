@@ -1,5 +1,6 @@
 import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
+import { result } from 'lodash'
 
 
 const helper = {
@@ -14,7 +15,16 @@ const helper = {
       hasTeam: 'auth/hasTeam',
       locale: 'lang/locale',
       locales: 'lang/locales'
-    })
+    }),
+
+
+    notificationsEnabled () {
+      var result = false
+      if (this.team.notificationsettings != null && this.team.notificationsettings.telegram_channel_id != null) {
+        result = true
+      }
+      return result
+    },
   },
 
   data () {
@@ -157,7 +167,6 @@ const helper = {
     showSnackbar (content, color) {
       this.$store.commit('snackbar/SHOW_MESSAGE', { content, color })
     },
-
 
     getOS () {
       const userAgent = window.navigator.userAgent

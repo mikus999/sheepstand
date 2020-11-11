@@ -62,6 +62,8 @@ export const mutations = {
     state.roles = null
     state.siteRoles = null
     state.token = null
+    state.tgUser = null
+    state.tgGroup = null
 
     Cookies.remove('token')
   },
