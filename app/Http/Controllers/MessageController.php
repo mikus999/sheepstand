@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Alert;
+use App\Models\Message;
 use App\Models\User;
 use DB;
 use Helper;
 use Auth;
 
 
-class AlertController extends Controller
+class MessageController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,8 +22,8 @@ class AlertController extends Controller
       $user = Auth::user();
 
       $data = [
-        'alerts' => $user->alerts()->get(),
-        'alerts_public' => Alert::all()
+        'alerts' => $user->messages()->get(),
+        'alerts_public' => Message::all()
       ];
       return response()->json($data);
 
@@ -38,7 +38,7 @@ class AlertController extends Controller
      */
     public function store(Request $request)
     {
-      $alert = Alert::create([
+      $alert = Message::create([
 
       ]);
     }

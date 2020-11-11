@@ -76,9 +76,9 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         return $this->hasMany('App\Models\TranslatorLanguages');
     }
 
-    public function alerts()
+    public function messages()
     {
-      return $this->hasManyThrough('App\Models\Alert', 'App\Models\Team');
+      return $this->hasManyThrough('App\Models\Message', 'App\Models\Team');
     }
 
 

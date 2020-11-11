@@ -66,7 +66,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('translation/permissions', 'TranslationController@getLanguages');
 
     // API Resource Routes
-    Route::apiResource('alerts', 'AlertController');
+    Route::apiResource('messages', 'MessageController');
     Route::apiResource('teams', 'TeamController');
     Route::apiResource('teams.locations', 'LocationController');
     Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);

@@ -52,6 +52,7 @@
     "assignments": "Assignments",
     "shift_planning": "Shift Planning",
     "locations": "Locations",
+    "messages": "Messages",
     "account": "Account",
     "change_password": "Change Password",
     "account_settings": "Account Settings",
@@ -230,10 +231,10 @@
     "setup_now": "Setup Now",
     "subscribe_now": "Subscribe Now"
   },
-  "alerts": {
-    "alerts": "Alerts",
-    "create_new_alert": "Create New Alert",
-    "message_text": "Alert Message",
+  "messages": {
+    "messages": "Messages",
+    "create_new_message": "Create New Message",
+    "message_text": "Message Text",
     "link_text": "Link Display Text",
     "named_route": "Page for Link",
     "dismissable": "Can be dismissed",
@@ -242,6 +243,6 @@
     "display_until": "Display message until",
     "banner_options": "Banner Options",
     "custom_color": "Use custom color",
-    "type": "Alert Type"
+    "type": "Message Type"
   }
 }

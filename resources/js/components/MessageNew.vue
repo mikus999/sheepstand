@@ -1,27 +1,27 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ $t('alerts.create_new_alert')}}
+      {{ $t('messages.create_new_message')}}
     </v-card-title>
 
     <v-card-text>
-      <v-text-field v-model="message_text" :label="$t('alerts.message_text')" />
-      <v-text-field v-model="link_text" :label="$t('alerts.link_text')" />
-      <v-select v-model="named_route" :label="$t('alerts.named_route')" :items="routes" item-text="path" item-value="name" />
+      <v-text-field v-model="message_text" :label="$t('messages.message_text')" />
+      <v-text-field v-model="link_text" :label="$t('messages.link_text')" />
+      <v-select v-model="named_route" :label="$t('messages.named_route')" :items="routes" item-text="path" item-value="name" />
 
-      <v-switch v-model="show_banner" :label="$t('alerts.show_as_banner')" />
+      <v-switch v-model="show_banner" :label="$t('messages.show_as_banner')" />
       
       <v-card v-if="show_banner" outlined class="pa-8">
         <v-card-title>
-          {{ $t('alerts.banner_options')}}
+          {{ $t('messages.banner_options')}}
         </v-card-title>
 
         <v-card-text>
-          <v-select v-model="type" :label="$t('alerts.type')" :items="types" />
-          <v-switch v-model="dismissable" :label="$t('alerts.dismissable')" />
-          <v-switch v-model="outlined" :label="$t('alerts.outlined')" />
+          <v-select v-model="type" :label="$t('messages.type')" :items="types" />
+          <v-switch v-model="dismissable" :label="$t('messages.dismissable')" />
+          <v-switch v-model="outlined" :label="$t('messages.outlined')" />
 
-          <v-switch v-model="custom_color" :label="$t('alerts.custom_color')" />
+          <v-switch v-model="custom_color" :label="$t('messages.custom_color')" />
           <v-menu 
             v-model="menu" 
             v-if="custom_color"
@@ -99,7 +99,7 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 
 export default {
-  name: 'AlertNew',
+  name: 'MessageNew',
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],

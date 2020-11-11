@@ -47,8 +47,8 @@ class Team extends LaratrustTeam
       return $this->hasOne('App\Models\NotificationSetting');
   }
 
-  public function alerts()
+  public function messages()
   {
-    return $this->hasMany('App\Models\Alert');
+    return $this->hasMany('App\Models\Message');
   }
 }

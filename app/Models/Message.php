@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Alert extends Model
+class Message extends Model
 {
   protected $fillable = [
     'team_id',
@@ -23,7 +23,7 @@ class Alert extends Model
     'display_until'
   ];
 
-  public function alerts_public()
+  public function messages_public()
   {
     return $this->where('team_id','=',null);
   }
