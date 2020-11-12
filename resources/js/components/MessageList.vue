@@ -28,6 +28,7 @@
 
             <v-divider :key="'div-'+message.id" v-if="index < messages.length - 1" />
           </template>
+          
         </v-list-item-group>
       </v-list>
     </v-card-text>
