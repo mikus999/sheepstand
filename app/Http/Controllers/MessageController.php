@@ -45,12 +45,14 @@ class MessageController extends Controller
     {
       $data = ['message' => 'Access Denied'];
       $user = Auth::user();
+      $team_admin = false;
 
       if ($request->team_id) {
         $team = Team::find($request->team_id);
+        $team_admin = $user->hasRole('team_admin', $team);
       }
 
-      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+      if ($team_admin || $user->hasRole('super_admin', null)) {
 
         $alert = Message::create([
           'team_id' => $request->team_id,

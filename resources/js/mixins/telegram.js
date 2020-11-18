@@ -417,7 +417,25 @@ const mtproto = {
         
       })
 
-    }
+    },
+
+
+
+    async sendMessage(channel_id, message_text) {
+      const chat_id = '-100' + channel_id
+      const url = this.bot_api_base + 'sendMessage?chat_id=' + chat_id + '&text=' + message_text
+      var message = null
+
+      await axios({
+        method: 'get',      
+        url: url,
+      })
+      .then(response => {
+        message = response.data.result
+      })
+
+      return message
+    },
   }
 }
 

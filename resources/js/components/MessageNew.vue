@@ -59,7 +59,7 @@
       </v-menu>
 
 
-      <v-switch v-model="show_inbox" :label="$t('messages.show_in_inbox')" />
+      <v-switch v-model="show_inbox" :label="$t('messages.show_in_inbox')" disabled />
       <v-switch v-model="send_telegram" :label="$t('messages.send_to_telegram')" :disabled="!notificationsEnabled" />
       <v-switch v-model="show_banner" :label="$t('messages.show_as_banner')" />
       
@@ -69,11 +69,9 @@
         </v-card-title>
 
         <v-card-text>
-          <v-select v-model="type" :label="$t('messages.type')" :items="types" />
           <v-switch v-model="dismissable" :label="$t('messages.dismissable')" />
           <v-switch v-model="outlined" :label="$t('messages.outlined')" />
 
-          <v-switch v-model="custom_color" :label="$t('messages.custom_color')" />
           <v-menu 
             v-model="color_menu" 
             v-if="custom_color"
@@ -81,17 +79,18 @@
             nudge-bottom="105" 
             nudge-left="16" 
             :open-on-click="true" 
-            :close-on-content-click="false">
+            :close-on-content-click="false"
+            class="my-12"
+          >
 
             <template v-slot:activator="{ on }">
               <v-text-field 
                 v-model="color_code" 
-                :label="$t('general.color') + ' (' + $t('general.optional') + ')'" 
+                :label="$t('general.color')"
                 v-on="on" 
-                prepend-icon="mdi-palette" 
                 hide-details>
 
-                <template v-slot:prepend-inner>
+                <template v-slot:prepend>
                   <v-icon :color="color_code">mdi-square-rounded</v-icon>
                 </template>
 
@@ -109,6 +108,7 @@
                   hide-inputs
                   hide-mode-switch
                   mode="hexa"
+                  :swatches="swatches"
                   show-swatches
                 />
               </v-card-text>
@@ -119,16 +119,43 @@
             </v-card>
           </v-menu>
 
+          <v-select
+            v-model="icon"
+            :items="icons"
+            label="Icon"
+            :prepend-icon="icon"
+            class="my-12"
+          >
+
+            <template v-slot:item="{ item }">
+                <v-list-item-avatar>
+                  <v-icon>{{ item }}</v-icon>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ item }}
+                  </v-list-item-title>
+                </v-list-item-content>
+            </template>
+
+          </v-select>
+
+
           <div class="mt-16">
             <v-alert 
-              :type="type"
-              :color="custom_color ? color_code : null"
+              :color="color_code"
               :dismissible="dismissable"
               :outlined="outlined"
               border="left"
-              dense
             >
-              {{ system_message ? $t(message_text_i18n) : message_text }}
+              <template v-slot:prepend>
+                <v-icon style="color: inherit !important;">{{ icon }}</v-icon>
+              </template>
+
+              <div class="mx-3">
+                {{ system_message ? $t(message_text_i18n) : message_text }}
+              </div>
 
               <template v-slot:append v-if="named_route != null && named_route != ''">
                 <v-icon style="color: inherit !important;">mdi-open-in-new</v-icon>
@@ -152,12 +179,13 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
+import mtproto from '~/mixins/telegram'
 
 export default {
   name: 'MessageNew',
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
-  mixins: [helper],
+  mixins: [helper, mtproto],
   components: {
     
   },
@@ -171,10 +199,10 @@ export default {
       message_text_i18n: null,
       link_text: null,
       named_route: null,
-      custom_color: false,
-      color_code: '#ffffff',
-      type: 'info',
-      icon: null,
+      custom_color: true,
+      color_code: '#0288D1',
+      type: null,
+      icon: 'mdi-alert',
       dismissable: true,
       outlined: true,
       show_inbox: true,
@@ -189,14 +217,43 @@ export default {
         'error',
         'warning'
       ],
+      icons: [
+        'mdi-information',
+        'mdi-alert',
+        'mdi-account',
+        'mdi-account-group',
+        'mdi-account-convert',
+        'mdi-message',
+        'mdi-cog',
+        'mdi-map-search',
+        'mdi-map-marker',
+        'mdi-clock',
+        'mdi-calendar',
+        'mdi-pin',
+        'mdi-briefcase',
+        'mdi-paperclip',
+        'mdi-weather-pouring',
+        'mdi-weather-snowy-heavy',
+        'mdi-weather-windy',
+        'mdi-lightbulb',
+        'mdi-shield-alert'
+      ],
+      swatches: [
+        ['#FF1744', '#B71C1C'],
+        ['#FF5722', '#BF360C'],
+        ['#1976D2', '#01579B'],
+        ['#4CAF50', '#1B5E20'],
+        ['#9C27B0', '#311B92'],
+      ],
     }
   },
 
   created () {
-    this.send_telegram = this.notificationsEnabled
 
+    this.mtInitialize()
     this.getRoutes()
     this.getStrings()
+
   },
 
   methods: {
@@ -229,6 +286,24 @@ export default {
     },
 
     async createMessage() {
+
+      // SEND TELEGRAM MESSAGE
+      if (this.send_telegram) {
+        const channel_id = this.team.notificationsettings.telegram_channel_id
+        var message_text = this.system_message ? this.$t(this.message_text_i18n) : this.message_text
+        if (this.named_route) {
+          var url = this.$router.resolve({ name: this.named_route }).href
+          if (url !== '/') {
+            message_text += '\n\n' + process.env.MIX_APP_URL + url
+          }
+        }
+
+        message_text = encodeURIComponent(message_text)
+        await this.sendMessage(channel_id, message_text)
+      }
+
+
+      // WRITE TO DATABASE
       await axios({
         method: 'POST',      
         url: '/api/messages',
@@ -237,7 +312,7 @@ export default {
           for_roles: null,
           system_message: this.system_message,
           message_text: this.system_message ? null : this.message_text,
-          message_i18n_string: !this.system_message? null : this.message_text_i18n,
+          message_i18n_string: !this.system_message ? null : this.message_text_i18n,
           named_route: this.named_route,
           color: this.custom_color ? this.color_code : null,
           type: this.type,
@@ -251,6 +326,7 @@ export default {
       .then(response => {
         this.$emit('updated')
       })
+      
     },
 
     clearForm() {

@@ -10,17 +10,18 @@
           <template v-for="(message, index) in messages">
             <v-list-item
               :key="message.id"
-              @click="editor ? null : goToRoute(message.named_route)"
+              @click="editor ? '' : goToRoute(message.named_route)"
             >
+
               <v-list-item-icon>
                 <v-icon 
-                  v-text="getMessageType(message).icon"
-                  :color="getMessageType(message).color"
+                  v-text="message.icon"
+                  :color="message.color"
                   ></v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title>
+                <v-list-item-title :style="'color: ' + message.color">
                   {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
                 </v-list-item-title>
               </v-list-item-content>
@@ -64,25 +65,7 @@ export default {
 
   data () {
     return {
-      messages: [],
-      message_types: {
-        success: {
-          icon: 'mdi-information',
-          color: 'green',
-        },
-        info: {
-          icon: 'mdi-information',
-          color: 'primary',
-        },
-        error: {
-          icon: 'mdi-alert',
-          color: 'red',
-        },
-        warning: {
-          icon: 'mdi-information',
-          color: 'orange',
-        },        
-      },
+      messages: []
     }
   },
 
@@ -124,21 +107,6 @@ export default {
       }
     },
 
-    getMessageType (message) {
-      var icon = message.icon
-      var color = message.color
-
-      var temp = this.message_types[message.type]
-
-      if (message.icon != null) {
-        temp.icon = message.icon
-      }
-      if (message.color != null) {
-        temp.color = message.color
-      }
-      
-      return temp
-    }
   }
   
 }
