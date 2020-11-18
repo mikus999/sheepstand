@@ -19,19 +19,19 @@
 
         <v-row>
           <v-col cols=12 sm=6 class="text-center">
-            <v-btn :to="{ name: 'register' }" class="col-sm-6" style="text-decoration: none;" block text>
+            <router-link :to="{ name: 'register' }" style="text-decoration: none;">
               {{ $t('auth.register') }}
-            </v-btn>
+            </router-link>
           </v-col>
           <v-col cols=12 sm=6 class="text-center">
-            <v-btn :to="{ name: 'password.request' }" class="col-sm-6" style="text-decoration: none;" block text>
+            <router-link :to="{ name: 'password.request' }" style="text-decoration: none;">
               {{ $t('auth.forgot_password') }}
-            </v-btn>
+            </router-link>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols=12 class="text-center">
-            <p class="my-8"><span class="h6">{{ $t('auth.login_with') }}:</span></p>
+            <p class="my-8"><span class="h6">{{ $t('auth.login_with') }}</span></p>
             
             <login-with-google />
             <login-with-facebook />

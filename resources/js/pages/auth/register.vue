@@ -33,14 +33,13 @@
 
           <v-row>
             <v-col cols=12 class="text-center">
-              <p class="my-8"><span class="h6">{{ $t('auth.login_with') }}:</span></p>
+              <p class="my-8"><span class="h6">{{ $t('auth.login_with') }}</span></p>
 
               <login-with-google />
               <login-with-facebook />
             </v-col>
           </v-row>
         </v-form>
-
       </v-card-text>
     </v-card>
   </v-container>

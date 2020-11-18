@@ -35,10 +35,11 @@ mix.webpackConfig({
   },
   output: {
     chunkFilename: 'dist/js/[chunkhash].js',
-    path: mix.config.hmr ? '/' : path.resolve(__dirname, './public/build')
+    path: mix.config.hmr ? '/' : path.resolve(__dirname, './public/')
   }
 })
 
+/*
 mix.then(() => {
   if (!mix.config.hmr) {
     process.nextTick(() => publishAssets())
@@ -55,3 +56,4 @@ function publishAssets () {
   fs.copySync(path.join(publicDir, 'build', 'dist'), path.join(publicDir, 'dist'))
   fs.removeSync(path.join(publicDir, 'build'))
 }
+*/

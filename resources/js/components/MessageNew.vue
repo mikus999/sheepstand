@@ -188,7 +188,7 @@ export default {
         'info',
         'error',
         'warning'
-      ]
+      ],
     }
   },
 
@@ -249,7 +249,7 @@ export default {
         }
       })
       .then(response => {
-        
+        this.$emit('updated')
       })
     },
 

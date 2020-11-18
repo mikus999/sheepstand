@@ -10,7 +10,7 @@
           <template v-for="(message, index) in messages">
             <v-list-item
               :key="message.id"
-              @click="goToRoute(message.named_route)"
+              @click="editor ? null : goToRoute(message.named_route)"
             >
               <v-list-item-icon>
                 <v-icon 
@@ -24,6 +24,13 @@
                   {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
                 </v-list-item-title>
               </v-list-item-content>
+
+              <v-list-item-action v-if="editor">
+                <v-icon
+                  @click="deleteMessage(message.id)"
+                >mdi-delete</v-icon>
+              </v-list-item-action>
+
             </v-list-item>
 
             <v-divider :key="'div-'+message.id" v-if="index < messages.length - 1" />
@@ -47,10 +54,17 @@ export default {
   components: {
     
   },
-  
+
+  props: {
+    editor: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   data () {
     return {
-      messages: {},
+      messages: [],
       message_types: {
         success: {
           icon: 'mdi-information',
@@ -89,6 +103,19 @@ export default {
       .then(response => {
         this.messages = response.data.messages
       })
+    },
+
+    async deleteMessage(id) {
+      if (await this.$root.$confirm(this.$t('messages.confirm_delete_message'), null, 'error')) {
+        await axios({
+          method: 'delete',      
+          url: '/api/messages/' + id,
+        })
+        .then(response => {
+          this.showSnackbar(this.$t('messages.success_delete_message'), 'success')
+          this.messages = response.data.messages
+        })
+      }
     },
 
     goToRoute (named_route) {
