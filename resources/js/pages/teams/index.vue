@@ -245,10 +245,9 @@ export default {
 
         // Execute bot api calls
         const url = this.bot_api_base + 'getMe'
-        console.log(url)
         axios.get(url)
           .then(response => {
-            console.log(response)
+            //console.log(response)
           })
       })
     },
