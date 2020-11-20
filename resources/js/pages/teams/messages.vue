@@ -2,11 +2,11 @@
   <v-container fluid>
     <v-row>
       <v-col cols=12 md=6>
-        <MessageNew v-on:updated="forceRerender"/>
+        <MessageNew v-on:updated="forceRerender" v-on:clear="clearMessageNew" :key="messageNew_key"/>
       </v-col>
 
       <v-col cols=12 md=6>
-        <MessageList :messages="messages" :key="message_key" editor/>
+        <MessageList :key="messageList_key" editor/>
       </v-col>
     </v-row>
   </v-container>
@@ -29,8 +29,8 @@ export default {
   
   data () {
     return {
-      messages: {},
-      message_key: 1
+      messageNew_key: 1,
+      messageList_key: 1,
     }
   },
 
@@ -39,7 +39,12 @@ export default {
 
   methods: {
     forceRerender() {
-      this.message_key += 1;
+      this.messageNew_key += 1
+      this.messageList_key += 1
+    },
+
+    clearMessageNew() {
+      this.messageNew_key += 1
     }
   }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 
 class Message extends Model
 {
@@ -21,10 +22,10 @@ class Message extends Model
     'dismissable',
     'outlined',
     'show_banner',
-    'display_until'
+    'expires_on'
   ];
 
-  public function messages_public()
+  public function messages_global()
   {
     return $this->where('team_id','=',null);
   }
@@ -36,7 +37,11 @@ class Message extends Model
 
   public function users()
   {
-    return $this->belongsToMany('App\Models\User')->withPivot('dismissed');
+    $user = Auth::user();
+    return $this->belongsToMany('App\Models\User')
+                ->wherePivot('user_id', $user->id)
+                ->wherePivot('dismissed', 1)
+                ->withPivot('dismissed');
   }
   
 }

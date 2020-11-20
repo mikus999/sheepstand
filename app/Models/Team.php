@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Laratrust\Models\LaratrustTeam;
+use App\Models\Message;
 
 class Team extends LaratrustTeam
 {
@@ -51,4 +52,5 @@ class Team extends LaratrustTeam
   {
     return $this->hasMany('App\Models\Message');
   }
+
 }

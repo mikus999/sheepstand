@@ -24,8 +24,9 @@ class MessageController extends Controller
       $message = new Message;
 
       $messages_team = $user->messages()->get();
-      $messages_global = $message->messages_public()->get();
+      $messages_global = $user->messages_global()->get();
       $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
+      usort($messages, 'self::date_compare');
 
       $data = [
         'messages' => $messages
@@ -67,14 +68,15 @@ class MessageController extends Controller
           'dismissable' => $request->dismissable,
           'outlined' => $request->outlined,
           'show_banner' => $request->show_banner,
-          'display_until' => $request->display_until
+          'expires_on' => $request->expires_on
         ]);
 
         $message = new Message;
         $messages_team = $user->messages()->get();
         $messages_global = $message->messages_public()->get();
         $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
-  
+        usort($messages, 'self::date_compare');
+
         $data = [
           'messages' => $messages,
         ];
@@ -140,7 +142,8 @@ class MessageController extends Controller
         $messages_team = $user->messages()->get();
         $messages_global = $message->messages_public()->get();
         $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
-  
+        usort($messages, 'self::date_compare');
+
         $data = [
           'messages' => $messages,
         ];
@@ -149,4 +152,14 @@ class MessageController extends Controller
       return response()->json($data);
 
     }
+
+
+
+    // Function used by usort to sort an array of objects by date
+    public function date_compare($a, $b) 
+    { 
+      $t1 = strtotime($b['created_at']);
+      $t2 = strtotime($a['created_at']);
+      return $t1 - $t2;
+    } 
 }

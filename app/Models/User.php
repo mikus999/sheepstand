@@ -78,7 +78,15 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function messages()
     {
-      return $this->hasManyThrough('App\Models\Message', 'App\Models\Team');
+      $messages = $this->hasManyThrough('App\Models\Message', 'App\Models\Team')->with('users');
+      return $messages;
+    }
+
+    public function messages_global()
+    {
+      $message = New Message;
+      $messages = Message::where('team_id','=',null)->with('users');
+      return $messages;
     }
 
 

@@ -17,6 +17,7 @@
         "nesbot/carbon": "^2.38",
         "santigarcor/laratrust": "^6.2",
         "spatie/laravel-permission": "^3.13",
+        "staudenmeir/eloquent-has-many-deep": "^1.12",
         "tymon/jwt-auth": "^1.0.0"
     },
     "require-dev": {

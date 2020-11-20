@@ -5,29 +5,27 @@
     </v-card-title>
 
     <v-card-text>
-      <v-list flat>
+      <v-list disabled>
         <v-list-item-group>
           <template v-for="(message, index) in messages">
-            <v-list-item
-              :key="message.id"
-              @click="editor ? '' : goToRoute(message.named_route)"
-            >
+            <v-list-item :key="message.id">
+              <v-list-item-avatar>
+                <v-icon>{{ message.users.length == 0 ? 'mdi-email-open' : 'mdi-email' }}</v-icon>
+              </v-list-item-avatar>
 
-              <v-list-item-icon>
-                <v-icon 
-                  v-text="message.icon"
-                  :color="message.color"
-                  ></v-icon>
-              </v-list-item-icon>
+              <v-list-item-content 
+                :class="message.users.length == 0 ? '' : 'font-weight-black'">
+                    {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
 
-              <v-list-item-content>
-                <v-list-item-title :style="'color: ' + message.color">
-                  {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
-                </v-list-item-title>
+                  <v-list-item-subtitle v-if="message.named_route" @click="goToRoute(message.named_route)">
+                    {{ base_url + $router.resolve({ name: message.named_route }).href }}
+                  </v-list-item-subtitle>
               </v-list-item-content>
 
-              <v-list-item-action v-if="editor">
-                <v-icon
+              <v-list-item-action>
+
+
+                <v-icon v-if="editor"
                   @click="deleteMessage(message.id)"
                 >mdi-delete</v-icon>
               </v-list-item-action>
@@ -65,7 +63,8 @@ export default {
 
   data () {
     return {
-      messages: []
+      messages: [],
+      base_url: process.env.MIX_APP_URL
     }
   },
 

@@ -43,7 +43,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
-            v-model="display_until"
+            v-model="expires_on"
             :label="$t('messages.display_until') + ' (' + $t('general.optional') + ')'"
             prepend-icon="mdi-calendar"
             readonly
@@ -54,7 +54,7 @@
         </template>
         <v-date-picker
           ref="picker"
-          v-model="display_until"
+          v-model="expires_on"
         ></v-date-picker>
       </v-menu>
 
@@ -147,6 +147,7 @@
               :color="color_code"
               :dismissible="dismissable"
               :outlined="outlined"
+              dark
               border="left"
             >
               <template v-slot:prepend>
@@ -169,7 +170,7 @@
 
     <v-card-actions>
       <div class="mx-auto">
-      <v-btn text @click="clearForm()">{{ $t('general.clear') }}</v-btn>
+      <v-btn text @click="resetForm()">{{ $t('general.clear') }}</v-btn>
       <v-btn color="primary" @click="createMessage()">{{ $t('general.create') }}</v-btn>
       </div>
     </v-card-actions>
@@ -200,15 +201,15 @@ export default {
       link_text: null,
       named_route: null,
       custom_color: true,
-      color_code: '#0288D1',
+      color_code: '#7E7E7E',
       type: null,
       icon: 'mdi-alert',
       dismissable: true,
       outlined: true,
       show_inbox: true,
-      send_telegram: false,
-      show_banner: true,
-      display_until: null,
+      send_telegram: true,
+      show_banner: false,
+      expires_on: null,
       i18n_strings: [],
       routes: [],
       types: [
@@ -239,18 +240,17 @@ export default {
         'mdi-shield-alert'
       ],
       swatches: [
-        ['#FF1744', '#B71C1C'],
-        ['#FF5722', '#BF360C'],
-        ['#1976D2', '#01579B'],
-        ['#4CAF50', '#1B5E20'],
-        ['#9C27B0', '#311B92'],
+        ['#FF1744', '#B71C1C'], // reds
+        ['#FF9800', '#EF6C00'], // oranges
+        ['#1976D2', '#01579B'], // blues
+        ['#4CAF50', '#1B5E20'], // greens
+        ['#7E7E7E', '#424242'], // greys
       ],
     }
   },
 
   created () {
 
-    this.mtInitialize()
     this.getRoutes()
     this.getStrings()
 
@@ -289,6 +289,8 @@ export default {
 
       // SEND TELEGRAM MESSAGE
       if (this.send_telegram) {
+        await this.mtInitialize()
+
         const channel_id = this.team.notificationsettings.telegram_channel_id
         var message_text = this.system_message ? this.$t(this.message_text_i18n) : this.message_text
         if (this.named_route) {
@@ -320,7 +322,7 @@ export default {
           dismissable: this.dismissable,
           outlined: this.outlined,
           show_banner: this.show_banner,
-          display_until: this.display_until 
+          expires_on: this.expires_on 
         }
       })
       .then(response => {
@@ -329,8 +331,8 @@ export default {
       
     },
 
-    clearForm() {
-
+    resetForm() {
+      this.$emit('clear')
     }
   }
 }

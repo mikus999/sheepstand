@@ -246,6 +246,7 @@
     "send_to_telegram": "Send as message to Telegram group",
     "show_as_banner": "Show as a banner on dashboard",
     "display_until": "Display message until",
+    "expires_on": "Expires on",
     "banner_options": "Banner Options",
     "custom_color": "Use custom color",
     "type": "Message Type",
