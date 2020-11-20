@@ -14,7 +14,8 @@ const helper = {
       team: 'auth/team',
       hasTeam: 'auth/hasTeam',
       locale: 'lang/locale',
-      locales: 'lang/locales'
+      locales: 'lang/locales',
+      message_count: 'general/message_count'
     }),
 
 

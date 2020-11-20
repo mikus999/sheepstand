@@ -65,12 +65,18 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
     Route::get('translation/permissions', 'TranslationController@getLanguages');
 
-    // API Resource Routes
-    Route::apiResource('messages', 'MessageController');
+
+    // MESSAGE routes
+    Route::get('messages/{id}/markread', 'MessageController@markAsRead');
+    Route::get('messages/count', 'MessageController@getCount');
+
+
+    // API routes (must be listed after all other routes are declared)
     Route::apiResource('teams', 'TeamController');
-    Route::apiResource('teams.locations', 'LocationController');
     Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);
     Route::apiResource('schedules.shifts', 'ShiftController');
+    Route::apiResource('teams.locations', 'LocationController');
+    Route::apiResource('messages', 'MessageController');
 
 });
 

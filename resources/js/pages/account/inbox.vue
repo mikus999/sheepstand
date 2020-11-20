@@ -1,6 +1,10 @@
 <template>
   <v-container fluid>
     <v-row>
+      <PageTitle :title="$t('messages.inbox')"></PageTitle>
+    </v-row>
+
+    <v-row>
       <v-col cols=12>
         <MessageList :key="messageList_key"/>
       </v-col>

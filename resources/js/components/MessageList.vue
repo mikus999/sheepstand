@@ -1,33 +1,46 @@
 <template>
   <v-card>
-    <v-card-title>
+    <v-card-title v-if="showTitle">
       {{ $t('messages.inbox')}}
     </v-card-title>
 
     <v-card-text>
-      <v-list disabled>
+      <v-list flat>
         <v-list-item-group>
+          <v-divider />
           <template v-for="(message, index) in messages">
-            <v-list-item :key="message.id">
+            <v-list-item :key="message.id" @click.native="markAsRead(message.id)">
+
               <v-list-item-avatar>
-                <v-icon>{{ message.users.length == 0 ? 'mdi-email-open' : 'mdi-email' }}</v-icon>
+                <v-icon>{{ message.users.length > 0 ? 'mdi-email-open' : 'mdi-email' }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content 
-                :class="message.users.length == 0 ? '' : 'font-weight-black'">
-                    {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
+                :class="message.users.length > 0 ? '' : 'font-weight-black'">
+                  <v-list-item-title>
+                    {{ message.system_message ? 'SheepStand' : message.team.display_name}}
+                  </v-list-item-title>
 
-                  <v-list-item-subtitle v-if="message.named_route" @click="goToRoute(message.named_route)">
-                    {{ base_url + $router.resolve({ name: message.named_route }).href }}
+                  <v-list-item-subtitle class="word-wrap">
+                    {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
                   </v-list-item-subtitle>
+
               </v-list-item-content>
 
               <v-list-item-action>
+                <v-list-item-action-text class="mb-auto">
+                  {{ message.created_at | formatDate }}
+                </v-list-item-action-text>
 
+                <div class="my-auto">
+                  <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" class="mb-n2">
+                    <v-icon>mdi-link</v-icon>
+                  </v-btn>
 
-                <v-icon v-if="editor"
-                  @click="deleteMessage(message.id)"
-                >mdi-delete</v-icon>
+                  <v-btn icon v-if="editor" @click="deleteMessage(message.id)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </div>
               </v-list-item-action>
 
             </v-list-item>
@@ -56,6 +69,10 @@ export default {
 
   props: {
     editor: {
+      type: Boolean,
+      default: false
+    },
+    showTitle: {
       type: Boolean,
       default: false
     }
@@ -100,6 +117,18 @@ export default {
       }
     },
 
+    async markAsRead (id) {
+      await axios({
+        method: 'get',      
+        url: '/api/messages/' + id + '/markread',
+      })
+      .then(response => {
+        this.messages = response.data.messages
+        
+        this.$store.dispatch('general/fetchMessageCounts')
+      })
+    },
+
     goToRoute (named_route) {
       if (named_route != null) {
         this.$router.push({ name: named_route })
@@ -110,3 +139,11 @@ export default {
   
 }
 </script>
+
+<style scoped>
+.word-wrap 
+{
+  -webkit-line-clamp: unset !important;
+  white-space: normal;
+}
+</style>

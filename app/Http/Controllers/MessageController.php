@@ -20,17 +20,11 @@ class MessageController extends Controller
      */
     public function index()
     {
-      $user = Auth::user();
-      $message = new Message;
-
-      $messages_team = $user->messages()->get();
-      $messages_global = $user->messages_global()->get();
-      $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
-      usort($messages, 'self::date_compare');
 
       $data = [
-        'messages' => $messages
+        'messages' => $this->getMessages()
       ];
+
       return response()->json($data);
 
     }
@@ -71,14 +65,8 @@ class MessageController extends Controller
           'expires_on' => $request->expires_on
         ]);
 
-        $message = new Message;
-        $messages_team = $user->messages()->get();
-        $messages_global = $message->messages_public()->get();
-        $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
-        usort($messages, 'self::date_compare');
-
         $data = [
-          'messages' => $messages,
+          'messages' => $this->getMessages(),
         ];
       }
 
@@ -137,15 +125,9 @@ class MessageController extends Controller
 
       if ($access_allowed) {
         Message::destroy($id);
-        
-        $message = new Message;
-        $messages_team = $user->messages()->get();
-        $messages_global = $message->messages_public()->get();
-        $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
-        usort($messages, 'self::date_compare');
 
         $data = [
-          'messages' => $messages,
+          'messages' => $this->getMessages(),
         ];
       }
 
@@ -153,6 +135,58 @@ class MessageController extends Controller
 
     }
 
+
+    public function markAsRead($id)
+    {
+      $user = Auth::user();
+
+      DB::table('message_user')->updateOrInsert(
+        ['user_id' => $user->id, 'message_id' => $id],
+        ['dismissed' => true]
+      );
+
+      $data = [
+        'messages' => $this->getMessages(),
+      ];
+
+      return response()->json($data);
+
+    }
+
+
+    public function getCount()
+    {
+      $messages = $this->getMessages();
+      $total = 0;
+      $unread = 0;
+
+      foreach ($messages as $message) {
+        if ($message['unread_count'] == 0) {
+          $unread += 1;
+        }
+        $total += 1;
+      };
+
+      $data = [
+        'unread' => $unread,
+        'total' => $total
+      ];
+
+      return response()->json($data);
+    }
+
+
+    public function getMessages()
+    {
+      $user = Auth::user();
+
+      $messages_team = $user->messages()->withCount('users as unread_count')->get();
+      $messages_global = $user->messages_global()->withCount('users as unread_count')->get();
+      $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
+      usort($messages, 'self::date_compare');
+
+      return $messages;
+    }
 
 
     // Function used by usort to sort an array of objects by date

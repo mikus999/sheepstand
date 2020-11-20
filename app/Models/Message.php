@@ -30,9 +30,9 @@ class Message extends Model
     return $this->where('team_id','=',null);
   }
 
-  public function teams()
+  public function team()
   {
-      return $this->belongsTo('App\Models\Team')->withTimeStamps();
+      return $this->belongsTo('App\Models\Team');
   }
 
   public function users()

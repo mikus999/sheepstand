@@ -32,10 +32,15 @@
 
       <v-list-item router :to="{ name: 'account.inbox' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-message</v-icon>
+          <v-badge :content="message_count.unread" color="red" overlap :value="message_count.unread">
+            <v-icon>mdi-message</v-icon>
+          </v-badge>
+
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>{{ $t('menu.inbox') }}</v-list-item-title>
+          <v-list-item-title>
+              {{ $t('menu.inbox') }} 
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 

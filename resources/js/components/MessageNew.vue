@@ -13,7 +13,12 @@
         <v-radio label="System Message" :value="true"></v-radio>
       </v-radio-group>
 
-      <v-text-field v-model="message_text" v-if="!system_message" :label="$t('messages.message_text')" />
+      <v-textarea 
+        v-model="message_text" 
+        v-if="!system_message" 
+        :label="$t('messages.message_text')"
+        auto-grow
+        rows=1 />
 
       <v-select 
         v-model="message_text_i18n" 
@@ -246,6 +251,7 @@ export default {
         ['#4CAF50', '#1B5E20'], // greens
         ['#7E7E7E', '#424242'], // greys
       ],
+      ta_rules: [v => v.length <= 2000 || 'Max 2000 characters']
     }
   },
 
