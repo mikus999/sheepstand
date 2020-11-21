@@ -242,10 +242,12 @@ export default {
 
     joinTeam() {
       const formData = new FormData()
-      formData.append('user_id', this.userid)
       formData.append('team_id', this.teamid)
       axios.post('/api/teams/jointeam', formData)
         .then(response => {
+          this.getTeams()
+          this.setTeam(response.data.team, 'self')     
+
           this.stepperCurr = 4
           this.isNewTeam = false
         })

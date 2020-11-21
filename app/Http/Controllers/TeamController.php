@@ -165,6 +165,7 @@ class TeamController extends Controller
     public function addUserToTeam(Request $request)
     {
       $error = false;
+      $selfadd = false;
       $user = Auth::user();
 
       if (strlen($request->team_id)<7) {
@@ -180,11 +181,15 @@ class TeamController extends Controller
         $targetUser = User::find($request->user_id);
       } elseif ($request->user_code) {
         $targetUser = User::where('user_code',$request->user_code)->first();
+      } else {
+        $targetUser = $user;
+        $selfadd = true;
       }
 
 
-      // Only Team Admins and Super Admins can add/remove users from a team
-      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+      // Check if the user is adding himself to a team.
+      // If not, only Team Admins and Super Admins can add/remove other users to/from a team
+      if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
 
         // If the target user was found
         if ($targetUser) {
@@ -216,6 +221,7 @@ class TeamController extends Controller
         $data = [
           'error' => $error,
           'message' => $message,
+          'team' => $team,
           'teams' => $targetUser->teams,
           'user' => $targetUser
         ];

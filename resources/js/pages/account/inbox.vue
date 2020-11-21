@@ -17,7 +17,7 @@ import helper from '~/mixins/helper'
 import MessageList from '~/components/MessageList.vue'
 
 export default {
-  middleware: ['auth', 'teams'],
+  middleware: ['auth'],
   layout: 'vuetify',
   mixins: [helper],
   components: {
