@@ -44,6 +44,52 @@
           <!-- TAB: SETTINGS -->
           <v-tab-item value="tab-settings">
             <v-col cols=12>
+              <v-row>
+                <div class="mx-auto">
+                  <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.appearance') }}</v-subheader>
+                </div>
+              </v-row>
+              <v-row>
+                <div :class="$vuetify.breakpoint.xs ? 'mx-auto' : 'ml-sm-auto'">
+                  <v-hover v-slot="{ hover }">
+                    <v-skeleton-loader
+                      type="article, actions"
+                      :width="$vuetify.breakpoint.smAndDown ? 250 : 300"
+                      :class="'ma-8 ' + (!$vuetify.theme.dark ? 'border-blue' : '')"
+                      :elevation="hover ? 15 : 5"
+                      boilerplate
+                      tile
+                      light
+                      @click="changeTheme('light')"
+                    ></v-skeleton-loader>
+                  </v-hover>
+                  <p class="text-center text-subtitle-1 font-weight-light">{{ $t('account.light_mode') }}</p>
+                </div>
+
+                <div :class="$vuetify.breakpoint.xs ? 'mx-auto' : 'mr-sm-auto'">
+                  <v-hover v-slot="{ hover }">
+                    <v-skeleton-loader
+                      type="article, actions"
+                      :width="$vuetify.breakpoint.smAndDown ? 250 : 300"
+                      :class="'ma-8 ' + ($vuetify.theme.dark ? 'border-blue' : '')"
+                      :elevation="hover ? 15 : 5"
+                      boilerplate
+                      tile
+                      dark
+                      @click="changeTheme('dark')"
+                    ></v-skeleton-loader>
+                  </v-hover>
+                  <p class="text-center text-subtitle-1 font-weight-light">{{ $t('account.dark_mode') }}</p>
+                </div>
+              </v-row>
+
+              <v-divider class="my-12"></v-divider>
+
+              <v-row>
+                <div class="mx-auto">
+                  <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.preferences') }}</v-subheader>
+                </div>
+              </v-row>
             </v-col>
           </v-tab-item>
 
@@ -209,5 +255,9 @@ export default {
 <style scoped>
   .tab-links a {
     text-decoration: none;
+  }
+
+  .border-blue {
+    border: 3px solid #0288D1;
   }
 </style>

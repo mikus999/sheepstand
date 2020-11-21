@@ -100,7 +100,11 @@
     "your_info": "Your Info",
     "user_code": "User Code",
     "account_created": "Account Created",
-    "account_settings": "Account Settings"
+    "account_settings": "Account Settings",
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode",
+    "appearance": "Appearance",
+    "preferences": "Preferences"
   },
   "teams": {
     "team_settings": "Team Settings",

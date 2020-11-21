@@ -15,6 +15,7 @@ export const SET_TGGROUP = 'SET_TGGROUP'
 export const SET_LOCALE = 'SET_LOCALE'
 
 // general.js
+export const SET_THEME = 'SET_THEME'
 export const SET_MESSAGE_COUNT = 'SET_MESSAGE_COUNT'
 
 // snackbar.js

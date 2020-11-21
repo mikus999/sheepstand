@@ -8,7 +8,6 @@ Vue.use(Vuetify)
 export default new Vuetify({
   theme: {
     treeshaking: true,
-    dark: false,
     themes: {
       light: {
         primary: colors.lightBlue.darken2,

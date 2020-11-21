@@ -64,22 +64,31 @@
         <!-- TAB: SETTINGS -->
         <v-tab-item value="tab-settings">
           <v-col cols=12>
-            <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
+            <v-row>
+              <div class="mx-auto">
+                <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
+              </div>
+            </v-row>
+            
             <v-divider></v-divider>
 
-            <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
-            </v-switch>
+            <v-row>
+              <div class="mx-auto">
+                <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
+                </v-switch>
 
-            <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
-              <v-input class="ml-5">
-                <v-chip color="primary" class="mr-3">
-                  <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
-                  <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
-                  <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
-                </v-chip>
-                <v-label class="float-right">{{ num.text }}</v-label>
-              </v-input>
-            </div>
+                <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
+                  <v-input class="ml-5">
+                    <v-chip color="primary" class="mr-3">
+                      <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
+                      <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
+                      <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
+                    </v-chip>
+                    <v-label class="float-right">{{ num.text }}</v-label>
+                  </v-input>
+                </div>
+              </div>
+            </v-row>
 
           </v-col>
         </v-tab-item>

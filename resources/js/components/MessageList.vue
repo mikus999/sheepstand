@@ -81,7 +81,8 @@ export default {
   data () {
     return {
       messages: [],
-      base_url: process.env.MIX_APP_URL
+      base_url: process.env.MIX_APP_URL,
+      apiInterval: null
     }
   },
 
@@ -91,6 +92,13 @@ export default {
 
   created () {
     this.getMessages()
+    this.apiInterval = window.setInterval(() => {
+      this.getMessages()
+    }, 60000)
+  },
+
+  beforeDestroy() {
+    window.clearInterval(this.apiInterval)
   },
 
   methods: {
@@ -125,7 +133,7 @@ export default {
       .then(response => {
         this.messages = response.data.messages
         
-        this.$store.dispatch('general/fetchMessageCounts')
+        this.$store.dispatch('general/scheduledTasks')
       })
     },
 

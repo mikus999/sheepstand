@@ -68,7 +68,11 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // MESSAGE routes
     Route::get('messages/{id}/markread', 'MessageController@markAsRead');
-    Route::get('messages/count', 'MessageController@getCount');
+    Route::get('messages/count', 'MessageController@getMessageCount');
+
+
+    // TASKS routs
+    Route::get('tasks/scheduled', 'TaskController@scheduledTasks');
 
 
     // API routes (must be listed after all other routes are declared)

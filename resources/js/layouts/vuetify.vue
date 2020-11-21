@@ -37,12 +37,11 @@ export default {
 
   computed: {
     ...mapGetters({
-      user: 'auth/user'
+      user: 'auth/user',
+      theme: 'general/theme'
     }),
 
-    theme () {
-      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
-    }
+
   },
 
   created () {

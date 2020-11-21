@@ -15,6 +15,7 @@ const helper = {
       hasTeam: 'auth/hasTeam',
       locale: 'lang/locale',
       locales: 'lang/locales',
+      theme: 'general/theme',
       message_count: 'general/message_count'
     }),
 
@@ -167,6 +168,10 @@ const helper = {
 
     showSnackbar (content, color) {
       this.$store.commit('snackbar/SHOW_MESSAGE', { content, color })
+    },
+
+    changeTheme(theme) {
+      this.$store.dispatch('general/setTheme', theme)
     },
 
     getOS () {

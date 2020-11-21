@@ -32,7 +32,8 @@ export default {
 
   data: () => ({
     layout: null,
-    defaultLayout: 'vuetify'
+    defaultLayout: 'vuetify',
+    apiInterval: null
   }),
 
   metaInfo () {
@@ -46,6 +47,13 @@ export default {
 
   mounted () {
     this.$loading = this.$refs.loading
+
+    // Get/setinitial dark/light mode
+    this.$store.dispatch('general/getTheme')
+  },
+
+  created () {
+    this.scheduledTasks()
   },
 
   methods: {
@@ -60,7 +68,16 @@ export default {
       }
 
       this.layout = layouts[layout]
+    },
+
+
+    scheduledTasks() {
+      // Runs scheduled tasks once per minute
+      this.apiInterval = window.setInterval(() => {
+        this.$store.dispatch('general/scheduledTasks')
+      }, 60000)
     }
+
   }
 }
 </script>
