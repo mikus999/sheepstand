@@ -261,12 +261,12 @@ export const messages = {
 
 
       var message = ''
-      message += this.$t('system_messages.new_trade_offer')
-      message += '\n\n' + this.$t('shifts.offered_by') + ": " + publisher
-      message += '\n' + this.$t('shifts.shift_time') + ": " + shiftDayTime
-      message += '\n' + this.$t('shifts.location') + ": " + location
-      //message = encodeURIComponent(message)
-      console.log(message)
+      message += this.$t('system_messages.new_trade_offer', lang)
+      message += '\n\n' + this.$t('shifts.offered_by', lang) + ": " + publisher
+      message += '\n' + this.$t('shifts.shift_time', lang) + ": " + shiftDayTime
+      message += '\n' + this.$t('shifts.location', lang) + ": " + location
+      message = encodeURIComponent(message)
+
       return message
     }
   }

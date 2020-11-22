@@ -435,6 +435,7 @@ export default {
           }
         })
         .then(response => {
+          this.setTeam(response.data, 'self')
           this.teamData = response.data
         })
     },
