@@ -18,14 +18,15 @@ import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import * as GmapVue from 'gmap-vue';
+import VueClipboard from 'vue-clipboard2'
 
 
 // Load .env variables to process.env
 //require('dotenv').config()
 
 
-// BootstrapVue
-//Vue.use(BootstrapVue)
+// VueClipboard
+Vue.use(VueClipboard)
 
 // Vuelidate: for form validation
 Vue.use(Vuelidate)

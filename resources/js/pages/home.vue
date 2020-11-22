@@ -44,20 +44,5 @@ export default {
     NotificationJoin
   },
 
-  data () {
-    return {
-
-    }
-  },
-
-  computed: {
-  },
-
-  created() {
-  },
-
-  methods: {
-  }
-
 }
 </script>

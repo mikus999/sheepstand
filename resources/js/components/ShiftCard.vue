@@ -60,12 +60,13 @@
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { helper, messages } from '~/mixins/helper'
+import mtproto from '~/mixins/telegram'
 import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   name: 'ShiftCard',
-  mixins: [helper],
+  mixins: [helper, messages, mtproto],
   components: {
     Leaflet
   },
@@ -205,28 +206,42 @@ export default {
 
 
     async updateTrade () {
-      var status = null
-      this.trade = !this.trade
+      if (this.trade || await this.$root.$confirm(this.$t('shifts.confirm_trade_offer'), null, 'info')) {
+        var status = null
+        this.trade = !this.trade
 
-      if (this.trade) {
-        status = 4
-      } else {
-        status = 2
-      }
-
-
-      await axios({
-        method: 'post',      
-        url: '/api/schedules/shiftuserstatus',
-        data: {
-          user_id: this.user.id,
-          shift_id: this.shift.id,
-          status: status
+        if (this.trade) {
+          status = 4
+        } else {
+          status = 2
         }
-      })
-      .then(response => {
-        this.shift.users = response.data.shiftusers
-      })
+
+
+        // If notifications are enabled for this team, send a group message via Telegram
+        if (this.notificationsEnabled) {
+          const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name)
+          const channel_id = this.team.notificationsettings.telegram_channel_id
+
+          //await this.mtInitialize()
+          //await this.sendMessage(channel_id, message_text)
+        }
+
+
+        /*
+        await axios({
+          method: 'post',      
+          url: '/api/schedules/shiftuserstatus',
+          data: {
+            user_id: this.user.id,
+            shift_id: this.shift.id,
+            status: status
+          }
+        })
+        .then(response => {
+          this.shift.users = response.data.shiftusers
+        })
+        */
+      }
     },
 
     returnZero (n) {

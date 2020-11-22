@@ -37,7 +37,10 @@
     "color": "Color",
     "type": "Type",
     "icon": "Icon",
-    "optional": "optional"
+    "optional": "optional",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "content_copied": "Content copied to clipboard successfully"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -134,6 +137,8 @@
     "team_name": "Team Name",
     "contact_name": "Contact Name",
     "contact_email": "Contact Email",
+    "default_language": "Default Language",
+    "default_language_hint": "This language will be used for sending notifications to your team.",
     "new_team_name": "Give your team a name",
     "new_team_name_help": "This might be the name of your congregation, special metropolitan witnessing program, service group, etc.",
     "join_team": "Join Team",
@@ -163,9 +168,11 @@
     "shift_schedules": "Shift Schedules",
     "create_new_schedule": "Create New Schedule",
     "choose_start_date": "Choose a start date",
-    "status_0": "SHIFTS",
+    "status_closed": "CLOSED",
+    "status_open": "OPEN",
+    "status_0": "CONFIGURING SHIFTS",
     "status_1": "ASSIGNMENTS",
-    "status_2": "FINAL",
+    "status_2": "FINALIZED",
     "status_3": "ARCHIVED",
     "status_4": "UNKNOWN",
     "status": "Status",
@@ -199,9 +206,11 @@
     "my_shifts": "My Shifts",
     "trade_requests": "Trade Requests",
     "trade_click_to_accept": "Click on a name to accept the shift",
+    "confirm_trade_offer": "Are you sure you want to trade this shift?",
     "confirm_trade": "Are you sure you want to accept this assignment?",
     "success_trade_made": "Trade successful!",
-    "show_all_teams": "Show for all my teams"
+    "show_all_teams": "Show for all my teams",
+    "offered_by": "Offered By"
   },
   "translation": {
     "management_system": "Translation Management System",
@@ -235,7 +244,12 @@
     "setup_notifications_now": "Would you like to setup notifications now?",
     "subscribe_notifications_now": "Would you like to subscribe to notifications now?",
     "setup_now": "Setup Now",
-    "subscribe_now": "Subscribe Now"
+    "subscribe_now": "Subscribe Now",
+    "group_name": "Group Name",
+    "group_description": "Group Description",
+    "2fa_password": "2FA Password",
+    "invite_link": "Join Link",
+    "notifications_problem_admin": "Notifications have been enabled for your team, but there seems to be a problem. Please make sure the 'SheepStand Bot' is an administrator in your group. You can also setup notifications again. However, all existing users will need to join the new Telegram group. You may also contact the support brothers for assistance."
   },
   "messages": {
     "messages": "Messages",
@@ -259,6 +273,8 @@
     "success_delete_message": "Message was deleted successfully"
   },
   "system_messages": {
-    "new_schedule_available": "A new schedule is available. Click here to view."
+    "new_schedule_available": "A new schedule is available. Click here to view.",
+    "new_trade_offer": "Someone on your team has offered their shift. Please sign in to sheepstand.com if you would like to accept the shift.",
+    "trade_completed": "Shift accepted by: "
   }
 }

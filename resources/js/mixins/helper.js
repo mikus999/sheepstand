@@ -3,7 +3,7 @@ import axios from 'axios'
 import { result } from 'lodash'
 
 
-const helper = {
+export const helper = {
   computed: {
     ...mapGetters({
       user: 'auth/user',
@@ -35,26 +35,31 @@ const helper = {
         { 
           value: 0,
           text: this.$t('schedules.status_0'), 
+          text_user: this.$t('schedules.status_closed'),
           color: 'yellow'
         },
         { 
           value: 1,
           text: this.$t('schedules.status_1'), 
+          text_user: this.$t('schedules.status_open'),
           color: 'blue'
         },
         { 
           value: 2,
           text: this.$t('schedules.status_2'), 
+          text_user: this.$t('schedules.status_closed'),
           color: 'green'
         },
         { 
           value: 3,
           text: this.$t('schedules.status_3'), 
+          text_user: this.$t('schedules.status_closed'),
           color: 'red'
         },
         { 
           value: 4,
           text: this.$t('schedules.status_4'), 
+          text_user: this.$t('schedules.status_closed'),
           color: 'grey'
         }
       ],
@@ -170,6 +175,14 @@ const helper = {
       this.$store.commit('snackbar/SHOW_MESSAGE', { content, color })
     },
 
+    copyText (content) {
+      this.$copyText(content).then(e => {
+        this.showSnackbar(this.$t('general.content_copied'), 'success')
+      }, e => {
+        alert('error')
+      })
+    },
+
     changeTheme(theme) {
       this.$store.dispatch('general/setTheme', theme)
     },
@@ -236,5 +249,28 @@ const helper = {
   },
 
 }
+
+export const messages = {
+  methods: {
+    message_trade_offer (publisher, time_start, time_end, location) {
+      const lang = this.team.language || 'en'     
+
+      var shiftDayTime = this.$dayjs(time_start).locale(lang).format('ddd, ll') 
+      shiftDayTime += ' ' + this.$dayjs(time_start).locale(lang).format('LT') + ' - '
+      shiftDayTime += ' ' + this.$dayjs(time_end).locale(lang).format('LT')
+
+
+      var message = ''
+      message += this.$t('system_messages.new_trade_offer')
+      message += '\n\n' + this.$t('shifts.offered_by') + ": " + publisher
+      message += '\n' + this.$t('shifts.shift_time') + ": " + shiftDayTime
+      message += '\n' + this.$t('shifts.location') + ": " + location
+      //message = encodeURIComponent(message)
+      console.log(message)
+      return message
+    }
+  }
+}
+
 
 export default helper

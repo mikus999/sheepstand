@@ -3,6 +3,20 @@
     <v-toolbar flat extended height="80">
       <v-select outlined v-model="schedule" :items="schedules" item-value="id" item-text="date_start" return-object
         @change="getShiftData" prepend-icon="mdi-calendar-week-begin" :label="$t('schedules.week_of')" class="mt-10">
+
+        <template v-slot:selection="{ item }">
+          <div v-if="item">
+            <v-icon :color="item.status == 1 ? 'green' : 'red'">mdi-circle</v-icon>
+            {{ item.date_start }}<span v-if="$vuetify.breakpoint.smAndUp">: {{scheduleStatus[item.status].text_user }}</span>
+          </div>
+        </template>
+
+        <template v-slot:item="{ item }">
+          <div v-if="item">
+            <v-icon :color="item.status == 1 ? 'green' : 'red'">mdi-circle</v-icon>
+            {{ item.date_start }}<span v-if="$vuetify.breakpoint.smAndUp">: {{scheduleStatus[item.status].text_user }}</span>
+          </div>
+        </template>
       </v-select>
 
       <template v-slot:extension>
@@ -86,7 +100,12 @@ export default {
       await axios.get('/api/schedules/' + this.team.id)
         .then(response => {
           this.schedules = response.data
+
+          // Filter schedules to only show those with status of 1 (ASSIGNMENTS) or 2 (FINAL)
           this.schedules = this.schedules.filter(sched => ["1","2"].indexOf(sched.status) > -1)
+                  
+          const prevWeek = this.$dayjs().subtract(8, 'd').format('YYYY-MM-DD')
+          this.schedules = this.schedules.filter(sched => (sched.date_start >= prevWeek))
 
           if (this.schedules[0] !== undefined) {
             this.schedule = this.schedules[0]

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <PageTitle :title="$t('general.home')"></PageTitle>
+      <PageTitle :title="$t('schedules.shift_schedules')"></PageTitle>
     </v-row>
 
     <v-row>
@@ -22,18 +22,5 @@ export default {
   components: {
     ShiftSchedule
   },
-
-  data () {
-    return {
-
-    }
-  },
-
-  created() {
-  },
-
-  methods: {
-  }
-
 }
 </script>

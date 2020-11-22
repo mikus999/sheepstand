@@ -23,8 +23,8 @@
 
         <!-- TAB: GENERAL -->
         <v-tab-item value="tab-general">
-          <v-row>
-            <v-col sm=6>
+          <v-row class="mx-2">
+            <v-col cols=12 sm=6>
 
               <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.name.success">
                 <template v-slot:append v-if="validation.name.success">
@@ -40,24 +40,59 @@
 
               <v-text-field name="team_date" :label="$t('teams.date_created')" :value="teamData.created_at | formatDate" readonly></v-text-field>
 
-              <v-btn color="error" @click.prevent="deleteTeam">
-                {{ $t('teams.delete_team') }}
-              </v-btn>
+              <v-select v-model="teamData.language" :items="languages" :label="$t('teams.default_language')" :hint="$t('teams.default_language_hint')" persistent-hint
+                @change="changeSetting('language', 'str')" outlined class="mt-4"></v-select>
 
+              <div class="my-6">
+                <v-btn color="error" @click.prevent="deleteTeam">
+                  {{ $t('teams.delete_team') }}
+                </v-btn>
+              </div>
             </v-col>
 
-            <v-col sm=6>
+            <v-col cols=12 sm=6>
               <v-card outlined class="ma-6">
                 <v-card-title>
+                  <v-icon left>mdi-telegram</v-icon>
                   {{ $t('notifications.notifications')}}
                 </v-card-title>
 
                 <v-card-text>
-                  <span>{{ $t('general.status') }}:</span>
+                  <div>
+                    <p>
+                      <span>{{ $t('general.status') }}: </span>
+                      <v-icon v-if="notificationsEnabled" small color="success">mdi-checkbox-marked-circle</v-icon>
+                      <v-icon v-else small color="red">mdi-close-circle</v-icon>
+                      <span class="font-weight-bold">{{ notificationsEnabled ? $t('general.enabled') : $t('general.disabled') }}</span>
+                    </p>
+                  </div>
+
+                  <!-- If notifications are setup and working properly -->
+                  <div v-if="!chatError && chatInfo">
+                    <p><span>{{ $t('notifications.group_name')}}: </span><span class="font-weight-bold">{{ chatInfo.title }}</span></p>
+                    <p><span>{{ $t('notifications.group_description')}}: </span><span class="font-weight-bold">{{ chatInfo.description }}</span></p>
+                    <p>
+                      <span>{{ $t('notifications.invite_link')}}: </span>
+                      <span class="font-weight-bold">{{ chatInfo.invite_link }}</span>
+                      <v-btn @click="copyText(chatInfo.invite_link)" icon>
+                        <v-icon small>mdi-content-copy</v-icon>
+                      </v-btn>
+                    </p>
+                  </div>
+
+                  <!-- If notifications have not been setup -->
+                  <div v-else-if="!chatError && !chatInfo">
+                    <p><span>{{ $t('notifications.feature_explanation_team') }}</span></p>
+                    <v-btn :to="{ name: 'notifications.setup' }" block>{{ $t('notifications.setup_now') }}</v-btn>
+                  </div>
+
+                  <!-- If notifications are setup but there was a problem retrieving chat details -->
+                  <div v-else-if="chatError">
+                    <p><span>{{ $t('general.error')}}: </span><span class="font-weight-bold red--text">{{ $t('notifications.notifications_problem_admin') }}</span></p>
+                  </div>
                 </v-card-text>
               </v-card>
             </v-col>
-
           </v-row>
         </v-tab-item>
 
@@ -74,7 +109,8 @@
 
             <v-row>
               <div class="mx-auto">
-                <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
+                <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" 
+                  :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
                 </v-switch>
 
                 <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
@@ -228,10 +264,20 @@ export default {
       },
       userData: [],
       newUserCode: '',
+      chatInfo: null,
+      chatError: false
     }
   },
 
-  computed: {},
+  computed: {
+    languages () {
+      var langArr = []
+      for (const key in this.locales) {
+        langArr.push({"text": this.locales[key], "value": key});
+      }
+      return langArr
+    }
+  },
 
   watch: {
     dialog(val) {
@@ -250,15 +296,24 @@ export default {
   methods: {
     getNotificationInfo() {
       // Initialize the mtproto object
-      this.mtInitialize().then(result => {
+      if (this.notificationsEnabled) {
+        this.mtInitialize().then(result => {
+          const chat_id = '-100' + this.team.notificationsettings.telegram_channel_id
+          // Execute bot api calls
+          const url = this.bot_api_base + 'getChat?chat_id=' + chat_id
+          axios.get(url)
+            .then(response => {
+              this.chatInfo = response.data.result
+              this.chatError = false
+            })
+            .catch(error => {
+              this.chatInfo = null
+              this.chatError = true
+            })
+        })
 
-        // Execute bot api calls
-        const url = this.bot_api_base + 'getMe'
-        axios.get(url)
-          .then(response => {
-            //console.log(response)
-          })
-      })
+        
+      } 
     },
 
     async getUserData() {
@@ -368,6 +423,7 @@ export default {
       } else {
         val = this.teamData[setting]
       }
+      
 
       await axios({
           method: 'post',
@@ -379,7 +435,7 @@ export default {
           }
         })
         .then(response => {
-          this.$store.dispatch('auth/setTeam', response.data)
+          this.teamData = response.data
         })
     },
   }

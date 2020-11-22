@@ -24,7 +24,13 @@
       </template>
 
       <template v-slot:item.view="{ item }">
-        <v-icon @click="showShiftOverlay(item)">mdi-card-account-details-outline</v-icon>
+        <v-btn icon @click="showShiftOverlay(item)">
+          <v-icon>mdi-card-account-details-outline</v-icon>
+        </v-btn>
+
+        <v-btn icon :disabled="!showTradeButton(item)" :color="item.pivot.status == 4 ? 'blue' : ''" @click.stop="updateTrade(item)">
+          <v-icon>mdi-account-convert</v-icon>
+        </v-btn>
       </template>
 
     </v-data-table>
@@ -72,7 +78,7 @@ export default {
         { text: this.$t('teams.team_name'), value: 'schedule.team.display_name', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
-        { text: '', value: 'view' },
+        { text: this.$t('general.actions'), value: 'view' },
       ],
     }
   },
@@ -81,7 +87,8 @@ export default {
     mapWidth() {
       var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
       return newWidth
-    }
+    },
+
   },
 
 
@@ -119,6 +126,37 @@ export default {
       this.locationOverlay = true
     },
 
+
+    showTradeButton(shift) {
+      var result = null
+      var shiftUser = shift.users.filter(user => user.id === this.user.id)
+      if (shiftUser.length > 0) {
+        result = shiftUser[0].pivot.status
+      }
+
+      return (shift.schedule.status == 2) && (result > 1)
+
+    },
+
+    async updateTrade (shift) {
+      if (shift.pivot.status == 4 || await this.$root.$confirm(this.$t('shifts.confirm_trade_offer'), null, 'info')) {
+
+        const newStatus = (shift.pivot.status == 4) ? 2 : 4
+
+        await axios({
+          method: 'post',      
+          url: '/api/schedules/shiftuserstatus',
+          data: {
+            user_id: this.user.id,
+            shift_id: shift.id,
+            status: newStatus
+          }
+        })
+        .then(response => {
+          this.getShifts()
+        })
+      }
+    },
   }
 }
 

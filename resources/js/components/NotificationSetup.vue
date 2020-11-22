@@ -101,7 +101,7 @@
               </p>
 
               <div class="my-16 text-center">
-                <v-text-field v-model="password" id="txtPassword" class="ma-3" label="2FA Password" outlined :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"></v-text-field>
+                <v-text-field v-model="password" id="txtPassword" class="ma-3" :label="$t('notifications.2fa_password')" outlined :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"></v-text-field>
               </div>
 
               <p class="text-muted mb-8 mt-n12 red--text" v-if="error_msg">
@@ -123,8 +123,8 @@
               </p>
 
               <div class="my-16 text-center">
-                <v-text-field v-model="group_name" id="txtGroupName" class="ma-3" label="Group Name" outlined></v-text-field>
-                <v-text-field v-model="group_desc" id="txtGroupDesc" class="ma-3" label="Group Description (optional)" outlined></v-text-field>
+                <v-text-field v-model="group_name" id="txtGroupName" class="ma-3" :label="$t('notifications.group_name')" outlined></v-text-field>
+                <v-text-field v-model="group_desc" id="txtGroupDesc" class="ma-3" :label="$t('notifications.group_description')" outlined></v-text-field>
               </div>
 
               <p class="text-muted mb-8 mt-n12 red--text" v-if="error_msg">
