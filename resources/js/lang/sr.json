@@ -44,28 +44,5 @@
     },
     "auth": {
         "logout": "Odjavi se"
-    },
-    "shifts": {
-      "status_0": "PENDING USER APPROVAL",
-      "status_1": "PENDING ADMIN APPROVAL",
-      "status_2": "APPROVED",
-      "status_3": "REJECTED",
-      "status_4": "TRADE REQUESTED",
-      "date": "Datum",
-      "day": "Dan",
-      "time_start": "Početak",
-      "time_end": "Kraj",
-      "shift_time": "Vreme smene",
-      "location": "Lokacija",
-      "participants": "Učesnici",
-      "assignments": "Dodeljivanja",
-      "my_shifts": "Moje smene",
-      "trade_requests": "Trade Requests",
-      "trade_click_to_accept": "Click on a name to accept the shift",
-      "confirm_trade_offer": "Are you sure you want to trade this shift?",
-      "confirm_trade": "Are you sure you want to accept this assignment?",
-      "success_trade_made": "Trade successful!",
-      "show_all_teams": "Show for all my teams",
-      "offered_by": "Pruženo od"
     }
 }

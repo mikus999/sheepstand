@@ -24,12 +24,12 @@
       </template>
 
       <template v-slot:item.view="{ item }">
-        <v-btn icon @click="showShiftOverlay(item)">
-          <v-icon>mdi-card-account-details-outline</v-icon>
+        <v-btn icon small @click="showShiftOverlay(item)">
+          <v-icon small>mdi-card-account-details-outline</v-icon>
         </v-btn>
 
-        <v-btn icon :disabled="!showTradeButton(item)" :color="item.pivot.status == 4 ? 'blue' : ''" @click.stop="updateTrade(item)">
-          <v-icon>mdi-account-convert</v-icon>
+        <v-btn icon small :disabled="!showTradeButton(item)" :color="item.pivot.status == 4 ? 'blue' : ''" @click.stop="updateTrade(item)">
+          <v-icon small>mdi-account-convert</v-icon>
         </v-btn>
       </template>
 
@@ -49,14 +49,15 @@
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { helper, messages } from '~/mixins/helper'
+import { mtproto } from '~/mixins/telegram'
 import ShiftCard from '~/components/ShiftCard.vue'
 import Leaflet from '~/components/Leaflet.vue'
 
 
 export default {
   name: 'MyShifts',
-  mixins: [helper],
+  mixins: [helper, messages, mtproto],
   props: {},
   components: {
     ShiftCard,
@@ -142,6 +143,17 @@ export default {
       if (shift.pivot.status == 4 || await this.$root.$confirm(this.$t('shifts.confirm_trade_offer'), null, 'info')) {
 
         const newStatus = (shift.pivot.status == 4) ? 2 : 4
+
+
+        // If notifications are enabled for this team, send a group message via Telegram
+        if (this.notificationsEnabled && newStatus == 4) {
+          const message_text = this.message_trade_offer(this.user.name, shift.time_start, shift.time_end, shift.location.name)
+          const channel_id = this.team.notificationsettings.telegram_channel_id
+
+          await this.mtInitialize()
+          await this.sendMessage(channel_id, message_text)
+        }
+
 
         await axios({
           method: 'post',      

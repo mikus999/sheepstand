@@ -210,15 +210,11 @@ export default {
         var status = null
         this.trade = !this.trade
 
-        if (this.trade) {
-          status = 4
-        } else {
-          status = 2
-        }
+        const newStatus = (this.shift.pivot.status == 4) ? 2 : 4
 
 
         // If notifications are enabled for this team, send a group message via Telegram
-        if (this.notificationsEnabled && this.trade) {
+        if (this.notificationsEnabled && newStatus == 4) {
           const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name)
           const channel_id = this.team.notificationsettings.telegram_channel_id
 
@@ -227,14 +223,14 @@ export default {
         }
 
 
-        
+      
         await axios({
           method: 'post',      
           url: '/api/schedules/shiftuserstatus',
           data: {
             user_id: this.user.id,
             shift_id: this.shift.id,
-            status: status
+            status: newStatus
           }
         })
         .then(response => {

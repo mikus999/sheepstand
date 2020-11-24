@@ -171,9 +171,11 @@
             </template>
 
             <template v-slot:item.actions="{ item }">
-              <v-icon small @click="deleteUser(item)">
-                mdi-delete
-              </v-icon>
+              <v-btn icon small @click="removeUser(item)">
+                <v-icon small>mdi-delete</v-icon>
+              </v-btn>
+
+
             </template>
           </v-data-table>
         </v-tab-item>
@@ -372,7 +374,7 @@ export default {
         })
     },
 
-    async deleteUser(user) {
+    async removeUser(user) {
       if (await this.$root.$confirm(this.$t('teams.confirm_remove_user'), null, 'error')) {
         await axios({
             method: 'post',
@@ -435,7 +437,6 @@ export default {
           }
         })
         .then(response => {
-          this.setTeam(response.data, 'self')
           this.teamData = response.data
         })
     },

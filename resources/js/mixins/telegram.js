@@ -2,7 +2,7 @@ import { MTProto, getSRPParams } from '@mtproto/core'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 
-const mtproto = {
+export const mtproto = {
   data () {
     return {
       mtproto: null,
