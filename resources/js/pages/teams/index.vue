@@ -171,17 +171,24 @@
             </template>
 
             <template v-slot:item.actions="{ item }">
+              <v-btn icon small @click="showRolesOverlay(item)">
+                <v-icon small>mdi-shield-account</v-icon>
+              </v-btn>
+              
               <v-btn icon small @click="removeUser(item)">
                 <v-icon small>mdi-delete</v-icon>
               </v-btn>
-
-
             </template>
           </v-data-table>
         </v-tab-item>
       </v-tabs-items>
 
     </v-tabs>
+
+
+    <v-overlay :value="rolesOverlay" @click.native="rolesOverlay = false">
+      <UserRoles :data="currUser" width="300px" height="100%"></UserRoles>
+    </v-overlay>
   </v-card>
 </v-container>
 </template>
@@ -190,11 +197,15 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
+import UserRoles from '~/components/UserRoles.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper, mtproto],
+  components: { 
+    UserRoles 
+  },
 
   data() {
     return {
@@ -267,7 +278,9 @@ export default {
       userData: [],
       newUserCode: '',
       chatInfo: null,
-      chatError: false
+      chatError: false,
+      rolesOverlay: false,
+      currUser: null
     }
   },
 
@@ -393,6 +406,12 @@ export default {
 
     close() {
       this.dialog = false
+    },
+
+    showRolesOverlay(user) {
+      console.log(JSON.stringify(user))
+      this.currUser = user
+      this.rolesOverlay = true
     },
 
     async addUser() {

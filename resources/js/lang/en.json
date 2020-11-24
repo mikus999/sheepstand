@@ -102,12 +102,22 @@
     "password_updated": "Your password has been updated!",
     "your_info": "Your Info",
     "user_code": "User Code",
-    "account_created": "Account Created",
+    "account_created": "Account Created", 
     "account_settings": "Account Settings",
     "dark_mode": "Dark Mode",
     "light_mode": "Light Mode",
     "appearance": "Appearance",
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "user_security": "User Security",
+    "user_role": "Team Role",
+    "site_roles": "Site Roles"
+  },
+  "roles": {
+    "publisher": "Publisher",
+    "elder": "Elder",
+    "team_admin": "Team Admin",
+    "translator": "Translator",
+    "super_admin": "Super Admin"
   },
   "teams": {
     "team_settings": "Team Settings",

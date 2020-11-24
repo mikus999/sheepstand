@@ -1,8 +1,10 @@
 {
     "editor.tabSize": 2,
     "i18n-ally.localesPaths": [
-        "resources/lang",
-        "resources/js/lang"
+      "resources/lang",
+      "resources/js/lang",
+      "resources",
+      "resources/js"
     ],
     "i18n-ally.sourceLanguage": "en",
     "vue3snippets.enable-compile-vue-file-on-did-save-code": false
