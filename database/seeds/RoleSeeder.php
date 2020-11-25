@@ -33,11 +33,11 @@ class RoleSeeder extends Seeder
       $role->attachPermission($view_shifts);
 
       $role = Role::create(['name' => 'elder', 'display_name' => 'Elder']);
-      $role->attachPermissions([$view_team, $view_locations, $view_schedules, $view_assignments, $view_templates]);
+      $role->attachPermissions([$view_shifts, $view_team, $view_locations, $view_schedules, $view_assignments, $view_templates]);
 
       $role = Role::create(['name' => 'team_admin', 'display_name' => 'Team Administrator']);
-      $role->attachPermissions([$manage_team, $manage_locations, $manage_schedules, $manage_assignments, $manage_templates]);
-
+      $role->attachPermissions([$view_shifts, $view_team, $view_locations, $view_schedules, $view_assignments, $view_templates, 
+                                $manage_team, $manage_locations, $manage_schedules, $manage_assignments, $manage_templates]);
       $role = Role::create(['name' => 'translator', 'display_name' => 'Translator']);
       $role->attachPermission($manage_translation);
 

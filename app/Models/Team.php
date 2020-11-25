@@ -53,4 +53,8 @@ class Team extends LaratrustTeam
     return $this->hasMany('App\Models\Message');
   }
 
+  public function getTeamRoleAttribute()
+  {
+    return $this->name;
+  }
 }

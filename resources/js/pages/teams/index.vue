@@ -186,8 +186,8 @@
     </v-tabs>
 
 
-    <v-overlay :value="rolesOverlay" @click.native="rolesOverlay = false">
-      <UserRoles :data="currUser" width="300px" height="100%"></UserRoles>
+    <v-overlay :value="rolesOverlay">
+      <UserRoles :data="currUser" width="300px" height="100%" @close="rolesOverlay = false"></UserRoles>
     </v-overlay>
   </v-card>
 </v-container>
@@ -233,8 +233,8 @@ export default {
           value: 'user_code'
         },
         {
-          text: this.$t('account.account_created'),
-          value: 'created_at'
+          text: this.$t('account.user_role'),
+          value: 'team_role'
         },
         {
           text: this.$t('general.actions'),
@@ -409,7 +409,6 @@ export default {
     },
 
     showRolesOverlay(user) {
-      console.log(JSON.stringify(user))
       this.currUser = user
       this.rolesOverlay = true
     },

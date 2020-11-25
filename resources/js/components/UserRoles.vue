@@ -1,6 +1,7 @@
 <template>
   <v-card outlined hover :width="width">
     <v-card-title class="justify-center text-h6">
+      <v-icon class="mr-3">mdi-shield-account</v-icon>
       {{ $t('account.user_security') }}
     </v-card-title>
 
@@ -9,10 +10,26 @@
     </v-card-subtitle>
 
     <v-card-text>
-      <v-radio-group>
-        <v-radio v-for="sr in siteRoles.filter(role => role.global == false)" :key="sr.id" :label="$t('roles.' + sr.name)"></v-radio>
+      <div>{{ $t('account.user_role') }}</div>
+      <v-divider class="mt-2 mb-n2"/>
+      <v-radio-group v-model="teamRole">
+        <v-radio 
+          v-for="sr in siteRoles.filter(role => role.global == false)" 
+          :key="sr.id" 
+          :value="sr.name"
+          :label="$t('roles.' + sr.name)"
+          @change="changeUserRole(sr.name)"
+          >
+        </v-radio>
       </v-radio-group>
     </v-card-text>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" text v-on:click="$emit('close')">
+        {{ $t('general.close' ) }}
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -40,7 +57,7 @@ export default {
   data() {
     return {
       userRoles: null,
-      teamRoles: null
+      teamRole: null
     }
   },
 
@@ -59,9 +76,26 @@ export default {
       })
       .then(response => {
         this.userRoles = response.data.roles
-        this.teamRoles = this.userRoles[this.team.id]
+        this.teamRole = this.userRoles[this.team.id][0]
       })
     },
+
+    async changeUserRole(role) {
+      await axios({
+        method: 'post',
+        url: '/api/user/roles/set',
+        data: {
+          user_id: this.data.id,
+          role: role,
+          changetype: 'sync',
+          team_id: this.team.id
+        }
+      })
+      .then(response => {
+        this.userRoles = response.data.roles
+        this.teamRole = this.userRoles[this.team.id][0]
+      })
+    }
   },
 
 }

@@ -55,10 +55,7 @@ class SecurityController extends Controller
         $role = $request->role;
         $changetype = $request->changetype;
         $teamScope = $request->team_id !== null;
-        $message = '';
         $team = [];
-        $roles_team = [];
-        $roles_global = [];
 
         if ($teamScope) {
           $team = Team::find($request->team_id);
