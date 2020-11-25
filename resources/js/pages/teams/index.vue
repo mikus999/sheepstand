@@ -131,7 +131,12 @@
 
         <!-- TAB: USERS -->
         <v-tab-item value="tab-users">
-          <v-data-table :headers="userHeaders" :items="userData">
+          <v-data-table 
+            :headers="userHeaders" 
+            :items="userData"
+            sort-by="team_role"
+            sort-desc
+            >
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</v-toolbar-title>
@@ -166,17 +171,16 @@
               </v-toolbar>
             </template>
 
-            <template v-slot:item.created_at="{ item }">
-              {{ item.created_at | formatDate }}
+            <template v-slot:item.team_role="{ item }">
+              <a @click="showRolesOverlay(item)" class="text-no-decoration">
+                <v-icon small>mdi-shield-account</v-icon>
+                {{ item.team_role ? $t('roles.' + item.team_role) : $t('roles.not_assigned') }}
+              </a>
             </template>
 
-            <template v-slot:item.actions="{ item }">
-              <v-btn icon small @click="showRolesOverlay(item)">
-                <v-icon small>mdi-shield-account</v-icon>
-              </v-btn>
-              
-              <v-btn icon small @click="removeUser(item)">
-                <v-icon small>mdi-delete</v-icon>
+            <template v-slot:item.actions="{ item }">           
+              <v-btn icon @click="removeUser(item)">
+                <v-icon>mdi-delete</v-icon>
               </v-btn>
             </template>
           </v-data-table>
@@ -187,7 +191,7 @@
 
 
     <v-overlay :value="rolesOverlay">
-      <UserRoles :data="currUser" width="300px" height="100%" @close="rolesOverlay = false"></UserRoles>
+      <UserRoles :data="currUser" width="300px" height="100%" @close="rolesOverlay = false; getUserData()"></UserRoles>
     </v-overlay>
   </v-card>
 </v-container>
@@ -458,6 +462,7 @@ export default {
           this.teamData = response.data
         })
     },
+
   }
 }
 </script>

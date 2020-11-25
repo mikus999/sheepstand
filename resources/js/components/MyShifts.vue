@@ -24,12 +24,12 @@
       </template>
 
       <template v-slot:item.view="{ item }">
-        <v-btn icon small @click="showShiftOverlay(item)">
-          <v-icon small>mdi-card-account-details-outline</v-icon>
+        <v-btn icon @click="showShiftOverlay(item)">
+          <v-icon>mdi-card-account-details-outline</v-icon>
         </v-btn>
 
-        <v-btn icon small :disabled="!showTradeButton(item)" :color="item.pivot.status == 4 ? 'blue' : ''" @click.stop="updateTrade(item)">
-          <v-icon small>mdi-account-convert</v-icon>
+        <v-btn icon :disabled="!showTradeButton(item)" :color="item.pivot.status == 4 ? 'blue' : ''" @click.stop="updateTrade(item)">
+          <v-icon>mdi-account-convert</v-icon>
         </v-btn>
       </template>
 

@@ -38,8 +38,8 @@
       </template>
 
       <template v-slot:item.view="{ item }">
-        <v-btn icon small @click="showShiftOverlay(item)">
-          <v-icon small>mdi-card-account-details-outline</v-icon>
+        <v-btn icon @click="showShiftOverlay(item)">
+          <v-icon>mdi-card-account-details-outline</v-icon>
         </v-btn>
       </template>
     </v-data-table>

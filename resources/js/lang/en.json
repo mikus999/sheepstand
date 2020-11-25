@@ -117,7 +117,8 @@
     "elder": "Elder",
     "team_admin": "Team Admin",
     "translator": "Translator",
-    "super_admin": "Super Admin"
+    "super_admin": "Super Admin",
+    "not_assigned": "Not Assigned"
   },
   "teams": {
     "team_settings": "Team Settings",

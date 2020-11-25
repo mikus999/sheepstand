@@ -329,6 +329,13 @@ class TeamController extends Controller
 
       if ($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null)) {
         $teamUsers = $team->users;
+
+        foreach($teamUsers as $key => $user) {
+          $targetUser = User::find($user->id);
+          $userRoles = $targetUser->getRoles($team);
+          $teamUsers[$key]['team_role'] = count($userRoles) > 0 ? $userRoles[0] : '';
+        };
+    
       }
       
       return response()->json($teamUsers);
