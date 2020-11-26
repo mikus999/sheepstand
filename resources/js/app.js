@@ -17,7 +17,6 @@ import '~/plugins'
 import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
-import * as GmapVue from 'gmap-vue';
 import VueClipboard from 'vue-clipboard2'
 
 
@@ -30,15 +29,6 @@ Vue.use(VueClipboard)
 
 // Vuelidate: for form validation
 Vue.use(Vuelidate)
-
-// Google Maps plugin
-Vue.use(GmapVue, {
-  load: {
-    key: window.config.googleMaps,
-    libraries: 'drawing',
-    installComponents: true
-  }
-})
 
 // VueLodash: for array manipulation
 Vue.use(VueLodash, { lodash: lodash })

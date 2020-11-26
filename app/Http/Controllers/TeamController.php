@@ -342,6 +342,7 @@ class TeamController extends Controller
     }
 
 
+
     /**
      * 
      * Change a team setting
@@ -354,9 +355,13 @@ class TeamController extends Controller
       $setting = $request->setting; // must match DB column name
       $value = $request->value;
 
-      $team = Team::find($teamid);
-      $team->$setting = $value;
-      $team->save();
+      $user = Auth::user();
+      $team = Team::with('notificationsettings')->find($teamid);
+
+      if ($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null)) {
+        $team->$setting = $value;
+        $team->save();
+      }
 
       return response()->json($team);
     }

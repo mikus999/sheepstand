@@ -41,8 +41,6 @@ $config = [
 
     <!--DevTools-->
     <script src="http://localhost:8098"></script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_id') }}"></script>
 </head>
 
 <body>

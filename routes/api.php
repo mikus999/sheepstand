@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
     Route::get('/user', 'Auth\UserController@current');
+    Route::get('/users/{role}', 'Auth\UserController@getUsersByRole'); // GLOBAL Roles Only
 
     // SECURITY routes
     Route::get('roles', 'SecurityController@getRolesWithPermissions');

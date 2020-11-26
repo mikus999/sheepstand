@@ -134,17 +134,32 @@
           <v-data-table 
             :headers="userHeaders" 
             :items="userData"
+            :search="userSearch"
             sort-by="team_role"
             sort-desc
             >
             <template v-slot:top>
               <v-toolbar flat>
-                <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</v-toolbar-title>
+                <v-text-field
+                  v-model="userSearch"
+                  :label="$t('general.search')"
+                  prepend-inner-icon="mdi-magnify"
+                  single-line
+                  hide-details
+                ></v-text-field>
                 <v-spacer></v-spacer>
-
                 <v-dialog v-model="dialog" max-width="500px">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on" :block="$vuetify.breakpoint.xs">{{ $t('teams.add_user') }}</v-btn>
+                    <v-btn 
+                      color="secondary" 
+                      class="mb-2" 
+                      v-bind="attrs" 
+                      v-on="on" 
+                      :block="$vuetify.breakpoint.xs"
+                      >
+                      <v-icon left>mdi-account-plus</v-icon>
+                      {{ $t('teams.add_user') }}
+                    </v-btn>
                   </template>
                   <v-card>
                     <v-card-title>
@@ -172,16 +187,23 @@
             </template>
 
             <template v-slot:item.team_role="{ item }">
-              <a @click="showRolesOverlay(item)" class="text-no-decoration">
+              <a @click="showRolesOverlay(item)" class="text-no-decoration" v-if="team.user_id != item.id">
                 <v-icon small>mdi-shield-account</v-icon>
                 {{ item.team_role ? $t('roles.' + item.team_role) : $t('roles.not_assigned') }}
               </a>
+
+              <a @click="showChangeOwnerOverlay(item)" class="text-no-decoration" v-else>
+                <v-icon small>mdi-shield-account</v-icon>
+                {{ $t('teams.owner') }}
+              </a>
+
             </template>
 
             <template v-slot:item.actions="{ item }">           
-              <v-btn icon @click="removeUser(item)">
-                <v-icon>mdi-delete</v-icon>
+              <v-btn icon @click="removeUser(item)" v-if="team.user_id != item.id">
+                <v-icon>mdi-account-minus</v-icon>
               </v-btn>
+
             </template>
           </v-data-table>
         </v-tab-item>
@@ -193,6 +215,10 @@
     <v-overlay :value="rolesOverlay">
       <UserRoles :data="currUser" width="300px" height="100%" @close="rolesOverlay = false; getUserData()"></UserRoles>
     </v-overlay>
+
+    <v-overlay :value="changeOwnerOverlay">
+      <ChangeOwner :data="userData" :owner="currUser" width="300px" height="100%" @close="changeOwnerOverlay = false; getUserData()"></ChangeOwner>
+    </v-overlay>
   </v-card>
 </v-container>
 </template>
@@ -202,13 +228,15 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
 import UserRoles from '~/components/UserRoles.vue'
+import ChangeOwner from '~/components/ChangeOwner.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper, mtproto],
   components: { 
-    UserRoles 
+    UserRoles,
+    ChangeOwner
   },
 
   data() {
@@ -279,11 +307,13 @@ export default {
           ]
         }
       },
-      userData: [],
+      userData: null,
       newUserCode: '',
       chatInfo: null,
       chatError: false,
+      userSearch: '',
       rolesOverlay: false,
+      changeOwnerOverlay: false,
       currUser: null
     }
   },
@@ -415,6 +445,11 @@ export default {
     showRolesOverlay(user) {
       this.currUser = user
       this.rolesOverlay = true
+    },
+
+    showChangeOwnerOverlay(user) {
+      this.currUser = user
+      this.changeOwnerOverlay = true
     },
 
     async addUser() {

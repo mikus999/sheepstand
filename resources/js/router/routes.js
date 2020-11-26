@@ -39,6 +39,10 @@ export default [
   // TRANSLATION routes
   { path: '/translation', name: 'translation.index', component: page('translation/index.vue'), meta: { roles: ['translator'], auth: true }},
 
+  // ADMIN routes
+  { path: '/admin', name: 'admin.index', component: page('admin/index.vue'), meta: { roles: ['super_admin'], auth: true }},
+
+
   // ERROR routes
   { path: '/notfound', name: 'notfound', component: page('errors/404.vue'), meta: { roles: [], auth: false } },
   { path: '/accessdenied', name: 'accessdenied', component: page('errors/403.vue'), meta: { roles: [], auth: false } }

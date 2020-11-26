@@ -4,7 +4,9 @@
       <v-toolbar dark :color="color" flat>
         <v-toolbar-title class="white--text">{{ title }}</v-toolbar-title>
       </v-toolbar>
-      <v-card-text v-show="!!message" class="pa-4 body-1">{{ message }}</v-card-text>
+      <v-card-text v-show="!!message" class="pa-4 body-1">
+        <span v-html="message"></span>
+      </v-card-text>
       <v-card-actions class="pt-0">
         <v-spacer></v-spacer>
         <v-btn color="primary darken-1" text @click.native="agree">{{ $t('general.ok') }}</v-btn>

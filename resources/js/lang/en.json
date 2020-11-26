@@ -40,7 +40,8 @@
     "optional": "optional",
     "enabled": "Enabled",
     "disabled": "Disabled",
-    "content_copied": "Content copied to clipboard successfully"
+    "content_copied": "Content copied to clipboard successfully",
+    "search": "Search"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -124,6 +125,11 @@
     "team_settings": "Team Settings",
     "team_not_found": "Team not found",
     "team_code": "Team Code",
+    "owner": "Owner",
+    "change_owner": "Change Team Owner",
+    "select_an_admin": "Select a New Team Owner",
+    "confirm_change_owner": "Are you sure you want to transfer ownership of this team to the following user?",
+    "success_change_owner": "Team Owner changed successfully",
     "reset_code": "Reset Code",
     "date_created": "Date Created",
     "delete_team": "Delete Team",

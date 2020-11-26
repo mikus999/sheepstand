@@ -9,7 +9,7 @@
       {{ this.data.name }}
     </v-card-subtitle>
 
-    <v-card-text>
+    <v-card-text class="my-5">
       <div>{{ $t('account.user_role') }}</div>
       <v-divider class="mt-2 mb-n2"/>
       <v-radio-group v-model="teamRole">
