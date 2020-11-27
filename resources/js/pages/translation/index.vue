@@ -17,7 +17,7 @@
         <v-col cols=6>
           <span>{{ $t('translation.target_language')}}</span>
           <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
-            <v-radio v-for="lang in languages" :key="lang.id" :label="locales[lang.language]" :value="lang.language"></v-radio>
+            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
@@ -123,6 +123,7 @@ export default {
       })
       .then(response => {
         this.languages = response.data
+        this.languages = this.languages.filter(lang => lang.code != 'en')
       })
     },
 

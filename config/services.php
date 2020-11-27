@@ -50,16 +50,16 @@ return [
     ],
 
     'google' => [
-      'client_id' => env('GOOGLE_CLIENT_ID'),
-      'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-      'redirect' => env('GOOGLE_REDIRECT'),
-      'maps_id' => env('GOOGLE_MAPS_ID')
+      'client_id' => env('MIX_GOOGLE_CLIENT_ID'),
+      'client_secret' => env('MIX_GOOGLE_CLIENT_SECRET'),
+      'redirect' => env('MIX_GOOGLE_REDIRECT'),
+      'maps_id' => env('MIX_GOOGLE_MAPS_ID')
     ],
 
     'facebook' => [
-      'client_id' => env('FACEBOOK_APP_ID'),
-      'client_secret' => env('FACEBOOK_APP_SECRET'),
-      'redirect' => env('FACEBOOK_REDIRECT'),
+      'client_id' => env('MIX_FACEBOOK_APP_ID'),
+      'client_secret' => env('MIX_FACEBOOK_APP_SECRET'),
+      'redirect' => env('MIX_FACEBOOK_REDIRECT'),
     ]
 
 ];

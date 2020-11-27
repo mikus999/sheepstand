@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\TranslatorLanguages;
+use App\Models\Language;
 use Auth;
 use DB;
 
@@ -90,12 +90,38 @@ class TranslationController extends Controller
 
 
     // GET
-    public function getLanguages(Request $request)
+    public function getLanguages($subset)
+    {
+      if ($subset == 'site') {
+        $languages = Language::where('site_language','=',true)->get();
+      } else {
+        $languages = Language::all();
+      }
+
+      return response()->json($languages);
+    }
+
+
+    // GET
+    public function getUserLanguages(Request $request)
     {
         $user = Auth::user();
 
-        return response()->json($user->translator_languages);
+        return response()->json($user->languages);
     }
 
+
+    public function setUserLanguages(Request $request)
+    {
+      $targetUser = User::find($request->user_id);
+      $languages = $request->languages;
+
+      $targetUser->languages()->detach();
+
+      foreach ($languages as $lang) {
+        $language = Language::find($lang);
+        $targetUser->languages()->attach($language);
+      }
+    }
 
 }

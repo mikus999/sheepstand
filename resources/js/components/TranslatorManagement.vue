@@ -11,25 +11,33 @@
       </template>
 
       <template v-slot:item.lang="{ item }">
-        <p v-for="lang in item.translator_languages">{{ lang }}</p>
+        <div v-for="lang in item.languages">{{ lang.name }}</div>
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-btn icon>
+        <v-btn icon @click="showLanguageOverly(item)">
           <v-icon>mdi-account-edit</v-icon>
         </v-btn>
       </template>
     </v-data-table>
+
+    <v-overlay :value="langOverlay">
+      <TranslatorLanguages :data="currUser" v-on:close="closeLanguageOverlay()" width="300px" height="100%"></TranslatorLanguages>
+    </v-overlay>
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
+import TranslatorLanguages from '~/components/TranslatorLanguages.vue'
 
 export default {
   name: 'TranslatorManagement',
   mixins: [helper],
+  components: {
+    TranslatorLanguages
+  },
 
   data () {
     return {
@@ -40,6 +48,8 @@ export default {
         { text: 'Languages', value: 'lang', align: 'left' },
         { text: 'Actions', value: 'actions' },
       ],
+      currUser: null,
+      langOverlay: false
     }
   },
 
@@ -54,6 +64,17 @@ export default {
           this.translators = response.data.users
         })
     },
+
+    showLanguageOverly(user) {
+      this.currUser = user
+      this.langOverlay = true
+    },
+
+    closeLanguageOverlay() {
+      this.getUserData()
+      this.currUser = null
+      this.langOverlay = false
+    }
   },
 }
 </script>

@@ -39,9 +39,10 @@
 export default {
   name: 'LoginWithFacebook',
 
-  computed: {
-    facebookAuth: () => window.config.facebookAuth,
-    url: () => `/api/oauth/facebook`
+  data() {
+    return {
+      facebookAuth: process.env.MIX_FACEBOOK_APP_ID
+    }
   },
 
   mounted() {

@@ -98,15 +98,24 @@
     </v-list>
 
 
-    <v-list v-if="user && $can('manage_translation')" dense>
-      <v-subheader>{{ $t('menu.site_admin')}}</v-subheader>
+    <v-list v-if="user && $is(['translator','super_admin'])" dense>
+      <v-divider />
 
-      <v-list-item router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
+      <v-list-item v-if="$is('translator')" router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
           <v-icon>mdi-google-translate</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.translation') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-item v-if="$is('super_admin')" router :to="{ name: 'admin.index' }" class="text-decoration-none" active-class="menu-selected-item">
+        <v-list-item-icon>
+          <v-icon>mdi-tools</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.site_admin') }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -118,14 +127,9 @@
       </div>
 
 
-      <!-- TEAM SELECTOR -->
+      <!-- SELECTORS -->
       <div class="pa-1">
         <TeamSelector v-if="!$vuetify.breakpoint.mobile && user && hasTeam" />
-      </div>
-
-
-      <!-- LANGUAGE SELECTOR -->
-      <div class="pa-1">
         <LocaleSelector v-if="!$vuetify.breakpoint.mobile" />
       </div>
 

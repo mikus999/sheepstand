@@ -44,7 +44,7 @@ class UserController extends Controller
       $siteUsers = [];
 
       if ($user->hasRole('super_admin', null)) {
-        $siteUsers = User::whereRoleIs($role)->with('translator_languages')->get();
+        $siteUsers = User::whereRoleIs($role)->with('languages')->get();
       }
 
       $data = [

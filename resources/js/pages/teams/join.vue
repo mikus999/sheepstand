@@ -183,7 +183,6 @@ export default {
 
   data() {
     return {
-      userid: this.$userId,
       teamid: '',
       teamNotFound: false,
       teamNotFoundMsg: '',

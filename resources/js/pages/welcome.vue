@@ -15,7 +15,6 @@ export default {
   },
 
   data: () => ({
-    title: window.config.appName
   }),
 
   computed: mapGetters({

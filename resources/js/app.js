@@ -39,7 +39,6 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 
 Vue.config.productionTip = false
-Vue.prototype.$userId = document.querySelector("meta[name='user_id']").getAttribute('content')
 
 
 

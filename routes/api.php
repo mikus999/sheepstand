@@ -64,7 +64,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     // TRANSLATION routes
     Route::post('translation/update', 'TranslationController@updateString');
     Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
-    Route::get('translation/permissions', 'TranslationController@getLanguages');
+    Route::get('translation/permissions', 'TranslationController@getUserLanguages');
+    Route::post('translation/permissions', 'TranslationController@setUserLanguages');
+    Route::get('translation/languages/{subset}', 'TranslationController@getLanguages');
 
 
     // MESSAGE routes

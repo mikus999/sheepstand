@@ -1,13 +1,4 @@
 @php
-$config = [
-    'appName' => config('app.name'),
-    'locale' => $locale = app()->getLocale(),
-    'locales' => config('app.locales'),
-    'googleAuth' => config('services.google.client_id'),
-    'facebookAuth' => config('services.facebook.client_id'),
-    'googleMaps' => config('services.google.maps_id'),
-    'environment' => config('app.env')
-];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -25,13 +16,7 @@ $config = [
     <meta name="theme-color" content="#084389">
 
 
-    @if (Auth::check())
-        <meta name="user_id" content="{{ Auth::user()->id }}" />
-    @else
-        <meta name="user_id" content="" />
-    @endif
-
-    <title>{{ config('app.name') }}</title>
+    <title>SheepStand</title>
 
     <link rel="stylesheet" href="{{ mix('dist/css/app.css') }}">
 
@@ -45,11 +30,6 @@ $config = [
 
 <body>
   <div id="app"></div>
-
-  {{-- Global configuration object --}}
-  <script>
-    window.config = @json($config);
-  </script>
 
 
   {{-- Load the application scripts --}}

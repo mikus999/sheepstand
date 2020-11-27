@@ -1,5 +1,5 @@
 <template>
-  <v-select v-if="!$vuetify.breakpoint.mobile" :items="languages" :value="locale" @change="setLocale" outlined dense prepend-icon="mdi-translate">
+  <v-select v-if="!$vuetify.breakpoint.mobile" :items="languages" item-text="native_name" item-value="code" :value="locale" @change="setLocale" outlined dense prepend-icon="mdi-translate">
   </v-select>
   
 
@@ -12,8 +12,8 @@
     </template>
 
     <v-list>
-      <v-list-item v-for="l in languages" :key="l.value" @click="setLocale(l.value)">
-        <v-list-item-title>{{ l.text }}</v-list-item-title>
+      <v-list-item v-for="l in languages" :key="l.id" @click="setLocale(l.code)">
+        <v-list-item-title>{{ l.native_name }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -21,21 +21,34 @@
 </template>
 
 <script>
+import axios from 'axios'
 import helper from '../mixins/helper'
 
 export default {
   name: 'LocaleSelector',
   mixins: [helper],
 
-  computed: {
-    languages () {
-      var langArr = []
-      for (const key in this.locales) {
-        langArr.push({"text": this.locales[key], "value": key});
-      }
-      return langArr
+  data() {
+    return {
+      languages: [],
     }
   },
+
+  created() {
+    this.getLanguages()
+  },
+
+  methods: {
+    async getLanguages() {
+      await axios({
+        method: 'get',      
+        url: '/api/translation/languages/site',
+      })
+      .then(response => {
+        this.languages = response.data
+      })
+    },
+  }
 
 }
 </script>

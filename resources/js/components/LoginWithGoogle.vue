@@ -24,9 +24,10 @@
 export default {
   name: 'LoginWithGoogle',
 
-  computed: {
-    googleAuth: () => window.config.googleAuth,
-    url: () => `/api/oauth/google`
+  data() {
+    return {
+      googleAuth: process.env.MIX_GOOGLE_CLIENT_ID
+    }
   },
 
   mounted() {

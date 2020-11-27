@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <PageTitle title="Superadmin Features"></PageTitle>
+      <PageTitle title="Site Administration"></PageTitle>
     </v-row>
 
     <v-row>

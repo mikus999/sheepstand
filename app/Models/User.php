@@ -71,9 +71,9 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         return $this->belongsToMany('App\Models\Shift')->withPivot('status')->withTimeStamps();
     }
 
-    public function translator_languages()
+    public function languages()
     {
-        return $this->hasMany('App\Models\TranslatorLanguages');
+        return $this->belongsToMany('App\Models\Language');
     }
 
     public function messages()
