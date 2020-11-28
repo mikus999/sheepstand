@@ -40,7 +40,19 @@
         "translation": "Prevođenje"
     },
     "account": {
-        "profile": "Nalog"
+        "profile": "Nalog",
+        "dashboard": "Tabla",
+        "team": "Tim",
+        "translation": "Prevođenje",
+        "team_settings": "Podešavanja tima",
+        "join_another_team": "Priključi se timu",
+        "scheduling": "Rasporedi",
+        "assignments": "Dodeljavanja",
+        "shift_planning": "Planiranje smena",
+        "locations": "Lokacije",
+        "account": "Nalog",
+        "change_password": "Promeni lozinku",
+        "dark_theme": "Tamna tema"
     },
     "auth": {
         "logout": "Odjavi se"
