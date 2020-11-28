@@ -28,7 +28,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text v-on:click="$emit('close')">
+      <v-btn color="grey" text v-on:click="$emit('close')">
         {{ $t('general.cancel' ) }}
       </v-btn>
       <v-btn color="primary" text v-on:click="saveLanguages()">

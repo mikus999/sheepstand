@@ -35,11 +35,11 @@
 
     </v-data-table>
 
-    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
+    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false" :dark="theme=='dark'">
       <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px" height="100%"></ShiftCard>
     </v-overlay>
 
-    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false">
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="location" :width="mapWidth" height="500px" readonly 
           v-on:close="locationOverlay = false" v-on:click.native.stop/>
     </v-overlay>

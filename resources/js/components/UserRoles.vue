@@ -92,6 +92,7 @@ export default {
         }
       })
       .then(response => {
+        this.showSnackbar(this.$t('general.info_updated'), 'success')
         this.userRoles = response.data.roles
         this.teamRole = this.userRoles[this.team.id][0]
       })

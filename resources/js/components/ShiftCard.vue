@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined hover :width="width" :style="'background-color: ' + background">
+  <v-card outlined hover :width="width">
     <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
       {{ shift.location.name }}
     </v-card-title>
@@ -50,7 +50,7 @@
 
     </v-card-actions>
 
-    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false">
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="shift.location" :fill="shift.location.color_code" :width="mapWidth" height="500px" readonly 
           v-on:close="locationOverlay = false" v-on:click.native.stop/>
     </v-overlay>
@@ -76,10 +76,6 @@ export default {
     },
     schedule: {
       type: Object
-    },
-    background: {
-      type: String,
-      default: ''
     },
     width: {
       type: [String, Number],

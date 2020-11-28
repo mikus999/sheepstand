@@ -44,7 +44,7 @@
       </template>
     </v-data-table>
 
-    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false">
+    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false" :dark="theme=='dark'">
       <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px" height="100%"></ShiftCard>
     </v-overlay>
   </v-card>

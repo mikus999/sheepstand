@@ -21,7 +21,7 @@
       </template>
     </v-data-table>
 
-    <v-overlay :value="langOverlay">
+    <v-overlay :value="langOverlay" :dark="theme=='dark'">
       <TranslatorLanguages :data="currUser" v-on:close="closeLanguageOverlay()" width="300px" height="100%"></TranslatorLanguages>
     </v-overlay>
   </v-card>

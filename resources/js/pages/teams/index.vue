@@ -212,11 +212,11 @@
     </v-tabs>
 
 
-    <v-overlay :value="rolesOverlay">
+    <v-overlay :value="rolesOverlay" :dark="theme=='dark'">
       <UserRoles :data="currUser" width="300px" height="100%" @close="rolesOverlay = false; getUserData()"></UserRoles>
     </v-overlay>
 
-    <v-overlay :value="changeOwnerOverlay">
+    <v-overlay :value="changeOwnerOverlay" :dark="theme=='dark'">
       <ChangeOwner :data="userData" :owner="currUser" width="300px" height="100%" @close="changeOwnerOverlay = false; getUserData()"></ChangeOwner>
     </v-overlay>
   </v-card>
