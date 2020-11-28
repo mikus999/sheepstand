@@ -22,7 +22,26 @@
         "default": "Default",
         "min": "min",
         "max": "max",
-        "password": "Lozinka"
+        "password": "Lozinka",
+        "clear": "Izbriši",
+        "security": "Sigurnost",
+        "general": "Opšti",
+        "continue": "Napred",
+        "later": "Kasnije",
+        "autosave": "Sačuvaj automatski",
+        "available": "Dostupan",
+        "statistics": "Statistika",
+        "confirm": "Potvrda",
+        "error": "Greška",
+        "status": "Status",
+        "color": "Boja",
+        "type": "Tip",
+        "icon": "Ikona",
+        "optional": "neobavezan",
+        "enabled": "Aktiviran",
+        "disabled": "Neaktiviran",
+        "content_copied": "Sadržaj je uspešno kopiran",
+        "search": "Potraga"
     },
     "menu": {
         "dashboard": "Tabla",
@@ -37,7 +56,13 @@
         "account_settings": "Podešavanja naloga",
         "dark_theme": "Tamna tema",
         "team": "Tim",
-        "translation": "Prevođenje"
+        "translation": "Prevođenje",
+        "team_admin": "Administracija tima",
+        "shifts": "Smene",
+        "messages": "Poruke",
+        "inbox": "Primljene",
+        "logout": "Odjavi se",
+        "site_admin": "Administracija sajta"
     },
     "account": {
         "profile": "Nalog",

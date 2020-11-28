@@ -40,7 +40,7 @@
 
               <v-text-field name="team_date" :label="$t('teams.date_created')" :value="teamData.created_at | formatDate" readonly></v-text-field>
 
-              <v-select v-model="teamData.language" :items="languages" :label="$t('teams.default_language')" :hint="$t('teams.default_language_hint')" persistent-hint
+              <v-select v-model="teamData.language" :items="languages" item-text="native_name" item-value="code" :label="$t('teams.default_language')" :hint="$t('teams.default_language_hint')" persistent-hint
                 @change="changeSetting('language', 'str')" outlined class="mt-4"></v-select>
 
               <div class="my-6">
@@ -153,11 +153,9 @@
                     <v-btn 
                       color="secondary" 
                       class="mb-2" 
-                      v-bind="attrs" 
-                      v-on="on" 
                       :block="$vuetify.breakpoint.xs"
                       >
-                      <v-icon left>mdi-account-plus</v-icon>
+                      <v-icon left small>mdi-account-plus</v-icon>
                       {{ $t('teams.add_user') }}
                     </v-btn>
                   </template>
@@ -200,8 +198,8 @@
             </template>
 
             <template v-slot:item.actions="{ item }">           
-              <v-btn icon @click="removeUser(item)" v-if="team.user_id != item.id">
-                <v-icon>mdi-account-minus</v-icon>
+              <v-btn icon small @click="removeUser(item)" v-if="team.user_id != item.id">
+                <v-icon small>mdi-account-minus</v-icon>
               </v-btn>
 
             </template>
@@ -314,17 +312,8 @@ export default {
       userSearch: '',
       rolesOverlay: false,
       changeOwnerOverlay: false,
-      currUser: null
-    }
-  },
-
-  computed: {
-    languages () {
-      var langArr = []
-      for (const key in this.locales) {
-        langArr.push({"text": this.locales[key], "value": key});
-      }
-      return langArr
+      currUser: null,
+      languages: [],
     }
   },
 
@@ -337,7 +326,7 @@ export default {
   created() {
     this.getTeamData()
     this.getUserData()
-
+    this.getLanguages()
     this.getNotificationInfo()
 
   },
@@ -378,6 +367,18 @@ export default {
           this.teamData = response.data
         })
     },
+
+
+    async getLanguages() {
+      await axios({
+        method: 'get',      
+        url: '/api/translation/languages/site',
+      })
+      .then(response => {
+        this.languages = response.data
+      })
+    },
+
 
     updateTeam: _.debounce(async function (e) {
       this.validation[e.target.name].success = true

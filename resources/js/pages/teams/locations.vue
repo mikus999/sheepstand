@@ -10,7 +10,15 @@
           <v-toolbar flat>
             <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $tc('teams.cart_location', 1) }}</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn color="secondary" class="mb-2" @click="showDialog(tempData, false)" :block="$vuetify.breakpoint.xs">{{ $t('teams.create_new_location') }}</v-btn>
+            <v-btn 
+              color="secondary" 
+              class="mb-2" 
+              @click="showDialog(tempData, false)" 
+              :block="$vuetify.breakpoint.xs"
+            >
+              <v-icon left small>mdi-map-marker-plus</v-icon>
+              {{ $t('teams.create_new_location') }}
+            </v-btn>
 
 
             <!-- NEW/EDIT DIALOG -->
@@ -78,12 +86,13 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-icon small @click="showDialog(item, true)" class="mr-2">
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click="deleteLoc(item)" class="mr-2">
-            mdi-delete
-          </v-icon>
+          <v-btn icon small @click="showDialog(item, true)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+
+          <v-btn icon small @click="deleteLoc(item)">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
 

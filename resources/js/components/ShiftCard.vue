@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined hover :width="width">
+  <v-card :outlined="!onlyinfo" hover :width="width">
     <v-card-title class="justify-center text-h6" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
       {{ shift.location.name }}
     </v-card-title>
@@ -10,24 +10,25 @@
     </v-card-subtitle>
 
     <v-card-text :style="'overflow-y: auto; height: ' + height">
-        <div v-if="onlyinfo" class="text-overline">{{ $t('shifts.participants') }}</div>
-        <div v-for="user in shift.users" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
-          <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">{{ shiftStatus[user.pivot.status].icon }}</v-icon>
-          <span :class="shiftStatus[user.pivot.status].color + '--text'">{{ user.name }}</span>
-        </div>
+      <div v-if="onlyinfo" class="text-overline">{{ $t('shifts.participants') }}</div>
+      <div v-for="user in shift.users" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
+        <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">{{ shiftStatus[user.pivot.status].icon }}</v-icon>
+        <span :class="shiftStatus[user.pivot.status].color + '--text'">{{ user.name }}</span>
+      </div>
 
-        <div v-for="n in returnZero(shift.max_participants - shift.users.length)" :key="n" class="ma-2" disabled>
-          <div class="ml-n5 dashed-border rounded" width="100%">
-            <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
-            <span>{{ $t('general.available') }}</span>
-          </div>
+      <div v-for="n in returnZero(shift.max_participants - shift.users.length)" :key="n" class="ma-2" disabled>
+        <div class="ml-n5 dashed-border rounded" width="100%">
+          <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
+          <span>{{ $t('general.available') }}</span>
         </div>
+      </div>
 
-        <div class="mt-8">
-        </div>
+      <div class="mt-8">
+      </div>
     </v-card-text>
 
-    <v-divider class="ma-0"></v-divider>
+
+    <v-divider v-if="!onlyinfo" class="ma-0"></v-divider>
 
     <v-card-actions v-if="!onlyinfo">
       <v-row dense>
@@ -47,7 +48,13 @@
           </v-btn>
         </v-col>
       </v-row>
-
+    </v-card-actions>
+    
+    <v-card-actions v-else>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" text v-on:click="$emit('close')">
+        {{ $t('general.close' ) }}
+      </v-btn>
     </v-card-actions>
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">

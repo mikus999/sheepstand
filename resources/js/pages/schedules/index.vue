@@ -12,7 +12,14 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn color="secondary" class="mb-2" v-bind="attrs" v-on="on" :block="$vuetify.breakpoint.xs">{{ $t('schedules.create_new_schedule') }}</v-btn>
+                <v-btn 
+                  color="secondary" 
+                  class="mb-2" 
+                  :block="$vuetify.breakpoint.xs"
+                >
+                  <v-icon left small>mdi-calendar-plus</v-icon>
+                  {{ $t('schedules.create_new_schedule') }}
+                </v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -65,15 +72,15 @@
         </template>
         
         <template v-slot:item.actions="{ item }">
-          <v-icon small @click="editSched(item)" class="mr-2">
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click="editAssignments(item)" class="mr-2" :disabled="item.status < 1">
-            mdi-account-multiple-plus
-          </v-icon>
-          <v-icon small @click="deleteSched(item)" class="mr-2">
-            mdi-delete
-          </v-icon>
+          <v-btn icon small @click="editSched(item)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+
+          <v-btn icon small @click="editAssignments(item)" :disabled="item.status < 1"><v-icon small>mdi-account-multiple-plus</v-icon></v-btn>
+
+          <v-btn icon small @click="deleteSched(item)">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-card>

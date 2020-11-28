@@ -22,11 +22,23 @@
                   {{ $t('teams.enter_team_code') }}
                 </p>
 
-                <v-text-field v-model="teamid" class="my-16" label="TM-XXXXXXXX" outlined :error="teamNotFound" :error-messages="teamNotFoundMsg"></v-text-field>
 
-                <v-btn color="primary" class="mb-8 mt-n8" @click.prevent="findTeam">
-                  {{ $t('teams.find_team') }}
-                </v-btn>
+
+                  <CodeInput 
+                    @change="codeChange"
+                    :fields="6" 
+                    :fieldWidth="$vuetify.breakpoint.xsOnly ? 35 : 58" 
+                    :fieldHeight="$vuetify.breakpoint.xsOnly ? 33 : 54" 
+                    class="mx-auto" />
+
+                  <div v-if="teamNotFound" class="mt-4">
+                    <span class="red--text font-weight-bold">{{ teamNotFoundMsg}}</span>
+                  </div>
+
+                  <v-btn color="primary" class="my-8" @click.prevent="findTeam">
+                    {{ $t('teams.find_team') }}
+                  </v-btn>
+                </p>
               </v-col>
             </v-row>
 
@@ -175,15 +187,20 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
+import CodeInput from "vue-verification-code-input"
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
   mixins: [helper],
 
+  components: {
+    CodeInput
+  },
+
   data() {
     return {
-      teamid: '',
+      teamid: null,
       teamNotFound: false,
       teamNotFoundMsg: '',
       team_name: '',
@@ -284,6 +301,10 @@ export default {
       this.teamid = ''
       this.stepperCurr = 1
       this.isNewTeam = false
+    },
+
+    codeChange(v) {
+      this.teamid = v
     }
   }
 }

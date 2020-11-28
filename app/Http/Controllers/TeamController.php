@@ -41,7 +41,7 @@ class TeamController extends Controller
     {
       $user = Auth::user();
       $userid = $user->id;
-      $teamcode = Helper::getUniqueCode(6, 'team_code', 'TM-');
+      $teamcode = Helper::getUniqueCode(6, 'team_code');
       $teamUUID = Helper::getUniqueCode(12, 'team_name');
 
       $newteam = Team::create([
@@ -113,7 +113,7 @@ class TeamController extends Controller
         if ($user->hasRole('team_admin', $team)) {
           $team->display_name = $request->display_name;
           if ($request->newcode = true) {
-            $team->code = Helper::getUniqueCode(6, 'team_code', 'TM-');
+            $team->code = Helper::getUniqueCode(6, 'team_code');
           }
           $team->user_id = $request->user_id;
           $team->save();
@@ -168,7 +168,8 @@ class TeamController extends Controller
       $selfadd = false;
       $user = Auth::user();
 
-      if (strlen($request->team_id)<7) {
+      
+      if (strlen($request->team_id)<6) {
         $teamid = $request->team_id;
         $team = Team::find($teamid);
       } else {
@@ -279,7 +280,7 @@ class TeamController extends Controller
       $team = Team::find($id);
 
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
-        $teamcode = Helper::getUniqueCode(6, 'team_code', 'TM-');
+        $teamcode = Helper::getUniqueCode(6, 'team_code');
         $team->code = $teamcode;
         $team->save();
       }
