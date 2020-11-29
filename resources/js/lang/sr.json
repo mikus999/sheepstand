@@ -80,31 +80,21 @@
         "dark_theme": "Tamna tema"
     },
     "auth": {
-        "logout": "Odjavi se"
-    },
-    "messages": {
-        "ok": "U redu",
-        "cancel": "Odustati",
-        "save": "Sačuvaj",
-        "delete": "Izbriši",
-        "update": "Ažuriraj",
-        "close": "Zatvori",
-        "create": "Kreiraj",
-        "error_alert_title": "Opa...",
-        "error_alert_text": "Something went wrong! Please try again.",
-        "email": "Mejl",
-        "name": "Ime",
+        "logout": "Odjavi se",
+        "remember_me": "Zapamti me",
         "password": "Lozinka",
-        "home": "Početna",
-        "settings": "Podešavanja",
-        "language": "Jezik",
-        "administrators": "Administratori",
-        "users": "Koresnici",
-        "info_updated": "Your info has been updated!",
-        "actions": "Actions",
-        "go_back": "Nazad",
-        "default": "Default",
-        "min": "min",
-        "max": "max"
+        "new_password": "Nova lozinka",
+        "curr_password:": "Trenutna lozinka",
+        "forgot_password": "Da li si zaboravio svoju lozinku?",
+        "confirm_password": "Potvrdi lozinku",
+        "reset_password": "Podesi novu lozinku",
+        "success_reset_password": "Uspešno si podesio lozinku",
+        "login": "Uloguj se",
+        "login_with": "- ILI -",
+        "token_expired_alert_text": "Uloguj se da bi nastavio",
+        "register": "Registruj se",
+        "page_not_found": "Stranica nije pronađena",
+        "token_expired_alert_title": "Vasa sesija je istekla",
+        "register_with": "Registruj se sa"
     }
 }

@@ -77,7 +77,8 @@ export default {
         url: '/api/translation/languages/site',
       })
       .then(response => {
-        this.languages = response.data
+        // Show all site languages except English, as it's a target language for translation
+        this.languages = response.data.filter(lang => lang.code != 'en')
       })
 
       this.data.languages.forEach((language, index) => {

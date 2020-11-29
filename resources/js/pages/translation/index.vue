@@ -9,12 +9,13 @@
     </v-row>
 
     <v-card width="100%">
+      <!-- LANGUAGE SELECTOR -->
       <v-row>
-        <v-col cols=6>
+        <v-col cols=12 sm=6>
           <span>{{ $t('translation.source_language')}}: EN</span>
         </v-col>
 
-        <v-col cols=6>
+        <v-col cols=12 sm=6>
           <span>{{ $t('translation.target_language')}}</span>
           <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
             <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code"></v-radio>
@@ -22,13 +23,30 @@
         </v-col>
       </v-row>
 
+
+      <!-- CATEGORIES IN ENGLISH FILE -->
       <v-row>
         <v-col cols=12>
+          <div v-if="langTargetLocale !== null" >
+            <v-chip  
+              v-for="category in langSourceCat" 
+              :key="category.value"
+              @click="parseStrings(category.value)"
+              class="ma-2 font-weight-bold"
+              :color="getCategoryColor(category.text) "
+            >
+              {{ category.text + ' ' + getFinishedPct(category.text) }}%
+            </v-chip>
+          </div>
+          <!--
           <v-select v-if="langTargetLocale !== null" v-model="currSection" :items="langSourceCat" @change="parseStrings($event)">
           </v-select>
+          -->
         </v-col>
       </v-row>
       
+
+      <!-- STRINGS FOR SELECTED CATEGORY -->
       <v-row>
         <v-col cols=12>
           <v-data-iterator v-if="currSection !== null" :items="langSourceStrings" hide-default-footer disable-pagination>
@@ -52,7 +70,7 @@
     
     <v-fab-transition>
       <v-btn :key="saveFab.icon" :color="saveFab.color" @click="saveNow" fab dark bottom right fixed>
-        <span v-show="saveFab.showTime">{{ remaining }}</span>
+        <span v-show="saveFab.showTime">{{ saveFab.interval1_rem }}</span>
         <v-icon>{{ saveFab.icon }}</v-icon>
       </v-btn>
     </v-fab-transition>
@@ -104,12 +122,6 @@ export default {
     }
   },
 
-  computed: {
-    remaining: function () {
-      return this.saveFab.interval1_rem
-    }
-  },
-
   created () {
     this.getLanguages()
     this.getStrings(this.langSourceLocale, true)
@@ -136,6 +148,32 @@ export default {
       this.getStrings(this.langTargetLocale, false)
     },
 
+    getFinishedPct(key) {
+      const sourceCount = Object.keys(this.langSource[key]).length
+      const targetCount = this.langTarget[key] == undefined ? 0 : Object.keys(this.langTarget[key]).length
+      var pctFinished = parseInt((targetCount / sourceCount) * 100)
+
+      if (pctFinished > 100) {
+        pctFinished = 100
+      }
+
+      return pctFinished
+    },
+
+    getCategoryColor(key) {
+      const pctFinished = this.getFinishedPct(key)
+      var color = ''
+
+      if (pctFinished == 0) {
+        color = 'red'
+      } else if (pctFinished < 100) {
+        color = 'yellow'
+      } else {
+        color = 'green'
+      }
+
+      return color
+    },
 
     async getStrings(lang, isSource) {
       await axios({
@@ -166,6 +204,7 @@ export default {
     },
 
     parseStrings(key) {
+      // First save the current section
       if (this.currSection !== null) {
         this.updateStrings()
       }
