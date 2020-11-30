@@ -121,7 +121,7 @@
     </v-list>
 
 
-    <template v-slot:append v-if="user">
+    <template v-slot:append>
       <div class="pa-1">
         <v-switch v-model="$vuetify.theme.dark" hide-details color="black"></v-switch>
       </div>
@@ -136,7 +136,7 @@
 
       <!-- LOGOUT BUTTON -->
       <div class="pa-1">
-        <v-btn block @click.prevent="logout" v-if="!$vuetify.breakpoint.mobile">
+        <v-btn block @click.prevent="logout" v-if="!$vuetify.breakpoint.mobile && user">
           <v-icon>mdi-logout-variant</v-icon>
           <span class="ml-3">{{ $t('auth.logout') }}</span>
         </v-btn>

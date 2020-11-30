@@ -10,17 +10,17 @@
           <v-toolbar flat>
             <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-btn 
+              color="secondary" 
+              class="mb-2" 
+              :block="$vuetify.breakpoint.xs"
+              @click="dialog = true" 
+            >
+              <v-icon left small>mdi-calendar-plus</v-icon>
+              {{ $t('schedules.create_new_schedule') }}
+            </v-btn>
+
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn 
-                  color="secondary" 
-                  class="mb-2" 
-                  :block="$vuetify.breakpoint.xs"
-                >
-                  <v-icon left small>mdi-calendar-plus</v-icon>
-                  {{ $t('schedules.create_new_schedule') }}
-                </v-btn>
-              </template>
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ $t('schedules.create_new_schedule') }}</span>
@@ -37,7 +37,14 @@
                             <v-text-field v-model="newSchedDate" :label="$t('schedules.choose_start_date')" prepend-icon="mdi-calendar" readonly
                               v-bind="attrs" v-on="on"></v-text-field>
                           </template>
-                          <v-date-picker v-model="newSchedDate" no-title scrollable first-day-of-week="1">
+                          <v-date-picker 
+                            v-model="newSchedDate" 
+                            no-title 
+                            scrollable 
+                            :locale="locale"
+                            :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
+                            :allowed-dates="allowedDates"
+                          >
                             <v-spacer></v-spacer>
                             <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
                             <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
@@ -125,6 +132,10 @@ export default {
 
     getDayColor(status) {
       return (status ? 'green' : 'red')
+    },
+
+    allowedDates(val) {
+      return this.$dayjs(val).day() === 1
     },
 
     async getSchedData () {

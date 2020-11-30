@@ -4,9 +4,9 @@
       {{ shift.location.name }}
     </v-card-title>
 
-    <v-card-subtitle class="text-center" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
-      {{ dayOfWeek($dayjs(shift.time_start).isoWeekday()) }}
-      {{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}
+    <v-card-subtitle class="text-center font-weight-bold" :style="'background-color: ' + (shift.location.color_code !== null ? shift.location.color_code : '')">
+      <div>{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
+      <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
     </v-card-subtitle>
 
     <v-card-text :style="'overflow-y: auto; height: ' + height">
@@ -213,7 +213,7 @@ export default {
         var status = null
         this.trade = !this.trade
 
-        const newStatus = (this.shift.pivot.status == 4) ? 2 : 4
+        const newStatus = (this.myShiftStatus == 4) ? 2 : 4
 
 
         // If notifications are enabled for this team, send a group message via Telegram

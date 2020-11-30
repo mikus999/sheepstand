@@ -1,85 +1,117 @@
 <template>
-  <div class="row">
-    <div class="col-lg-8 m-auto">
-      <card :title="$t('reset_password')">
-        <form @submit.prevent="reset" @keydown="form.onKeydown($event)">
-          <alert-success :form="form" :message="status" />
+  <v-container fluid>
+    <v-card class="mx-auto" max-width="500" outlined>
+      <v-card-title>{{ $t('auth.reset_password') }}</v-card-title>
+      <v-card-text>
+        <v-form >
+          <v-text-field v-model="email" name="email" :label="$t('general.email')" 
+            :error-messages="emailErrors" @blur="$v.email.$touch()" readonly></v-text-field>
 
-          <!-- Email -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email" readonly>
-              <has-error :form="form" field="email" />
-            </div>
-          </div>
+          <v-text-field v-model="password" name="password" :label="$t('auth.password')"
+            :error-messages="passwordErrors" @blur="$v.password.$touch()"
+            :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
+            ></v-text-field>
 
-          <!-- Password -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('password') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.password" :class="{ 'is-invalid': form.errors.has('password') }" class="form-control" type="password" name="password">
-              <has-error :form="form" field="password" />
-            </div>
-          </div>
+          <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')"
+            :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
+            :append-icon="showPwd2 ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
+            ></v-text-field>
 
-          <!-- Password Confirmation -->
-          <div class="form-group row">
-            <label class="col-md-3 col-form-label text-md-right">{{ $t('confirm_password') }}</label>
-            <div class="col-md-7">
-              <input v-model="form.password_confirmation" :class="{ 'is-invalid': form.errors.has('password_confirmation') }" class="form-control" type="password" name="password_confirmation">
-              <has-error :form="form" field="password_confirmation" />
-            </div>
-          </div>
 
-          <!-- Submit Button -->
-          <div class="form-group row">
-            <div class="col-md-9 ml-md-auto">
-              <v-button :loading="form.busy">
-                {{ $t('reset_password') }}
-              </v-button>
-            </div>
-          </div>
-        </form>
-      </card>
-    </div>
-  </div>
+          <v-row>
+            <v-col cols=12 class="text-center">
+              <!-- Submit Button -->
+              <v-btn type="submit" @click.prevent="reset" color="primary" block>
+                {{ $t('auth.reset_password') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
-import Form from 'vform'
+import axios from 'axios'
+import helper from '~/mixins/helper'
+import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 
 export default {
   layout: 'vuetify',
   middleware: 'guest',
+  mixins: [helper],
 
-  metaInfo () {
-    return { title: this.$t('reset_password') }
+  validations: {
+    email: { required, email },
+    password: { required, minLength: minLength(6) },
+    password2: { required, sameAsPassword: sameAs('password') },
   },
 
   data: () => ({
     status: '',
-    form: new Form({
-      token: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
-    })
+    token: '',
+    email: '',
+    password: '',
+    password2: '',
+    showPwd: false,
+    showPwd2: false,
   }),
 
+  computed: {
+    emailErrors () {
+      const errors = []
+      if (!this.$v.email.$dirty) return errors
+      !this.$v.email.email && errors.push(this.$t('auth.email_invalid'))
+      !this.$v.email.required && errors.push(this.$t('auth.email_required'))
+      return errors
+    },
+    passwordErrors () {
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+      !this.$v.password.minLength && errors.push(this.$t('auth.password_length', { length: '6' }))
+      !this.$v.password.required && errors.push(this.$t('auth.password_required'))
+      return errors
+    },
+    passwordErrors2 () {
+      const errors = []
+      if (!this.$v.password2.$dirty) return errors
+      !this.$v.password2.sameAsPassword && errors.push(this.$t('auth.password_mismatch'))
+      return errors
+    },
+  },
+
   created () {
-    this.form.email = this.$route.query.email
-    this.form.token = this.$route.params.token
+    this.email = this.$route.query.email
+    this.token = this.$route.params.token
   },
 
   methods: {
     async reset () {
-      const { data } = await this.form.post('/api/password/reset')
+      this.$v.$touch()
 
-      this.status = data.status
+      if (!this.$v.$invalid) {
+        await axios({
+            method: 'post',      
+            url: '/api/password/reset',
+            data: {
+              token: this.token,
+              email: this.email,
+              password: this.password,
+              password_confirmation: this.password2
+            }
+          })
+          .then(response => {
+            this.showSnackbar(this.$t('auth.success_reset_password'), 'success')
+            this.$router.push({ name: 'login' })
 
-      this.form.reset()
-    }
+          })
+          .catch(error => {
+            this.showSnackbar(this.$t('general.error_alert_text'), 'error')
+          })
+      }
+    },
   }
 }
 </script>

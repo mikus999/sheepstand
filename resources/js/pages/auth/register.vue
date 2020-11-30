@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card class="mx-auto" max-width="600" outlined>
+    <v-card class="mx-auto" max-width="500" outlined>
       <v-card-title>{{ $t('auth.register') }}</v-card-title>
       <v-card-text>
 
@@ -134,7 +134,7 @@ export default {
             }
           })
           .catch(error => {
-            this.showSnackbar($t('auth.error_registration'), 'error')
+            this.showSnackbar(this.$t('auth.error_registration'), 'error')
           });
       }
     },
@@ -171,7 +171,7 @@ export default {
         }
       })
       .catch(error => {
-        this.showSnackbar($t('auth.error_login'), 'error')
+        this.showSnackbar(this.$t('auth.error_login'), 'error')
       });
     }
   }

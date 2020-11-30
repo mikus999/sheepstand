@@ -44,7 +44,7 @@ class ShiftController extends Controller
         $schedule = $user->schedules->find($scheduleid);
 
         if ($schedule) {
-            $shifts = $schedule->shifts()->with('location', 'users')
+            $shifts = $schedule->shifts()->with('schedule', 'location', 'users')
                         ->orderBy('shifts.location_id')
                         ->orderBy('shifts.time_start')
                         ->get();

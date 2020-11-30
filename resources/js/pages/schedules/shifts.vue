@@ -5,7 +5,8 @@
     </v-row>
 
     <v-row>
-      <ShiftSchedule />
+      <ShiftSchedule v-if="$vuetify.breakpoint.smAndUp" />
+      <ShiftScheduleMobile v-else />
     </v-row>
   </v-container>
 </template>
@@ -14,13 +15,15 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import ShiftSchedule from '~/components/ShiftSchedule.vue'
+import ShiftScheduleMobile from '~/components/ShiftScheduleMobile.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
   components: {
-    ShiftSchedule
+    ShiftSchedule,
+    ShiftScheduleMobile,
   },
 }
 </script>

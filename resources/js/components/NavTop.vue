@@ -8,10 +8,10 @@
 
     <v-spacer />
 
-    <TeamSelector v-if="hasTeam" />
+    <TeamSelector v-if="user && hasTeam" />
     <LocaleSelector />
 
-    <v-btn dark icon @click.prevent="logout">
+    <v-btn dark icon @click.prevent="logout" v-if="user">
       <v-icon>mdi-logout-variant</v-icon>
     </v-btn>
   </v-app-bar>

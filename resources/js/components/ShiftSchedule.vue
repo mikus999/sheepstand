@@ -20,7 +20,7 @@
       </v-select>
 
       <template v-slot:extension>
-        <v-tabs v-model="tab" centered align-with-title fixed-tabs show-arrows v-if="schedule !== null">
+        <v-tabs v-if="schedule !== null" v-model="tab" centered align-with-title fixed-tabs show-arrows>
           <v-tab v-for="n in 7" :key="n">
             <v-badge color="secondary" :value="filterShifts(shifts, n) ? filterShifts(shifts, n).length : null" 
               :content="filterShifts(shifts, n) ? filterShifts(shifts, n).length : null" offset-x="-3px">

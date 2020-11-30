@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card class="mx-auto" max-width="600" outlined>
+    <v-card class="mx-auto" max-width="500" outlined>
       <v-card-title>{{ $t('auth.reset_password') }}</v-card-title>
       <v-card-text>
         <v-form >
@@ -20,23 +20,18 @@
       </v-card-text>
     </v-card>
 
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn v-bind="attrs" text @click="snack = false">{{ $t('general.close') }}</v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios'
+import helper from '~/mixins/helper'
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
   layout: 'vuetify',
   middleware: 'guest',
+  mixins: [helper],
 
   validations: {
     email: { required, email },
@@ -44,9 +39,6 @@ export default {
 
   data: () => ({
     email: '',
-    snack: false,
-    snackText: '',
-    snackColor: '',
   }),
 
   computed: {
@@ -72,9 +64,10 @@ export default {
           }
         })
         .then(response => {
-          this.snack = true
-          this.snackColor = 'success'
-          this.snackText = this.$t('auth.password_reset_link_sent')
+          this.showSnackbar(this.$t('auth.password_reset_link_sent'), 'success')
+        })
+        .catch(error => {
+            this.showSnackbar(this.$t('general.error_alert_text'), 'error')
         })
       }
     }

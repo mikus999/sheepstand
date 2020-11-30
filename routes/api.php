@@ -66,7 +66,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
     Route::get('translation/permissions', 'TranslationController@getUserLanguages');
     Route::post('translation/permissions', 'TranslationController@setUserLanguages');
-    Route::get('translation/languages/{subset}', 'TranslationController@getLanguages');
 
 
     // MESSAGE routes
@@ -100,4 +99,11 @@ Route::group(['middleware' => 'guest:api'], function () {
     Route::post('oauth/{driver}', 'Auth\OAuthController@redirectToProvider');
     Route::get('oauth/{driver}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback');
     Route::post('oauth/{driver}/mobile', 'Auth\OAuthController@getTokenFromMobile');
-  });
+
+});
+
+
+
+
+// ROUTES THAT ARE ACCESSIBLE WITH AND WITHOUT AUTHENTICATION
+Route::get('translation/languages/{subset}', 'TranslationController@getLanguages');
