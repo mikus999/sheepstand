@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        //$this->call(RoleSeeder::class);
-        //$this->call(LanguageSeeder::class);
+        $this->call(RoleSeeder::class);
+        $this->call(LanguageSeeder::class);
 
         // Create an admin user
         $user = User::create([
