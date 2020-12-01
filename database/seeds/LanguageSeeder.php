@@ -12,7 +12,7 @@ class LanguageSeeder extends Seeder
      */
     public function run()
     {
-      $data = base_path('resources/languages.json');
+      $data = base_path('languages.json');
       $data = json_decode(file_get_contents($data), true);
 
       foreach ($data as $language) {
