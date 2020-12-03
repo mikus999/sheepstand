@@ -4,7 +4,7 @@ import * as types from '../mutation-types'
 
 // state
 export const state = {
-  locale: Cookies.get('locale') || locale,
+  locale: Cookies.get('locale') || 'en',
   locales: null
 }
 
