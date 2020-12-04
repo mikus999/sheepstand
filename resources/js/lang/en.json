@@ -41,7 +41,8 @@
         "enabled": "Enabled",
         "disabled": "Disabled",
         "content_copied": "Content copied to clipboard successfully",
-        "search": "Search"
+        "search": "Search",
+        "test": "Test"
     },
     "menu": {
         "dashboard": "Dashboard",
