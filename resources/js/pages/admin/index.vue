@@ -22,7 +22,7 @@ import TranslatorManagement from '~/components/TranslatorManagement'
 import UserTable from '~/components/UserTable'
 
 export default {
-  middleware: ['auth', 'teams'],
+  middleware: ['auth'],
   layout: 'vuetify',
   mixins: [helper],
   components: { 

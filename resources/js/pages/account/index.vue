@@ -37,6 +37,12 @@
                   <v-icon color="green">mdi-check-circle</v-icon>
                 </template>
               </v-text-field>
+
+              <div class="my-6" v-if="hasTeam">
+                <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
+                  {{ $t('teams.leave_team') }}
+                </v-btn>
+              </div>
             </v-col>
           </v-tab-item>
 
@@ -247,7 +253,26 @@ export default {
             this.showSnackbar(this.$t('uth.success_reset_password'), 'success')
         });
       }
-    }
+    },
+
+
+
+    async leaveTeam() {
+      if (await this.$root.$confirm(this.$t('teams.confirm_leave_team'), null, 'error')) {
+        await axios({
+            method: 'post',
+            url: '/api/teams/leaveteam',
+            data: {
+              team_id: this.team.id,
+            }
+          })
+          .then(response => {
+            this.showSnackbar(this.$t('teams.success_leave_team'), 'success')
+            this.getTeams()
+            this.setTeam(response.data.team, 'home')   
+          })
+      }
+    },
   }
 }
 </script>

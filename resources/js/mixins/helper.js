@@ -19,6 +19,9 @@ export const helper = {
       message_count: 'general/message_count'
     }),
 
+    isTeamOwner () {
+      return this.team.user_id == this.user.id
+    },
 
     notificationsEnabled () {
       var result = false

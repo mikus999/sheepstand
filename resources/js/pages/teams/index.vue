@@ -283,9 +283,7 @@ export default {
                 name: 'teams.join'
               })
             } else {
-              this.setTeam(this.teams[0].id)
-
-              this.$router.push('/home')
+              this.setTeam(this.teams[0].id, 'home')
             }
           })
       }

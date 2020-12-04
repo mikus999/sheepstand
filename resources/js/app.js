@@ -84,7 +84,7 @@ Vue.prototype.$can = function (permission) {
   var rolesAllowed = []
   var matchFound = false
 
-  if (this.siteRoles !== null) {
+  if (this.siteRoles != null) {
     // Find which roles contain this permission
     this.siteRoles.forEach(item => {
       const sitePermissions = item.permissions
@@ -112,9 +112,15 @@ Vue.prototype.$can = function (permission) {
 
     // Now see if the user owns one of the roles above
     // If any of the users' roles match any of the allowed roles for this resource, return 'true'
-    const teamRoles = this.team ? this.roles[this.team.id] : []
+    var myRoles = null
+    const teamRoles = this.team ? this.roles[this.team.id] : null
     const globalRoles = this.roles['global']
-    const myRoles = teamRoles.concat(globalRoles)
+
+    if (teamRoles) {
+      myRoles = teamRoles.concat(globalRoles)
+    } else {
+      myRoles = globalRoles
+    }
 
     for (let myRole of myRoles) {
       matchFound = rolesAllowed.indexOf(myRole) >= 0
@@ -134,13 +140,19 @@ Vue.prototype.$can = function (permission) {
 Vue.prototype.$is = function (rolesAllowed) {
   var matchFound = false
 
-  if (this.siteRoles !== null) {
+  if (this.siteRoles != null) {
 
     // Now see if the user owns one of the roles above
     // If any of the users' roles match any of the allowed roles for this resource, return 'true'
-    const teamRoles = this.team ? this.roles[this.team.id] : []
+    var myRoles = null
+    const teamRoles = this.team ? this.roles[this.team.id] : null
     const globalRoles = this.roles['global']
-    const myRoles = teamRoles.concat(globalRoles)
+
+    if (teamRoles) {
+      myRoles = teamRoles.concat(globalRoles)
+    } else {
+      myRoles = globalRoles
+    }
 
     for (let myRole of myRoles) {
       matchFound = rolesAllowed.indexOf(myRole) >= 0

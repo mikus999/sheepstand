@@ -244,11 +244,18 @@ class TeamController extends Controller
       $teamid = $request->team_id;
       $user = Auth::user();
       $team = Team::find($teamid);
-      $targetUser = User::find($userid);
+      $selfadd = false;
+
+      if ($request->user_id) {
+        $targetUser = User::find($userid);
+      } else {
+        $targetUser = $user;
+        $selfadd = true;
+      }
 
 
       // Only Team Admins and Super Admins can add/remove users from a team
-      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+      if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
         $targetUser->teams()->detach($teamid);
         
         // Remove user's shifts
