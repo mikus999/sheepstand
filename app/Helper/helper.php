@@ -27,7 +27,6 @@ class Helper
     }
 
 
-
     public static function getUniqueCode($digits, $scope, $prefix = '', $suffix = '') {
         $returnstr = '';
         $is_unique = false;
