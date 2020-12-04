@@ -1,5 +1,6 @@
 <template>
-  <v-select v-if="!$vuetify.breakpoint.mobile" :items="user.teams" item-text="display_name" item-value="id" :value="team !== null ? team.id : 0" return-object @change="setTeam($event, 'home')" outlined dense prepend-icon="mdi-account-group select-item">
+  <!-- IF LARGER DEVICE, SHOW SELECT -->
+  <v-select v-if="!$vuetify.breakpoint.mobile" :items="user.teams" item-text="display_name" item-value="id" :value="team !== null ? team.id : 0" return-object @change="setTeam($event)" outlined dense prepend-icon="mdi-account-group select-item">
     <template v-slot:append-item>
       <v-divider class="mb-2"></v-divider>
 

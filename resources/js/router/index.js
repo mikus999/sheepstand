@@ -149,7 +149,7 @@ function checkPermissions (to, from, next) {
   const routeRoles = to.meta.roles
   const team = store.getters['auth/team']
   const userRoles = store.getters['auth/roles']
-  const teamRoles = userRoles[team.id]
+  const teamRoles = team ? userRoles[team.id] : null
   const globalRoles = userRoles['global']
 
   var isAllowed = store.getters['auth/isSuperAdmin']
@@ -158,11 +158,13 @@ function checkPermissions (to, from, next) {
   // If the user is not a superadmin, check the roles
   if (!isAllowed) {
     // First check the team roles
-    Object.keys(teamRoles).forEach(function(key) {
-      if (routeRoles.indexOf(teamRoles[key]) >= 0) {
-        isAllowed = true
-      }
-    })
+    if (teamRoles) {
+      Object.keys(teamRoles).forEach(function(key) {
+        if (routeRoles.indexOf(teamRoles[key]) >= 0) {
+          isAllowed = true
+        }
+      })
+    }
 
     if (!isAllowed) {
       // If team role not found, check global roles

@@ -55,7 +55,7 @@
       </template>
 
       <template v-slot:item.team_role="{ item }">
-        <a @click="showRolesOverlay(item)" class="text-no-decoration" v-if="team.user_id != item.id">
+        <a @click="showRolesOverlay(item)" class="text-no-decoration" v-if="team && (team.user_id != item.id)">
           <v-icon small>mdi-shield-account</v-icon>
           {{ item.team_role ? $t('roles.' + item.team_role) : $t('roles.not_assigned') }}
         </a>
@@ -76,7 +76,7 @@
           <v-icon small>mdi-shield-edit</v-icon>
         </v-btn>
 
-        <v-btn icon small @click="removeUser(item)" v-if="team.user_id != item.id">
+        <v-btn icon small @click="removeUser(item)" v-if="team && (team.user_id != item.id)">
           <v-icon small>mdi-account-minus</v-icon>
         </v-btn>
       </template>

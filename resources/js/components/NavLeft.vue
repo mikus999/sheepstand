@@ -21,7 +21,7 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-list-item router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" active-class="menu-selected-item">
+      <v-list-item router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" active-class="menu-selected-item" v-if="user && hasTeam">
         <v-list-item-icon>
           <v-icon>mdi-calendar</v-icon>
         </v-list-item-icon>
@@ -29,6 +29,16 @@
           <v-list-item-title>{{ $t('menu.shifts') }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
+
+      <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none" active-class="menu-selected-item" v-else>
+        <v-list-item-icon>
+          <v-icon>mdi-account-multiple-plus</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('teams.join_team') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
 
       <v-list-item router :to="{ name: 'account.inbox' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>

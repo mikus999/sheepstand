@@ -9,11 +9,15 @@
     <v-spacer />
 
     <TeamSelector v-if="user && hasTeam" />
-    <LocaleSelector />
+    <v-btn v-else-if="user && !hasTeam" dark icon @click.prevent="$router.push({ name: 'teams.join' })">
+      <v-icon>mdi-account-multiple-plus</v-icon>
+    </v-btn>
 
     <v-btn dark icon @click.prevent="logout" v-if="user">
       <v-icon>mdi-logout-variant</v-icon>
     </v-btn>
+
+    <LocaleSelector />
   </v-app-bar>
 </template>
 
