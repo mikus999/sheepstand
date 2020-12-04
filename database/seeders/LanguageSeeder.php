@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Language;
@@ -20,6 +21,7 @@ class LanguageSeeder extends Seeder
               'code'        => $language['code'],
               'name'        => $language['name'],
               'native_name' => $language['nativeName'],
+              'site_language' => $language['siteLanguage']
           ]);
       }
 
