@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
     Route::get('/user', 'Auth\UserController@current');
+    Route::get('/users', 'Auth\UserController@getAllUsers'); // GLOBAL Roles Only
     Route::get('/users/{role}', 'Auth\UserController@getUsersByRole'); // GLOBAL Roles Only
 
     // SECURITY routes
@@ -66,6 +67,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
     Route::get('translation/permissions', 'TranslationController@getUserLanguages');
     Route::post('translation/permissions', 'TranslationController@setUserLanguages');
+    Route::post('translation/languages/edit', 'TranslationController@setSiteLanguage');
 
 
     // MESSAGE routes

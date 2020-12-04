@@ -73,6 +73,8 @@ class SecurityController extends Controller
               $user->syncRoles([$roleObj], $teamScope ? $team : null);
             }
 
+          } else if (is_array($role)) {
+            $user->syncRoles($role, $teamScope ? $team : null);
           }
 
           $roles = Helper::getUserRoles($user);

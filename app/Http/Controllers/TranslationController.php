@@ -27,6 +27,10 @@ class TranslationController extends Controller
         $lang = $request->lang;
         $filepath = 'resources/js/lang/' . $lang . '.json';
 
+        if (!file_exists(base_path($filepath))) {
+          file_put_contents(base_path($filepath), '{}');
+        }
+
         // Read File
         $jsonString = file_get_contents(base_path($filepath));
         $jsonString = mb_convert_encoding($jsonString, 'UTF-8');
@@ -81,9 +85,12 @@ class TranslationController extends Controller
         $filepath = 'resources/js/lang/' . $lang . '.json';
 
         // Read File
-        $jsonString = file_get_contents(base_path($filepath));
-        $jsonString = json_decode($jsonString);
-
+        if (file_exists(base_path($filepath))) {
+          $jsonString = file_get_contents(base_path($filepath));
+          $jsonString = json_decode($jsonString);
+        } else {
+          $jsonString = null;
+        }
 
         return response()->json($jsonString);
     }
@@ -94,7 +101,7 @@ class TranslationController extends Controller
     {
       if ($subset == 'site') {
         $languages = Language::where('site_language','=',true)->get();
-      } else {
+      } else if ($subset == 'all') {
         $languages = Language::all();
       }
 
@@ -122,6 +129,27 @@ class TranslationController extends Controller
         $language = Language::find($lang);
         $targetUser->languages()->attach($language);
       }
+    }
+
+    public function setSiteLanguage(Request $request)
+    {
+      $user = Auth::user();
+      $language = $request->language;
+      $changetype = $request->changetype;
+      $site_lang = 0;
+
+      if ($changetype == 'add') {
+        $site_lang = 1;
+      }
+
+      if ($user->hasRole('super_admin', null)) {
+        $lang = Language::where('code','=',$language)->first();
+        $lang->site_language = $site_lang;
+        $lang->save();
+      }
+
+      return response()->json(Language::all());
+
     }
 
 }

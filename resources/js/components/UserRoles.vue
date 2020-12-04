@@ -9,7 +9,8 @@
       {{ this.data.name }}
     </v-card-subtitle>
 
-    <v-card-text class="my-5">
+    <!-- Team user security -->
+    <v-card-text class="my-5" v-if="!adminRoles">
       <div>{{ $t('account.user_role') }}</div>
       <v-divider class="mt-2 mb-n2"/>
       <v-radio-group v-model="teamRole">
@@ -23,6 +24,24 @@
         </v-radio>
       </v-radio-group>
     </v-card-text>
+
+    <!-- Site user security -->
+    <v-card-text class="my-5" v-else>
+      <div>{{ $t('account.site_roles') }}</div>
+      <v-divider class="mt-2 mb-n2"/>
+
+      <v-checkbox
+        v-for="sr in siteRoles.filter(role => role.global == true)"
+        v-model="globalRoles"
+        :key="sr.id"
+        :value="sr.name"
+        :label="$t('roles.' + sr.name)"
+        @change="changeUserRole(sr.name)"
+        hide-details
+        >
+      </v-checkbox>
+    </v-card-text>
+
 
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -52,12 +71,17 @@ export default {
       type: [String, Number],
       default: '170px'
     },
+    adminRoles: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data() {
     return {
       userRoles: null,
-      teamRole: null
+      teamRole: null,
+      globalRoles: null
     }
   },
 
@@ -77,27 +101,40 @@ export default {
       .then(response => {
         this.userRoles = response.data.roles
         this.teamRole = this.userRoles[this.team.id][0]
+        this.globalRoles = this.userRoles.global
       })
     },
 
     async changeUserRole(role) {
+
+      if (!this.adminRoles) {
+        var changetype = 'sync'
+      } else if (this.globalRoles.indexOf(role) >= 0) {
+        var changetype = 'add'
+      } else {
+        var changetype = 'remove'
+      }
+
+
       await axios({
         method: 'post',
         url: '/api/user/roles/set',
         data: {
           user_id: this.data.id,
           role: role,
-          changetype: 'sync',
-          team_id: this.team.id
+          changetype: changetype,
+          team_id: this.adminRoles ? null : this.team.id
         }
       })
       .then(response => {
         this.showSnackbar(this.$t('general.info_updated'), 'success')
         this.userRoles = response.data.roles
         this.teamRole = this.userRoles[this.team.id][0]
+        this.globalRoles = this.userRoles.global
       })
-    }
-  },
+      
+    },
 
+  }
 }
 </script>

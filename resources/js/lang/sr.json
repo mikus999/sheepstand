@@ -96,5 +96,13 @@
         "page_not_found": "Stranica nije pronađena",
         "token_expired_alert_title": "Vasa sesija je istekla",
         "register_with": "Registruj se sa"
+    },
+    "roles": {
+        "publisher": "Objavitelj",
+        "elder": "Starešina",
+        "team_admin": "Administrator tima",
+        "translator": "Prevodilac",
+        "super_admin": "Super administrator",
+        "not_assigned": "Neodređen"
     }
 }

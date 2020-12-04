@@ -105,5 +105,13 @@
         "change_password": "Смени паролата",
         "account_settings": "Настройки на акаунта",
         "dark_theme": "Тъмна тема"
+    },
+    "roles": {
+        "publisher": "Вестител",
+        "elder": "Старейшина",
+        "team_admin": "Администратор на екипа",
+        "translator": "Преводач",
+        "super_admin": "Супер администратор",
+        "not_assigned": "Неназначен"
     }
 }

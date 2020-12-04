@@ -4,7 +4,11 @@
       <PageTitle title="Site Administration"></PageTitle>
     </v-row>
 
-    <v-row>
+    <v-row class="mb-12">
+      <UserTable :team-users="false" />
+    </v-row>
+
+    <v-row class="mb-12">
       <TranslatorManagement />
     </v-row>
 
@@ -15,13 +19,15 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import TranslatorManagement from '~/components/TranslatorManagement'
+import UserTable from '~/components/UserTable'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper],
   components: { 
-    TranslatorManagement
+    TranslatorManagement,
+    UserTable
   },
 }
 </script>

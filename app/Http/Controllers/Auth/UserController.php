@@ -35,6 +35,31 @@ class UserController extends Controller
      * Get all site users.
      *   Role: super_admin ONLY
      *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllUsers()
+    {
+      $user = Auth::user();
+      $siteUsers = [];
+
+      if ($user->hasRole('super_admin', null)) {
+        $siteUsers = User::with('languages')->get();
+
+        foreach($siteUsers as $key => $user) {
+          $targetUser = User::find($user->id);
+          $userRoles = $targetUser->getRoles();
+          $siteUsers[$key]['site_roles'] = $userRoles;
+        };
+      }
+
+      return response()->json($siteUsers);
+    }
+
+
+    /**
+     * Get all site users for given role.
+     *   Role: super_admin ONLY
+     *
      * @param String $role || GLOBAL ROLES ONLY
      * @return \Illuminate\Http\JsonResponse
      */

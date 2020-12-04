@@ -131,92 +131,12 @@
 
         <!-- TAB: USERS -->
         <v-tab-item value="tab-users">
-          <v-data-table 
-            :headers="userHeaders" 
-            :items="userData"
-            :search="userSearch"
-            sort-by="team_role"
-            sort-desc
-            >
-            <template v-slot:top>
-              <v-toolbar flat>
-                <v-text-field
-                  v-model="userSearch"
-                  :label="$t('general.search')"
-                  prepend-inner-icon="mdi-magnify"
-                  single-line
-                  hide-details
-                ></v-text-field>
-                <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="500px">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn 
-                      color="secondary" 
-                      class="mb-2" 
-                      :block="$vuetify.breakpoint.xs"
-                      >
-                      <v-icon left small>mdi-account-plus</v-icon>
-                      {{ $t('teams.add_user') }}
-                    </v-btn>
-                  </template>
-                  <v-card>
-                    <v-card-title>
-                      <span class="headline">{{ $t('teams.add_user_to_team') }}</span>
-                    </v-card-title>
-
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col cols="12">
-                            <v-text-field v-model="newUserCode" :label="$t('account.user_code')"></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                      <v-btn color="blue darken-1" text @click="addUser">{{ $t('general.save') }}</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-              </v-toolbar>
-            </template>
-
-            <template v-slot:item.team_role="{ item }">
-              <a @click="showRolesOverlay(item)" class="text-no-decoration" v-if="team.user_id != item.id">
-                <v-icon small>mdi-shield-account</v-icon>
-                {{ item.team_role ? $t('roles.' + item.team_role) : $t('roles.not_assigned') }}
-              </a>
-
-              <a @click="showChangeOwnerOverlay(item)" class="text-no-decoration" v-else>
-                <v-icon small>mdi-shield-account</v-icon>
-                {{ $t('teams.owner') }}
-              </a>
-
-            </template>
-
-            <template v-slot:item.actions="{ item }">           
-              <v-btn icon small @click="removeUser(item)" v-if="team.user_id != item.id">
-                <v-icon small>mdi-account-minus</v-icon>
-              </v-btn>
-
-            </template>
-          </v-data-table>
+          <UserTable team-users />
         </v-tab-item>
       </v-tabs-items>
 
     </v-tabs>
 
-
-    <v-overlay :value="rolesOverlay" :dark="theme=='dark'">
-      <UserRoles :data="currUser" width="300px" height="100%" @close="rolesOverlay = false; getUserData()"></UserRoles>
-    </v-overlay>
-
-    <v-overlay :value="changeOwnerOverlay" :dark="theme=='dark'">
-      <ChangeOwner :data="userData" :owner="currUser" width="300px" height="100%" @close="changeOwnerOverlay = false; getUserData()"></ChangeOwner>
-    </v-overlay>
   </v-card>
 </v-container>
 </template>
@@ -225,21 +145,18 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
-import UserRoles from '~/components/UserRoles.vue'
-import ChangeOwner from '~/components/ChangeOwner.vue'
+import UserTable from '~/components/UserTable.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper, mtproto],
   components: { 
-    UserRoles,
-    ChangeOwner
+    UserTable,
   },
 
   data() {
     return {
-      dialog: false,
       hasError: false,
       tab: null,
       teamData: [],
@@ -249,29 +166,6 @@ export default {
           message: null
         }
       },
-      userHeaders: [{
-          text: this.$t('general.name'),
-          align: 'start',
-          value: 'name'
-        },
-        {
-          text: this.$t('general.email'),
-          value: 'email'
-        },
-        {
-          text: this.$t('account.user_code'),
-          value: 'user_code'
-        },
-        {
-          text: this.$t('account.user_role'),
-          value: 'team_role'
-        },
-        {
-          text: this.$t('general.actions'),
-          value: 'actions',
-          sortable: false
-        },
-      ],
       settings: {
         shifts: {
           switches: [{
@@ -305,27 +199,15 @@ export default {
           ]
         }
       },
-      userData: null,
-      newUserCode: '',
       chatInfo: null,
       chatError: false,
-      userSearch: '',
-      rolesOverlay: false,
-      changeOwnerOverlay: false,
-      currUser: null,
       languages: [],
     }
   },
 
-  watch: {
-    dialog(val) {
-      val || this.close()
-    },
-  },
 
   created() {
     this.getTeamData()
-    this.getUserData()
     this.getLanguages()
     this.getNotificationInfo()
 
@@ -354,12 +236,6 @@ export default {
       } 
     },
 
-    async getUserData() {
-      await axios.get('/api/teams/users/' + this.team.id)
-        .then(response => {
-          this.userData = response.data
-        })
-    },
 
     getTeamData() {
       axios.get('/api/teams/' + this.team.id)
@@ -422,58 +298,6 @@ export default {
         })
     },
 
-    async removeUser(user) {
-      if (await this.$root.$confirm(this.$t('teams.confirm_remove_user'), null, 'error')) {
-        await axios({
-            method: 'post',
-            url: '/api/teams/leaveteam',
-            data: {
-              team_id: this.team.id,
-              user_id: user.id
-            }
-          })
-          .then(response => {
-            this.getUserData()
-            this.showSnackbar(this.$t('teams.success_remove_user'), 'success')
-          })
-      }
-    },
-
-    close() {
-      this.dialog = false
-    },
-
-    showRolesOverlay(user) {
-      this.currUser = user
-      this.rolesOverlay = true
-    },
-
-    showChangeOwnerOverlay(user) {
-      this.currUser = user
-      this.changeOwnerOverlay = true
-    },
-
-    async addUser() {
-      await axios({
-          method: 'post',
-          url: '/api/teams/jointeam',
-          data: {
-            team_id: this.team.id,
-            user_code: this.newUserCode
-          }
-        })
-        .then(response => {
-          if (!response.data.error) {
-            this.getUserData()
-            this.showSnackbar(this.$t('teams.success_add_user'), 'success')
-          } else {
-            this.showSnackbar(this.$t(response.data.message, 'error'))
-          }
-        })
-
-      this.newUserCode = ''
-      this.close()
-    },
 
     async changeSetting(setting, valType) {
       var val = ''

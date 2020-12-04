@@ -7,6 +7,19 @@
             <v-icon left>mdi-account-multiple</v-icon>
             Translators
           </v-toolbar-title>
+
+            
+          <v-spacer />
+
+          <v-btn 
+            color="secondary" 
+            class="mb-2" 
+            :block="$vuetify.breakpoint.xs"
+            @click="showSiteLanguageOverly()"
+            >
+            <v-icon left small>mdi-translate</v-icon>
+            Site Languages
+          </v-btn>
         </v-toolbar>
       </template>
 
@@ -24,6 +37,11 @@
     <v-overlay :value="langOverlay" :dark="theme=='dark'">
       <TranslatorLanguages :data="currUser" v-on:close="closeLanguageOverlay()" width="300px" height="100%"></TranslatorLanguages>
     </v-overlay>
+
+    <v-overlay :value="siteLangOverlay" :dark="theme=='dark'">
+      <SiteLanguages v-on:close="closeSiteLanguageOverlay()" width="300px" height="100%"></SiteLanguages>
+    </v-overlay>
+
   </v-card>
 </template>
 
@@ -31,12 +49,14 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import TranslatorLanguages from '~/components/TranslatorLanguages.vue'
+import SiteLanguages from '~/components/SiteLanguages.vue'
 
 export default {
   name: 'TranslatorManagement',
   mixins: [helper],
   components: {
-    TranslatorLanguages
+    TranslatorLanguages,
+    SiteLanguages
   },
 
   data () {
@@ -49,7 +69,8 @@ export default {
         { text: 'Actions', value: 'actions' },
       ],
       currUser: null,
-      langOverlay: false
+      langOverlay: false,
+      siteLangOverlay: false
     }
   },
 
@@ -74,6 +95,14 @@ export default {
       this.getUserData()
       this.currUser = null
       this.langOverlay = false
+    },
+
+    showSiteLanguageOverly() {
+      this.siteLangOverlay = true
+    },
+
+    closeSiteLanguageOverlay() {
+      this.siteLangOverlay = false
     }
   },
 }
