@@ -16,3 +16,6 @@ yarn-error.log
 phpunit.dusk.xml
 *.code-workspace
 .DS_Store
+
+/resources/js/lang
+!/resources/js/lang/en.json
