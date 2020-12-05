@@ -24,7 +24,7 @@
 
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <v-col md=8>
+            <v-col cols=12>
               <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
                   :success="validation.name.success">
                 <template v-slot:append v-if="validation.name.success">
@@ -38,11 +38,25 @@
                 </template>
               </v-text-field>
 
+
               <div class="my-6" v-if="hasTeam">
                 <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
                   {{ $t('teams.leave_team') }}
                 </v-btn>
               </div>
+            </v-col>
+
+            <v-col cols=12>
+              <v-divider class="my-12"></v-divider>
+
+              <v-row>
+                <div class="mx-auto">
+                  <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.availability') }}</v-subheader>
+                </div>
+              </v-row>
+              <v-row>
+                <AvailabilitySchedule :data="user" />
+              </v-row>
             </v-col>
           </v-tab-item>
 
@@ -129,11 +143,15 @@
 import axios from 'axios'
 import helper from '../../mixins/helper'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
+import AvailabilitySchedule from '~/components/AvailabilitySchedule.vue'
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
   mixins: [helper],
+  components: {
+    AvailabilitySchedule
+  },
 
   validations: {
     password1: { required, minLength: minLength(6) },

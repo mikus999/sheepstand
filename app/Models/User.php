@@ -86,6 +86,11 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
       return Message::where('team_id','=',null)->with('users','team');
     }
 
+    public function user_availabilities()
+    {
+      return $this->hasMany('App\Models\UserAvailability');
+    }
+
 
 
 

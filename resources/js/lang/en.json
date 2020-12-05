@@ -112,7 +112,8 @@
         "preferences": "Preferences",
         "user_security": "User Security",
         "user_role": "Team Role",
-        "site_roles": "Site Roles"
+        "site_roles": "Site Roles",
+        "availability": "Availability"
     },
     "roles": {
         "publisher": "Publisher",

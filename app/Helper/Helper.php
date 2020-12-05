@@ -4,6 +4,8 @@ namespace App\Helper;
 
 use DB;
 use Auth;
+use App\Models\User;
+use App\Models\UserAvailability;
 
 class Helper
 {
@@ -68,6 +70,28 @@ class Helper
       }
 
       return $uniq;
+    }
+
+
+    public static function addDefaultAvailability(User $user, $available = 1)
+    {
+      $data = [];
+
+      for ($d = 0; $d <= 6; $d++) {
+        for ($h = 0; $h <= 23; $h++) {
+          $temp = [
+            'user_id' => $user->id, 
+            'day_of_week' => $d, 
+            'start_time' => $h . ':00', 
+            'end_time' => ($h+1) . ':00',
+            'available' => $available
+          ];
+
+          $data[] = $temp;
+        }
+      }
+
+      UserAvailability::upsert($data, ['user_id', 'day_of_week', 'start_time', 'end_time'], ['available']);
     }
 
 }

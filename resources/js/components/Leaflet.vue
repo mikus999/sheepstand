@@ -10,31 +10,14 @@
       <v-spacer></v-spacer>
 
       <v-item-group class="v-btn-toggle" right>
-        <v-btn @click="changeDrawingMode('marker')" :input-value="isActiveButton('marker')">
-          <v-icon>mdi-map-marker</v-icon>
-        </v-btn>
-        <v-btn @click="changeDrawingMode('rectangle')" :input-value="isActiveButton('rectangle')">
-          <v-icon>mdi-vector-rectangle</v-icon>
-        </v-btn>
-        <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
-          <v-icon>mdi-vector-polygon</v-icon>
-        </v-btn>
-        <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
-          <v-icon>mdi-vector-circle</v-icon>
-        </v-btn>
-      </v-item-group>
-
-      <v-spacer></v-spacer>
-
-      <v-item-group class="v-btn-toggle" right>
-        <v-btn @click="deleteSelection()">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
         <v-btn @click="saveShapes()" :input-value="isChanged" active-class="save-btn">
           <v-icon>mdi-content-save</v-icon>
         </v-btn>
         <v-btn @click="revertChanges()">
           <v-icon>mdi-undo</v-icon>
+        </v-btn>
+        <v-btn @click="$emit('close')">
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-item-group>
     </v-toolbar>
@@ -53,6 +36,34 @@
       <l-tile-layer :url="url" :attribution="attribution" />
 
     </l-map>
+
+
+    <v-toolbar v-if="!readonly" dense dark bottom>
+      <v-item-group class="v-btn-toggle">
+        <v-btn @click="changeDrawingMode('marker')" :input-value="isActiveButton('marker')">
+          <v-icon>mdi-map-marker</v-icon>
+        </v-btn>
+        <v-btn @click="changeDrawingMode('rectangle')" :input-value="isActiveButton('rectangle')">
+          <v-icon>mdi-vector-rectangle</v-icon>
+        </v-btn>
+        <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
+          <v-icon>mdi-vector-polygon</v-icon>
+        </v-btn>
+        <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
+          <v-icon>mdi-vector-circle</v-icon>
+        </v-btn>
+      </v-item-group>
+
+      <v-spacer />
+
+      <v-item-group class="v-btn-toggle" right>
+        <v-btn @click="deleteSelection()">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </v-item-group>
+
+    </v-toolbar>
+
   </div>
 </template>
 

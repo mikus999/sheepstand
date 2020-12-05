@@ -17,18 +17,17 @@
             single-line
             hide-details
           ></v-text-field>
-          <v-spacer></v-spacer>
+          <v-spacer />
+          <v-btn 
+            color="secondary" 
+            class="mb-2" 
+            @click="dialog = true"
+            >
+            <v-icon small :left="$vuetify.breakpoint.smAndUp">mdi-account-plus</v-icon>
+            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('teams.add_user') }}</span>
+          </v-btn>
+
           <v-dialog v-model="dialog" max-width="500px" v-if="teamUsers">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn 
-                color="secondary" 
-                class="mb-2" 
-                :block="$vuetify.breakpoint.xs"
-                >
-                <v-icon left small>mdi-account-plus</v-icon>
-                {{ $t('teams.add_user') }}
-              </v-btn>
-            </template>
             <v-card>
               <v-card-title>
                 <span class="headline">{{ $t('teams.add_user_to_team') }}</span>

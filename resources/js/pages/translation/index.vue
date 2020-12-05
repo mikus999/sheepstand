@@ -321,9 +321,13 @@ export default {
       this.saveFab.icon = isSave ? 'mdi-content-save' : 'mdi-check-bold'
       this.saveFab.showTime = withTimer
     }
+  },
+
+  beforeRouteLeave (to, from, next) {
+    this.stopTimer()
+    this.updateStrings()
+    next()
   }
-
-
 }
 </script>
 

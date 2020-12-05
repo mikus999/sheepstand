@@ -21,7 +21,7 @@ class UserController extends Controller
      */
     public function current(Request $request)
     {
-        $user = $request->user();
+        $user = Auth::user();
         $roles = Helper::getUserRoles($user);
 
         $user['roles'] = $roles;
