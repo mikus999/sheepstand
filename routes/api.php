@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('account/password', 'Settings\PasswordController@update');
     Route::get('account/availability', 'UserAvailabilityController@getAvailability');
     Route::post('account/availability', 'UserAvailabilityController@setAvailability');
+    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability');
 
     // TEAM routes
     Route::post('teams/jointeam', 'TeamController@addUserToTeam');

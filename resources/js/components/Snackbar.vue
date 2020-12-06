@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar v-model="show" :timeout="3000" :color="color">
+  <v-snackbar v-model="show" :timeout="3000" :color="color" :top="$vuetify.breakpoint.xs">
     {{ message }}
     <v-btn text @click="show = false">{{ $t('general.close') }}</v-btn>
   </v-snackbar>

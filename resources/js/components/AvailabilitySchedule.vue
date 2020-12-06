@@ -1,29 +1,92 @@
 <template>
-  <v-card width="100%">
+  <v-card width="100%" :flat="$vuetify.breakpoint.xs">
     <v-card-title class="text-h6">
       <v-icon class="mr-3">mdi-calendar-multiselect</v-icon>
       {{ $t('account.availability') }}
     </v-card-title>
 
-    <v-card-text>
-      <v-row width="100%">
-        <v-col cols="2">
-          <br>
-          <div v-for="h in 24" :key="'row_' + h" class="avail_row">
-            {{ timeSlot(h) }}
+    <!-- Desktop View -->
+    <v-card-text v-if="$vuetify.breakpoint.smAndUp">
+      <v-row>
+        <v-col>
+          <v-btn text @click="changeAll(1)" color="grey">
+            {{ $t('general.enable_all') }}
+          </v-btn>
+          <v-btn text @click="changeAll(0)" color="grey">
+            {{ $t('general.disable_all') }}
+          </v-btn>
+          <v-btn @click="saveSchedule" color="primary">
+            {{ $t('general.save') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col>
+          <div class="avail_col">
+            <p>{{ $t('account.time_slot') }}</p>
+            <div v-for="h in 24" :key="'row_' + h" class="avail_row">
+              {{ timeSlot(h) }}
+            </div>
+          </div>
+
+          <div v-for="d in 7" :key="'day_' + (d-1)" class="avail_col text-center">
+            <p>{{ dayOfWeek(d) }}</p>
+
+            <div 
+              v-for="(h, index) in filterAvailability(d-1)" 
+              :key="index" 
+              :class="'avail_square ' + (h.available ? 'avail_square_on' : 'avail_square_off')"
+              @click="changeAvailability(h)"
+            >
+              <v-icon>{{ h.available ? 'mdi-check-circle-outline' : 'mdi-cancel' }}</v-icon>
+            </div>
           </div>
         </v-col>
-
-        <v-col cols="1" v-for="d in 7" :key="'day_' + (d-1)" class="text-center">
-          {{ dayOfWeek(d) }}
-          <div v-for="h in filterAvailability(d-1)" :key="'hour_' + (h.start_time)" class="avail_square">
-            {{ h.day_of_week}}
-          </div>
-        </v-col>
-
-        <v-col cols="3"></v-col>
       </v-row>
     </v-card-text>
+
+
+    <!-- Mobile View -->
+    <v-card-text v-else>
+      <v-row>
+        <v-col>
+          <v-btn block @click="saveSchedule" color="primary">
+            {{ $t('general.save') }}
+          </v-btn>
+          <v-btn text block @click="changeAll(1)" color="grey">
+            {{ $t('general.enable_all') }}
+          </v-btn>
+          <v-btn text block @click="changeAll(0)" color="grey">
+            {{ $t('general.disable_all') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-tabs vertical>
+        <v-tab v-for="d in 7" :key="d">
+          {{ dayOfWeek(d) }}
+        </v-tab>
+
+        <v-tab-item v-for="d in 7" :key="d">
+          <v-btn 
+            v-for="(h, index) in filterAvailability(d-1)" 
+            :key="index" 
+            block small
+            @click="changeAvailability(h)"
+            class="my-2"
+            :color="h.available ? 'green' : '#eeeeee'"
+          >
+            <v-icon class="mr-auto" small>{{ h.available ? 'mdi-check-circle-outline' : 'mdi-cancel' }}</v-icon>
+            <span class="mx-auto">{{ timeSlot(index + 1) }}</span>
+          </v-btn>
+        </v-tab-item>
+
+
+      </v-tabs>
+          
+    </v-card-text>
+
   </v-card>
 </template>
 
@@ -43,7 +106,9 @@ export default {
 
   data() {
     return {
-      availability: []
+      tabs: 1,
+      availability: [],
+      changed: []
     }
   },
 
@@ -63,6 +128,53 @@ export default {
     filterAvailability(day) {
       var dayAvail = this.availability.filter(d => d.day_of_week == day)
       return dayAvail
+    },
+
+    changeAvailability(hour) {
+      var index = this.availability.indexOf(hour)
+      var inChanged = this.changed.indexOf(hour)
+
+      // First, change the master array
+      this.availability[index].available = !hour.available
+
+      // Then, either add or remove it from the changed items array
+      if (inChanged > -1) {
+        this.changed.splice(inChanged, 1)
+      } else {
+        this.changed.push(hour)
+      }
+
+    },
+
+    async changeAll(turnOn) {
+      await axios({
+        method: 'post',      
+        url: '/api/account/availability/default',
+        data: {
+          default: turnOn
+        }
+      })
+      .then(response => {
+        this.availability = response.data
+        this.changed = []
+        this.showSnackbar(this.$t('general.info_updated'), 'success')
+      })
+    },
+
+    async saveSchedule() {
+      if (this.changed.length > 0) {
+        await axios({
+          method: 'post',      
+          url: '/api/account/availability',
+          data: {
+            availability: JSON.stringify(this.changed)
+          }
+        })
+        .then(response => {
+          this.changed = []
+          this.showSnackbar(this.$t('general.info_updated'), 'success')
+        })
+      }
     },
 
     dayOfWeek (daynum) {
@@ -85,16 +197,29 @@ export default {
 <style scoped>
   .avail_row {
     height: 35px;
-    margin: 2px;
+    margin: 4px;
+    line-height: 35px;
+  }
+
+  .avail_col {
     display: inline-block;
   }
 
   .avail_square {
     width: 35px;
     height: 35px;
-    margin: 2px;
-    display: inline-block;
+    margin: 4px;
+    padding: 0px;
+    line-height: 35px;
     border-radius: 1.5px;
-    background-color: #cccccc;
   }
+
+  .avail_square_off {
+    background-color: #eeeeee;
+  }
+
+  .avail_square_on {
+    background-color: #4CAF50;
+  }
+
 </style>

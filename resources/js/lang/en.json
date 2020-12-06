@@ -39,7 +39,9 @@
         "icon": "Icon",
         "optional": "optional",
         "enabled": "Enabled",
+        "enable_all": "Enable All",
         "disabled": "Disabled",
+        "disable_all": "Disable All",
         "content_copied": "Content copied to clipboard successfully",
         "search": "Search",
         "test": "Test"
@@ -113,7 +115,8 @@
         "user_security": "User Security",
         "user_role": "Team Role",
         "site_roles": "Site Roles",
-        "availability": "Availability"
+        "availability": "Availability",
+        "time_slot": "Time Slot"
     },
     "roles": {
         "publisher": "Publisher",

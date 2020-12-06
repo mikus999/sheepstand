@@ -24,40 +24,35 @@
 
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <v-col cols=12>
-              <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
-                  :success="validation.name.success">
-                <template v-slot:append v-if="validation.name.success">
-                  <v-icon color="green">mdi-check-circle</v-icon>
-                </template>
-              </v-text-field>
-              <v-text-field v-model="userData.email" name="email" :label="$t('general.email')" @input.native="updateUser($event)" 
-                  :success="validation.email.success">
-                <template v-slot:append v-if="validation.email.success">
-                  <v-icon color="green">mdi-check-circle</v-icon>
-                </template>
-              </v-text-field>
+            <v-row>
+              <v-col cols=12 md=5 lg=6>
+                <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
+                    :success="validation.name.success">
+                  <template v-slot:append v-if="validation.name.success">
+                    <v-icon color="green">mdi-check-circle</v-icon>
+                  </template>
+                </v-text-field>
+                <v-text-field v-model="userData.email" name="email" :label="$t('general.email')" @input.native="updateUser($event)" 
+                    :success="validation.email.success">
+                  <template v-slot:append v-if="validation.email.success">
+                    <v-icon color="green">mdi-check-circle</v-icon>
+                  </template>
+                </v-text-field>
 
 
-              <div class="my-6" v-if="hasTeam">
-                <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
-                  {{ $t('teams.leave_team') }}
-                </v-btn>
-              </div>
-            </v-col>
-
-            <v-col cols=12>
-              <v-divider class="my-12"></v-divider>
-
-              <v-row>
-                <div class="mx-auto">
-                  <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.availability') }}</v-subheader>
+                <div class="my-6" v-if="hasTeam">
+                  <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
+                    {{ $t('teams.leave_team') }}
+                  </v-btn>
                 </div>
-              </v-row>
-              <v-row>
+              </v-col>
+
+              <v-divider class="my-12" v-if="$vuetify.breakpoint.xs"></v-divider>
+
+              <v-col cols=12 md=7 lg=6 class="pa-sm-6">
                 <AvailabilitySchedule :data="user" />
-              </v-row>
-            </v-col>
+              </v-col>
+            </v-row>
           </v-tab-item>
 
 

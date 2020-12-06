@@ -73,7 +73,7 @@ class Helper
     }
 
 
-    public static function addDefaultAvailability(User $user, $available = 1)
+    public static function addDefaultAvailability(User $user, $available)
     {
       $data = [];
 
