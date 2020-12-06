@@ -24,7 +24,7 @@
 
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
-            <v-row>
+            <v-row class="mx-2">
               <v-col cols=12 md=5 lg=6>
                 <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
                     :success="validation.name.success">
