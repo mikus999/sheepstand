@@ -36,30 +36,35 @@ export const helper = {
     return {
       scheduleStatus: [
         { 
+          // Shift planning
           value: 0,
           text: this.$t('schedules.status_0'), 
           text_user: this.$t('schedules.status_closed'),
-          color: 'yellow'
+          color: 'deep-orange'
         },
         { 
+          // Assignments
           value: 1,
           text: this.$t('schedules.status_1'), 
           text_user: this.$t('schedules.status_open'),
           color: 'blue'
         },
         { 
+          // Finalized
           value: 2,
           text: this.$t('schedules.status_2'), 
           text_user: this.$t('schedules.status_closed'),
           color: 'green'
         },
         { 
+          // Archived
           value: 3,
           text: this.$t('schedules.status_3'), 
           text_user: this.$t('schedules.status_closed'),
           color: 'red'
         },
         { 
+          // Unknown
           value: 4,
           text: this.$t('schedules.status_4'), 
           text_user: this.$t('schedules.status_closed'),

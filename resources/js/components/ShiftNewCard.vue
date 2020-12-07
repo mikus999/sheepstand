@@ -1,53 +1,135 @@
 <template>
   <v-card>
-    <v-card-title class="text-center">
-      <span class="headline">{{ $t('schedules.new_shift') }} - {{ shift.time_start | formatDate }}</span>
+    <v-card-title class="justify-center">
+      <span class="headline">{{ edit ? $t('schedules.change_shift') : $t('schedules.new_shift') }} - {{ shift.time_start | formatDate }}</span>
     </v-card-title>
 
     <v-card-text>
       <v-container>
         <v-row>
-          <v-col cols=2><v-icon>mdi-map-marker</v-icon></v-col>
-          <v-col cols=10>
-            <v-select v-model="shift.location_id" :items="locations" item-value="id" item-text="name" outlined dense />
+          <v-col>
+            <!-- Location Picker -->
+            <v-select 
+              v-model="shift.location_id" 
+              :items="locations" 
+              item-value="id" 
+              item-text="name" 
+              outlined 
+              dense
+              prepend-icon="mdi-map-marker"
+              persistent-hint
+              :hint="$t('shifts.location')"
+            />
+
+
+            <!-- Shift Date Picker -->
+            <v-menu ref="menu" v-model="date_menu" :close-on-content-click="false" :return-value.sync="shift_date"
+              transition="scale-transition" offset-y min-width="290px">
+
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field 
+                  v-model="shift_date" 
+                  :label="$t('shifts.date')" 
+                  prepend-icon="mdi-calendar" 
+                  readonly
+                  v-bind="attrs" 
+                  v-on="on"
+                >
+                </v-text-field>
+              </template>
+
+              <v-date-picker 
+                v-model="shift_date" 
+                no-title 
+                scrollable 
+                :locale="locale"
+                :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
+              >
+                <v-spacer></v-spacer>
+                <v-btn text color="secondary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
+                <v-btn color="primary" @click="$refs.menu.save(shift_date)">{{ $t('general.ok') }}</v-btn>
+              </v-date-picker>
+
+            </v-menu>
           </v-col>
         </v-row>
-        
+
         <v-row class="mt-5">
-          <v-col cols=2><v-icon>mdi-clock</v-icon></v-col>
-          <v-col cols=5>
-            <v-dialog ref="dialog1" v-model="time.start.show" persistent width="290px">
+          <v-col cols=6>
+            <!-- Start Time Picker -->
+            <v-dialog 
+              ref="dialog1" 
+              v-model="time.start.show" 
+              persistent 
+              width="290px"
+            >
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field v-model="time.start.value" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
+                <v-text-field 
+                  v-model="time.start.value" 
+                  outlined 
+                  readonly 
+                  dense 
+                  persistent-hint
+                  :hint="$t('shifts.time_start')"
+                  v-bind="attrs" 
+                  v-on="on" 
+                  prepend-icon="mdi-clock"
+                >
+                </v-text-field>
               </template>
 
               <v-time-picker v-if="time.start.show" v-model="time.start.value" :format="timeFormat" full-width :allowed-minutes="allowedStep">
                 <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="time.start.show = false">{{ $t('general.cancel')}}</v-btn>
-                <v-btn text color="primary" @click="$refs.dialog1.save(time.start.value)">{{ $t('general.ok')}}</v-btn>
+                <v-btn text color="secondary" @click="time.start.show = false">{{ $t('general.cancel')}}</v-btn>
+                <v-btn color="primary" @click="$refs.dialog1.save(time.start.value)">{{ $t('general.ok')}}</v-btn>
               </v-time-picker>
             </v-dialog>
           </v-col>
-          <v-col cols=5>
-            <v-dialog ref="dialog2" v-model="time.end.show" persistent width="290px">
+          <v-col cols=6>
+            <!-- End Time Picker -->
+            <v-dialog 
+              ref="dialog2" 
+              v-model="time.end.show" 
+              persistent 
+              width="290px"
+            >
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field v-model="time.end.value" outlined readonly dense v-bind="attrs" v-on="on"></v-text-field>
+                <v-text-field 
+                  v-model="time.end.value" 
+                  outlined 
+                  readonly 
+                  dense 
+                  persistent-hint
+                  :hint="$t('shifts.time_end')"
+                  v-bind="attrs" 
+                  v-on="on"
+                ></v-text-field>
               </template>
 
               <v-time-picker v-if="time.end.show" v-model="time.end.value" :format="timeFormat" full-width :allowed-minutes="allowedStep">
                 <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="time.end.show = false">{{ $t('general.cancel')}}</v-btn>
-                <v-btn text color="primary" @click="$refs.dialog2.save(time.start.value)">{{ $t('general.ok')}}</v-btn>
+                <v-btn text color="secondary" @click="time.end.show = false">{{ $t('general.cancel')}}</v-btn>
+                <v-btn color="primary" @click="$refs.dialog2.save(time.start.value)">{{ $t('general.ok')}}</v-btn>
               </v-time-picker>
             </v-dialog>
           </v-col>
         </v-row>
 
         <v-row class="mt-10">
-          <v-col cols=2><v-icon>mdi-account-tie</v-icon></v-col>
-          <v-col cols=10>
-            <v-range-slider v-model="participants" :thumb-size="16" thumb-label="always"
-              min="1" max="8" ticks="always" tick-size="4" />
+          <v-col>
+            <!-- Number of Participants slider -->
+            <v-range-slider 
+              v-model="participants" 
+              :thumb-size="16" 
+              thumb-label="always"
+              min="1" 
+              max="8" 
+              ticks="always" 
+              tick-size="4" 
+              prepend-icon="mdi-account-tie"
+              persistent-hint
+              :hint="$t('shifts.number_of_participants')"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -56,7 +138,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="secondary" text @click="close">{{ $t('general.close') }}</v-btn>
-      <v-btn color="secondary" text @click="addShift">
+      <v-btn color="primary" @click="addShift">
         {{ edit ? $t('general.save') : $t('general.create') }}
       </v-btn>
     </v-card-actions>
@@ -98,6 +180,8 @@ export default {
   data () {
     return {
       locations: [],
+      shift_date: null,
+      date_menu: false,
       time: {
         start: {
           value: '',
@@ -123,6 +207,7 @@ export default {
   
   created () {
     this.getLocations()
+    this.shift_date = this.$dayjs(this.shift.time_start).format('YYYY-MM-DD')
     this.time.start.value = this.$dayjs(this.shift.time_start).format('HH:mm')
     this.time.end.value = this.$dayjs(this.shift.time_end).format('HH:mm')
     this.participants = [this.shift.min_participants, this.shift.max_participants]
@@ -147,8 +232,8 @@ export default {
 
 
     async addShift () {
-      var tempStart = this.$dayjs(this.shift.time_start).format('L') + ' ' + this.time.start.value
-      var tempEnd = this.$dayjs(this.shift.time_end).format('L') + ' ' + this.time.end.value
+      var tempStart = this.$dayjs(this.shift_date).format('YYYY-MM-DD') + ' ' + this.time.start.value
+      var tempEnd = this.$dayjs(this.shift_date).format('YYYY-MM-DD') + ' ' + this.time.end.value
 
       if (!this.$dayjs(tempStart).isBefore(this.$dayjs(tempEnd))) {
         tempEnd = this.$dayjs(tempStart).add(this.team.default_shift_minutes, 'm')
@@ -165,7 +250,7 @@ export default {
         var method = 'POST'
         var url = '/api/schedules/' + this.schedule.id + '/shifts'
       }
-
+      
 
       await axios({
         method: method,      

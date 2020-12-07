@@ -5,7 +5,7 @@
     </v-row>
 
     <v-card width="100%">
-      <v-data-table :headers="schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
+      <v-data-table :headers="schedHeaders" :items="getTableItems" sort-by="date_start" sort-desc>
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
@@ -46,8 +46,8 @@
                             :allowed-dates="allowedDates"
                           >
                             <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
-                            <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
+                            <v-btn text color="secondary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
+                            <v-btn color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
                           </v-date-picker>
                         </v-menu>
 
@@ -64,6 +64,12 @@
               </v-card>
             </v-dialog>
           </v-toolbar>
+          
+          <v-switch 
+            v-model="sw_show_archived" 
+            class="mx-4" 
+            :label="$t('schedules.show_archived_old')" 
+          />
         </template>
 
         <template v-slot:item.date_start="{ item }">
@@ -89,6 +95,7 @@
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
+
       </v-data-table>
     </v-card>
   </v-container>
@@ -118,6 +125,17 @@ export default {
       newSchedDate: '',
       date: new Date().toISOString().substr(0, 10),
       menu: false,
+      sw_show_archived: false
+    }
+  },
+
+  computed: {
+    getTableItems() {
+      if (this.sw_show_archived) {
+        return this.schedData
+      } else {
+        return this.schedData.filter(sched => (sched.status != 3) && (this.$dayjs(sched.date_start).isAfter(this.$dayjs().subtract(14, 'day'))))
+      }
     }
   },
 

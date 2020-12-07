@@ -44,7 +44,8 @@
         "disable_all": "Disable All",
         "content_copied": "Content copied to clipboard successfully",
         "search": "Search",
-        "test": "Test"
+        "test": "Test",
+        "duplicate": "Duplicate"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -200,6 +201,10 @@
         "status_2": "FINALIZED",
         "status_3": "ARCHIVED",
         "status_4": "UNKNOWN",
+        "schedule_visible": "Schedule is visible to team members",
+        "schedule_closed": "Schedule is finalized and can not be changed by team members",
+        "schedule_archive": "Schedule is archived",
+        "show_archived_old": "Show archived and old schedules",
         "status": "Status",
         "start_date": "Start Date",
         "shifts": "Shifts",
@@ -209,6 +214,7 @@
         "success_delete_schedule": "Schedule was deleted successfully",
         "success_create_schedule": "Schedule was created successfully",
         "new_shift": "New Shift",
+        "change_shift": "Change Shift",
         "confirm_delete_shift": "Are you sure you want to delete this shift?",
         "success_delete_shift": "Shift was deleted successfully",
         "assignments": "Assignments",
@@ -229,6 +235,7 @@
         "time_end": "End",
         "shift_time": "Shift Time",
         "location": "Location",
+        "number_of_participants": "Number of Participants",
         "participants": "Participants",
         "assignments": "Assignments",
         "my_shifts": "My Shifts",
@@ -238,7 +245,8 @@
         "confirm_trade": "Are you sure you want to accept this assignment?",
         "success_trade_made": "Trade successful!",
         "show_all_teams": "Show for all my teams",
-        "offered_by": "Offered By"
+        "offered_by": "Offered By",
+        "make_next_shift": "Duplicate and Make Consecutive"
     },
     "translation": {
         "management_system": "Translation Management System",

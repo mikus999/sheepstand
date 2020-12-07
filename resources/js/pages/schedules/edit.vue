@@ -14,7 +14,10 @@
         </v-col>
 
         <v-col xs=10 sm=4 class="text-center">
-          <span class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</span>
+          <div class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</div>
+          <div class="mx-auto font-weight-bold" :class="scheduleStatus[schedule.status].color+'--text'">
+            {{ scheduleStatus[schedule.status].text }}
+          </div>
         </v-col>
         
         <v-col xs=1 sm=4 class="text-right">
@@ -25,14 +28,33 @@
         </v-col>
       </v-row>
 
-      <v-row class="my-5">
+      <v-row class="my-5 mx-2">
         <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
         <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
 
         <v-col>
-          <v-slider v-model="schedule.status" min="0" max="2" :tick-labels="tickLabels" :color="scheduleStatus[schedule.status].color"
-            ticks="always" tick-size="4" @click="updateScheduleStatus" class="mb-8">
-          </v-slider>
+          <v-switch 
+            v-model="sw_status_visible" 
+            :label="$t('schedules.schedule_visible')" 
+            @click="updateScheduleStatus" 
+            hide-details 
+            :disabled="sw_status_archive"
+          />
+
+          <v-switch 
+            v-model="sw_status_closed" 
+            :label="$t('schedules.schedule_closed')" 
+            @click="updateScheduleStatus" 
+            hide-details 
+            :disabled="!sw_status_visible || sw_status_archive"
+          />
+
+          <v-switch 
+            v-model="sw_status_archive" 
+            :label="$t('schedules.schedule_archive')" 
+            @click="updateScheduleStatus" 
+            hide-details 
+          />
         </v-col>
       </v-row>
 
@@ -119,6 +141,9 @@ export default {
       schedule: {
         status: 0
       },
+      sw_status_visible: false,
+      sw_status_closed: false,
+      sw_status_archive: false,
       shiftDefaults: {
           id: null,
           time_start: null,
@@ -217,7 +242,8 @@ export default {
       const localeTime = this.$dayjs().localeData().longDateFormat('LT')
       const isAmPm = localeTime.indexOf('A') >= 0
       return (isAmPm ? 'ampm' : '24hr')
-    }
+    },
+
   },
 
   created () {
@@ -236,6 +262,13 @@ export default {
         .then(response => {
           this.schedule = response.data
           this.parseSchedule()
+
+
+          // Set schedule status switches
+          const status = response.data.status
+          this.sw_status_archive = (status == 3)
+          this.sw_status_visible = (status > 0) && !this.sw_status_archive
+          this.sw_status_closed = (status > 1) && !this.sw_status_archive
         })
 
     },
@@ -268,11 +301,32 @@ export default {
     },
 
     async updateScheduleStatus () {
+        // Calculate status from switches
+        var status = null
+        if (!this.sw_status_visible) {
+          status = 0
+          this.sw_status_closed = false
+        } else if (this.sw_status_visible && !this.sw_status_closed) {
+          status = 1
+        } else if (this.sw_status_visible && this.sw_status_closed) {
+          status = 2
+        } else {
+          status = 4
+        }
+
+        if (this.sw_status_archive) {
+          this.sw_status_visible = false
+          this.sw_status_closed = false
+          status = 3
+        }
+
+        this.schedule.status = status
+
         await axios({
           method: 'post',      
           url: '/api/schedules/' + this.id + '/status/',
           data: {
-            status: this.schedule.status
+            status: status
           }
         })
         .then(response => {
@@ -292,13 +346,14 @@ export default {
 
     showShiftDialog (data) {
       this.shift = this.lodash.cloneDeep(this.shiftDefaults)
-      this.shift.time_start = this.$dayjs(data.date).format('L') + ' 08:00'
+      this.shift.time_start = this.$dayjs(data.date).format('YYYY-MM-DD') + ' 08:00'
       this.shift.time_end = this.$dayjs(this.shift.time_start).add(this.team.default_shift_minutes, 'm')
       this.dialog = true
     },
 
 
     closeShiftDialog () {
+      this.shift = this.lodash.cloneDeep(this.shiftDefaults)
       this.dialog = false
     },
 

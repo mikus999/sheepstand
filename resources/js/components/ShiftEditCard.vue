@@ -1,21 +1,21 @@
 <template>
   <v-card :id="shift.id" class="shift mt-5 handle" :color="shift.location.color_code">
-    <v-card-text class="shift-body text-center pa-0">
+    <v-card-title class="justify-center text-h6">
+      {{ shift.location.name }}
+    </v-card-title>
+
+    <v-card-subtitle class="text-center font-weight-bold">
+      <div>{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
+      <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
+    </v-card-subtitle>
+
+    <v-card-text class="text-center pa-0">
       <v-row dense>
-        <v-col cols=2><v-icon small>mdi-map-marker</v-icon></v-col>
-        <v-col cols=8 class="font-weight-bold">{{ shift.location.name }}</v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols=2><v-icon small>mdi-clock</v-icon></v-col>
-        <v-col cols=8 class="font-weight-bold">{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols=2><v-icon small>mdi-account-tie</v-icon></v-col>
-        <v-col cols=3 offset="1">
+        <v-col cols=3 offset=3 class="pa-0">
           <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
           <span>{{ $t('general.min') }}</span>
         </v-col>
-        <v-col cols=2>
+        <v-col cols=3 class="pa-0">
           <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
           <span>{{ $t('general.max') }}</span>
         </v-col>
@@ -27,19 +27,64 @@
     <v-card-actions class="pa-0">
       <v-row dense>
         <v-col>
-          <v-btn icon @click="showShiftDialog()">
-            <v-icon small>mdi-pencil</v-icon>
-          </v-btn>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                icon 
+                @click="showShiftDialog()"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-pencil-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('schedules.new_shift') }}</span>
+          </v-tooltip>
         </v-col>
         <v-col>
-          <v-btn icon @click="deleteShift(shift.id)">
-            <v-icon small>mdi-delete</v-icon>
-          </v-btn>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                icon 
+                @click="deleteShift(shift.id)"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-delete-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('general.delete') }}</span>
+          </v-tooltip>
         </v-col>
         <v-col>
-          <v-btn icon @click="duplicateShift(shift.id)">
-            <v-icon small>mdi-content-duplicate</v-icon>
-          </v-btn>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                icon 
+                @click="duplicateShift(shift.id, true)"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('shifts.make_next_shift') }}</span>
+          </v-tooltip>
+        </v-col>        
+        <v-col>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                icon 
+                @click="duplicateShift(shift.id, false)"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-content-duplicate</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('general.duplicate') }}</span>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-card-actions>
@@ -96,12 +141,18 @@ export default {
 
   methods: {
 
-    async duplicateShift (id) {
+    async duplicateShift (id, makeSubsequent) {
       var newShiftData = []
 
       await axios.get('/api/schedules/' + this.schedule.id + '/shifts/' + id)
         .then(response => {
           newShiftData = response.data
+
+          // This will make the new shift immediately follow the source shift
+          if (makeSubsequent) {
+            newShiftData.time_start = newShiftData.time_end
+            newShiftData.time_end = this.$dayjs(newShiftData.time_start).add(this.team.default_shift_minutes, 'm').format('YYYY-MM-DD HH:mm:ss')
+          }
 
           const formData = new FormData()
           formData.append('location_id', newShiftData.location_id)
