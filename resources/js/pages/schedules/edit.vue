@@ -244,6 +244,9 @@ export default {
       return (isAmPm ? 'ampm' : '24hr')
     },
 
+    isTemplate () {
+      return this.schedule.schedule_template_id != null
+    }
   },
 
   created () {
@@ -298,6 +301,24 @@ export default {
       this.scheduleStatus.forEach((obj) => {
         this.tickLabels.push(obj.text)
       })
+    },
+
+    getStatusColor() {
+      var textColor = "black--text"
+      if (this.scheduleStatus[this.schedule.status] != undefined) {
+        textColor = this.scheduleStatus[this.schedule.status].color + '--text'
+      }
+      return textColor
+    },
+
+    getStatusText() {
+      var textString = null
+      if (!this.templates) {
+        textString = this.scheduleStatus[this.schedule.status].text
+      } else {
+        textString = this.schedule.schedule_template.name
+      }
+      return textString
     },
 
     async updateScheduleStatus () {

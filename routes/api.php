@@ -61,6 +61,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']);
     Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts');
     Route::post('schedules/{id}/status', 'ScheduleController@updateStatus');
+    Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates');
 
     // LOCATION routes
     Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');

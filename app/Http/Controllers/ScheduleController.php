@@ -16,6 +16,7 @@ class ScheduleController extends Controller
     {
         $schedules = Schedule::withCount('shifts')
                         ->where('team_id','=',$teamid)
+                        ->where('schedule_template_id','=',null)
                         ->orderBy('date_start', 'asc')
                         ->get();
 
@@ -101,6 +102,18 @@ class ScheduleController extends Controller
         $schedule->save();
 
         return response()->json($schedule);
+    }
+
+
+    public function getTemplates($teamid)
+    {
+        $schedules = Schedule::withCount('shifts')
+                        ->where('team_id','=',$teamid)
+                        ->where('schedule_template_id','!=',null)
+                        ->orderBy('date_start', 'asc')
+                        ->get();
+
+        return response()->json($schedules);
     }
 
 }

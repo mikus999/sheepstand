@@ -14,6 +14,8 @@ class Schedule extends Model
         'schedule_template_id'
     ];
 
+    protected $with = ['schedule_template'];
+
 
     public function user()
     {
@@ -25,9 +27,9 @@ class Schedule extends Model
         return $this->belongsTo('App\Models\Team');
     }
 
-    public function scheduletemplate()
+    public function schedule_template()
     {
-        return $this->hasOne('App\Models\ScheduleTemplate');
+        return $this->belongsTo('App\Models\ScheduleTemplate');
     }
 
     public function shifts()

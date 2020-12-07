@@ -107,9 +107,6 @@ export const helper = {
     }
   },
 
-  created () {
-  },
-
   methods: {
     formatJSON (data) {
       if (data.name) {

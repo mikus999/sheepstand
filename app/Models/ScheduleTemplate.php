@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class ScheduleTemplate extends Model
 {
     protected $fillable = [
-        'team_id',
         'name'
     ];
 
