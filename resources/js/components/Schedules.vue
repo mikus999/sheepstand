@@ -1,6 +1,6 @@
 <template>
   <v-card width="100%">
-    <v-data-table :headers="templates ? templateHeaders : schedHeaders" :items="schedData" sort-by="date_start" sort-desc>
+    <v-data-table :headers="templates ? templateHeaders : schedHeaders" :items="getTableItems" sort-by="date_start" sort-desc>
       <template v-slot:top>
         <v-toolbar flat v-if="!templates">
           <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
@@ -63,6 +63,14 @@
         <v-toolbar flat v-else>
           <v-toolbar-title>{{ $t('schedules.templates') }}</v-toolbar-title>
         </v-toolbar>
+
+                  
+        <v-switch 
+          v-model="sw_show_archived" 
+          class="mx-4" 
+          :label="$t('schedules.show_archived_old')" 
+          v-if="!templates"
+        />
       </template>
 
       <template v-slot:item.date_start="{ item }">
@@ -142,6 +150,18 @@ export default {
       newSchedDate: '',
       date: new Date().toISOString().substr(0, 10),
       menu: false,
+      sw_show_archived: this.templates
+    }
+  },
+
+
+  computed: {
+    getTableItems() {
+      if (this.sw_show_archived) {
+        return this.schedData
+      } else {
+        return this.schedData.filter(sched => (sched.status != 3) && (this.$dayjs(sched.date_start).isAfter(this.$dayjs().subtract(14, 'day'))))
+      }
     }
   },
 

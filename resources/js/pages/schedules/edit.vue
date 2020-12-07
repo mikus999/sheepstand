@@ -14,9 +14,12 @@
         </v-col>
 
         <v-col xs=10 sm=4 class="text-center">
-          <div class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</div>
-          <div class="mx-auto font-weight-bold" :class="scheduleStatus[schedule.status].color+'--text'">
-            {{ scheduleStatus[schedule.status].text }}
+          <div v-if="!isTemplate">
+            <div class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</div>
+            <div class="mx-auto font-weight-bold" :class="getStatusColor">{{ getStatusText() }}</div>
+          </div>
+          <div v-else>
+            <div class="text-h6 mx-auto">{{ schedule.schedule_template.name }}</div>
           </div>
         </v-col>
         
@@ -313,7 +316,7 @@ export default {
 
     getStatusText() {
       var textString = null
-      if (!this.templates) {
+      if (!this.isTemplate) {
         textString = this.scheduleStatus[this.schedule.status].text
       } else {
         textString = this.schedule.schedule_template.name
