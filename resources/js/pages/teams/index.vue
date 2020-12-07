@@ -78,17 +78,21 @@
                         <v-icon small>mdi-content-copy</v-icon>
                       </v-btn>
                     </p>
+                    <v-btn text block color="secondary" class="my-2" @click="disableNotifications">{{ $t('notifications.disable_notifications') }}</v-btn>
                   </div>
 
                   <!-- If notifications have not been setup -->
                   <div v-else-if="!chatError && !chatInfo">
                     <p><span>{{ $t('notifications.feature_explanation_team') }}</span></p>
-                    <v-btn :to="{ name: 'notifications.setup' }" block>{{ $t('notifications.setup_now') }}</v-btn>
+                    <v-btn :to="{ name: 'notifications.setup' }" block color="primary" class="my-2">{{ $t('notifications.setup_now') }}</v-btn>
+                    <v-btn text block color="secondary" class="my-2" @click="disableNotifications">{{ $t('notifications.disable_notifications') }}</v-btn>
                   </div>
 
                   <!-- If notifications are setup but there was a problem retrieving chat details -->
                   <div v-else-if="chatError">
                     <p><span>{{ $t('general.error')}}: </span><span class="font-weight-bold red--text">{{ $t('notifications.notifications_problem_admin') }}</span></p>
+                    <v-btn :to="{ name: 'notifications.setup' }" block color="primary" class="my-2">{{ $t('notifications.setup_now') }}</v-btn>
+                    <v-btn text block color="secondary" class="my-2" @click="disableNotifications">{{ $t('notifications.disable_notifications') }}</v-btn>
                   </div>
                 </v-card-text>
               </v-card>
@@ -225,6 +229,13 @@ export default {
             .then(response => {
               this.chatInfo = response.data.result
               this.chatError = false
+
+              if (this.chatInfo.invite_link == null || this.chatInfo.invite_link == '' || this.chatInfo.invite_link == undefined) {
+                this.setGroupLink(this.team.notificationsettings.telegram_channel_id)
+                  .then(link => {
+                    this.chatInfo.invite_link = link
+                  })
+              }
             })
             .catch(error => {
               this.chatInfo = null

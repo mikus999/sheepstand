@@ -27,16 +27,20 @@ class NotificationController extends Controller
 
       if ($team) {
         if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
-          if (empty($settings)) {
-            $notification = NotificationSetting::create([
-              'team_id' => $team->id,
-              'telegram_channel_id' => $request->channel_id,
-              'telegram_access_hash' => $request->access_hash,
-            ]);
+          if ($request->reset) {
+            $affectedRows = NotificationSetting::where('team_id', '=', $team->id)->delete();
           } else {
-            $settings->telegram_channel_id = $request->channel_id;
-            $settings->telegram_access_hash = $request->access_hash;
-            $settings->save();
+            if (empty($settings)) {
+              $notification = NotificationSetting::create([
+                'team_id' => $team->id,
+                'telegram_channel_id' => $request->channel_id,
+                'telegram_access_hash' => $request->access_hash,
+              ]);
+            } else {
+              $settings->telegram_channel_id = $request->channel_id;
+              $settings->telegram_access_hash = $request->access_hash;
+              $settings->save();
+            }
           }
 
         }

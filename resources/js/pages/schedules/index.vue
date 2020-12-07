@@ -58,8 +58,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">{{ $t('general.create') }}</v-btn>
+                  <v-btn color="secondary" text @click="close">{{ $t('general.cancel') }}</v-btn>
+                  <v-btn color="primary" @click="save">{{ $t('general.create') }}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>

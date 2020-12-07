@@ -335,6 +335,22 @@ export const mtproto = {
 
     },
 
+    async disableNotifications() {
+      if (await this.$root.$confirm(this.$t('notifications.confirm_disable_notifications'), null, 'error')) {
+
+        await axios({
+          method: 'post',      
+          url: '/api/teams/' + this.team.id + '/notificationsettings',
+          data: {
+            reset: true
+          }
+        })
+        .then(response => {
+          this.showSnackbar(this.$t('notifications.success_disable_notifications'), 'success')
+        })
+      }
+    },
+
 
     async setGroupLink(channel_id) {
       const chat_id = '-100' + channel_id
