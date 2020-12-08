@@ -2,9 +2,14 @@
   <v-card width="100%">
     <v-data-table :headers="templates ? templateHeaders : schedHeaders" :items="getTableItems" sort-by="date_start" sort-desc>
       <template v-slot:top>
-        <v-toolbar flat v-if="!templates">
-          <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $t('schedules.shift_schedules') }}</v-toolbar-title>
+        <v-toolbar flat>
+          <v-toolbar-title>
+            <v-icon left>{{ templates ? 'mdi-calendar-star' : 'mdi-calendar-week' }}</v-icon>
+            {{ templates ? $t('schedules.templates') : $t('schedules.shift_schedules') }}
+          </v-toolbar-title>
+
           <v-spacer></v-spacer>
+
           <v-btn 
             color="secondary" 
             class="mb-2" 
@@ -12,57 +17,10 @@
             @click="dialog = true" 
           >
             <v-icon left small>mdi-calendar-plus</v-icon>
-            {{ $t('schedules.create_new_schedule') }}
+            {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
           </v-btn>
-
-          <v-dialog v-model="dialog" max-width="500px">
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ $t('schedules.create_new_schedule') }}</span>
-              </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
-                        transition="scale-transition" offset-y min-width="290px">
-
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field v-model="newSchedDate" :label="$t('schedules.choose_start_date')" prepend-icon="mdi-calendar" readonly
-                            v-bind="attrs" v-on="on"></v-text-field>
-                        </template>
-                        <v-date-picker 
-                          v-model="newSchedDate" 
-                          no-title 
-                          scrollable 
-                          :locale="locale"
-                          :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
-                          :allowed-dates="allowedDates"
-                        >
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
-                          <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                <v-btn color="blue darken-1" text @click="save">{{ $t('general.create') }}</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-toolbar>
 
-        <v-toolbar flat v-else>
-          <v-toolbar-title>{{ $t('schedules.templates') }}</v-toolbar-title>
-        </v-toolbar>
 
                   
         <v-switch 
@@ -90,28 +48,131 @@
       </template>
       
       <template v-slot:item.schedule_actions="{ item }">
-        <v-btn icon small @click="editSched(item)">
-          <v-icon small>mdi-pencil</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon small @click="editSched(item)" v-bind="attrs" v-on="on">
+              <v-icon small>mdi-pencil</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('general.edit') }}</span>
+        </v-tooltip>
 
-        <v-btn icon small @click="editAssignments(item)" :disabled="item.status < 1"><v-icon small>mdi-account-multiple-plus</v-icon></v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon small @click="editAssignments(item)" v-bind="attrs" v-on="on" :disabled="item.status < 1">
+              <v-icon small>mdi-account-multiple-plus</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('schedules.assignments') }}</span>
+        </v-tooltip>
 
-        <v-btn icon small @click="deleteSched(item)">
-          <v-icon small>mdi-delete</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">        
+            <v-btn icon small @click="deleteSched(item)" v-bind="attrs" v-on="on">
+              <v-icon small>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('general.delete') }}</span>
+        </v-tooltip>
       </template>
 
-      <template v-slot:item.template_actions="{ item }">
-        <v-btn icon small @click="editSched(item)">
-          <v-icon small>mdi-pencil</v-icon>
-        </v-btn>
 
-        <v-btn icon small @click="deleteSched(item)">
-          <v-icon small>mdi-delete</v-icon>
-        </v-btn>
+      <template v-slot:item.template_actions="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon small @click="editSched(item)" v-bind="attrs" v-on="on">
+              <v-icon small>mdi-pencil</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('general.edit') }}</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">        
+            <v-btn icon small @click="convertToSchedule(item)" v-bind="attrs" v-on="on">
+              <v-icon small>mdi-calendar-plus</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('schedules.make_new_schedule') }}</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">        
+            <v-btn icon small @click="deleteSched(item)" v-bind="attrs" v-on="on">
+              <v-icon small>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('general.delete') }}</span>
+        </v-tooltip>
+
       </template>
 
     </v-data-table>
+
+
+
+    <!-- NEW SCHEDULE/TEMPLATE DIALOG -->
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
+          </span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-menu 
+            v-if="!templates" 
+            ref="menu" 
+            v-model="menu" 
+            :close-on-content-click="false" 
+            :return-value.sync="date"
+            transition="scale-transition" 
+            offset-y 
+            min-width="290px"
+          >
+
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field 
+                v-model="newSchedDate" 
+                :label="$t('schedules.choose_start_date')" 
+                prepend-icon="mdi-calendar-week-begin" 
+                readonly
+                :rules="value => !!value"
+                v-bind="attrs" 
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker 
+              v-model="newSchedDate" 
+              no-title 
+              scrollable 
+              :locale="locale"
+              :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
+              :allowed-dates="allowedDates"
+            >
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
+            </v-date-picker>
+          </v-menu>
+
+          <v-text-field 
+            v-else
+            v-model="newTemplateName" 
+            :label="$t('schedules.template_name')" 
+            prepend-icon="mdi-form-textbox"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" text @click="close">{{ $t('general.cancel') }}</v-btn>
+          <v-btn color="primary" @click="createSchedule">{{ $t('general.create') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-card>
 
 </template>
@@ -142,12 +203,13 @@ export default {
         { text: this.$t('general.actions'), value: 'schedule_actions', sortable: false },
       ],
       templateHeaders: [
-        { text: this.$t('schedules.template_name'), align: 'start', value: 'status' },
+        { text: this.$t('schedules.template_name'), align: 'start', value: 'template_name' },
         { text: this.$t('schedules.template_created'), value: 'created_at' },
         { text: this.$t('general.actions'), value: 'template_actions', sortable: false },
       ],
       schedData: [],
       newSchedDate: '',
+      newTemplateName: null,
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       sw_show_archived: this.templates
@@ -208,11 +270,7 @@ export default {
 
     getStatusText(item) {
       var textString = null
-      if (!this.templates) {
-        textString = this.scheduleStatus[item.status].text
-      } else {
-        textString = item.schedule_template.name
-      }
+      textString = this.scheduleStatus[item.status].text
       return textString
     },
 
@@ -236,14 +294,15 @@ export default {
 
     async deleteSched (sched) {
       const index = this.schedData.indexOf(sched.id)
-      if (await this.$root.$confirm(this.$t('schedules.confirm_delete_schedule'), null, 'error')) {
+      const confirm_msg = this.templates ? this.$t('schedules.confirm_delete_template') : this.$t('schedules.confirm_delete_schedule')
+      const success_msg = this.templates ? this.$t('schedules.success_delete_template') : this.$t('schedules.success_delete_schedule')
+
+      if (await this.$root.$confirm(confirm_msg, null, 'error')) {
         await axios.delete('/api/schedules/' + sched.id)
           .then(response => {
-            this.showSnackbar(this.$t('schedules.success_delete_schedule'), 'success')
+            this.showSnackbar(success_msg, 'success')
             this.getSchedData()
           })
-
-
       }
     },
 
@@ -251,24 +310,52 @@ export default {
       this.dialog = false
     },
 
-    save () {
-      if (this.newSchedDate !== '') {
-        this.newSchedDate = this.$dayjs(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
+    async createSchedule () {
+      var url = null
+      var success_msg = null
+      var validate = false
 
-        const formData = new FormData()
-        formData.append('user_id', this.user.id)
-        formData.append('team_id', this.team.id)
-        formData.append('date_start', this.newSchedDate)
-        axios.post('/api/schedules', formData)
-          .then(response => {
-            this.showSnackbar(this.$t('schedules.success_create_schedule'), 'success')
-            this.getSchedData()
-          })
+      if (this.templates) {
+        url = '/api/schedules/templates' 
+        success_msg = this.$t('schedules.success_create_template')
+        this.newSchedDate = this.templateStartDate
+        validate = this.newTemplateName != null
+      } else {
+        url = '/api/schedules'
+        success_msg = this.$t('schedules.success_create_schedule')
+        if (this.newSchedDate != '') {
+          this.newSchedDate = this.$dayjs(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
+          validate = true
+        }
       }
 
-      this.newSchedDate = ''
-      this.close()
-    }
+      if (validate) {
+        await axios({
+          method: 'post',      
+          url: url,
+          data: {
+            team_id: this.team.id,
+            date_start: this.newSchedDate,
+            template_name: this.newTemplateName
+          }
+        })
+        .then(response => {
+          this.showSnackbar(success_msg, 'success')
+          this.getSchedData()
+        })
+
+        this.newSchedDate = ''
+        this.newTemplateName = null
+        this.close()
+      }
+
+    },
+
+
+    async convertToSchedule(template) {
+
+    },
+
   }
 }
 </script>

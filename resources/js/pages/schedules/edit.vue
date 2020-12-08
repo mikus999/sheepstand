@@ -5,98 +5,124 @@
     </v-row>
 
     <v-card width="100%">
-      <v-row>
-        <v-col xs=1 sm=4 class="text-left" >
-          <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-            <v-icon left>mdi-arrow-left</v-icon>
-            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
-          </v-btn>
-        </v-col>
+      <v-card-text>
+        <v-row>
+          <v-col xs=1 sm=4 class="text-left" >
+            <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
+              <v-icon left>mdi-arrow-left</v-icon>
+              <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
+            </v-btn>
+          </v-col>
 
-        <v-col xs=10 sm=4 class="text-center">
-          <div v-if="!isTemplate">
-            <div class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</div>
-            <div class="mx-auto font-weight-bold" :class="getStatusColor">{{ getStatusText() }}</div>
-          </div>
-          <div v-else>
-            <div class="text-h6 mx-auto">{{ schedule.schedule_template.name }}</div>
-          </div>
-        </v-col>
-        
-        <v-col xs=1 sm=4 class="text-right">
-          <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedule.status > 0">
-            <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
-            <v-icon right>mdi-arrow-right</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
+          <v-col xs=10 sm=4 class="text-center">
+            <div v-if="!isTemplate">
+              <div class="text-h6 mx-auto">{{ $t('schedules.week_of')}} {{ schedule.date_start | formatDate }}</div>
+              <div class="mx-auto font-weight-bold">
+                <span :class="getStatusColor()">{{ getStatusText() }}</span>
+              </div>
+            </div>
+            <div v-else>
+              <div class="text-h6 mx-auto">{{ schedule.template_name }}</div>
+            </div>
+          </v-col>
+          
+          <v-col xs=1 sm=4 class="text-right">
+            <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedule.status > 0 && !isTemplate">
+              <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
+              <v-icon right>mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
 
-      <v-row class="my-5 mx-2">
-        <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
-        <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
+        <v-row class="my-5 mx-2">
+          <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
+          <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
 
-        <v-col>
-          <v-switch 
-            v-model="sw_status_visible" 
-            :label="$t('schedules.schedule_visible')" 
-            @click="updateScheduleStatus" 
-            hide-details 
-            :disabled="sw_status_archive"
-          />
+          <v-col v-if="!isTemplate">
+            <v-switch 
+              v-model="sw_status_visible" 
+              :label="$t('schedules.schedule_visible')" 
+              @click="updateScheduleStatus" 
+              hide-details 
+              :disabled="sw_status_archive"
+            />
 
-          <v-switch 
-            v-model="sw_status_closed" 
-            :label="$t('schedules.schedule_closed')" 
-            @click="updateScheduleStatus" 
-            hide-details 
-            :disabled="!sw_status_visible || sw_status_archive"
-          />
+            <v-switch 
+              v-model="sw_status_closed" 
+              :label="$t('schedules.schedule_closed')" 
+              @click="updateScheduleStatus" 
+              hide-details 
+              :disabled="!sw_status_visible || sw_status_archive"
+            />
 
-          <v-switch 
-            v-model="sw_status_archive" 
-            :label="$t('schedules.schedule_archive')" 
-            @click="updateScheduleStatus" 
-            hide-details 
-          />
-        </v-col>
-      </v-row>
+            <v-switch 
+              v-model="sw_status_archive" 
+              :label="$t('schedules.schedule_archive')" 
+              @click="updateScheduleStatus" 
+              hide-details 
+            />
+          </v-col>
+        </v-row>
 
-      <v-row>
-        <v-col>
-          <swiper ref="mySwiper" :options="swiperOptions">
-            <swiper-slide v-for="day in days7" :key="day.id" class="text-center">
-              <h4>{{ day.date | formatWeekdayShort }}</h4>
-              <h6>{{ day.date | formatDate }}</h6>
+        <v-row>
+          <v-col>
+            <swiper ref="mySwiper" :options="swiperOptions">
+              <swiper-slide v-for="day in days7" :key="day.id" class="text-center">
+                <h4>{{ day.date | formatWeekdayShort }}</h4>
+                <h6 v-if="!isTemplate">{{ day.date | formatDate }}</h6>
 
-              <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
-                @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
+                <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
+                  @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
 
-                  <ShiftEditCard v-for="shift in day.list" :key="shift.id" :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" />                  
+                    <ShiftEditCard v-for="shift in day.list" :key="shift.id" :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" />                  
 
-                  <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
-                  <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
-                    <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">mdi-plus-box</v-icon>
-                    </v-card-text>
-                  </v-card>
+                    <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
+                    <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
+                      <v-card-text class="text-center pa-0">
+                        <v-icon large class="pa-4">mdi-plus-box</v-icon>
+                      </v-card-text>
+                    </v-card>
 
-                  <!-- Show placeholder card if there are now shifts for this day -->
-                  <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
-                    <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">mdi-select-place</v-icon>
-                    </v-card-text>
-                  </v-card>
+                    <!-- Show placeholder card if there are now shifts for this day -->
+                    <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
+                      <v-card-text class="text-center pa-0">
+                        <v-icon large class="pa-4">mdi-select-place</v-icon>
+                      </v-card-text>
+                    </v-card>
 
-              </draggable>
-            </swiper-slide>
-          </swiper>
-        </v-col>
-      </v-row>
+                </draggable>
+              </swiper-slide>
+            </swiper>
+          </v-col>
+        </v-row>
+      </v-card-text>
+
+      <v-divider />
+
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          color="error"
+          text
+          @click="deleteSched"
+        >
+          {{ isTemplate ? $t('schedules.delete_template') : $t('schedules.delete_schedule') }}
+        </v-btn>
+
+
+        <v-btn 
+          v-if="!isTemplate"
+          color="secondary" 
+          :block="$vuetify.breakpoint.xs"
+        >
+          {{ $t('schedules.save_as_template') }}
+        </v-btn> 
+      </v-card-actions>
     </v-card>
 
     <!-- NEW SHIFT DIALOG -->
     <v-dialog :value="dialog" @click:outside="closeShiftDialog()" width="500px">
-      <ShiftNewCard :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" v-on:close="closeShiftDialog()" />
+      <ShiftNewCard :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" v-on:close="closeShiftDialog()" :key="keyShiftNewCard"/>
     </v-dialog>
 
   </v-container>
@@ -147,6 +173,7 @@ export default {
       sw_status_visible: false,
       sw_status_closed: false,
       sw_status_archive: false,
+      keyShiftNewCard: 0,
       shiftDefaults: {
           id: null,
           time_start: null,
@@ -220,7 +247,7 @@ export default {
             spaceBetween: 40,
             allowTouchMove: false,
           },
-          1366: {
+          1500: {
             slidesPerView: 5,
             spaceBetween: 40,
             allowTouchMove: false,
@@ -248,7 +275,7 @@ export default {
     },
 
     isTemplate () {
-      return this.schedule.schedule_template_id != null
+      return this.schedule.status == 9
     }
   },
 
@@ -300,6 +327,20 @@ export default {
     },
 
 
+    async deleteSched () {
+      const confirm_msg = this.isTemplate ? this.$t('schedules.confirm_delete_template') : this.$t('schedules.confirm_delete_schedule')
+      const success_msg = this.isTemplate ? this.$t('schedules.success_delete_template') : this.$t('schedules.success_delete_schedule')
+
+      if (await this.$root.$confirm(confirm_msg, null, 'error')) {
+        await axios.delete('/api/schedules/' + this.schedule.id)
+          .then(response => {
+            this.showSnackbar(success_msg, 'success')
+            this.$router.push({ name: 'schedules.index'})
+          })
+      }
+    },
+
+
     makeStatusLabels () {
       this.scheduleStatus.forEach((obj) => {
         this.tickLabels.push(obj.text)
@@ -319,7 +360,7 @@ export default {
       if (!this.isTemplate) {
         textString = this.scheduleStatus[this.schedule.status].text
       } else {
-        textString = this.schedule.schedule_template.name
+        textString = this.schedule.template_name
       }
       return textString
     },
@@ -369,7 +410,7 @@ export default {
 
 
     showShiftDialog (data) {
-      this.shift = this.lodash.cloneDeep(this.shiftDefaults)
+      this.keyShiftNewCard += 1
       this.shift.time_start = this.$dayjs(data.date).format('YYYY-MM-DD') + ' 08:00'
       this.shift.time_end = this.$dayjs(this.shift.time_start).add(this.team.default_shift_minutes, 'm')
       this.dialog = true

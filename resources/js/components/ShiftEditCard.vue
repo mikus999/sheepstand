@@ -35,7 +35,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon>mdi-pencil-outline</v-icon>
+                <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>
             <span>{{ $t('schedules.new_shift') }}</span>
@@ -50,7 +50,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon>mdi-delete-outline</v-icon>
+                <v-icon>mdi-delete</v-icon>
               </v-btn>
             </template>
             <span>{{ $t('general.delete') }}</span>
@@ -65,7 +65,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                <v-icon>mdi-clipboard-arrow-down</v-icon>
               </v-btn>
             </template>
             <span>{{ $t('shifts.make_next_shift') }}</span>

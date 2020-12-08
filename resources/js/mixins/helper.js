@@ -103,7 +103,9 @@ export const helper = {
           color: 'blue',
           icon: 'mdi-account-convert'
         }
-      ]
+      ],
+
+      templateStartDate: '2001-01-01', // MONDAY, JANUARY 1, 2001
     }
   },
 

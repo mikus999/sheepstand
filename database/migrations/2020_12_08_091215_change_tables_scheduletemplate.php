@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DeleteColumnScheduletemplates extends Migration
+class ChangeTablesScheduletemplate extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class DeleteColumnScheduletemplates extends Migration
      */
     public function up()
     {
-      Schema::table('schedule_templates', function (Blueprint $table) {
-        $table->dropForeign('schedule_templates_team_id_foreign');
-        $table->dropColumn(['team_id']);
-    });
+      Schema::table('schedules', function (Blueprint $table) {
+        $table->dropColumn(['schedule_template_id']);
+        $table->string('template_name', 100)->nullable();
+      });
+
+      Schema::dropIfExists('schedule_templates');
     }
 
     /**

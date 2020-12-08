@@ -11,10 +11,8 @@ class Schedule extends Model
         'user_id',
         'status',
         'date_start',
-        'schedule_template_id'
+        'template_name'
     ];
-
-    protected $with = ['schedule_template'];
 
 
     public function user()
@@ -25,11 +23,6 @@ class Schedule extends Model
     public function team()
     {
         return $this->belongsTo('App\Models\Team');
-    }
-
-    public function schedule_template()
-    {
-        return $this->belongsTo('App\Models\ScheduleTemplate');
     }
 
     public function shifts()

@@ -202,6 +202,10 @@ export default {
       const localeTime = this.$dayjs().localeData().longDateFormat('LT')
       const isAmPm = localeTime.indexOf('A') >= 0
       return (isAmPm ? 'ampm' : '24hr')
+    },
+
+    isTemplate () {
+      return this.schedule.status == 9
     }
   },
   
