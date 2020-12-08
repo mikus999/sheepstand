@@ -5,11 +5,11 @@
     </v-row>
 
     <v-row class="mb-12">
-      <Schedules />
+      <Schedules :key="schedules_key" v-on:updated="forceRerender" />
     </v-row>
 
     <v-row class="mb-12">
-      <Schedules templates />
+      <Schedules :key="templates_key" templates v-on:updated="forceRerender" />
     </v-row>
   </v-container>
 </template>
@@ -27,6 +27,20 @@ export default {
 
   components: {
     Schedules
+  },
+
+  data() {
+    return {
+      schedules_key: 1,
+      templates_key: 1
+    }
+  },
+
+  methods: {
+    forceRerender() {
+      this.schedules_key += 1
+      this.templates_key += 1
+    },
   },
 
 }

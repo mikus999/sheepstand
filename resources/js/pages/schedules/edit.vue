@@ -114,6 +114,7 @@
           v-if="!isTemplate"
           color="secondary" 
           :block="$vuetify.breakpoint.xs"
+          @click="openSaveTemplateDialog"
         >
           {{ $t('schedules.save_as_template') }}
         </v-btn> 
@@ -125,6 +126,31 @@
       <ShiftNewCard :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" v-on:close="closeShiftDialog()" :key="keyShiftNewCard"/>
     </v-dialog>
 
+
+    <!-- NEW TEMPLATE DIALOG -->
+    <v-dialog v-model="dialog2" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            {{ $t('schedules.new_template') }}
+          </span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field 
+            v-model="newTemplateName" 
+            :label="$t('schedules.template_name')" 
+            prepend-icon="mdi-form-textbox"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" text @click="closeSaveTemplateDialog()">{{ $t('general.cancel') }}</v-btn>
+          <v-btn color="primary" @click="saveAsTemplate()">{{ $t('general.create') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -159,6 +185,7 @@ export default {
     return {
       shiftOverlay: false,
       dialog: false,
+      dialog2: false,
       date: '',
       menu: false,
       time: {
@@ -174,6 +201,7 @@ export default {
       sw_status_closed: false,
       sw_status_archive: false,
       keyShiftNewCard: 0,
+      newTemplateName: null,
       shiftDefaults: {
           id: null,
           time_start: null,
@@ -464,6 +492,32 @@ export default {
     showShiftOverlay(shift) {
       this.shiftOverlay = true
     },
+
+
+    openSaveTemplateDialog() {
+      this.dialog2 = true
+    },
+
+    closeSaveTemplateDialog() {
+      this.newTemplateName = null
+      this.dialog2 = false
+    },
+
+    async saveAsTemplate() {
+      if (this.newTemplateName) {
+        await axios({
+          method: 'post',      
+          url: '/api/schedules/' + this.id + '/templates/make',
+          data: {
+            template_name: this.newTemplateName
+          }
+        })
+        .then(response => {
+          this.showSnackbar(this.$t('schedules.success_create_template'), 'success')
+          this.closeSaveTemplateDialog()
+        })
+      }
+    }
 
   },
 

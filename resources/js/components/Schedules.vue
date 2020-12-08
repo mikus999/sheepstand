@@ -14,7 +14,7 @@
             color="secondary" 
             class="mb-2" 
             :block="$vuetify.breakpoint.xs"
-            @click="dialog = true" 
+            @click="templates ? dialog2 = true : dialog = true" 
           >
             <v-icon left small>mdi-calendar-plus</v-icon>
             {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
@@ -111,18 +111,17 @@
 
 
 
-    <!-- NEW SCHEDULE/TEMPLATE DIALOG -->
+    <!-- NEW SCHEDULE DIALOG -->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">
-            {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
+            {{ $t('schedules.create_new_schedule') }}
           </span>
         </v-card-title>
 
         <v-card-text>
           <v-menu 
-            v-if="!templates" 
             ref="menu" 
             v-model="menu" 
             :close-on-content-click="false" 
@@ -138,7 +137,6 @@
                 :label="$t('schedules.choose_start_date')" 
                 prepend-icon="mdi-calendar-week-begin" 
                 readonly
-                :rules="value => !!value"
                 v-bind="attrs" 
                 v-on="on"
               ></v-text-field>
@@ -156,9 +154,29 @@
               <v-btn text color="primary" @click="$refs.menu.save(date)">{{ $t('general.ok') }}</v-btn>
             </v-date-picker>
           </v-menu>
+        </v-card-text>
 
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" text @click="close">{{ $t('general.cancel') }}</v-btn>
+          <v-btn color="primary" @click="createSchedule">{{ $t('general.create') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
+    <!-- NEW TEMPLATE DIALOG -->
+    <v-dialog v-model="dialog2" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            {{ $t('schedules.new_template') }}
+          </span>
+        </v-card-title>
+
+        <v-card-text>
           <v-text-field 
-            v-else
             v-model="newTemplateName" 
             :label="$t('schedules.template_name')" 
             prepend-icon="mdi-form-textbox"
@@ -172,7 +190,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
   </v-card>
 
 </template>
@@ -196,6 +213,7 @@ export default {
   data () {
     return {
       dialog: false,
+      dialog2: false,
       schedHeaders: [
         { text: this.$t('schedules.status'), align: 'start', value: 'status' },
         { text: this.$t('schedules.start_date'), value: 'date_start' },
@@ -208,7 +226,8 @@ export default {
         { text: this.$t('general.actions'), value: 'template_actions', sortable: false },
       ],
       schedData: [],
-      newSchedDate: '',
+      newSchedDate: null,
+      newTemplateId: null,
       newTemplateName: null,
       date: new Date().toISOString().substr(0, 10),
       menu: false,
@@ -308,6 +327,10 @@ export default {
 
     close () {
       this.dialog = false
+      this.dialog2 = false
+      this.newSchedDate = ''
+      this.newTemplateId = null
+      this.newTemplateName = null
     },
 
     async createSchedule () {
@@ -315,12 +338,24 @@ export default {
       var success_msg = null
       var validate = false
 
-      if (this.templates) {
+      if (this.templates && this.newTemplateId == null) {
+        // If we're creating a new template
         url = '/api/schedules/templates' 
         success_msg = this.$t('schedules.success_create_template')
-        this.newSchedDate = this.templateStartDate
+        this.newSchedDate = null
         validate = this.newTemplateName != null
+
+      } else if (this.newTemplateId) {
+        // If we're creating a schedule from a template
+        url = '/api/schedules/templates/' + this.newTemplateId + '/copy'
+        success_msg = this.$t('schedules.success_create_schedule')
+        if (this.newSchedDate != '') {
+          this.newSchedDate = this.$dayjs(this.newSchedDate).startOf('isoWeek').format("YYYY-MM-DD")
+          validate = true
+        } 
+
       } else {
+        // If we're creating a blank schedule
         url = '/api/schedules'
         success_msg = this.$t('schedules.success_create_schedule')
         if (this.newSchedDate != '') {
@@ -329,6 +364,7 @@ export default {
         }
       }
 
+
       if (validate) {
         await axios({
           method: 'post',      
@@ -336,16 +372,21 @@ export default {
           data: {
             team_id: this.team.id,
             date_start: this.newSchedDate,
-            template_name: this.newTemplateName
+            template_name: this.newTemplateName,
+            template_id: this.newTemplateId // NULL unless we're creating schedule from template
           }
         })
         .then(response => {
           this.showSnackbar(success_msg, 'success')
-          this.getSchedData()
+
+          if (this.newTemplateId) {
+            // This will rerender both Schedule components, to show newly created schedule
+            this.$emit('updated')
+          } else {
+            this.getSchedData()
+          }
         })
 
-        this.newSchedDate = ''
-        this.newTemplateName = null
         this.close()
       }
 
@@ -353,7 +394,8 @@ export default {
 
 
     async convertToSchedule(template) {
-
+      this.newTemplateId = template.id
+      this.dialog = true
     },
 
   }

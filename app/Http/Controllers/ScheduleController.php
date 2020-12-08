@@ -13,6 +13,7 @@ use Carbon\Carbon;
 
 class ScheduleController extends Controller
 {
+    public $template_date = '2001-01-01';
 
     public function index($teamid)
     {
@@ -131,7 +132,7 @@ class ScheduleController extends Controller
             'team_id' => $teamid,
             'user_id' => $user->id,
             'status' => 9,
-            'date_start' => date($request->date_start), // YYYY-MM-DD
+            'date_start' => $this->template_date, // YYYY-MM-DD
             'template_name' => $request->template_name,
           ]);
 
@@ -150,37 +151,78 @@ class ScheduleController extends Controller
     {
         $user = Auth::user();
         $template = Schedule::find($id);
+        $team = Team::find($template->team_id);
         $template_date = Carbon::createFromDate($template->date_start);
         $schedule_date = Carbon::createFromDate($request->date_start);
         $diff = $template_date->diffInDays($schedule_date); // Difference in days between template Monday (2001-01-01) and new schedule Monday
 
 
-        $schedule = Schedule::create([
-          'team_id' => $template->team_id,
-          'user_id' => $user->id,
-          'status' => 0,
-          'date_start' => date($request->date_start), // YYYY-MM-DD
-        ]);
+        if (($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
 
-        
-        foreach ($template->shifts as $shift) {
-          $shift_start = Carbon::createFromDate($shift->time_start)->addDays($diff);
-          $shift_end = Carbon::createFromDate($shift->time_end)->addDays($diff);
-
-          $newshift = Shift::create([
-            'schedule_id' => $schedule->id,
-            'location_id'=> $shift->location_id,
-            'time_start' => $shift_start,
-            'time_end' => $shift_end,
-            'min_participants' => $shift->min_participants,
-            'max_participants' => $shift->max_participants
+          $schedule = Schedule::create([
+            'team_id' => $template->team_id,
+            'user_id' => $user->id,
+            'status' => 0,
+            'date_start' => date($request->date_start), // YYYY-MM-DD
           ]);
+
+          
+          foreach ($template->shifts as $shift) {
+            $shift_start = Carbon::createFromDate($shift->time_start)->addDays($diff);
+            $shift_end = Carbon::createFromDate($shift->time_end)->addDays($diff);
+
+            $newshift = Shift::create([
+              'schedule_id' => $schedule->id,
+              'location_id'=> $shift->location_id,
+              'time_start' => $shift_start,
+              'time_end' => $shift_end,
+              'min_participants' => $shift->min_participants,
+              'max_participants' => $shift->max_participants
+            ]);
+          }
         }
         
-
-
         return response()->json($schedule);
     }
 
 
+
+    public function saveAsTemplate(Request $request, $id)
+    {
+        $user = Auth::user();
+        $schedule = Schedule::find($id);
+        $team = Team::find($schedule->team_id);
+        $schedule_date = Carbon::createFromDate($schedule->date_start);
+        $template_date = Carbon::createFromDate($this->template_date);
+        $diff = $template_date->diffInDays($schedule_date); // Difference in days between template Monday (2001-01-01) and new schedule Monday
+
+
+        if (($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
+
+          $template = Schedule::create([
+            'team_id' => $team->id,
+            'user_id' => $user->id,
+            'status' => 9,
+            'date_start' => $this->template_date,
+            'template_name' => $request->template_name,
+          ]);
+
+          
+          foreach ($schedule->shifts as $shift) {
+            $shift_start = Carbon::createFromDate($shift->time_start)->subDays($diff);
+            $shift_end = Carbon::createFromDate($shift->time_end)->subDays($diff);
+
+            $newshift = Shift::create([
+              'schedule_id' => $template->id,
+              'location_id'=> $shift->location_id,
+              'time_start' => $shift_start,
+              'time_end' => $shift_end,
+              'min_participants' => $shift->min_participants,
+              'max_participants' => $shift->max_participants
+            ]);
+          }
+        }
+        
+        return response()->json($schedule);
+    }
 }

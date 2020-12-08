@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates');
     Route::post('schedules/templates', 'ScheduleController@newTemplate');
     Route::post('schedules/templates/{id}/copy', 'ScheduleController@makeFromTemplate');
+    Route::post('schedules/{id}/templates/make', 'ScheduleController@saveAsTemplate');
 
     // LOCATION routes
     Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');

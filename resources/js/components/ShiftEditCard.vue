@@ -5,7 +5,7 @@
     </v-card-title>
 
     <v-card-subtitle class="text-center font-weight-bold">
-      <div>{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
+      <div v-if="!isTemplate">{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
       <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
     </v-card-subtitle>
 
@@ -132,6 +132,12 @@ export default {
     return {
       dialog: false,
 
+    }
+  },
+
+  computed: {
+    isTemplate () {
+      return this.schedule.status == 9
     }
   },
 

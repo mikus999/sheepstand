@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="justify-center">
-      <span class="headline">{{ edit ? $t('schedules.change_shift') : $t('schedules.new_shift') }} - {{ shift.time_start | formatDate }}</span>
+      <span class="headline">{{ edit ? $t('schedules.change_shift') : $t('schedules.new_shift') }}</span>
     </v-card-title>
 
     <v-card-text>
@@ -22,9 +22,17 @@
             />
 
 
-            <!-- Shift Date Picker -->
-            <v-menu ref="menu" v-model="date_menu" :close-on-content-click="false" :return-value.sync="shift_date"
-              transition="scale-transition" offset-y min-width="290px">
+            <!-- Shift Date Picker (SCHEDULES ONLY) -->
+            <v-menu 
+              v-if="!isTemplate"
+              ref="menu" 
+              v-model="date_menu" 
+              :close-on-content-click="false" 
+              :return-value.sync="shift_date"
+              transition="scale-transition" 
+              offset-y 
+              min-width="290px"
+            >
 
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field 
@@ -34,6 +42,7 @@
                   readonly
                   v-bind="attrs" 
                   v-on="on"
+                  class="mt-5"
                 >
                 </v-text-field>
               </template>
@@ -51,6 +60,27 @@
               </v-date-picker>
 
             </v-menu>
+
+
+            <!-- Day picker (TEMPLATES ONLY) -->
+            <v-select
+              v-else
+              v-model="shift_date"
+              :items="template_days" 
+              item-value="date" 
+              item-text="date" 
+              :label="$t('shifts.day')"
+              prepend-icon="mdi-calendar"
+              class="mt-5"
+            >
+              <template v-slot:selection="{ item }">
+                {{ $dayjs(item.date).format('dddd') }}
+              </template>
+
+              <template v-slot:item="{ item }">
+                {{ $dayjs(item.date).format('dddd') }}
+              </template>
+            </v-select>
           </v-col>
         </v-row>
 
@@ -180,6 +210,7 @@ export default {
   data () {
     return {
       locations: [],
+      template_days: [],
       shift_date: null,
       date_menu: false,
       time: {
@@ -211,6 +242,7 @@ export default {
   
   created () {
     this.getLocations()
+    this.getTemplateDays()
     this.shift_date = this.$dayjs(this.shift.time_start).format('YYYY-MM-DD')
     this.time.start.value = this.$dayjs(this.shift.time_start).format('HH:mm')
     this.time.end.value = this.$dayjs(this.shift.time_end).format('HH:mm')
@@ -228,6 +260,18 @@ export default {
             this.shift.location_id = this.locations[0].id
           }
         })
+    },
+
+    getTemplateDays () {
+      var date_start = this.schedule.date_start
+      for (var i = 0; i < 7; i++) {
+        var temp_array = {
+          id: i, 
+          date: this.$dayjs(date_start).add(i, 'd').format('YYYY-MM-DD')
+        }
+
+        this.template_days.push(temp_array)
+      }
     },
 
     close () {
