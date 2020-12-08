@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Http\Request;
+use Helper;
 
 class OAuthController extends Controller
 {
@@ -133,6 +134,8 @@ class OAuthController extends Controller
             'access_token' => $sUser->token,
             'refresh_token' => $sUser->refreshToken,
         ]);
+
+        Helper::addDefaultAvailability($user, true);
 
         return $user;
     }

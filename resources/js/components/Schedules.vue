@@ -21,13 +21,12 @@
           </v-btn>
         </v-toolbar>
 
-
                   
         <v-switch 
+          v-if="!templates"
           v-model="sw_show_archived" 
           class="mx-4" 
           :label="$t('schedules.show_archived_old')" 
-          v-if="!templates"
         />
       </template>
 
@@ -59,7 +58,7 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon small @click="editAssignments(item)" v-bind="attrs" v-on="on" :disabled="item.status < 1">
+            <v-btn icon small @click="editAssignments(item)" v-bind="attrs" v-on="on">
               <v-icon small>mdi-account-multiple-plus</v-icon>
             </v-btn>
           </template>

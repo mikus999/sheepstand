@@ -100,7 +100,7 @@ export default {
       })
       .then(response => {
         this.userRoles = response.data.roles
-        this.teamRole = this.userRoles[this.team.id][0]
+        this.teamRole = this.userRoles[this.team.id] ? this.userRoles[this.team.id][0] : null
         this.globalRoles = this.userRoles.global
       })
     },
@@ -129,7 +129,7 @@ export default {
       .then(response => {
         this.showSnackbar(this.$t('general.info_updated'), 'success')
         this.userRoles = response.data.roles
-        this.teamRole = this.userRoles[this.team.id][0]
+        this.teamRole = this.userRoles[this.team.id] ? this.userRoles[this.team.id][0] : null
         this.globalRoles = this.userRoles.global
       })
       

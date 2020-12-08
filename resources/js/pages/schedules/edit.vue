@@ -27,7 +27,7 @@
           </v-col>
           
           <v-col xs=1 sm=4 class="text-right">
-            <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-show="schedule.status > 0 && !isTemplate">
+            <v-btn text class="ml-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="editAssignments" v-if="!isTemplate">
               <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.assignments') }}</span>
               <v-icon right>mdi-arrow-right</v-icon>
             </v-btn>
