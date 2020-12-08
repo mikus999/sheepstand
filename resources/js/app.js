@@ -12,6 +12,7 @@ import localeData from 'dayjs/plugin/localeData'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import weekday from 'dayjs/plugin/weekday'
+import isBetween from 'dayjs/plugin/isBetween'
 //import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
@@ -48,6 +49,7 @@ dayjs.extend(localeData)
 dayjs.extend(localizedFormat)
 dayjs.extend(isoWeek)
 dayjs.extend(weekday)
+dayjs.extend(isBetween)
 
 Vue.filter('formatDate', function (value) {
   if (value) {

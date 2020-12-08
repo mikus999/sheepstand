@@ -119,8 +119,8 @@ export const mtproto = {
       })
       .then(result => {
         // 2FA is not enabled for this user. User is signed in. Continue to group setup.
-        this.$store.dispatch('auth/updateTGUser', result.user)
         this.stepperGo(5)
+        this.$store.dispatch('auth/updateTGUser', result.user)
       })
       .catch(error => {
         // If 2FA is turned on, we must check the password

@@ -24,6 +24,7 @@
       </div>
 
       <div class="mt-8">
+        {{ checkShiftAvailability(shift, user) }}
       </div>
     </v-card-text>
 
@@ -67,13 +68,13 @@
 
 <script>
 import axios from 'axios'
-import { helper, messages } from '~/mixins/helper'
+import { helper, scheduling, messages } from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
 import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   name: 'ShiftCard',
-  mixins: [helper, messages, mtproto],
+  mixins: [helper, scheduling, messages, mtproto],
   components: {
     Leaflet
   },

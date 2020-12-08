@@ -257,6 +257,44 @@ export const helper = {
 
 }
 
+
+
+export const scheduling = {
+  methods: {
+    checkShiftAvailability(shift, user) {
+      // Day of Week: Monday = 0, Sunday = 6
+
+      var result = true
+      const availability = user.user_availabilities
+      const shift_dow = this.$dayjs(shift.time_start).isoWeekday() - 1
+      const shift_start_hour = this.$dayjs(shift.time_start).hour()
+      var shift_end_hour = this.$dayjs(shift.time_end).hour()
+
+      if (this.$dayjs(shift.time_end).minute() > 0) {
+        shift_end_hour += 1
+      }
+
+
+      if (availability) {
+        var check_start = availability.filter(a => a.day_of_week == shift_dow && 
+          shift_start_hour >= this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
+          shift_start_hour < this.$dayjs('2001-01-01 ' + a.end_time).hour() &&
+          a.available == 1
+        )
+
+        // ADD CHECK FOR END TIME
+        
+        console.log(check_start)
+
+      }
+
+      return shift_start_hour
+    }
+  }
+}
+
+
+
 export const messages = {
   methods: {
     message_trade_offer (publisher, time_start, time_end, location) {
