@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Helper;
 use App\Models\User;
 use App\Models\UserAvailability;
+use App\Models\UserVacation;
 use Auth;
 use DB;
 
@@ -65,5 +66,42 @@ class UserAvailabilityController extends Controller
   {
     $user = Auth::user();
     return response()->json($user->user_availabilities);
+  }
+
+
+
+  public function getVacation()
+  {
+    $user = Auth::user();
+    return response()->json($user->user_vacations);
+  }
+
+
+
+  public function setVacation(Request $request)
+  {
+    $user = Auth::user();
+
+    UserVacation::create([
+      'user_id' => $user->id,
+      'date_start' => $request->date_start,
+      'date_end' => $request->date_end,
+      'note' => $request->note
+    ]);
+
+    return response()->json($user->user_vacations);
+  }
+
+
+  public function deleteVacation($id)
+  {
+    $user = Auth::user();
+    $found = $user->user_vacations()->find($id);
+
+    if ($found) {
+      UserVacation::destroy($id);
+    }
+
+    return response()->json($user->user_vacations);
   }
 }

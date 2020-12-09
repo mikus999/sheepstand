@@ -20,21 +20,46 @@
       </v-select>
 
       <template v-slot:extension>
-        <v-tabs v-if="schedule !== null" v-model="tab" centered align-with-title fixed-tabs show-arrows>
-          <v-tab v-for="n in 7" :key="n">
-            <v-badge color="secondary" :value="filterShifts(shifts, n) ? filterShifts(shifts, n).length : null" 
-              :content="filterShifts(shifts, n) ? filterShifts(shifts, n).length : null" offset-x="-3px">
-              {{ dayOfWeek(n) }}
-            </v-badge>
-          </v-tab>
-        </v-tabs>
+        <v-icon class="mr-2">mdi-tune</v-icon>
+
+        <v-switch 
+          v-model="filter_shifts" 
+          :label="$t('shifts.show_according_to_availability')" 
+          hide-details
+        />
       </template>
+
     </v-toolbar>
+
+    <v-tabs 
+      v-if="schedule !== null" 
+      v-model="tab" 
+      centered 
+      align-with-title 
+      fixed-tabs 
+      show-arrows
+      class="mt-6"
+    >
+      <v-tab 
+        v-for="n in 7" 
+        :key="n"
+        :disabled="filterShifts(filter_shifts ? shifts_available : shifts, n).length == 0"
+      >
+        <v-badge 
+          color="secondary" 
+          :value="filterShifts(filter_shifts ? shifts_available : shifts, n) ? filterShifts(filter_shifts ? shifts_available : shifts, n).length : null" 
+          :content="filterShifts(filter_shifts ? shifts_available : shifts, n) ? filterShifts(filter_shifts ? shifts_available : shifts, n).length : null" 
+          offset-x="-3px"
+        >
+          {{ dayOfWeek(n) }}
+        </v-badge>
+      </v-tab>
+    </v-tabs>
 
     <v-tabs-items v-model="tab">
       <v-tab-item v-for="n in 7" :key="n">
         <v-row class="ma-2">
-          <ShiftCard v-for="shift in filterShifts(shifts, n)" :key="shift.id" :shift="shift" :schedule="schedule" :width="cardWidth" class="ma-3"></ShiftCard>
+          <ShiftCard v-for="shift in filterShifts(filter_shifts ? shifts_available : shifts, n)" :key="shift.id" :shift="shift" :schedule="schedule" :width="cardWidth" class="ma-3"></ShiftCard>
         </v-row>
       </v-tab-item>
     </v-tabs-items>
@@ -43,13 +68,13 @@
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { helper, scheduling } from '~/mixins/helper'
 import ShiftCard from '~/components/ShiftCard.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
-  mixins: [helper],
+  mixins: [helper, scheduling],
   components: {
     ShiftCard
   },
@@ -61,6 +86,8 @@ export default {
       schedules: null,
       schedule: null,
       hover: false,
+      shifts_available: [],
+      filter_shifts: true,
     }
   },
 
@@ -119,8 +146,8 @@ export default {
         .then(response => {
           this.tab = 0
           this.shifts = response.data
+          this.shifts_available = this.filterShiftsAvailability(response.data, this.user)
         })
-
     },
 
     dayOfWeek (daynum) {
@@ -131,12 +158,12 @@ export default {
     },
 
     filterShifts (shifts, day) {
-      var temp = null
+      var filtered = []
 
       if (shifts !== null) {
-        temp = shifts.filter(s => this.$dayjs(s.time_start).day() == day)
+        filtered = shifts.filter(s => this.$dayjs(s.time_start).isoWeekday() == day)
       }
-      return temp
+      return filtered
     }
   }
 

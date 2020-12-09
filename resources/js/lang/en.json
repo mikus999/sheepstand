@@ -46,7 +46,8 @@
         "content_copied": "Content copied to clipboard successfully",
         "search": "Search",
         "test": "Test",
-        "duplicate": "Duplicate"
+        "duplicate": "Duplicate",
+        "note": "Note"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -118,6 +119,8 @@
         "user_role": "Team Role",
         "site_roles": "Site Roles",
         "availability": "Availability",
+        "vacation_schedule": "Vacation Schedule",
+        "confirm_delete_vacation": "Are you sure you want to delete this vacation?",
         "time_slot": "Time Slot"
     },
     "roles": {
@@ -208,8 +211,9 @@
         "show_archived_old": "Show archived and old schedules",
         "status": "Status",
         "start_date": "Start Date",
+        "end_date": "End Date",
         "shifts": "Shifts",
-        "shifts_displayed": "Shifts Displayed",
+        "shifts_displayed": "Shifts Displayed: {0} of {1}",
         "templates": "Schedule Templates",
         "template_name": "Template Name",
         "new_template": "New Template",
@@ -230,9 +234,7 @@
         "success_delete_shift": "Shift was deleted successfully",
         "assignments": "Assignments",
         "approvals": "Approvals",
-        "week_of": "Week of:",
-        "show_all": "Show All",
-        "show_none": "Show None"
+        "week_of": "Week of:"
     },
     "shifts": {
         "status_0": "PENDING USER APPROVAL",
@@ -256,6 +258,8 @@
         "confirm_trade": "Are you sure you want to accept this assignment?",
         "success_trade_made": "Trade successful!",
         "show_all_teams": "Show for all my teams",
+        "show_according_to_availability": "Show shifts according to my availability",
+        "show_all_dates": "Show all dates",
         "offered_by": "Offered By",
         "make_next_shift": "Duplicate and Make Consecutive"
     },

@@ -25,7 +25,7 @@
           <!-- TAB: GENERAL -->
           <v-tab-item value="tab-general">
             <v-row class="mx-2">
-              <v-col cols=12 md=5 lg=6>
+              <v-col cols=12>
                 <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
                     :success="validation.name.success">
                   <template v-slot:append v-if="validation.name.success">
@@ -46,11 +46,17 @@
                   </v-btn>
                 </div>
               </v-col>
+            </v-row>
 
-              <v-divider class="my-12" v-if="$vuetify.breakpoint.xs"></v-divider>
+            <v-divider class="my-12" v-if="$vuetify.breakpoint.xs"></v-divider>
 
+            <v-row>
               <v-col cols=12 md=7 lg=6 class="pa-sm-6">
                 <AvailabilitySchedule :data="user" />
+              </v-col>
+
+              <v-col cols=12 md=5 lg=6 class="pa-sm-6">
+                <VacationSchedule :data="user" />
               </v-col>
             </v-row>
           </v-tab-item>
@@ -139,13 +145,16 @@ import axios from 'axios'
 import helper from '../../mixins/helper'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 import AvailabilitySchedule from '~/components/AvailabilitySchedule.vue'
+import VacationSchedule from '~/components/VacationSchedule.vue'
 
 export default {
   middleware: 'auth',
   layout: 'vuetify',
   mixins: [helper],
+
   components: {
-    AvailabilitySchedule
+    AvailabilitySchedule,
+    VacationSchedule,
   },
 
   validations: {

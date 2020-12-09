@@ -8,40 +8,66 @@
       :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
       no-title
       multiple
-      @click:date="filterShifts"
+      @click:date="filterShifts()"
       width="100%"
     >
     </v-date-picker>
 
-    <v-btn
-      block
-      color="primary"
-      @click="toggleShowAllNone"
-      >
-      <v-icon small class="mr-2">{{ showAllNone ? 'mdi-eye-off' : 'mdi-eye' }}</v-icon>
-      {{ showAllNone ? $t('schedules.show_none') : $t('schedules.show_all') }}
-    </v-btn>
 
+    <v-switch 
+      v-model="showAll" 
+      :label="$t('shifts.show_all_dates')" 
+      hide-details
+      @change="toggleShowAllNone"
+    />
 
-    <v-row class="mb-2 mt-6">
-      <span class="mx-auto text-overline">{{ calendarHeader }}</span>
+    <v-switch 
+      v-model="filter_shifts" 
+      :label="$t('shifts.show_according_to_availability')" 
+      hide-details
+      @change="filterShifts"
+    />
+
+    <v-row class="my-6">
+      <span class="mx-auto text-overline">{{ this.$t('schedules.shifts_displayed', [shiftsFiltered.length, shifts.length]) }}</span>
     </v-row>
 
-    <v-row class="ma-2">
-      <ShiftCard v-for="shift in sortedShifts" :key="shift.id" :shift="shift" :schedule="shift.schedule" :width="cardWidth" class="ma-3"></ShiftCard>
+    <v-divider class="mb-8" />
+
+    <v-row 
+      class="ma-2"
+      v-for="d in getUniqueDates()"
+      :key="d"
+    >
+
+      <div class="text-h5 mx-auto mb-4">
+        {{ $dayjs(d).format('ddd, L') }}
+      </div>
+
+      <ShiftCard 
+        v-for="shift in sortedShifts(d)" 
+        :key="shift.id" 
+        :shift="shift" 
+        :schedule="shift.schedule" 
+        :width="cardWidth" 
+        class="ma-3"
+      ></ShiftCard>
+
+      <v-divider class="my-8" />
+
     </v-row>
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { helper, scheduling } from '~/mixins/helper'
 import ShiftCard from '~/components/ShiftCard.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
-  mixins: [helper],
+  mixins: [helper, scheduling],
   components: {
     ShiftCard
   },
@@ -56,7 +82,8 @@ export default {
       availableDates: [],
       selectedDates: [],
       shiftsFiltered: [],
-      showAllNone: true,
+      showAll: true,
+      filter_shifts: true,
     }
   },
 
@@ -68,12 +95,6 @@ export default {
       return headerString
     },
 
-    sortedShifts: function() {
-      this.shiftsFiltered.sort( ( a, b) => {
-          return new Date(a.time_start) - new Date(b.time_start);
-      });
-      return this.shiftsFiltered;
-    },
 
     cardWidth () {
       var width = null
@@ -108,6 +129,28 @@ export default {
       return this.availableDates.indexOf(val) > -1
     },
 
+
+    getUniqueDates() {
+      var shiftTemp = []
+
+      this.shiftsFiltered.forEach((shift) => {
+        shiftTemp.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
+      })
+
+      return Array.from(new Set(shiftTemp))
+    },
+    
+    sortedShifts (date) {
+      var shiftTemp = this.shiftsFiltered.filter(shift => this.$dayjs(shift.time_start).format('YYYY-MM-DD') == date)
+
+      shiftTemp.sort( ( a, b) => {
+        return new Date(a.time_start) - new Date(b.time_start);
+      });
+      
+      return shiftTemp;
+    },
+
+
     dayShifts (date) {
       if (this.shifts) {
         var shiftTemp = this.shifts.filter(shift => this.$dayjs(shift.time_start).format('YYYY-MM-DD') == date)
@@ -121,13 +164,18 @@ export default {
               color_array.push(shift.location.color_code)
             }
           })
+
+          // If there are more than three locations for the day, just display one black dot
+          if (color_array.length > 3) {
+            color_array = []
+          }
+
           return color_array
         }
 
         return false
       }
     },
-
 
     async getSchedData () {
       await axios.get('/api/schedules/' + this.team.id)
@@ -172,17 +220,22 @@ export default {
     },
 
     filterShifts () {
-      if (this.selectedDates.length > 0) {
-        this.shiftsFiltered = this.shifts.filter(s => this.selectedDates.indexOf(this.$dayjs(s.time_start).format('YYYY-MM-DD')) > -1)
-      } else {
-        this.shiftsFiltered = []
+
+      // First, filter by date (or show all dates)
+      this.shiftsFiltered = this.shifts.filter(s => this.selectedDates.indexOf(this.$dayjs(s.time_start).format('YYYY-MM-DD')) > -1)
+
+      this.showAll = (this.shiftsFiltered.length == this.shifts.length)
+
+
+      // Second, filter by user availability (if option is checked)
+      if (this.filter_shifts) {
+        this.shiftsFiltered = this.filterShiftsAvailability(this.shiftsFiltered, this.user)
       }
+
     },
 
     toggleShowAllNone() {
-      this.showAllNone = !this.showAllNone
-
-      if (this.showAllNone) {
+      if (this.showAll) {
         this.shifts.forEach((shift) => {
           this.availableDates.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
           this.selectedDates.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))

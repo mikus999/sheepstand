@@ -11,6 +11,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Team;
 use Laratrust\Traits\LaratrustUserTrait;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 {
@@ -54,7 +55,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     ];
 
 
-    protected $with = ['user_availabilities'];
+    protected $with = ['user_availabilities', 'user_vacations'];
     
 
     public function teams()
@@ -90,6 +91,12 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function user_availabilities()
     {
       return $this->hasMany('App\Models\UserAvailability');
+    }
+
+    public function user_vacations()
+    {
+      $oldestDate = Carbon::now()->sub(1, 'month');
+      return $this->hasMany('App\Models\UserVacation')->where('date_start','>=',$oldestDate);
     }
 
 

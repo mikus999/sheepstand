@@ -30,11 +30,11 @@
             </div>
           </div>
 
-          <div v-for="d in 7" :key="'day_' + (d-1)" class="avail_col text-center">
+          <div v-for="d in 7" :key="'day_' + (d)" class="avail_col text-center">
             <p>{{ dayOfWeek(d) }}</p>
 
             <div 
-              v-for="(h, index) in filterAvailability(d-1)" 
+              v-for="(h, index) in filterAvailability(d)" 
               :key="index" 
               :class="'avail_square ' + (h.available ? 'avail_square_on' : 'avail_square_off')"
               @click="changeAvailability(h)"
@@ -70,7 +70,7 @@
 
         <v-tab-item v-for="d in 7" :key="d">
           <v-btn 
-            v-for="(h, index) in filterAvailability(d-1)" 
+            v-for="(h, index) in filterAvailability(d)" 
             :key="index" 
             block small
             @click="changeAvailability(h)"
@@ -173,6 +173,7 @@ export default {
         .then(response => {
           this.changed = []
           this.showSnackbar(this.$t('general.info_updated'), 'success')
+          this.refreshStore()
         })
       }
     },

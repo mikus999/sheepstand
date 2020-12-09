@@ -143,6 +143,10 @@ export const helper = {
       }
     },
 
+    async refreshStore () {
+      await this.$store.dispatch('general/init')
+    },
+
     async getTeams () {
       await this.$store.dispatch('auth/fetchUser')
     },
@@ -261,12 +265,28 @@ export const helper = {
 
 export const scheduling = {
   methods: {
+    filterShiftsAvailability (shifts, user) {
+      var avail_shifts = shifts.filter(shift => 
+        this.checkShiftAvailability(shift, user)
+      )
+      return avail_shifts
+    },
+
+    filterUsersAvailability (shift, users) {
+      var avail_users = users.filter(user => 
+        this.checkShiftAvailability(shift, user)
+      )
+      return avail_users
+    },
+
     checkShiftAvailability(shift, user) {
-      // Day of Week: Monday = 0, Sunday = 6
+      // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
 
       var result = true
       const availability = user.user_availabilities
-      const shift_dow = this.$dayjs(shift.time_start).isoWeekday() - 1
+      const vacations = user.user_vacations
+      const shift_date = this.$dayjs(shift.time_start).format('YYYY-MM-DD')
+      const shift_dow = this.$dayjs(shift.time_start).isoWeekday()
       const shift_start_hour = this.$dayjs(shift.time_start).hour()
       var shift_end_hour = this.$dayjs(shift.time_end).hour()
 
@@ -275,21 +295,39 @@ export const scheduling = {
       }
 
 
-      if (availability) {
-        var check_start = availability.filter(a => a.day_of_week == shift_dow && 
+      // First, check shift against user's weekly availability schedule
+      if (availability && availability.length > 0) {
+        var check_start = availability.filter(a => 
+          a.day_of_week == shift_dow && 
           shift_start_hour >= this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
           shift_start_hour < this.$dayjs('2001-01-01 ' + a.end_time).hour() &&
           a.available == 1
-        )
+        );
 
-        // ADD CHECK FOR END TIME
-        
-        console.log(check_start)
+        var check_end = availability.filter(a => 
+          a.day_of_week == shift_dow && 
+          shift_end_hour > this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
+          shift_end_hour <= this.$dayjs('2001-01-01 ' + a.end_time).hour() &&
+          a.available == 1
+        );
 
+        result = check_start.length > 0 && check_end.length > 0
       }
 
-      return shift_start_hour
-    }
+
+      // Next, if the shift fits user's weekly availability, check against their vacation schedule
+      if (result && vacations && vacations.length > 0) {
+        var check_vac = vacations.filter(v => 
+          this.$dayjs(shift_date).isBetween(this.$dayjs(v.date_start), this.$dayjs(v.date_end), null, '[]')
+        )
+
+        result = check_vac.length == 0 // shift does not fall into any vacation date ranges
+      }
+
+      return result
+    },
+
+
   }
 }
 

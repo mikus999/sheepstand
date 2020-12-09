@@ -50,7 +50,7 @@
 
               <v-select 
                 v-model="item.users" 
-                :items="teamUsers" 
+                :items="filterUsersAvailability(item, teamUsers)" 
                 :readonly="((item.max_participants <= item.users.length) || !$can('manage_schedules'))"
                 hide-details 
                 multiple 
@@ -64,14 +64,27 @@
 
                 <!-- NUMBER OF SHIFT ASSIGNMENTS -->
                 <template v-slot:prepend-inner>
-                  <v-chip small dark label :color="checkMax(item.max_participants, item.users.length)">{{ item.users.length }}/{{ item.max_participants }}</v-chip>
+                  <v-chip 
+                    small 
+                    dark 
+                    label 
+                    :color="checkMax(item.max_participants, item.users.length)"
+                  >
+                    {{ item.users.length }}/{{ item.max_participants }}
+                  </v-chip>
                 </template>
 
                 <!-- SELECTION SLOT: DISPLAYED IN TEXTBOX -->
                 <template v-slot:selection="data">
-                  <v-chip small label v-bind="data.attrs" :input-value="data.selected" close
-                      :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
-                      @click:close="removeShiftUser(data, item)">
+                  <v-chip 
+                    small 
+                    label 
+                    v-bind="data.attrs" 
+                    :input-value="data.selected" 
+                    close
+                    :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
+                    @click:close="removeShiftUser(data, item)"
+                  >
                     {{ data.item.name}}
                   </v-chip>
                 </template>
@@ -79,13 +92,15 @@
 
                 <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
                 <template v-slot:item="data">
-                  <v-list-item-avatar>
-                    <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-content @click="addShiftUser(data, item)">
-                    <v-list-item-title>{{ data.item.name }}</v-list-item-title>
-                    <v-list-item-subtitle></v-list-item-subtitle>
-                  </v-list-item-content>
+                  <v-list-item>
+                    <v-list-item-avatar>
+                      <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-content @click="addShiftUser(data, item)">
+                      <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+                      <v-list-item-subtitle></v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
                 </template>
 
               </v-select>
@@ -100,13 +115,13 @@
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { helper, scheduling } from '~/mixins/helper'
 
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
-  mixins: [helper],
+  mixins: [helper, scheduling],
   props: {
     id: {
       type: [String, Number],

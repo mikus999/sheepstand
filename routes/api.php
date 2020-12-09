@@ -32,6 +32,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('account/availability', 'UserAvailabilityController@getAvailability');
     Route::post('account/availability', 'UserAvailabilityController@setAvailability');
     Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability');
+    Route::get('account/vacation', 'UserAvailabilityController@getVacation');
+    Route::post('account/vacation', 'UserAvailabilityController@setVacation');
+    Route::delete('account/vacation/{id}', 'UserAvailabilityController@deleteVacation');
 
     // TEAM routes
     Route::post('teams/jointeam', 'TeamController@addUserToTeam');

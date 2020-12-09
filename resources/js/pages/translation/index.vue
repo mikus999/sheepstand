@@ -10,22 +10,23 @@
 
     <v-card width="100%">
       <!-- LANGUAGE SELECTOR -->
-      <v-row>
+      <v-row class="mx-2">
         <v-col cols=12 sm=6>
-          <span>{{ $t('translation.source_language')}}: EN</span>
+          <span>{{ $t('translation.source_language')}}</span>
+          <div class="mt-6 font-weight-bold">English</div>
         </v-col>
 
         <v-col cols=12 sm=6>
           <span>{{ $t('translation.target_language')}}</span>
           <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
-            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code"></v-radio>
+            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code" class="font-weight-bold"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
 
 
       <!-- CATEGORIES IN ENGLISH FILE -->
-      <v-row>
+      <v-row class="mx-2">
         <v-col cols=12>
           <div v-if="langTargetLocale !== null" >
             <v-chip  
@@ -47,7 +48,7 @@
       
 
       <!-- STRINGS FOR SELECTED CATEGORY -->
-      <v-row>
+      <v-row class="mx-2">
         <v-col cols=12>
           <v-data-iterator v-if="currSection !== null" :items="langSourceStrings" hide-default-footer disable-pagination>
             <template v-slot:default="props">

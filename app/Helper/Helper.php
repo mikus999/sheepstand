@@ -77,7 +77,7 @@ class Helper
     {
       $data = [];
 
-      for ($d = 0; $d <= 6; $d++) {
+      for ($d = 1; $d <= 7; $d++) {
         for ($h = 0; $h <= 23; $h++) {
           $temp = [
             'user_id' => $user->id, 

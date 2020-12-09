@@ -24,7 +24,6 @@
       </div>
 
       <div class="mt-8">
-        {{ checkShiftAvailability(shift, user) }}
       </div>
     </v-card-text>
 
