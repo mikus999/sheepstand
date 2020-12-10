@@ -22,8 +22,12 @@
       </v-item-group>
     </v-toolbar>
 
-    <v-btn v-else fab small :style="closeBtn" color="primary" @click="$emit('close')">
+    <v-btn v-if="readonly" fab small :style="closeBtn" color="primary" @click="$emit('close')">
       <v-icon>mdi-close</v-icon>
+    </v-btn>
+
+    <v-btn v-if="readonly" fab small :style="satelliteBtn" color="secondary" @click="updateMapType()">
+      <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
     </v-btn>
 
     <l-map 
@@ -150,6 +154,12 @@ export default {
         left: '50px',
         zIndex: '500'
       },
+      satelliteBtn: {
+        display: 'fixed',
+        top: '50px',
+        right: '35px',
+        zIndex: '501'
+      },
       mapDraggable: this.readonly,
       mapCursor: this.readonly ? null : 'default',
       mapType: 'roadmap',
@@ -177,6 +187,7 @@ export default {
 
   mounted () {
     this.closeBtn.left = (this.$refs.mainDiv.clientWidth - 50) + 'px'
+    this.satelliteBtn.top = (this.$refs.mainDiv.clientHeight - 50) + 'px'
   },
 
   methods: {
@@ -278,7 +289,7 @@ export default {
           break
         case 'roadmap':
           this.url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-	        this.attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+	        this.attribution = 'Tiles &copy; Esri'
           this.mapType = 'satellite'
           break
       }

@@ -299,6 +299,30 @@ class ShiftController extends Controller
     }
 
 
+        /**
+     * 
+     * Change a user's shift status
+     *  - ROLE: 
+     * 
+     */
+    public function approveAllRequests($id)
+    {
+        $data = ['message' => 'Access Denied'];
+        $user = Auth::user();
+        $schedule = Schedule::find($id);
+        $shifts = $schedule->shifts()->get();
+        $data = [];
+
+        foreach ($shifts as $shift) {
+          $shift->users()->updateExistingPivot($shift->users()->wherePivot('status',1)->allRelatedIds(), ['status' => 2]);
+        };
+
+
+        return response()->json($data);
+
+    }
+
+
 
     /**
      * 

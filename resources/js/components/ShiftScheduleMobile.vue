@@ -133,11 +133,20 @@ export default {
     getUniqueDates() {
       var shiftTemp = []
 
+      // Get the dates for selected shifts
       this.shiftsFiltered.forEach((shift) => {
         shiftTemp.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
       })
 
-      return Array.from(new Set(shiftTemp))
+      // Get unique values only
+      shiftTemp = Array.from(new Set(shiftTemp))
+
+      // Sort the remaining dates
+      shiftTemp.sort( ( a, b) => {
+        return new Date(a) - new Date(b);
+      });
+
+      return shiftTemp
     },
     
     sortedShifts (date) {

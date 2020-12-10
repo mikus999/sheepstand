@@ -75,7 +75,7 @@
             block small
             @click="changeAvailability(h)"
             class="my-2"
-            :color="h.available ? 'green' : '#eeeeee'"
+            :color="h.available ? 'green' : '#AEAEAE'"
           >
             <v-icon class="mr-auto" small>{{ h.available ? 'mdi-check-circle-outline' : 'mdi-cancel' }}</v-icon>
             <span class="mx-auto">{{ timeSlot(index + 1) }}</span>
@@ -216,7 +216,7 @@ export default {
   }
 
   .avail_square_off {
-    background-color: #eeeeee;
+    background-color: #AEAEAE;
   }
 
   .avail_square_on {

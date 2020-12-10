@@ -234,6 +234,8 @@
         "success_delete_shift": "Shift was deleted successfully",
         "assignments": "Assignments",
         "approvals": "Approvals",
+        "approve_all": "Approve All Requests",
+        "confirm_approve_all": "Are you sure you want to approve all shift requests for this schedule?",
         "week_of": "Week of:"
     },
     "shifts": {

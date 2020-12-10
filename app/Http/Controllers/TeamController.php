@@ -54,7 +54,7 @@ class TeamController extends Controller
       $location = Location::create([
         'team_id' => $newteam->id,
         'name' => 'Default Location',
-        'color_code' => '#000000',
+        'color_code' => '#AEAEAE',
         'map' => null,
         'default' => true
       ]);

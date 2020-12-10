@@ -43,7 +43,16 @@
                       </template>
                       <v-card>
                         <v-card-text class="pa-0">
-                          <v-color-picker v-model="tempData.color_code" mode="hexa" flat />
+                          <v-color-picker 
+                            v-model="tempData.color_code" 
+                            flat 
+                            hide-canvas
+                            hide-inputs
+                            hide-mode-switch
+                            mode="hexa"
+                            :swatches="swatches"
+                            show-swatches
+                          />
                         </v-card-text>
                         <v-card-actions>
                           <v-spacer />
@@ -73,7 +82,7 @@
         </template>
         
         <template v-slot:item.color_code="{ item }">
-          <v-chip :color="item.color_code" small>{{ item.color_code }}</v-chip>
+          <v-chip :color="item.color_code" label small>{{ item.color_code }}</v-chip>
         </template>
       
         <template v-slot:item.map="{ item }">
@@ -144,10 +153,16 @@ export default {
         id: null,
         team_id: null,
         name: '',
-        color_code: '#000000',
+        color_code: '#7E7E7E',
         map: null,
         default: false
       },
+      swatches: [
+        ['#FF5A5A', '#FF4081', '#BA68C8'], // reds
+        ['#00D3E6', '#4793CA', '#AEAEAE'], // blues
+        ['#AFB42B', '#00E676', '#26A69A'],
+        ['#FF9800', '#EF6C00', '#A1887F'] // oranges
+      ],
       tempData: {
         name: null
       },

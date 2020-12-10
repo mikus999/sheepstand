@@ -1,6 +1,18 @@
 <template>
   <!-- IF LARGER DEVICE, SHOW SELECT -->
-  <v-select v-if="!$vuetify.breakpoint.mobile" :items="user.teams" item-text="display_name" item-value="id" :value="team !== null ? team.id : 0" return-object @change="setTeam($event)" outlined dense prepend-icon="mdi-account-group select-item">
+  <v-select 
+    v-if="!$vuetify.breakpoint.mobile" 
+    :items="user.teams" 
+    item-text="display_name" 
+    item-value="id" 
+    :value="team !== null ? team.id : 0" 
+    return-object 
+    @change="setTeam($event)" 
+    outlined 
+    dense 
+    prepend-icon="mdi-account-group select-item"
+  >
+
     <template v-slot:append-item>
       <v-divider class="mb-2"></v-divider>
 
@@ -26,6 +38,17 @@
     <v-list>
       <v-list-item v-for="t in teams" :key="t.id" @click="setTeam(t)">
         <v-list-item-title>{{ t.display_name }}</v-list-item-title>
+      </v-list-item>
+
+      <v-divider class="mb-2"></v-divider>
+
+      <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('menu.join_another_team') }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-icon>
+          <v-icon>mdi-account-multiple-plus</v-icon>
+        </v-list-item-icon>
       </v-list-item>
     </v-list>
   </v-menu>

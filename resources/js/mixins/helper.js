@@ -267,6 +267,7 @@ export const scheduling = {
   methods: {
     filterShiftsAvailability (shifts, user) {
       var avail_shifts = shifts.filter(shift => 
+        shift.users.filter(u => u.id == user.id).length > 0 || // include shift if user is already assigned to it, regardless of availability
         this.checkShiftAvailability(shift, user)
       )
       return avail_shifts
@@ -274,8 +275,14 @@ export const scheduling = {
 
     filterUsersAvailability (shift, users) {
       var avail_users = users.filter(user => 
+        shift.users.filter(u => u.id == user.id).length > 0 || // include user if he is already assigned, regardless of availability
         this.checkShiftAvailability(shift, user)
       )
+
+      // Show selected users at top of list
+      avail_users.sort( ( a, b) => {
+        return shift.users.filter(u => u.id == b.id).length - shift.users.filter(u => u.id == a.id).length
+      });
       return avail_users
     },
 

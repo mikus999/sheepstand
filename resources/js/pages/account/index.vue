@@ -272,7 +272,7 @@ export default {
           }
         })
         .then(response => {
-            this.showSnackbar(this.$t('uth.success_reset_password'), 'success')
+            this.showSnackbar(this.$t('auth.success_reset_password'), 'success')
         });
       }
     },

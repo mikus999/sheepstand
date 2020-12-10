@@ -156,17 +156,12 @@ export default {
             remember: this.remember
           })
 
-          // Update the user.
-          this.$store.dispatch('auth/updateUser', { user: userdata })
-
-          // Fetch the user.
-          this.$store.dispatch('auth/fetchUser')
-
-          // Fetch the teams.
-          this.$store.dispatch('teams/fetchTeams');
-
-          // Redirect home.
-          this.$router.push({ name: 'teams.join' })
+          // Redirect home when store is initiated
+          this.$store.dispatch('general/init').then(() => {
+            this.$router.push({
+              name: 'home'
+            })
+          })
 
         }
       })

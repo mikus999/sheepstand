@@ -17,11 +17,12 @@
             single-line
             hide-details
           ></v-text-field>
-          <v-spacer />
+          <v-spacer v-if="teamUsers" />
           <v-btn 
             color="secondary" 
             class="mb-2" 
             @click="dialog = true"
+            v-if="teamUsers"
             >
             <v-icon small :left="$vuetify.breakpoint.smAndUp">mdi-account-plus</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('teams.add_user') }}</span>
@@ -45,8 +46,8 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                <v-btn color="blue darken-1" text @click="addUser">{{ $t('general.save') }}</v-btn>
+                <v-btn text @click="close">{{ $t('general.cancel') }}</v-btn>
+                <v-btn color="primary" @click="addUser">{{ $t('general.save') }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>

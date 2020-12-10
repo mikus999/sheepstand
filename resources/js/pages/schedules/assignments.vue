@@ -27,18 +27,23 @@
 
       <v-row>
         <v-col md="12">
-          <v-data-table :headers="shiftHeaders" :items="shiftData" sort-by="time_start" sort-asc>
+          <v-data-table :headers="shiftHeaders" :items="shiftData" :key="shiftTable_key" sort-by="time_start" sort-asc>
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title>{{ $t('schedules.assignments') }}</v-toolbar-title>
+                <v-spacer />
+                <v-btn
+                  color="secondary"
+                  @click="approveAllRequests()"
+                >
+                  <v-icon small left>mdi-thumb-up</v-icon>
+                  {{ $t('schedules.approve_all') }}
+                </v-btn>
               </v-toolbar>
             </template>
 
             <template v-slot:item.day="{ item }">
-              {{ item.time_start | formatDay }}
-            </template>
-
-            <template v-slot:item.shift_time="{ item }">
+              {{ item.time_start | formatDay }}<br />
               {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
             </template>
 
@@ -51,9 +56,10 @@
               <v-select 
                 v-model="item.users" 
                 :items="filterUsersAvailability(item, teamUsers)" 
-                :readonly="((item.max_participants <= item.users.length) || !$can('manage_schedules'))"
+                :readonly="!$can('manage_schedules')"
                 hide-details 
                 multiple 
+                dense
                 class="no-border"
                 return-object 
                 item-text="name" 
@@ -81,20 +87,27 @@
                     label 
                     v-bind="data.attrs" 
                     :input-value="data.selected" 
-                    close
                     :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
-                    @click:close="removeShiftUser(data, item)"
                   >
                     {{ data.item.name}}
+                    
+                    <v-icon 
+                      small 
+                      right
+                      v-if="item.users[data.index].pivot.status < 2"
+                      @click.stop="updateStatus(data, item, 2)"
+                    >
+                      mdi-thumb-up-outline
+                    </v-icon>
                   </v-chip>
                 </template>
 
 
                 <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
                 <template v-slot:item="data">
-                  <v-list-item>
-                    <v-list-item-avatar>
-                      <v-icon :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
+                  <v-list-item dense>
+                    <v-list-item-avatar class="ma-0">
+                      <v-icon small :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
                     </v-list-item-avatar>
                     <v-list-item-content @click="addShiftUser(data, item)">
                       <v-list-item-title>{{ data.item.name }}</v-list-item-title>
@@ -135,13 +148,13 @@ export default {
     return {
       dialog: false,
       date: '',
+      shiftTable_key: 1,
       schedData: [],
       shiftData: [],
       shiftHeaders: [
-        { text: this.$t('shifts.day'), align: 'start', value: 'day' },
-        { text: this.$t('shifts.shift_time'), align: 'start', value: 'shift_time' },
+        { text: this.$t('shifts.shift_time'), align: 'start', value: 'day' },
         { text: this.$t('shifts.location'), value: 'location', align: 'center'},
-        { text: this.$t('shifts.assignments'), value: 'assignments', align: 'start', sortable: false, width: '50%'},
+        { text: this.$t('shifts.assignments'), value: 'assignments', align: 'start', sortable: false, width: '60%'},
       ],
       teamUsers: [],
       shiftUsers: {},
@@ -232,6 +245,42 @@ export default {
       }
 
     },
+
+
+    async updateStatus (data, shift, status) {
+      var user = data.item
+
+      await axios({
+        method: 'post',      
+        url: '/api/schedules/shiftuserstatus',
+        data: {
+          user_id: user.id,
+          shift_id: shift.id,
+          status: status
+        }
+      })
+      .then(response => {
+        user.pivot.status = status
+        shift.users = response.data.shiftusers
+      })
+
+    },
+
+
+    async approveAllRequests() {
+      if (await this.$root.$confirm(this.$t('schedules.confirm_approve_all'), null, 'error')) {
+        await axios({
+          method: 'get',      
+          url: '/api/schedules/' + this.id + '/approveall',
+        })
+        .then(response => {
+          this.showSnackbar(this.$t('general.info_updated'), 'success')
+          this.getShiftData()
+          this.shiftTable_key += 1
+        })
+      }
+    },
+
 
     checkMax (target, actual) {
         var color = 'grey darken-3'

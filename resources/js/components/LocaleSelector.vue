@@ -1,5 +1,15 @@
 <template>
-  <v-select v-if="!$vuetify.breakpoint.mobile" :items="languages" item-text="native_name" item-value="code" :value="locale" @change="setLocale" outlined dense prepend-icon="mdi-translate">
+  <v-select 
+    v-if="!$vuetify.breakpoint.mobile" 
+    :items="languages" 
+    item-text="native_name" 
+    item-value="code" 
+    :value="locale" 
+    @change="setLocale" 
+    outlined 
+    dense 
+    prepend-icon="mdi-translate"
+  >
   </v-select>
   
 

@@ -280,7 +280,7 @@ export default {
             this.teamNameError = true
             this.teamNotFoundMsg = this.$t('teams.error_creating_team')
           } else {
-            this.getTeams()
+            this.refreshStore()
 
             this.setTeam(response.data.team, 'self')
 

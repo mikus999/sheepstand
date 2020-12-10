@@ -81,7 +81,7 @@ export default {
 
   data () {
     return {
-      tab: null,
+      tab: 0,
       shifts: null,
       schedules: null,
       schedule: null,
@@ -144,9 +144,15 @@ export default {
     async getShiftData () {
       await axios.get('/api/schedules/' + this.schedule.id + '/shifts')
         .then(response => {
-          this.tab = 0
           this.shifts = response.data
           this.shifts_available = this.filterShiftsAvailability(response.data, this.user)
+
+          for (var n = 1; n <= 7; n++) {
+            if (this.filterShifts(this.shifts_available, n).length > 0) {
+              this.tab = (n - 1)
+              break
+            }
+          }
         })
     },
 
