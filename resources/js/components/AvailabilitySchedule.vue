@@ -158,6 +158,8 @@ export default {
         this.availability = response.data
         this.changed = []
         this.showSnackbar(this.$t('general.info_updated'), 'success')
+        this.refreshStore()
+        this.$emit('updated')
       })
     },
 

@@ -47,7 +47,8 @@
         "search": "Search",
         "test": "Test",
         "duplicate": "Duplicate",
-        "note": "Note"
+        "note": "Note",
+        "warning": "Warning"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -263,7 +264,9 @@
         "show_according_to_availability": "Show shifts according to my availability",
         "show_all_dates": "Show all dates",
         "offered_by": "Offered By",
-        "make_next_shift": "Duplicate and Make Consecutive"
+        "make_next_shift": "Duplicate and Make Consecutive",
+        "conflict_shift_another_team": "Conflicts with another assignment",
+        "conflict_shift_adjacent": "Adjacent to another assignment at different location"
     },
     "translation": {
         "management_system": "Translation Management System",

@@ -59,7 +59,15 @@
     <v-tabs-items v-model="tab">
       <v-tab-item v-for="n in 7" :key="n">
         <v-row class="ma-2">
-          <ShiftCard v-for="shift in filterShifts(filter_shifts ? shifts_available : shifts, n)" :key="shift.id" :shift="shift" :schedule="schedule" :width="cardWidth" class="ma-3"></ShiftCard>
+          <ShiftCard 
+            v-for="shift in filterShifts(filter_shifts ? shifts_available : shifts, n)" 
+            :key="shift.id" 
+            :shift="shift" 
+            :schedule="schedule" 
+            :user_shifts="user_shifts"
+            :width="cardWidth" 
+            class="ma-3"
+          ></ShiftCard>
         </v-row>
       </v-tab-item>
     </v-tabs-items>
@@ -85,6 +93,7 @@ export default {
       shifts: null,
       schedules: null,
       schedule: null,
+      user_shifts: null,
       hover: false,
       shifts_available: [],
       filter_shifts: true,
@@ -118,10 +127,21 @@ export default {
   },
 
   created() {
-    this.getSchedData()
+    this.initialize()
   },
 
   methods: {
+    async initialize() {
+      this.getUserShifts()
+    },
+
+    async getUserShifts () {
+      await axios.get('/api/user/shifts')
+        .then(response => {
+          this.user_shifts = response.data
+          this.getSchedData()
+        })
+    },
 
     async getSchedData () {
       await axios.get('/api/schedules/' + this.team.id)
@@ -155,6 +175,7 @@ export default {
           }
         })
     },
+
 
     dayOfWeek (daynum) {
       var days = []

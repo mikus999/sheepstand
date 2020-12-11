@@ -52,7 +52,7 @@
 
             <v-row>
               <v-col cols=12 md=7 lg=6 class="pa-sm-6">
-                <AvailabilitySchedule :data="user" />
+                <AvailabilitySchedule :data="user" :key="availability_key" v-on:updated="availability_key++" />
               </v-col>
 
               <v-col cols=12 md=5 lg=6 class="pa-sm-6">
@@ -194,6 +194,7 @@ export default {
       password2: null,
       showPwd: false,
       showPwd2: false,
+      availability_key: 0,
     }
   },
 

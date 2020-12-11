@@ -335,6 +335,70 @@ export const scheduling = {
     },
 
 
+    checkShiftConflicts (shift, user_shifts) {
+      // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
+
+      var warnings = []
+      var hasConflict = false
+      const shift_date = this.$dayjs(shift.time_start).format('YYYY-MM-DD')
+      const shift_start_hour = this.$dayjs(shift.time_start).hour()
+      var shift_end_hour = this.$dayjs(shift.time_end).hour()
+
+      if (this.$dayjs(shift.time_end).minute() > 0) {
+        shift_end_hour += 1
+      }
+    
+
+
+
+      // First, check shift against user's other assigned shifts in all teams
+      if (user_shifts && user_shifts.length > 0) {
+        var check_start = user_shifts.filter(s => 
+          shift.id != s.id &&
+          this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
+        );
+
+        check_start.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
+
+
+
+        var check_end = user_shifts.filter(s => 
+          shift.id != s.id &&
+          this.$dayjs(shift.time_end).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
+        );
+
+        check_end.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
+
+      }
+
+
+      
+      // Next, check and warn for any adjacent shifts at a different location
+      if (user_shifts && user_shifts.length > 0) {
+        var check_start = user_shifts.filter(s => 
+          shift.id != s.id &&
+          shift.location_id != s.location_id &&
+          this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end))
+        );
+
+        check_start.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
+
+
+
+        var check_end = user_shifts.filter(s => 
+          shift.id != s.id &&
+          shift.location_id != s.location_id &&
+          this.$dayjs(shift.time_end).isSame(this.$dayjs(s.time_start))
+        );
+
+        check_end.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
+
+      }
+
+
+      return warnings
+
+    }
   }
 }
 

@@ -23,10 +23,17 @@
         </div>
       </div>
 
-      <div class="mt-8">
-      </div>
     </v-card-text>
 
+    <v-card-text v-if="conflicts_user.length > 0" class="red warning-message pa-2">
+      <span 
+        v-for="(conflict, index) in conflicts_user" 
+        :key="index"
+        class="warning-text"
+      >
+        {{ getConflictMessage(conflict) }}
+      </span>
+    </v-card-text>
 
     <v-divider v-if="!onlyinfo" class="ma-0"></v-divider>
 
@@ -79,10 +86,14 @@ export default {
   },
   props: {
     shift: {
-      type: Object
+      type: [Object, Array]
     },
     schedule: {
-      type: Object
+      type: [Object, Array]
+    },
+    user_shifts: {
+      type: [Object, Array],
+      default: null
     },
     width: {
       type: [String, Number],
@@ -102,13 +113,17 @@ export default {
     return {
       request: false,
       trade: false,
-      locationOverlay: false
+      locationOverlay: false,
+      conflicts_user: [],
     }
   },
 
   created () {
     this.request = this.isShiftMember
     this.trade = this.myShiftStatus == 4
+
+    // Checks for possible conflicts with user's existing shift assignements in all teams
+    this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts)
   },
 
   computed: {
@@ -207,6 +222,20 @@ export default {
       this.locationOverlay = true
     },
 
+    getConflictMessage(conflict) {
+      var result = ''
+      result += this.$t('general.warning') + ': '
+      
+      if (conflict.type == 'conflict') {
+        result += this.$t('shifts.conflict_shift_another_team')
+        result += ' (' + conflict.team + ')'
+      } else if (conflict.type == 'adjacent') {
+        result += this.$t('shifts.conflict_shift_adjacent')
+        result += ' (' + conflict.team + ')'
+      }
+
+      return result
+    },
 
     async updateTrade () {
       if (this.trade || await this.$root.$confirm(this.$t('shifts.confirm_trade_offer'), null, 'info')) {
@@ -258,6 +287,17 @@ export default {
     border-style: dashed;
     border-color: 'grey';
     border-width: thin;
+  }
+
+  .warning-message {
+    line-height: 1;
+  }
+
+  .warning-text {
+    font-size: .75rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: capitalize;
   }
 
 </style>

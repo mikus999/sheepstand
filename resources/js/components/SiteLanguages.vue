@@ -85,9 +85,6 @@ export default {
         var changetype = 'remove'
       }
 
-      console.log(lang)
-      console.log(changetype)
-
       await axios({
         method: 'post',      
         url: '/api/translation/languages/edit/',
