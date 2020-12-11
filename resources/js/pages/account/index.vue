@@ -39,6 +39,13 @@
                   </template>
                 </v-text-field>
 
+                <div class="my-6">
+                  <v-subheader class="pa-0">{{ $t('account.fts_status') }}</v-subheader>
+                  <v-radio-group v-model="userData.fts_status" class="my-0" @change="updateFTS()">
+                    <v-radio v-for="fts in ftsStatus" :key="fts.value" :label="fts.text" />
+                  </v-radio-group>
+                </div>
+
 
                 <div class="my-6" v-if="hasTeam">
                   <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
@@ -279,6 +286,19 @@ export default {
     },
 
 
+    async updateFTS () {
+      await axios({
+        method: 'post',      
+        url: '/api/account/fts',
+        data: {
+          status: this.userData.fts_status
+        }
+      })
+      .then(response => {
+          this.refreshUser()
+          this.showSnackbar(this.$t('general.info_updated'), 'success')
+      });
+    },
 
     async leaveTeam() {
       if (await this.$root.$confirm(this.$t('teams.confirm_leave_team'), null, 'error')) {

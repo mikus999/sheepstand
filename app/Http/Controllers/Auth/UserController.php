@@ -78,4 +78,22 @@ class UserController extends Controller
       
       return response()->json($data);
     }
+
+
+
+    public function updateFTSStatus(Request $request)
+    {
+      $user = Auth::user();
+      $targetUser = $user;
+
+      if ($request->user_id) {
+        $targetUser = User::find($request->user_id);
+      }
+
+      $targetUser->fts_status = $request->status;
+      $targetUser->save();
+
+      return response()->json($targetUser);
+
+    }
 }

@@ -105,6 +105,33 @@ export const helper = {
         }
       ],
 
+      ftsStatus: [
+        {
+          value: 0,
+          text: this.$t('account.fts_publisher')
+        },
+        {
+          value: 1,
+          text: this.$t('account.fts_pioneer')
+        },
+        {
+          value: 2,
+          text: this.$t('account.fts_sfts')
+        },
+        {
+          value: 3,
+          text: this.$t('account.fts_co')
+        },                        
+        {
+          value: 4,
+          text: this.$t('account.fts_bethelite')
+        },        
+        {
+          value: 5,
+          text: this.$t('account.fts_construction')
+        }
+      ],
+
       templateStartDate: '2001-01-01', // MONDAY, JANUARY 1, 2001
     }
   },
@@ -145,6 +172,10 @@ export const helper = {
 
     async refreshStore () {
       await this.$store.dispatch('general/init')
+    },
+
+    async refreshUser () {
+      await this.$store.dispatch('auth/fetchUser')
     },
 
     async getTeams () {
@@ -349,52 +380,55 @@ export const scheduling = {
       }
     
 
+      // Only check for conflicts if the user is assigned to this shift
+      var in_shift = user_shifts.filter(s => s.id == shift.id)
+      if (in_shift.length > 0) { 
+
+  
+        // First, check shift against user's other assigned shifts in all teams
+        if (user_shifts && user_shifts.length > 0) {
+          var check_start = user_shifts.filter(s => 
+            shift.id != s.id &&
+            this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
+          );
+
+          check_start.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
 
 
-      // First, check shift against user's other assigned shifts in all teams
-      if (user_shifts && user_shifts.length > 0) {
-        var check_start = user_shifts.filter(s => 
-          shift.id != s.id &&
-          this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
-        );
 
-        check_start.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
+          var check_end = user_shifts.filter(s => 
+            shift.id != s.id &&
+            this.$dayjs(shift.time_end).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
+          );
+
+          check_end.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
+
+        }
+
+
+        
+        // Next, check and warn for any adjacent shifts at a different location
+        if (user_shifts && user_shifts.length > 0) {
+          var check_start = user_shifts.filter(s => 
+            shift.id != s.id &&
+            shift.location_id != s.location_id &&
+            this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end))
+          );
+
+          check_start.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
 
 
 
-        var check_end = user_shifts.filter(s => 
-          shift.id != s.id &&
-          this.$dayjs(shift.time_end).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
-        );
+          var check_end = user_shifts.filter(s => 
+            shift.id != s.id &&
+            shift.location_id != s.location_id &&
+            this.$dayjs(shift.time_end).isSame(this.$dayjs(s.time_start))
+          );
 
-        check_end.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
+          check_end.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
 
+        }
       }
-
-
-      
-      // Next, check and warn for any adjacent shifts at a different location
-      if (user_shifts && user_shifts.length > 0) {
-        var check_start = user_shifts.filter(s => 
-          shift.id != s.id &&
-          shift.location_id != s.location_id &&
-          this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end))
-        );
-
-        check_start.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
-
-
-
-        var check_end = user_shifts.filter(s => 
-          shift.id != s.id &&
-          shift.location_id != s.location_id &&
-          this.$dayjs(shift.time_end).isSame(this.$dayjs(s.time_start))
-        );
-
-        check_end.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
-
-      }
-
 
       return warnings
 

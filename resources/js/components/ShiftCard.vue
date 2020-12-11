@@ -9,6 +9,7 @@
       <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
     </v-card-subtitle>
 
+
     <v-card-text :style="'overflow-y: auto; height: ' + height">
       <div v-if="onlyinfo" class="text-overline">{{ $t('shifts.participants') }}</div>
       <div v-for="user in shift.users" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
@@ -22,18 +23,16 @@
           <span>{{ $t('general.available') }}</span>
         </div>
       </div>
-
     </v-card-text>
 
-    <v-card-text v-if="conflicts_user.length > 0" class="red warning-message pa-2">
-      <span 
-        v-for="(conflict, index) in conflicts_user" 
-        :key="index"
-        class="warning-text"
-      >
-        {{ getConflictMessage(conflict) }}
-      </span>
-    </v-card-text>
+    <v-system-bar :color="$vuetify.theme.dark ? '#1c1c1c' : '#ffffff'">
+      <MarqueeText v-if="hasConflicts">
+          <span v-for="(conflict, index) in conflicts_user" :key="index" class="warning-text">
+            <v-icon color="red" class="ml-6">mdi-alert-box</v-icon>
+            {{ getConflictMessage(conflict) }}
+          </span>
+      </MarqueeText>
+    </v-system-bar>
 
     <v-divider v-if="!onlyinfo" class="ma-0"></v-divider>
 
@@ -64,6 +63,7 @@
       </v-btn>
     </v-card-actions>
 
+
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="shift.location" :fill="shift.location.color_code" :width="mapWidth" height="500px" readonly 
           v-on:close="locationOverlay = false" v-on:click.native.stop/>
@@ -77,12 +77,14 @@ import axios from 'axios'
 import { helper, scheduling, messages } from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
 import Leaflet from '~/components/Leaflet.vue'
+import MarqueeText from 'vue-marquee-text-component'
 
 export default {
   name: 'ShiftCard',
   mixins: [helper, scheduling, messages, mtproto],
   components: {
-    Leaflet
+    Leaflet,
+    MarqueeText
   },
   props: {
     shift: {
@@ -115,15 +117,17 @@ export default {
       trade: false,
       locationOverlay: false,
       conflicts_user: [],
+      user_shifts_mutable: [],
     }
   },
 
   created () {
     this.request = this.isShiftMember
     this.trade = this.myShiftStatus == 4
+    this.user_shifts_mutable = this.user_shifts
 
     // Checks for possible conflicts with user's existing shift assignements in all teams
-    this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts)
+    this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts_mutable)
   },
 
   computed: {
@@ -162,6 +166,10 @@ export default {
     mapWidth() {
       var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
       return newWidth
+    },
+
+    hasConflicts() {
+      return this.conflicts_user.length > 0
     }
   },
 
@@ -214,6 +222,8 @@ export default {
       })
       .then(response => {
         this.shift.users = response.data.shiftusers
+        this.user_shifts_mutable = response.data.usershifts
+        this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts_mutable)
       })
 
     },
@@ -224,14 +234,13 @@ export default {
 
     getConflictMessage(conflict) {
       var result = ''
-      result += this.$t('general.warning') + ': '
-      
+
       if (conflict.type == 'conflict') {
         result += this.$t('shifts.conflict_shift_another_team')
-        result += ' (' + conflict.team + ')'
+        this.team.display_name == conflict.team ? '' : result += ' (' + conflict.team + ')'
       } else if (conflict.type == 'adjacent') {
         result += this.$t('shifts.conflict_shift_adjacent')
-        result += ' (' + conflict.team + ')'
+        this.team.display_name == conflict.team ? '' : result += ' (' + conflict.team + ')'
       }
 
       return result
@@ -289,15 +298,11 @@ export default {
     border-width: thin;
   }
 
-  .warning-message {
-    line-height: 1;
-  }
-
   .warning-text {
     font-size: .75rem;
     font-weight: bold;
-    color: #ffffff;
-    text-transform: capitalize;
+    color: #ff0000;
+    text-transform: uppercase;
   }
 
 </style>

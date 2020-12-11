@@ -122,7 +122,14 @@
         "availability": "Availability",
         "vacation_schedule": "Vacation Schedule",
         "confirm_delete_vacation": "Are you sure you want to delete this vacation?",
-        "time_slot": "Time Slot"
+        "time_slot": "Time Slot",
+        "fts_status": "Fulltime Service Status",
+        "fts_publisher": "Publisher",
+        "fts_pioneer": "Regular Pioneer",
+        "fts_sfts": "Special Pioneer/Missionary",
+        "fts_co": "Circuit Overseer/Wife",
+        "fts_bethelite": "Bethelite",
+        "fts_construction": "Construction Servant"
     },
     "roles": {
         "publisher": "Publisher",

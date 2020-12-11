@@ -54,6 +54,12 @@
         </v-toolbar>
       </template>
 
+      <template v-slot:item.fts_status="{ item }">
+        <a @click="showFTSOverlay(item)" class="text-no-decoration">
+          {{ ftsStatus[item.fts_status].text }}
+        </a>
+      </template>
+
       <template v-slot:item.team_role="{ item }">
         <a @click="showRolesOverlay(item)" class="text-no-decoration" v-if="team && (team.user_id != item.id)">
           <v-icon small>mdi-shield-account</v-icon>
@@ -92,7 +98,10 @@
     <v-overlay :value="changeOwnerOverlay" :dark="theme=='dark'">
       <ChangeOwner :data="userData" :owner="currUser" width="300px" height="100%" @close="changeOwnerOverlay = false; getUserData()"></ChangeOwner>
     </v-overlay>
-    
+
+    <v-overlay :value="changeFTSOverlay" :dark="theme=='dark'">
+      <FTSStatus :data="currUser" width="300px" height="100%" @close="changeFTSOverlay = false; getUserData()"></FTSStatus>
+    </v-overlay>
   </v-card>
 </template>
 
@@ -101,13 +110,15 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 import UserRoles from '~/components/UserRoles.vue'
 import ChangeOwner from '~/components/ChangeOwner.vue'
+import FTSStatus from '~/components/FTSStatus.vue'
 
 export default {
   name: 'UserTable',
   mixins: [helper],
   components: { 
     UserRoles,
-    ChangeOwner
+    ChangeOwner,
+    FTSStatus
   },
   
   props: {
@@ -124,6 +135,7 @@ export default {
       newUserCode: '',
       rolesOverlay: false,
       changeOwnerOverlay: false,
+      changeFTSOverlay: false,
       currUser: null,
       userSearch: '',
       userHeadersTeam: [
@@ -135,6 +147,10 @@ export default {
         {
           text: this.$t('general.email'),
           value: 'email'
+        },
+        {
+          text: this.$t('account.fts_status'),
+          value: 'fts_status'
         },
         {
           text: this.$t('account.user_code'),
@@ -228,6 +244,11 @@ export default {
     showChangeOwnerOverlay(user) {
       this.currUser = user
       this.changeOwnerOverlay = true
+    },
+
+    showFTSOverlay(user) {
+      this.currUser = user
+      this.changeFTSOverlay = true
     },
 
     async addUser() {

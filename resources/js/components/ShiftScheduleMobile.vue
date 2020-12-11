@@ -44,17 +44,21 @@
         {{ $dayjs(d).format('ddd, L') }}
       </div>
 
-      <ShiftCard 
-        v-for="shift in sortedShifts(d)" 
-        :key="shift.id" 
-        :shift="shift" 
-        :schedule="shift.schedule" 
-        :width="cardWidth" 
-        class="ma-3"
-      ></ShiftCard>
+      <v-col cols=12>
+        <ShiftCard 
+          v-for="shift in sortedShifts(d)" 
+          :key="shift.id" 
+          :shift="shift" 
+          :schedule="shift.schedule" 
+          :user_shifts="user_shifts"
+          class="my-5"
+        ></ShiftCard>
+      </v-col>
 
-      <v-divider class="my-8" />
-
+      <v-col>
+        <v-divider class="my-8" />
+      </v-col>
+      
     </v-row>
   </v-card>
 </template>
@@ -78,6 +82,7 @@ export default {
       shifts: [],
       schedules: null,
       schedule: null,
+      user_shifts: null,
       hover: false,
       availableDates: [],
       selectedDates: [],
@@ -95,36 +100,25 @@ export default {
       return headerString
     },
 
-
-    cardWidth () {
-      var width = null
-
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          width = '100%'
-          break
-        case 'sm':
-          width = '29%'
-          break
-        case 'md':
-          width = '22%'
-          break
-        case 'xl':
-          width = '16%'
-          break
-        default:
-          width = '22%'
-      }
-
-      return width
-    }
   },
 
   created() {
-    this.getSchedData()
+    this.initialize()
   },
 
   methods: {
+    async initialize() {
+      this.getUserShifts()
+    },
+
+    async getUserShifts () {
+      await axios.get('/api/user/shifts')
+        .then(response => {
+          this.user_shifts = response.data
+          this.getSchedData()
+        })
+    },
+
     allowedDates (val) {
       return this.availableDates.indexOf(val) > -1
     },
