@@ -329,6 +329,7 @@ export default {
         })
         .then(response => {
           this.teamData = response.data
+          this.refreshStore()
         })
     },
 
