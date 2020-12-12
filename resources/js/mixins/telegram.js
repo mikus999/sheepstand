@@ -212,6 +212,7 @@ export const mtproto = {
 
         this.botAdd()
         this.updateDB(group)
+        this.$store.dispatch('general/init')
 
         this.stepperGo(6)
       })
@@ -330,9 +331,11 @@ export const mtproto = {
           access_hash: group.access_hash
         }
       })
+      .then(response => {
+        this.$store.commit('auth/SET_TEAM', response.data)
+        this.setGroupLink(group.id)
+      })
       
-      //await this.setGroupLink(group.id)
-
     },
 
     async disableNotifications() {
@@ -347,6 +350,7 @@ export const mtproto = {
         })
         .then(response => {
           this.showSnackbar(this.$t('notifications.success_disable_notifications'), 'success')
+          this.$store.commit('auth/SET_TEAM', response.data)
         })
       }
     },
@@ -370,6 +374,9 @@ export const mtproto = {
           data: {
             group_link: link
           }
+        })
+        .then(result => {
+          this.$store.commit('auth/SET_TEAM', result.data)
         })
 
       })
@@ -427,7 +434,7 @@ export const mtproto = {
           peer: peerChannel
         })
         .then(result => {
-          console.log(result)
+          //console.log(result)
         })
             
         

@@ -46,7 +46,9 @@ class NotificationController extends Controller
         }
       }
 
-      return response()->json($settings);
+      $team = $user->teams()->find($id);
+
+      return response()->json($team);
     }
 
 
@@ -123,6 +125,9 @@ class NotificationController extends Controller
         }
       }
 
+      $team = $user->teams()->find($id);
+
+      return response()->json($team);
     }
 
 

@@ -143,6 +143,19 @@ export const actions = {
   },
 
 
+  async refreshTeam({ state, commit }) {
+    if (state.team !== undefined) {
+      await axios({
+        method: 'get',      
+        url: '/api/teams/' + state.team.id
+      })
+      .then(response => {
+        commit(types.SET_TEAM, response.data)
+      })
+    }
+  },
+
+
   async setTeam ({ commit }, team) {  
     if (team !== undefined) {
       await axios({

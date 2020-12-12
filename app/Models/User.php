@@ -70,7 +70,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function shifts()
     {
-        return $this->belongsToMany('App\Models\Shift')->withPivot('status')->withTimeStamps();
+        return $this->belongsToMany('App\Models\Shift')->with('schedule')->withPivot('status')->withTimeStamps();
     }
 
     public function languages()

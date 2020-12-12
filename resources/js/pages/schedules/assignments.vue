@@ -111,7 +111,7 @@
                     </v-list-item-avatar>
                     <v-list-item-content @click="addShiftUser(data, item)">
                       <v-list-item-title>{{ data.item.name }}</v-list-item-title>
-                      <v-list-item-subtitle></v-list-item-subtitle>
+                      <v-list-item-subtitle>{{ checkShiftConflicts(item, data.item.shifts).length > 0 ? $t('shifts.conflict_shift_another_team') : '' }}</v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
                 </template>

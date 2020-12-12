@@ -145,7 +145,7 @@
                 {{ $t('notifications.notifications_now_enabled') }}
               </p>
 
-              <v-btn text @click="cancelSetup">{{ $t('general.close') }}</v-btn>
+              <v-btn text @click="close()">{{ $t('general.close') }}</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -182,6 +182,10 @@ export default {
   },
 
   created() {
+    if (this.notificationsEnabled) {
+      this.$router.push({ name: 'teams.index'})
+    }
+
     this.mtInitialize()
     this.group_name = this.team.display_name
     this.group_desc = 'SheepStand.com notifications'
@@ -196,6 +200,10 @@ export default {
     codeInputComplete(value) {
       this.login_code = value
       this.signIn()
+    },
+
+    close() {
+      this.$router.go(-1)
     }
   }
 }

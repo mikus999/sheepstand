@@ -178,6 +178,10 @@ export const helper = {
       await this.$store.dispatch('auth/fetchUser')
     },
 
+    async refreshTeam() {
+      await this.$store.dispatch('auth/refreshTeam')
+    },
+
     async getTeams () {
       await this.$store.dispatch('auth/fetchUser')
     },

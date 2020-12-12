@@ -336,7 +336,7 @@ class TeamController extends Controller
       $teamUsers = [];
 
       if ($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null)) {
-        $teamUsers = $team->users;
+        $teamUsers = $team->users()->with('shifts')->get();
 
         foreach($teamUsers as $key => $user) {
           $targetUser = User::find($user->id);
