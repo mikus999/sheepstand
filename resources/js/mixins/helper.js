@@ -76,13 +76,13 @@ export const helper = {
         { 
           value: 0,
           text: this.$t('shifts.status_0'), 
-          color: 'deep-orange',
-          icon: 'mdi-account-clock'
+          color: 'pink',
+          icon: 'mdi-account-question'
         },
         { 
           value: 1,
           text: this.$t('shifts.status_1'), 
-          color: 'deep-orange',
+          color: 'grey',
           icon: 'mdi-account-clock'
         },
         { 
@@ -321,6 +321,8 @@ export const scheduling = {
       return avail_users
     },
 
+
+
     checkShiftAvailability(shift, user) {
       // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
 
@@ -339,21 +341,18 @@ export const scheduling = {
 
       // First, check shift against user's weekly availability schedule
       if (availability && availability.length > 0) {
-        var check_start = availability.filter(a => 
+        var check = availability.filter(a => 
           a.day_of_week == shift_dow && 
-          shift_start_hour >= this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
-          shift_start_hour < this.$dayjs('2001-01-01 ' + a.end_time).hour() &&
-          a.available == 1
+          a.available == 1 &&
+          (
+            (shift_start_hour >= this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
+            shift_start_hour < this.$dayjs('2001-01-01 ' + a.end_time).hour()) ||
+            (shift_end_hour > this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
+            shift_end_hour <= this.$dayjs('2001-01-01 ' + a.end_time).hour())
+          )
         );
 
-        var check_end = availability.filter(a => 
-          a.day_of_week == shift_dow && 
-          shift_end_hour > this.$dayjs('2001-01-01 ' + a.start_time).hour() &&
-          shift_end_hour <= this.$dayjs('2001-01-01 ' + a.end_time).hour() &&
-          a.available == 1
-        );
-
-        result = check_start.length > 0 && check_end.length > 0
+        result = check.length > 0
       }
 
 
@@ -370,11 +369,10 @@ export const scheduling = {
     },
 
 
-    checkShiftConflicts (shift, user_shifts) {
+    checkShiftConflicts (shift, user_shifts, alwaysCheck = false) {
       // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
 
       var warnings = []
-      var hasConflict = false
       const shift_date = this.$dayjs(shift.time_start).format('YYYY-MM-DD')
       const shift_start_hour = this.$dayjs(shift.time_start).hour()
       var shift_end_hour = this.$dayjs(shift.time_end).hour()
@@ -386,53 +384,38 @@ export const scheduling = {
 
       // Only check for conflicts if the user is assigned to this shift
       var in_shift = user_shifts.filter(s => s.id == shift.id)
-      if (in_shift.length > 0) { 
 
-  
+      if (alwaysCheck || in_shift.length > 0) { 
+
         // First, check shift against user's other assigned shifts in all teams
         if (user_shifts && user_shifts.length > 0) {
-          var check_start = user_shifts.filter(s => 
+          var check = user_shifts.filter(s => 
             shift.id != s.id &&
-            this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
+            (
+              this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '[)') ||
+              this.$dayjs(shift.time_end).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '(]')
+            )
           );
 
-          check_start.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
-
-
-
-          var check_end = user_shifts.filter(s => 
-            shift.id != s.id &&
-            this.$dayjs(shift.time_end).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '()')
-          );
-
-          check_end.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
-
+          check.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
         }
 
 
-        
         // Next, check and warn for any adjacent shifts at a different location
         if (user_shifts && user_shifts.length > 0) {
-          var check_start = user_shifts.filter(s => 
+          var check = user_shifts.filter(s => 
             shift.id != s.id &&
             shift.location_id != s.location_id &&
-            this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end))
+            (this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end)) ||
+            this.$dayjs(shift.time_end).isSame(this.$dayjs(s.time_start)))
           );
 
-          check_start.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
-
-
-
-          var check_end = user_shifts.filter(s => 
-            shift.id != s.id &&
-            shift.location_id != s.location_id &&
-            this.$dayjs(shift.time_end).isSame(this.$dayjs(s.time_start))
-          );
-
-          check_end.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
-
+          check.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
         }
       }
+
+      // Remove duplicate warnings
+      warnings = warnings.filter((v,i,a)=>a.findIndex(t=>(t.type === v.type && t.team===v.team))===i)
 
       return warnings
 

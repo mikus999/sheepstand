@@ -226,7 +226,8 @@ class ShiftController extends Controller
 
                 $data = [
                     'shiftusers' => $shiftusers,
-                    'usershifts' => $usershifts
+                    'usershifts' => $usershifts,
+                    'teamusers' =>  $team->users()->with('shifts')->get()
                 ];
             }
         }
@@ -270,7 +271,9 @@ class ShiftController extends Controller
 
                 $data = [
                     'shiftusers' => $shiftusers,
-                    'usershifts' => $usershifts
+                    'usershifts' => $usershifts,
+                    'teamusers' =>  $team->users()->with('shifts')->get()
+
                 ];
             }
         }

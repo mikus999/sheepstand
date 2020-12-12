@@ -28,15 +28,43 @@
           <v-icon>mdi-card-account-details-outline</v-icon>
         </v-btn>
 
-        <v-btn icon :disabled="!showTradeButton(item)" :color="item.pivot.status == 4 ? 'blue' : ''" @click.stop="updateTrade(item)">
-          <v-icon>mdi-account-convert</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn 
+              icon 
+              v-if="!showTradeButton(item)" 
+              :color="shiftStatus[item.pivot.status].color" 
+              @click.stop="updateStatus(item)"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>{{ shiftStatus[item.pivot.status].icon }}</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ shiftStatus[item.pivot.status].text }}</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn 
+              icon  
+              v-if="showTradeButton(item)" 
+              :color="item.pivot.status == 4 ? 'blue' : ''" 
+              @click.stop="updateTrade(item)"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-account-convert</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ item.pivot.status == 4 ? $t('shifts.status_4') : $t('shifts.status_2a') }}</span>
+        </v-tooltip>       
       </template>
 
     </v-data-table>
 
     <v-overlay :value="shiftOverlay" :dark="theme=='dark'">
-      <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px" height="100%" v-on:close="shiftOverlay = false"></ShiftCard>
+      <ShiftCard :shift="shift" :schedule="schedule" :user_shifts="shiftsAll" onlyinfo width="300px" height="100%" v-on:close="shiftOverlay = false"></ShiftCard>
     </v-overlay>
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
@@ -138,6 +166,66 @@ export default {
       return (shift.schedule.status == 2) && (result > 1)
 
     },
+
+    async updateStatus(shift) {
+      var newStatus = 0
+      var confirm_msg = null
+      var success_msg = null
+
+      if (shift.pivot.status == 0) {
+        newStatus = 2
+        confirm_msg = this.$t('shifts.confirm_trade')
+      } else if (shift.pivot.status == 1) {
+        newStatus = 9
+        confirm_msg = this.$t('shifts.confirm_remove_request')
+      } else if (shift.pivot.status == 2 && shift.schedule.status != 2) {
+        newStatus = 9
+        confirm_msg = this.$t('shifts.confirm_remove_shift')
+      } else {
+        console.log(shift)
+      }
+
+
+
+      if (await this.$root.$confirm(confirm_msg, null, 'info')) {
+        if (newStatus == 9) {
+          this.leaveShift(shift)
+
+        } else {
+          await axios({
+            method: 'post',      
+            url: '/api/schedules/shiftuserstatus',
+            data: {
+              user_id: this.user.id,
+              shift_id: shift.id,
+              status: newStatus
+            }
+          })
+          .then(response => {
+            this.getShifts()
+          })
+        }
+      }
+    },
+
+
+    async leaveShift (shift) {
+      var url = '/api/schedules/leaveshift'      
+
+      await axios({
+        method: 'post',      
+        url: url,
+        data: {
+          user_id: this.user.id,
+          shift_id: shift.id
+        }
+      })
+      .then(response => {
+          this.getShifts()
+      })
+
+    },
+
 
     async updateTrade (shift) {
       if (shift.pivot.status == 4 || await this.$root.$confirm(this.$t('shifts.confirm_trade_offer'), null, 'info')) {

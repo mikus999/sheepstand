@@ -27,7 +27,13 @@
 
       <v-row>
         <v-col md="12">
-          <v-data-table :headers="shiftHeaders" :items="shiftData" :key="shiftTable_key" sort-by="time_start" sort-asc>
+          <v-data-table 
+            :headers="shiftHeaders" 
+            :items="shiftData" 
+            :key="shiftTable_key" 
+            sort-by="time_start" 
+            sort-asc
+          >
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title>{{ $t('schedules.assignments') }}</v-toolbar-title>
@@ -66,6 +72,7 @@
                 item-value="id" 
                 :id="'shift'+item.id"
                 :menu-props="{ bottom: true, offsetY: true }"
+                :key="shift_key + item.id"
               >
 
                 <!-- NUMBER OF SHIFT ASSIGNMENTS -->
@@ -89,6 +96,14 @@
                     :input-value="data.selected" 
                     :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
                   >
+                    <v-icon
+                      small
+                      left
+                      v-if="checkShiftConflicts(item, data.item.shifts, true).length > 0"
+                    >
+                      mdi-alert
+                    </v-icon>
+
                     {{ data.item.name}}
                     
                     <v-icon 
@@ -105,13 +120,15 @@
 
                 <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
                 <template v-slot:item="data">
-                  <v-list-item dense>
+                  <v-list-item dense @click="addShiftUser(data, item)">
                     <v-list-item-avatar class="ma-0">
                       <v-icon small :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
                     </v-list-item-avatar>
-                    <v-list-item-content @click="addShiftUser(data, item)">
+                    <v-list-item-content>
                       <v-list-item-title>{{ data.item.name }}</v-list-item-title>
-                      <v-list-item-subtitle>{{ checkShiftConflicts(item, data.item.shifts).length > 0 ? $t('shifts.conflict_shift_another_team') : '' }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="red--text">
+                        <span v-html="getConflictMessage(checkShiftConflicts(item, data.item.shifts, true))"></span>
+                      </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -149,6 +166,7 @@ export default {
       dialog: false,
       date: '',
       shiftTable_key: 1,
+      shift_key: 1,
       schedData: [],
       shiftData: [],
       shiftHeaders: [
@@ -216,6 +234,7 @@ export default {
       })
       .then(response => {
         shift.users = response.data.shiftusers
+        this.teamUsers = response.data.teamusers
       })
     },
 
@@ -241,6 +260,7 @@ export default {
         .then(response => {
           user.pivot.status = status
           shift.users = response.data.shiftusers
+          this.teamUsers = response.data.teamusers
         })
       }
 
@@ -283,16 +303,38 @@ export default {
 
 
     checkMax (target, actual) {
-        var color = 'grey darken-3'
+      var color = 'grey darken-3'
 
-        if (target === actual) {
-          color = 'green'
-        } else if (target < actual) {
-          color="red darken-4"
-        }
+      if (target === actual) {
+        color = 'green'
+      } else if (target < actual) {
+        color="red darken-4"
+      }
 
-        return color
-      },
+      return color
+    },
+
+    
+    getConflictMessage(conflicts) {
+      var result = ''
+
+      if (conflicts.length > 0) {
+        conflicts.forEach(conflict => {
+          if (result != '') result += '<br>'
+
+          if (conflict.type == 'conflict') {
+            result += this.$t('shifts.conflict_shift_another_team')
+            this.team.display_name == conflict.team ? '' : result += ' (' + conflict.team + ')'
+          } else if (conflict.type == 'adjacent') {
+            result += this.$t('shifts.conflict_shift_adjacent')
+            this.team.display_name == conflict.team ? '' : result += ' (' + conflict.team + ')'
+          }
+        })
+        
+      }
+
+      return result
+    },
   }
 }
 
