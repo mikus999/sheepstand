@@ -82,7 +82,7 @@
           <v-icon small>mdi-shield-edit</v-icon>
         </v-btn>
 
-        <v-btn icon small @click="removeUser(item)" v-if="team && (team.user_id != item.id)">
+        <v-btn icon small @click="removeUser(item)" v-if="teamUsers && team && (team.user_id != item.id)">
           <v-icon small>mdi-account-minus</v-icon>
         </v-btn>
       </template>

@@ -31,8 +31,8 @@
             :headers="shiftHeaders" 
             :items="shiftData" 
             :key="shiftTable_key" 
-            sort-by="time_start" 
-            sort-asc
+            sort-by="time_start"
+            multi-sort
           >
             <template v-slot:top>
               <v-toolbar flat>
@@ -48,12 +48,12 @@
               </v-toolbar>
             </template>
 
-            <template v-slot:item.day="{ item }">
+            <template v-slot:item.time_start="{ item }">
               {{ item.time_start | formatDay }}<br />
               {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
             </template>
 
-            <template v-slot:item.location="{ item }">
+            <template v-slot:item.location_id="{ item }">
               <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
             </template>
 
@@ -170,9 +170,24 @@ export default {
       schedData: [],
       shiftData: [],
       shiftHeaders: [
-        { text: this.$t('shifts.shift_time'), align: 'start', value: 'day' },
-        { text: this.$t('shifts.location'), value: 'location', align: 'center'},
-        { text: this.$t('shifts.assignments'), value: 'assignments', align: 'start', sortable: false, width: '60%'},
+        { 
+          text: this.$t('shifts.shift_time'), 
+          value: 'time_start', 
+          align: 'start', 
+          sort: (a, b) => this.$dayjs(a).isoWeekday() - this.$dayjs(b).isoWeekday() 
+        },
+        { 
+          text: this.$t('shifts.location'), 
+          value: 'location_id', 
+          align: 'center'
+        },
+        { 
+          text: this.$t('shifts.assignments'), 
+          value: 'assignments', 
+          align: 'start', 
+          sortable: false,
+          width: '60%'
+        },
       ],
       teamUsers: [],
       shiftUsers: {},

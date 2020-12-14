@@ -70,8 +70,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="grey" text @click="close">{{ $t('general.cancel') }}</v-btn>
-                  <v-btn color="primary" text @click="createOrUpdate">
+                  <v-btn text @click="close">{{ $t('general.cancel') }}</v-btn>
+                  <v-btn color="primary" @click="createOrUpdate">
                     {{ isEdit ? $t('general.save') : $t('general.create') }}
                   </v-btn>
                 </v-card-actions>

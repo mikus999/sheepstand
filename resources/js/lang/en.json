@@ -48,7 +48,8 @@
         "test": "Test",
         "duplicate": "Duplicate",
         "note": "Note",
-        "warning": "Warning"
+        "warning": "Warning",
+        "sort_by": "Sort By"
     },
     "menu": {
         "dashboard": "Dashboard",

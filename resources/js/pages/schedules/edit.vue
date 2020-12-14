@@ -38,13 +38,16 @@
           <div class="swiper-button-prev" v-if="$vuetify.breakpoint.smAndUp"></div>
           <div class="swiper-button-next" v-if="$vuetify.breakpoint.smAndUp"></div>      
 
-          <v-col v-if="!isTemplate">
+          <v-col cols=12 sm=6 v-if="!isTemplate">
+            <v-subheader class="pa-0">{{ $t('schedules.status') }}</v-subheader>
+
             <v-switch 
               v-model="sw_status_visible" 
               :label="$t('schedules.schedule_visible')" 
               @click="updateScheduleStatus" 
               hide-details 
               :disabled="sw_status_archive"
+              class="mt-0"
             />
 
             <v-switch 
@@ -61,6 +64,14 @@
               @click="updateScheduleStatus" 
               hide-details 
             />
+          </v-col>
+
+          <v-col cols=12 :sm="!isTemplate ? '6' : '12'">
+            <v-subheader class="pa-0">{{ $t('general.sort_by') }}</v-subheader>
+            <v-radio-group v-model="sort_options" class="my-0" @change="parseSchedule()">
+              <v-radio :label="$t('shifts.shift_time')" value="time_start" />
+              <v-radio :label="$t('shifts.location')" value="location" />
+            </v-radio-group>
           </v-col>
         </v-row>
 
@@ -100,24 +111,28 @@
       <v-divider />
 
       <v-card-actions>
-        <v-spacer />
-        <v-btn
-          color="error"
-          text
-          @click="deleteSched"
-        >
-          {{ isTemplate ? $t('schedules.delete_template') : $t('schedules.delete_schedule') }}
-        </v-btn>
 
+        <v-row>
+          <v-col cols=12 class="text-right">
+            <v-btn
+              color="error"
+              text
+              :block="$vuetify.breakpoint.xs"
+              @click="deleteSched"
+            >
+              {{ isTemplate ? $t('schedules.delete_template') : $t('schedules.delete_schedule') }}
+            </v-btn>
 
-        <v-btn 
-          v-if="!isTemplate"
-          color="secondary" 
-          :block="$vuetify.breakpoint.xs"
-          @click="openSaveTemplateDialog"
-        >
-          {{ $t('schedules.save_as_template') }}
-        </v-btn> 
+            <v-btn 
+              v-if="!isTemplate"
+              color="secondary" 
+              :block="$vuetify.breakpoint.xs"
+              @click="openSaveTemplateDialog"
+            >
+              {{ $t('schedules.save_as_template') }}
+            </v-btn> 
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
 
@@ -200,6 +215,7 @@ export default {
       sw_status_visible: false,
       sw_status_closed: false,
       sw_status_archive: false,
+      sort_options: 'location',
       keyShiftNewCard: 0,
       newTemplateName: null,
       shiftDefaults: {
@@ -347,7 +363,29 @@ export default {
         item.date = this.$dayjs(this.schedule.date_start).add(item.id, 'd').format('YYYY-MM-DD')
         item.list = this.schedule.shifts.filter(shift => shift.time_start.includes(item.date))
       })
+
+      this.sortShifts()
     },
+
+
+    sortShifts() {
+      this.days7.forEach ((item) => {
+        item.list.sort((a,b) => {
+          if (this.sort_options == 'location') {
+            var result = a.location_id - b.location_id
+            if (result == 0) {
+              return this.$dayjs(a.time_start).isBefore(this.$dayjs(b.time_start)) ? -1 : 1
+            } else {
+              return result
+            }
+
+          } else if (this.sort_options == 'time_start') {
+            return this.$dayjs(a.time_start).isBefore(this.$dayjs(b.time_start)) ? -1 : 1
+          }
+        })
+      })
+    },
+
 
     updateSchedule (sched) {
       this.schedule = sched
