@@ -296,6 +296,7 @@ class ShiftController extends Controller
         $userid = $request->user_id;
         $shiftid = $request->shift_id;
         $status = $request->status;
+        $date = date_create(now())->modify('-7 days');
 
         $shift = Shift::find($shiftid);
         $schedule = $user->schedules->find($shift->schedule_id);
@@ -305,8 +306,16 @@ class ShiftController extends Controller
             $targetUser->shifts()->updateExistingPivot($shiftid, ['status' => $status]);
 
             $shiftusers = Shift::find($shiftid)->users()->get();
+
+            $usershifts = $targetUser->shifts()
+            ->with('schedule', 'location', 'users')
+            ->where('time_start','>',$date)
+            ->orderBy('time_start')
+            ->get();
+
             $data = [
-                'shiftusers' => $shiftusers
+                'shiftusers' => $shiftusers,
+                'usershifts' => $usershifts
             ];
         }
 

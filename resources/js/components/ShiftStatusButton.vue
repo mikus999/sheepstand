@@ -1,6 +1,6 @@
 <template>
   <!-- If user is not a shift member -->
-  <div v-if="!isShiftMember">
+  <div v-if="!isShiftMember && !isFinalized && !isShiftFull">
     <v-btn fab color="primary" @click="joinLeaveShift('join')">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
@@ -9,32 +9,52 @@
 
   <!-- If user acceptance is pending -->
   <div v-else-if="myShiftStatus == 0">
-    <v-btn fab color="primary" @click="updateStatus($t('shifts.confirm_accept'), 2)" class="mx-4">
-      <v-icon>mdi-thumb-up</v-icon>
+    <v-btn fab color="secondary" @click="updateStatus($t('shifts.confirm_accept'), 2)" class="mx-4">
+      <v-icon color="green">mdi-thumb-up</v-icon>
     </v-btn>
 
-    <v-btn fab color="secondary" @click="updateStatus($t('shifts.confirm_accept'), 3)" class="mx-4">
-      <v-icon>mdi-thumb-down</v-icon>
+    <v-btn fab color="secondary" @click="updateStatus($t('shifts.confirm_reject'), 3)" class="mx-4">
+      <v-icon color="red">mdi-thumb-down</v-icon>
     </v-btn>
   </div>
 
 
   <!-- If user has requested a shift -->
   <div v-else-if="myShiftStatus == 1">
-    <v-btn fab color="primary" @click="joinLeaveShift('leave')">
+    <v-btn fab color="secondary" @click="joinLeaveShift('leave')">
       <v-icon>mdi-account-minus</v-icon>
     </v-btn>
   </div>
 
 
-  <!-- If user is accepted/approved -->
+  <!-- If status is accepted/approved -->
   <div v-else-if="myShiftStatus == 2">
-    <v-btn v-if="!isFinalized" fab color="primary" @click="joinLeaveShift('leave')">
+    <v-btn v-if="!isFinalized" fab color="secondary" @click="joinLeaveShift('leave')">
       <v-icon>mdi-account-minus</v-icon>
     </v-btn>
 
-    
+    <v-btn v-else fab color="primary" @click="updateStatus($t('shifts.confirm_trade_offer'), 4)">
+      <v-icon>mdi-account-switch</v-icon>
+    </v-btn>
   </div>
+
+
+  <!-- If status is rejected/refused -->
+  <div v-else-if="myShiftStatus == 3 && !isFinalized && !isShiftFull">
+    <v-btn fab color="primary" @click="joinLeaveShift('join')">
+      <v-icon>mdi-account-plus</v-icon>
+    </v-btn>
+  </div>
+
+
+
+  <!-- If trade offer is pending -->
+  <div v-else-if="myShiftStatus == 4">
+    <v-btn fab color="secondary" @click="updateStatus($t('shifts.confirm_trade_cancel'), 2)">
+      <v-icon color="primary">mdi-account-switch</v-icon>
+    </v-btn>
+  </div>
+
 </template>
 
 <script>
@@ -85,12 +105,13 @@ export default {
       return result
     },
 
-    shiftFull() {
+    isShiftFull() {
       var result = false
       var autoApproval = this.team.setting_shift_request_autoapproval == 1
 
       if (autoApproval) {
-        var userCount = this.shift.users.length
+        var users = this.shift.users.filter(u => u.pivot.status != 3)
+        var userCount = users.length
         result = userCount >= this.shift.max_participants
       }
 
@@ -146,8 +167,8 @@ export default {
       })
       .then(response => {
         this.shift.users = response.data.shiftusers
-        this.user_shifts_mutable = response.data.usershifts
-        this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts_mutable)
+        this.$emit('updated', response.data.usershifts)
+
       })
 
     },
@@ -180,6 +201,7 @@ export default {
         })
         .then(response => {
           this.shift.users = response.data.shiftusers
+          this.$emit('updated', response.data.usershifts)
         })
         
       }

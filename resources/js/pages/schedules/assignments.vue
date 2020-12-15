@@ -81,9 +81,9 @@
                     small 
                     dark 
                     label 
-                    :color="checkMax(item.max_participants, item.users.length)"
+                    :color="checkMax(item.max_participants, filterShiftUsers(item.users).length)"
                   >
-                    {{ item.users.length }}/{{ item.max_participants }}
+                    {{ filterShiftUsers(item.users).length }}/{{ item.max_participants }}
                   </v-chip>
                 </template>
 
@@ -95,6 +95,7 @@
                     v-bind="data.attrs" 
                     :input-value="data.selected" 
                     :color="item.users[data.index].pivot.status !== undefined ? shiftStatus[item.users[data.index].pivot.status].color : ''"
+                    v-if="item.users[data.index].pivot.status != 3"
                   >
                     <v-icon
                       small
@@ -106,13 +107,27 @@
 
                     {{ data.item.name}}
                     
+                      <v-icon 
+                        small 
+                        right
+                        color="green darken-2"
+                        v-if="item.users[data.index].pivot.status < 2"
+                        @click.stop="updateStatus(data, item, 2)"
+                        class="ml-2"
+                      >
+                        mdi-thumb-up
+                      </v-icon>
+                    </v-btn>
+
                     <v-icon 
                       small 
                       right
+                      color="black"
                       v-if="item.users[data.index].pivot.status < 2"
-                      @click.stop="updateStatus(data, item, 2)"
+                      @click.stop="updateStatus(data, item, 3)"
+                      class="ml-3"
                     >
-                      mdi-thumb-up-outline
+                      mdi-thumb-down
                     </v-icon>
                   </v-chip>
                 </template>
@@ -120,12 +135,12 @@
 
                 <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
                 <template v-slot:item="data">
-                  <v-list-item dense @click="addShiftUser(data, item)">
+                  <v-list-item dense @click="addShiftUser(data, item)" :disabled="getStatus_List(data, item) == 3">
                     <v-list-item-avatar class="ma-0">
-                      <v-icon small :color="data.attrs['aria-selected']==='true' ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
+                      <v-icon small :color="(getStatus_List(data, item) != 3 && data.attrs['aria-selected']==='true') ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                      <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+                      <v-list-item-title :class="getStatus_List(data, item) == 3 ? 'text-decoration-line-through' : ''">{{ data.item.name }}</v-list-item-title>
                       <v-list-item-subtitle class="red--text">
                         <span v-html="getConflictMessage(checkShiftConflicts(item, data.item.shifts, true))"></span>
                       </v-list-item-subtitle>
@@ -314,6 +329,22 @@ export default {
           this.shiftTable_key += 1
         })
       }
+    },
+
+
+    filterShiftUsers(shiftUsers) {
+      return shiftUsers.filter(u => u.pivot.status != 3)
+    },
+
+
+    getStatus_List(data, shift) {
+      var result = null
+      var user = data.item
+      var shiftUser = shift.users.filter(u => u.id == user.id)
+      if (shiftUser.length > 0) {
+        result = shiftUser[0].pivot.status
+      }
+      return result
     },
 
 

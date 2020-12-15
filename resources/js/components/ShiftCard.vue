@@ -1,5 +1,5 @@
 <template>
-  <v-card :outlined="!onlyinfo" :width="width" min-width="300">
+  <v-card :outlined="!onlyinfo" :width="width" elevation="2" min-width="300">
 
     <v-card-subtitle class="text-center font-weight-bold" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
       <v-row class="align-center">
@@ -29,24 +29,32 @@
         <div v-else class="text-overline">{{ $t('shifts.participants') }}</div>
       </v-system-bar>
 
-      <div v-for="user in shift.users" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
-        <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">{{ shiftStatus[user.pivot.status].icon }}</v-icon>
-        <span :class="shiftStatus[user.pivot.status].color + '--text'">{{ user.name }}</span>
+      <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
+        <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">
+          {{ shiftStatus[user.pivot.status].icon }}
+        </v-icon>
+        <span 
+          :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')"
+        >
+          {{ user.name }}
+        </span>
       </div>
 
-      <div v-for="n in returnZero(shift.max_participants - shift.users.length)" :key="n" class="ma-2" disabled>
+      <div v-for="n in returnZero(shift.max_participants - filterShiftUsers(shift.users).length)" :key="n" class="ma-2" disabled>
         <div class="ml-n5 dashed-border rounded" width="100%">
           <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
           <span>{{ $t('general.available') }}</span>
         </div>
       </div>
+
     </v-card-text>
 
 
-    <v-card-actions v-if="!onlyinfo">
+    <v-card-actions v-if="!onlyinfo" class="pa-0">
+
       <v-row>
         <v-col class="text-center">
-          <ShiftStatusButton :shift="shift" />
+          <ShiftStatusButton :shift="shift" v-on:updated="statusUpdated" />
         </v-col>
       </v-row>
 
@@ -119,7 +127,7 @@ export default {
     },
     height: {
       type: [String, Number],
-      default: '170px'
+      default: '250px'
     },
     onlyinfo: {
       type: Boolean,
@@ -182,6 +190,19 @@ export default {
       }
 
       return result
+    },
+
+
+    filterShiftUsers(shiftUsers) {
+      return shiftUsers.filter(u => u.pivot.status != 3)
+    },
+
+
+    statusUpdated(userShifts) {
+      this.user_shifts_mutable = userShifts
+      this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts_mutable)
+      console.log(this.userShifts)
+      this.$emit('updated', userShifts)
     },
 
 

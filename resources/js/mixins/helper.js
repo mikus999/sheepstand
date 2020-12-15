@@ -76,7 +76,7 @@ export const helper = {
         { 
           value: 0,
           text: this.$t('shifts.status_0'), 
-          color: 'pink',
+          color: 'deep-orange',
           icon: 'mdi-account-question'
         },
         { 
@@ -94,7 +94,7 @@ export const helper = {
         { 
           value: 3,
           text: this.$t('shifts.status_3'), 
-          color: 'red darken-4',
+          color: 'grey',
           icon: 'mdi-account-cancel'
         },
         { 

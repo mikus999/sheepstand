@@ -67,6 +67,7 @@
             :user_shifts="user_shifts"
             :width="cardWidth" 
             class="ma-3"
+            v-on:updated="updateUserShifts"
           ></ShiftCard>
         </v-row>
       </v-tab-item>
@@ -174,6 +175,11 @@ export default {
             }
           }
         })
+    },
+
+    updateUserShifts(userShifts) {
+      console.log('updated')
+      this.user_shifts = userShifts
     },
 
 
