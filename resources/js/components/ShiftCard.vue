@@ -20,7 +20,7 @@
     <v-card-text :style="'overflow-y: auto; height: ' + height">
       <v-system-bar :color="$vuetify.theme.dark ? '#1c1c1c' : '#ffffff'">
         <MarqueeText v-if="hasConflicts">
-            <span v-for="(conflict, index) in conflicts_user" :key="index" class="warning-text">
+            <span v-for="(conflict, index) in conflicts" :key="index" class="warning-text">
               <v-icon color="red" class="ml-6">mdi-alert-box</v-icon>
               {{ getConflictMessage(conflict) }}
             </span>
@@ -79,6 +79,7 @@
       -->
     </v-card-actions>
     
+
     <v-card-actions v-else>
       <v-spacer></v-spacer>
       <v-btn color="primary" text v-on:click="$emit('close')">
@@ -97,6 +98,7 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 import { helper, scheduling, messages } from '~/mixins/helper'
 import Leaflet from '~/components/Leaflet.vue'
 import MarqueeText from 'vue-marquee-text-component'
@@ -113,13 +115,6 @@ export default {
   props: {
     shift: {
       type: [Object, Array]
-    },
-    schedule: {
-      type: [Object, Array]
-    },
-    user_shifts: {
-      type: [Object, Array],
-      default: null
     },
     width: {
       type: [String, Number],
@@ -138,26 +133,43 @@ export default {
   data () {
     return {
       locationOverlay: false,
-      conflicts_user: [],
-      user_shifts_mutable: [],
     }
   },
 
   created () {
-    this.user_shifts_mutable = this.user_shifts
-
     // Checks for possible conflicts with user's existing shift assignements in all teams
-    this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts_mutable)
+    //this.checkShiftConflicts(this.shift, this.user_shifts)
   },
 
   computed: {
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+      user_shifts: 'scheduling/user_shifts',
+      shifts_available: 'scheduling/shifts_available',
+      shift_conflicts: 'scheduling/shift_conflicts'
+    }),
+    
     mapWidth() {
       var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
       return newWidth
     },
 
     hasConflicts() {
-      return this.conflicts_user.length > 0
+      return this.conflicts.length > 0
+    },
+
+    conflicts() {
+      var result = []
+      if (this.shift_conflicts != null) {
+        result = this.shift_conflicts.filter(c => c.shift == this.shift.id)
+
+        if (result[0] != undefined) {
+          result = result[0].conflicts
+        } 
+      }
+
+      return result
     }
   },
 
@@ -198,11 +210,8 @@ export default {
     },
 
 
-    statusUpdated(userShifts) {
-      this.user_shifts_mutable = userShifts
-      this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts_mutable)
-      console.log(this.userShifts)
-      this.$emit('updated', userShifts)
+    statusUpdated() {
+      //this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts)
     },
 
 

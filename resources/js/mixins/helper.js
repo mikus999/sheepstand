@@ -300,6 +300,28 @@ export const helper = {
 
 export const scheduling = {
   methods: {
+    async storeSchedule (data) {
+      this.$store.commit('scheduling/SET_SCHEDULE', data )
+    },
+
+    async storeShifts (data) {
+      this.$store.commit('scheduling/SET_SHIFTS', data)
+    },
+
+    async storeUserShifts (data) {
+      this.$store.commit('scheduling/SET_USER_SHIFTS', data)
+    },
+
+    async storeShiftsAvailable (data) {
+      this.$store.commit('scheduling/SET_SHIFTS_AVAILABLE', data)
+    },
+
+    async storeShiftConflicts (data) {
+      this.$store.commit('scheduling/SET_SHIFT_CONFLICTS', data)
+    },
+
+
+
     filterShiftsAvailability (shifts, user) {
       var avail_shifts = shifts.filter(shift => 
         shift.users.filter(u => u.id == user.id).length > 0 || // include shift if user is already assigned to it, regardless of availability
@@ -372,7 +394,12 @@ export const scheduling = {
     checkShiftConflicts (shift, user_shifts, alwaysCheck = false) {
       // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
 
-      var warnings = []
+      var store_conflicts = this.$store.getters['scheduling/shift_conflicts'] || []
+      store_conflicts = store_conflicts.filter(c => c.shift != shift.id)
+
+      var shift_conflicts = { shift: shift.id, conflicts: [] }
+
+
       const shift_date = this.$dayjs(shift.time_start).format('YYYY-MM-DD')
       const shift_start_hour = this.$dayjs(shift.time_start).hour()
       var shift_end_hour = this.$dayjs(shift.time_end).hour()
@@ -383,7 +410,7 @@ export const scheduling = {
     
 
       // Only check for conflicts if the user is assigned to this shift
-      var in_shift = user_shifts.filter(s => s.id == shift.id)
+      var in_shift = user_shifts.filter(s => s.id == shift.id && s.pivot.status != 3)
 
       if (alwaysCheck || in_shift.length > 0) { 
 
@@ -391,13 +418,15 @@ export const scheduling = {
         if (user_shifts && user_shifts.length > 0) {
           var check = user_shifts.filter(s => 
             shift.id != s.id &&
+            shift.pivot.status != 3 &&
+            s.pivot.status != 3 &&
             (
               this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '[)') ||
               this.$dayjs(shift.time_end).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '(]')
             )
           );
 
-          check.forEach(s => warnings.push({ type: 'conflict', team: s.schedule.team.display_name }))
+          check.forEach(s => shift_conflicts.conflicts.push({ type: 'conflict', team: s.schedule.team.display_name }))
         }
 
 
@@ -405,20 +434,39 @@ export const scheduling = {
         if (user_shifts && user_shifts.length > 0) {
           var check = user_shifts.filter(s => 
             shift.id != s.id &&
+            shift.pivot.status != 3 &&
+            s.pivot.status != 3 &&
             shift.location_id != s.location_id &&
             (this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end)) ||
             this.$dayjs(shift.time_end).isSame(this.$dayjs(s.time_start)))
           );
 
-          check.forEach(s => warnings.push({ type: 'adjacent', team: s.schedule.team.display_name }))
+          check.forEach(s => shift_conflicts.conflicts.push({ type: 'adjacent', team: s.schedule.team.display_name }))
         }
+
+
+        // Remove duplicate warnings
+        shift_conflicts.conflicts = shift_conflicts.conflicts.filter((v,i,a)=>a.findIndex(t=>(t.type === v.type && t.team===v.team))===i)
+        store_conflicts.push(shift_conflicts)
+
+        this.storeShiftConflicts(store_conflicts)
+
       }
 
-      // Remove duplicate warnings
-      warnings = warnings.filter((v,i,a)=>a.findIndex(t=>(t.type === v.type && t.team===v.team))===i)
+      return shift_conflicts.conflicts
 
-      return warnings
+    },
 
+
+    checkConflictsAllShifts() {
+      var user_shifts = this.$store.getters['scheduling/user_shifts'] || []
+      this.storeShiftConflicts([])
+
+      if (user_shifts.length > 0) {
+        user_shifts.forEach(shift => {
+          this.checkShiftConflicts(shift, user_shifts)
+        })
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
 <template>
   <v-card width="100%">
     <v-toolbar flat extended height="80">
-      <v-select outlined v-model="schedule" :items="schedules" item-value="id" item-text="date_start" return-object
-        @change="getShiftData" prepend-icon="mdi-calendar-week-begin" :label="$t('schedules.week_of')" class="mt-10">
+      <v-select outlined :value="schedule" :items="schedules" item-value="id" item-text="date_start" return-object
+        @change="changeSchedule" prepend-icon="mdi-calendar-week-begin" :label="$t('schedules.week_of')" class="mt-10">
 
         <template v-slot:selection="{ item }">
           <div v-if="item">
@@ -63,11 +63,8 @@
             v-for="shift in filterShifts(filter_shifts ? shifts_available : shifts, n)" 
             :key="shift.id" 
             :shift="shift" 
-            :schedule="schedule" 
-            :user_shifts="user_shifts"
             :width="cardWidth" 
             class="ma-3"
-            v-on:updated="updateUserShifts"
           ></ShiftCard>
         </v-row>
       </v-tab-item>
@@ -77,6 +74,7 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 import { helper, scheduling } from '~/mixins/helper'
 import ShiftCard from '~/components/ShiftCard.vue'
 
@@ -91,17 +89,20 @@ export default {
   data () {
     return {
       tab: 0,
-      shifts: null,
       schedules: null,
-      schedule: null,
-      user_shifts: null,
       hover: false,
-      shifts_available: [],
       filter_shifts: true,
     }
   },
 
   computed: {
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+      user_shifts: 'scheduling/user_shifts',
+      shifts_available: 'scheduling/shifts_available',
+      shift_conflicts: 'scheduling/shift_conflits',
+    }),
 
     cardWidth () {
       var width = null
@@ -139,7 +140,7 @@ export default {
     async getUserShifts () {
       await axios.get('/api/user/shifts')
         .then(response => {
-          this.user_shifts = response.data
+          this.storeUserShifts(response.data)
           this.getSchedData()
         })
     },
@@ -156,7 +157,7 @@ export default {
           this.schedules = this.schedules.filter(sched => (sched.date_start >= prevWeek))
 
           if (this.schedules[0] !== undefined) {
-            this.schedule = this.schedules[0]
+            this.storeSchedule(this.schedules[0])
             this.getShiftData()
           }
         })
@@ -165,8 +166,9 @@ export default {
     async getShiftData () {
       await axios.get('/api/schedules/' + this.schedule.id + '/shifts')
         .then(response => {
-          this.shifts = response.data
-          this.shifts_available = this.filterShiftsAvailability(response.data, this.user)
+          this.storeShifts(response.data)
+          this.storeShiftsAvailable(this.filterShiftsAvailability(response.data, this.user))
+          this.checkConflictsAllShifts()
 
           for (var n = 1; n <= 7; n++) {
             if (this.filterShifts(this.shifts_available, n).length > 0) {
@@ -177,11 +179,10 @@ export default {
         })
     },
 
-    updateUserShifts(userShifts) {
-      console.log('updated')
-      this.user_shifts = userShifts
+    changeSchedule(value) {
+      this.storeSchedule(value)
+      this.getShiftData()
     },
-
 
     dayOfWeek (daynum) {
       var days = []

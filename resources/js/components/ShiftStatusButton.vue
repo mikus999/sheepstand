@@ -59,6 +59,7 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 import { helper, scheduling, messages } from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
 
@@ -81,6 +82,13 @@ export default {
 
 
   computed: {
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+      user_shifts: 'scheduling/user_shifts',
+      shifts_available: 'scheduling/shifts_available'
+    }),
+    
     isShiftMember() {
       var temp = this.shift.users.map(o => o['id'])
       var index = temp.indexOf(this.user.id)
@@ -167,8 +175,9 @@ export default {
       })
       .then(response => {
         this.shift.users = response.data.shiftusers
-        this.$emit('updated', response.data.usershifts)
-
+        this.storeUserShifts(response.data.usershifts)
+        this.checkConflictsAllShifts()
+        this.$emit('updated')
       })
 
     },
@@ -201,7 +210,9 @@ export default {
         })
         .then(response => {
           this.shift.users = response.data.shiftusers
-          this.$emit('updated', response.data.usershifts)
+          this.storeUserShifts(response.data.usershifts)
+          this.checkConflictsAllShifts()
+          this.$emit('updated')
         })
         
       }

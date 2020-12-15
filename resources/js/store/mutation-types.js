@@ -20,3 +20,10 @@ export const SET_MESSAGE_COUNT = 'SET_MESSAGE_COUNT'
 
 // snackbar.js
 export const SHOW_MESSAGE = 'SHOW_MESSAGE'
+
+// scheduling.js
+export const SET_SCHEDULE = 'SET_SCHEDULE'
+export const SET_SHIFTS = 'SET_SHIFTS'
+export const SET_USER_SHIFTS = 'SET_USER_SHIFTS'
+export const SET_SHIFTS_AVAILABLE = 'SET_SHIFTS_AVAILABLE'
+export const SET_SHIFT_CONFLICTS = 'SET_SHIFT_CONFLICTS'
