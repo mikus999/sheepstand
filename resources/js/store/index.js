@@ -26,15 +26,15 @@ const modules = requireContext.keys()
 export default new Vuex.Store({
   modules,
   plugins: [
-    createPersistedState()
-    /*
-    createPersistedState({ 
-      storage: {
-        getItem: (key) => ls.get(key),
-        setItem: (key, value) => ls.set(key, value),
-        removeItem: (key) => ls.remove(key),
-      }
-    })
-    */
+    process.env.NODE_ENV != 'production' ? 
+      createPersistedState() : 
+      createPersistedState({ 
+        storage: {
+          getItem: (key) => ls.get(key),
+          setItem: (key, value) => ls.set(key, value),
+          removeItem: (key) => ls.remove(key),
+        }
+      })
+    
   ],
 })
