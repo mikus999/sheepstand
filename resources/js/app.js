@@ -13,16 +13,12 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import weekday from 'dayjs/plugin/weekday'
 import isBetween from 'dayjs/plugin/isBetween'
-//import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import '~/plugins'
 import '~/components'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import VueClipboard from 'vue-clipboard2'
 
-
-// Load .env variables to process.env
-//require('dotenv').config()
 
 
 // VueClipboard
@@ -38,8 +34,12 @@ Vue.use(VueLodash, { lodash: lodash })
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 
-
 Vue.config.productionTip = false
+if (process.env.NODE_ENV === 'production') {
+  Vue.config.devtools = false
+  Vue.config.debug = false
+  Vue.config.silent = true
+}
 
 
 
