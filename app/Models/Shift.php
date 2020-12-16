@@ -27,11 +27,14 @@ class Shift extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\Models\User')->withPivot('status');
+        return $this->belongsToMany('App\Models\User')
+                    ->withPivot('status', 'trade_user_id', 'trade_shift_id');
     }
 
     public function trades()
     {
-        return $this->belongsToMany('App\Models\User')->withPivot('status')->wherePivot('status',4);
+        return $this->belongsToMany('App\Models\User')
+                    ->withPivot('status', 'trade_user_id', 'trade_shift_id')
+                    ->wherePivot('status',4);
     }
 }

@@ -1,110 +1,124 @@
 <template>
-  <!-- If user is not a shift member -->
-  <div v-if="!isShiftMember && !isFinalized && !isShiftFull">
-    <v-btn 
-      :fab="!tableActions" 
-      :icon="tableActions" 
-      :loading="loading"
-      color="primary" 
-      @click="joinLeaveShift('join')"
-    >
-      <v-icon>mdi-account-plus</v-icon>
-    </v-btn>
+  <div>
+
+    <!-- If user is not a shift member -->
+    <div v-if="!isShiftMember && !isFinalized && !isShiftFull">
+      <v-btn 
+        :fab="!tableActions" 
+        :icon="tableActions" 
+        :loading="loading"
+        color="primary" 
+        @click="joinLeaveShift('join')"
+      >
+        <v-icon>mdi-account-plus</v-icon>
+      </v-btn>
+    </div>
+
+
+    <!-- If user acceptance is pending -->
+    <div v-else-if="myShiftStatus == 0">
+      <v-btn 
+        :fab="!tableActions" 
+        :icon="tableActions"  
+        :loading="loading"
+        color="secondary" 
+        @click="updateStatus($t('shifts.confirm_accept'), 2)" 
+      >
+        <v-icon color="green">mdi-thumb-up</v-icon>
+      </v-btn>
+
+      <v-btn 
+        :fab="!tableActions" 
+        :icon="tableActions" 
+        :loading="loading"
+        color="secondary" 
+        @click="updateStatus($t('shifts.confirm_reject'), 3)" 
+      >
+        <v-icon color="red">mdi-thumb-down</v-icon>
+      </v-btn>
+    </div>
+
+
+    <!-- If user has requested a shift -->
+    <div v-else-if="myShiftStatus == 1">
+      <v-btn 
+        :fab="!tableActions" 
+        :icon="tableActions" 
+        :loading="loading"
+        color="secondary" 
+        @click="joinLeaveShift('leave')"
+      >
+        <v-icon>mdi-account-minus</v-icon>
+      </v-btn>
+    </div>
+
+
+    <!-- If status is accepted/approved -->
+    <div v-else-if="myShiftStatus == 2">
+      <v-btn 
+        v-if="!isFinalized" 
+        :fab="!tableActions" 
+        :icon="tableActions"  
+        :loading="loading"
+        color="secondary" 
+        @click="joinLeaveShift('leave')"
+      >
+        <v-icon>mdi-account-minus</v-icon>
+      </v-btn>
+
+      <v-btn 
+        v-else 
+        :fab="!tableActions" 
+        :icon="tableActions"  
+        :loading="loading"
+        color="primary" 
+        @click="tradeOverlay = true"
+      >
+        <v-icon>mdi-account-switch</v-icon>
+      </v-btn>
+    </div>
+
+
+    <!-- If status is rejected/refused -->
+    <div v-else-if="myShiftStatus == 3 && !isFinalized && !isShiftFull">
+      <v-btn 
+        :fab="!tableActions" 
+        :icon="tableActions"  
+        :loading="loading"
+        color="primary" 
+        @click="joinLeaveShift('join')"
+      >
+        <v-icon>mdi-account-plus</v-icon>
+      </v-btn>
+    </div>
+
+
+
+    <!-- If trade offer is pending -->
+    <div v-else-if="myShiftStatus == 4">
+      <v-btn 
+        :fab="!tableActions" 
+        :icon="tableActions" 
+        :loading="loading"
+        color="secondary" 
+        @click="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
+      >
+        <v-icon color="primary">mdi-account-switch</v-icon>
+      </v-btn>
+    </div>
+
+
+    <v-overlay :value="tradeOverlay" @click.native="tradeOverlay = false" :dark="theme=='dark'">
+      <ShiftTrade 
+        :shift="shift" 
+        width="400px"
+        v-on:close="tradeOverlay = false" 
+        v-on:updated="tradeUpdate"
+        v-on:click.native.stop 
+      />
+    </v-overlay>
+
   </div>
-
-
-  <!-- If user acceptance is pending -->
-  <div v-else-if="myShiftStatus == 0">
-    <v-btn 
-      :fab="!tableActions" 
-      :icon="tableActions"  
-      :loading="loading"
-      color="secondary" 
-      @click="updateStatus($t('shifts.confirm_accept'), 2)" 
-    >
-      <v-icon color="green">mdi-thumb-up</v-icon>
-    </v-btn>
-
-    <v-btn 
-      :fab="!tableActions" 
-      :icon="tableActions" 
-      :loading="loading"
-      color="secondary" 
-      @click="updateStatus($t('shifts.confirm_reject'), 3)" 
-    >
-      <v-icon color="red">mdi-thumb-down</v-icon>
-    </v-btn>
-  </div>
-
-
-  <!-- If user has requested a shift -->
-  <div v-else-if="myShiftStatus == 1">
-    <v-btn 
-      :fab="!tableActions" 
-      :icon="tableActions" 
-      :loading="loading"
-      color="secondary" 
-      @click="joinLeaveShift('leave')"
-    >
-      <v-icon>mdi-account-minus</v-icon>
-    </v-btn>
-  </div>
-
-
-  <!-- If status is accepted/approved -->
-  <div v-else-if="myShiftStatus == 2">
-    <v-btn 
-      v-if="!isFinalized" 
-      :fab="!tableActions" 
-      :icon="tableActions"  
-      :loading="loading"
-      color="secondary" 
-      @click="joinLeaveShift('leave')"
-    >
-      <v-icon>mdi-account-minus</v-icon>
-    </v-btn>
-
-    <v-btn 
-      v-else 
-      :fab="!tableActions" 
-      :icon="tableActions"  
-      :loading="loading"
-      color="primary" 
-      @click="updateStatus($t('shifts.confirm_trade_offer'), 4)"
-    >
-      <v-icon>mdi-account-switch</v-icon>
-    </v-btn>
-  </div>
-
-
-  <!-- If status is rejected/refused -->
-  <div v-else-if="myShiftStatus == 3 && !isFinalized && !isShiftFull">
-    <v-btn 
-      :fab="!tableActions" 
-      :icon="tableActions"  
-      :loading="loading"
-      color="primary" 
-      @click="joinLeaveShift('join')"
-    >
-      <v-icon>mdi-account-plus</v-icon>
-    </v-btn>
-  </div>
-
-
-
-  <!-- If trade offer is pending -->
-  <div v-else-if="myShiftStatus == 4">
-    <v-btn 
-      :fab="!tableActions" 
-      :icon="tableActions" 
-      :loading="loading"
-      color="secondary" 
-      @click="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
-    >
-      <v-icon color="primary">mdi-account-switch</v-icon>
-    </v-btn>
-  </div>
-
 </template>
 
 <script>
@@ -112,11 +126,16 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { helper, scheduling, messages } from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
+import ShiftTrade from '~/components/ShiftTrade.vue'
 
 
 export default {
   name: 'ShiftStatusButton',
   mixins: [helper, scheduling, messages, mtproto],
+  components: {
+    ShiftTrade
+  },
+
   props: {
     shift: {
       type: [Object, Array]
@@ -132,7 +151,8 @@ export default {
       request: false,
       trade: false,
       loading: false,
-      fab0: false
+      fab0: false,
+      tradeOverlay: false
     }
   },
 
@@ -231,18 +251,6 @@ export default {
       this.loading = true
 
       if (this.trade || await this.$root.$confirm(confirm_msg, null, 'info')) {
-
-        // If notifications are enabled for this team, send a group message via Telegram
-        /*
-        if (this.notificationsEnabled && newStatus == 4) {
-          const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name)
-          const channel_id = this.team.notificationsettings.telegram_channel_id
-
-          await this.mtInitialize()
-          await this.sendMessage(channel_id, message_text)
-        }
-        */
-
       
         await axios({
           method: 'post',      
@@ -269,6 +277,11 @@ export default {
       }
     },
 
+
+    tradeUpdate(value) {
+      this.tradeOverlay = false
+      this.shift.users = value
+    }
   },
 }
 </script>

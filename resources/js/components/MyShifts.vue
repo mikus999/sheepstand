@@ -41,7 +41,7 @@
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="location" :width="mapWidth" height="500px" readonly 
-          v-on:close="locationOverlay = false" v-on:click.native.stop/>
+          v-on:close="locationOverlay = false" v-on:click.native.stop />
     </v-overlay>
   </v-card>
 </template>

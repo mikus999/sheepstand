@@ -27,7 +27,8 @@ class Schedule extends Model
 
     public function shifts()
     {
-        return $this->hasMany('App\Models\Shift')->with('location','users');
+        return $this->hasMany('App\Models\Shift')
+                    ->with('location','users');
     }
 
 

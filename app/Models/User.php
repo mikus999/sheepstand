@@ -60,7 +60,10 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function teams()
     {
-        return $this->belongsToMany('App\Models\Team')->withPivot('default_team')->with('notificationsettings')->withTimeStamps();
+        return $this->belongsToMany('App\Models\Team')
+                    ->withPivot('default_team')
+                    ->with('notificationsettings')
+                    ->withTimeStamps();
     }
 
     public function schedules()
@@ -70,7 +73,10 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function shifts()
     {
-        return $this->belongsToMany('App\Models\Shift')->with('schedule')->withPivot('status')->withTimeStamps();
+        return $this->belongsToMany('App\Models\Shift')
+                    ->with('schedule')
+                    ->withPivot('status', 'trade_user_id', 'trade_shift_id')
+                    ->withTimeStamps();
     }
 
     public function languages()
@@ -80,7 +86,8 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function messages()
     {
-      return $this->hasManyThrough('App\Models\Message', 'App\Models\Team')->with('users','team');
+      return $this->hasManyThrough('App\Models\Message', 'App\Models\Team')
+                  ->with('users','team');
     }
 
     public function messages_global()
@@ -96,7 +103,8 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function user_vacations()
     {
       $oldestDate = Carbon::now()->sub(1, 'month');
-      return $this->hasMany('App\Models\UserVacation')->where('date_start','>=',$oldestDate);
+      return $this->hasMany('App\Models\UserVacation')
+                  ->where('date_start','>=',$oldestDate);
     }
 
 
