@@ -8,7 +8,7 @@
     </v-row>
 
     <v-row v-if="user">
-      <v-col cols=12 lg=8>
+      <v-col cols=12>
         <MyShifts />
 
         <v-spacer class="my-12" />
@@ -16,7 +16,7 @@
         <TradeRequests />
       </v-col>
       
-      <v-col cols=12 lg=4>
+      <v-col cols=12>
         <!--<ShiftStatistics v-if="$vuetify.breakpoint.smAndUp"/>-->
       </v-col>
     </v-row>

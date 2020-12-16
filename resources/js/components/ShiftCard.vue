@@ -54,7 +54,7 @@
 
       <v-row>
         <v-col class="text-center">
-          <ShiftStatusButton :shift="shift" v-on:updated="statusUpdated" />
+          <ShiftStatusButton :shift="shift" />
         </v-col>
       </v-row>
 
@@ -207,11 +207,6 @@ export default {
 
     filterShiftUsers(shiftUsers) {
       return shiftUsers.filter(u => u.pivot.status != 3)
-    },
-
-
-    statusUpdated() {
-      //this.conflicts_user = this.checkShiftConflicts(this.shift, this.user_shifts)
     },
 
 

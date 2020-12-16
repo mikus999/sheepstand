@@ -49,7 +49,9 @@
         "duplicate": "Duplicate",
         "note": "Note",
         "warning": "Warning",
-        "sort_by": "Sort By"
+        "sort_by": "Sort By",
+        "approve": "Approve",
+        "all": "All"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -243,8 +245,10 @@
         "success_delete_shift": "Shift was deleted successfully",
         "assignments": "Assignments",
         "approvals": "Approvals",
-        "approve_all": "Approve All Requests",
-        "confirm_approve_all": "Are you sure you want to approve all shift requests for this schedule?",
+        "approve_all_requests": "Approve Requests",
+        "approve_all_assignments": "Approve Assignments",
+        "confirm_approve_all_requests": "Are you sure you want to approve all shift requests for this schedule?",
+        "confirm_approve_all_assignments": "Are you sure you want to approve all pending assignments for this schedule?",
         "week_of": "Week of:"
     },
     "shifts": {

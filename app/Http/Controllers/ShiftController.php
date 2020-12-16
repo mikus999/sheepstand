@@ -331,7 +331,7 @@ class ShiftController extends Controller
      *  - ROLE: 
      * 
      */
-    public function approveAllRequests($id)
+    public function approveAllRequests($id, $status)
     {
         $data = ['message' => 'Access Denied'];
         $user = Auth::user();
@@ -340,11 +340,12 @@ class ShiftController extends Controller
         $data = [];
 
         foreach ($shifts as $shift) {
-          $shift->users()->updateExistingPivot($shift->users()->wherePivot('status',1)->allRelatedIds(), ['status' => 2]);
+          $shift->users()->updateExistingPivot($shift->users()->wherePivot('status', $status)->allRelatedIds(), ['status' => 2]);
         };
 
+        $schedule = Schedule::with('shifts')->find($id);
 
-        return response()->json($data);
+        return response()->json($schedule);
 
     }
 
@@ -529,6 +530,7 @@ class ShiftController extends Controller
             $shifts = $user->shifts()
                         ->with('schedule', 'location', 'users')
                         ->where('time_start','>',$date)
+                        ->wherePivot('status','!=','3')
                         ->orderBy('time_start')
                         ->get();
         }

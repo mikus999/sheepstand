@@ -168,7 +168,7 @@ export default {
         .then(response => {
           this.storeShifts(response.data)
           this.storeShiftsAvailable(this.filterShiftsAvailability(response.data, this.user))
-          this.checkConflictsAllShifts()
+          this.checkConflictsAllUserShifts()
 
           for (var n = 1; n <= 7; n++) {
             if (this.filterShifts(this.shifts_available, n).length > 0) {

@@ -101,7 +101,7 @@ export const helper = {
           value: 4,
           text: this.$t('shifts.status_4'), 
           color: 'blue',
-          icon: 'mdi-account-convert'
+          icon: 'mdi-account-switch'
         }
       ],
 
@@ -312,6 +312,10 @@ export const scheduling = {
       this.$store.commit('scheduling/SET_USER_SHIFTS', data)
     },
 
+    async storeShiftUsers (data) {
+      this.$store.commit('scheduling/SET_SHIFT_USERS', data)
+    },
+
     async storeShiftsAvailable (data) {
       this.$store.commit('scheduling/SET_SHIFTS_AVAILABLE', data)
     },
@@ -391,11 +395,13 @@ export const scheduling = {
     },
 
 
-    checkShiftConflicts (shift, user_shifts, alwaysCheck = false) {
+    checkShiftConflicts (shift, user_shifts, alwaysCheck = false, useStore = true) {
       // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
 
-      var store_conflicts = this.$store.getters['scheduling/shift_conflicts'] || []
-      store_conflicts = store_conflicts.filter(c => c.shift != shift.id)
+      if (useStore) {
+        var store_conflicts = this.$store.getters['scheduling/shift_conflicts'] || []
+        store_conflicts = store_conflicts.filter(c => c.shift != shift.id)
+      }
 
       var shift_conflicts = { shift: shift.id, conflicts: [] }
 
@@ -418,7 +424,7 @@ export const scheduling = {
         if (user_shifts && user_shifts.length > 0) {
           var check = user_shifts.filter(s => 
             shift.id != s.id &&
-            shift.pivot.status != 3 &&
+            //(shift.pivot.status != undefined ? shift.pivot.status != 3 : true) &&
             s.pivot.status != 3 &&
             (
               this.$dayjs(shift.time_start).isBetween(this.$dayjs(s.time_start), this.$dayjs(s.time_end), 'minute', '[)') ||
@@ -434,7 +440,7 @@ export const scheduling = {
         if (user_shifts && user_shifts.length > 0) {
           var check = user_shifts.filter(s => 
             shift.id != s.id &&
-            shift.pivot.status != 3 &&
+            //(shift.pivot.status != undefined ? shift.pivot.status != 3 : true) &&
             s.pivot.status != 3 &&
             shift.location_id != s.location_id &&
             (this.$dayjs(shift.time_start).isSame(this.$dayjs(s.time_end)) ||
@@ -447,9 +453,11 @@ export const scheduling = {
 
         // Remove duplicate warnings
         shift_conflicts.conflicts = shift_conflicts.conflicts.filter((v,i,a)=>a.findIndex(t=>(t.type === v.type && t.team===v.team))===i)
-        store_conflicts.push(shift_conflicts)
-
-        this.storeShiftConflicts(store_conflicts)
+        
+        if (useStore) {
+          store_conflicts.push(shift_conflicts)
+          this.storeShiftConflicts(store_conflicts)
+        }
 
       }
 
@@ -458,7 +466,19 @@ export const scheduling = {
     },
 
 
-    checkConflictsAllShifts() {
+    checkConflictsAllUserShifts() {
+      var user_shifts = this.$store.getters['scheduling/user_shifts'] || []
+      this.storeShiftConflicts([])
+
+      if (user_shifts.length > 0) {
+        user_shifts.forEach(shift => {
+          this.checkShiftConflicts(shift, user_shifts)
+        })
+      }
+    },
+
+
+    checkConflictsAllUserShifts() {
       var user_shifts = this.$store.getters['scheduling/user_shifts'] || []
       this.storeShiftConflicts([])
 

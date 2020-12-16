@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-data-table :headers="headers" :items="shifts" disable-sort width="100%">
+    <v-data-table :headers="headers" :items="filteredShifts" disable-sort width="100%">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
@@ -9,10 +9,16 @@
           </v-toolbar-title>
         </v-toolbar>
 
-        <v-switch v-model="allTeams" :label="$t('shifts.show_all_teams')"  hide-details class="mx-4" @change="update" />
+        <v-switch v-model="allTeams" :label="$t('shifts.show_all_teams')"  hide-details class="mx-4" />
 
       </template>
 
+      <template v-slot:item.team_name="{ item }">
+        <v-btn icon @click="showShiftOverlay(item)">
+          <v-icon>mdi-card-account-details-outline</v-icon>
+        </v-btn>
+        {{ item.schedule.team.display_name }}
+      </template>
 
       <template v-slot:item.day="{ item }">
         {{ item.time_start | formatDay }}<br>
@@ -24,47 +30,13 @@
       </template>
 
       <template v-slot:item.view="{ item }">
-        <v-btn icon @click="showShiftOverlay(item)">
-          <v-icon>mdi-card-account-details-outline</v-icon>
-        </v-btn>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn 
-              icon 
-              v-if="!showTradeButton(item)" 
-              :color="shiftStatus[item.pivot.status].color" 
-              @click.stop="updateStatus(item)"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>{{ shiftStatus[item.pivot.status].icon }}</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ shiftStatus[item.pivot.status].text }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn 
-              icon  
-              v-if="showTradeButton(item)" 
-              :color="item.pivot.status == 4 ? 'blue' : ''" 
-              @click.stop="updateTrade(item)"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>mdi-account-convert</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ item.pivot.status == 4 ? $t('shifts.status_4') : $t('shifts.status_2a') }}</span>
-        </v-tooltip>       
+        <ShiftStatusButton :shift="item" table-actions />
       </template>
 
     </v-data-table>
 
     <v-overlay :value="shiftOverlay" :dark="theme=='dark'">
-      <ShiftCard :shift="shift" :schedule="schedule" :user_shifts="shiftsAll" onlyinfo width="300px" height="100%" v-on:close="shiftOverlay = false"></ShiftCard>
+      <ShiftCard :shift="shift" onlyinfo width="300px" height="100%" v-on:close="shiftOverlay = false"></ShiftCard>
     </v-overlay>
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
@@ -77,19 +49,22 @@
 
 <script>
 import axios from 'axios'
-import { helper, messages } from '~/mixins/helper'
+import { mapGetters } from 'vuex'
+import { helper, messages, scheduling } from '~/mixins/helper'
 import { mtproto } from '~/mixins/telegram'
 import ShiftCard from '~/components/ShiftCard.vue'
 import Leaflet from '~/components/Leaflet.vue'
+import ShiftStatusButton from '~/components/ShiftStatusButton.vue'
 
 
 export default {
   name: 'MyShifts',
-  mixins: [helper, messages, mtproto],
+  mixins: [helper, messages, scheduling, mtproto],
   props: {},
   components: {
     ShiftCard,
-    Leaflet
+    Leaflet,
+    ShiftStatusButton
   },
 
   data () {
@@ -98,26 +73,36 @@ export default {
       shiftOverlay: false,
       locationOverlay: false,
       shift: null,
-      schedule: null,
       location: null,
-      shifts: [],
-      shiftsAll: [],
       allTeams: false,
       headers: [
-        { text: this.$t('teams.team_name'), value: 'schedule.team.display_name', align: 'left' },
+        { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
-        { text: this.$t('general.actions'), value: 'view' },
+        { text: this.$t('general.actions'), value: 'view', align: 'center' },
       ],
     }
   },
 
   computed: {
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+      user_shifts: 'scheduling/user_shifts',
+    }),
+
     mapWidth() {
       var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
       return newWidth
     },
 
+    filteredShifts() {
+      if (this.allTeams) {
+          return this.user_shifts
+      } else {
+          return this.user_shifts.filter(shift => shift.schedule.team_id === this.team.id)
+      }
+    }
   },
 
 
@@ -129,20 +114,11 @@ export default {
     async getShifts () {
       await axios.get('/api/user/shifts')
         .then(response => {
-          this.shiftsAll = response.data
-
-          this.shifts = response.data.filter(shift => shift.schedule.team_id === this.team.id)
+          this.storeUserShifts(response.data)
 
         })
     },
 
-    update() {
-      if (this.allTeams) {
-          this.shifts = this.shiftsAll
-      } else {
-          this.shifts = this.shiftsAll.filter(shift => shift.schedule.team_id === this.team.id)
-      }
-    },
 
     showShiftOverlay(shift) {
       this.shift = shift
@@ -202,7 +178,7 @@ export default {
             }
           })
           .then(response => {
-            this.getShifts()
+            this.storeUserShifts(response.data.usershifts)
           })
         }
       }
@@ -221,7 +197,7 @@ export default {
         }
       })
       .then(response => {
-          this.getShifts()
+        this.storeUserShifts(response.data.usershifts)
       })
 
     },
@@ -253,7 +229,7 @@ export default {
           }
         })
         .then(response => {
-          this.getShifts()
+          this.storeUserShifts(response.data.usershifts)
         })
       }
     },
