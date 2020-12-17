@@ -324,6 +324,9 @@ export const scheduling = {
       this.$store.commit('scheduling/SET_SHIFT_CONFLICTS', data)
     },
 
+    async storeTrades (data) {
+      this.$store.commit('scheduling/SET_TRADES', data)
+    },
 
 
     filterShiftsAvailability (shifts, user) {

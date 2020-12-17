@@ -286,7 +286,8 @@
         "offered_by": "Offered By",
         "make_next_shift": "Duplicate and Make Consecutive",
         "conflict_shift_another_team": "Conflicts with another assignment",
-        "conflict_shift_adjacent": "Adjacent to another assignment at different location"
+        "conflict_shift_adjacent": "Adjacent to another assignment at different location",
+        "see_more": "See More Shifts"
     },
     "translation": {
         "management_system": "Translation Management System",

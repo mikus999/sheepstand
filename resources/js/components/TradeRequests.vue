@@ -43,20 +43,29 @@
 
     </v-data-table>
 
-    <v-overlay :value="shiftOverlay" :dark="theme=='dark'">
-      <ShiftCard :shift="shift" :schedule="schedule" onlyinfo width="300px" height="100%" v-on:close="shiftOverlay = false"></ShiftCard>
+    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false" :dark="theme=='dark'">
+      <ShiftCard 
+        :shift="shift" 
+        onlyinfo 
+        width="300px" 
+        height="100%" 
+        v-on:close="shiftOverlay = false"
+        v-on:click.native.stop
+      />
     </v-overlay>
+    
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { mapGetters } from 'vuex'
+import { helper, scheduling } from '~/mixins/helper'
 import ShiftCard from '~/components/ShiftCard.vue'
 
 export default {
   name: 'TradeRequests',
-  mixins: [helper],
+  mixins: [helper, scheduling],
   components: {
     ShiftCard
   },
@@ -65,8 +74,6 @@ export default {
     return {
       shiftOverlay: false,
       shift: null,
-      schedule: null,
-      trades: [],
       headersShift: [
         { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
@@ -76,24 +83,21 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      trades: 'scheduling/trades'
+    }),
+  },
+
   created () {
-    if (this.team) {
-      this.getTrades()
-    } else {
-      const unsubscribe = this.$store.subscribe((mutation, state) => {
-        if(mutation.type === 'auth/SET_TEAM') {
-          this.getTrades()
-          unsubscribe()
-        }
-      })
-    }
+    this.getTrades()
   },
 
   methods: {
     async getTrades () {
       await axios.get('/api/teams/' + this.team.id + '/trades')
         .then(response => {
-          this.trades = response.data.trades
+          this.storeTrades(response.data.trades)
         })
     },
 
@@ -108,7 +112,7 @@ export default {
           }
         })
         .then(response => {
-          this.trades = response.data.trades.trades
+          this.storeTrades(response.data.trades)
           this.showSnackbar(this.$t('shifts.success_trade_made'), 'success')
         })
       }
@@ -116,7 +120,6 @@ export default {
 
     showShiftOverlay(shift) {
       this.shift = shift
-      this.schedule = shift.schedule
       this.shiftOverlay = true
     }
   }

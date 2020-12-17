@@ -1,12 +1,24 @@
 <template>
   <v-card>
-    <v-data-table :headers="headers" :items="filteredShifts" disable-sort width="100%">
+    <v-data-table :headers="headers" :items="filteredShifts || []" disable-sort width="100%">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
             <v-icon left>mdi-calendar-account</v-icon>
             {{ $t('shifts.my_shifts') }}
           </v-toolbar-title>
+
+
+          <v-spacer></v-spacer>
+
+          <v-btn 
+            color="secondary" 
+            v-if="$vuetify.breakpoint.smAndUp"
+            :to="{ name: 'schedules.shifts' }"
+          >
+            <v-icon left small>mdi-calendar</v-icon>
+            {{ $t('shifts.see_more') }}
+          </v-btn>
         </v-toolbar>
 
         <v-switch v-model="allTeams" :label="$t('shifts.show_all_teams')"  hide-details class="mx-4" />
@@ -35,13 +47,26 @@
 
     </v-data-table>
 
-    <v-overlay :value="shiftOverlay" :dark="theme=='dark'">
-      <ShiftCard :shift="shift" onlyinfo width="300px" height="100%" v-on:close="shiftOverlay = false"></ShiftCard>
+    <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false" :dark="theme=='dark'">
+      <ShiftCard 
+        :shift="shift" 
+        onlyinfo 
+        width="300px" 
+        height="100%" 
+        v-on:close="shiftOverlay = false"
+        v-on:click.native.stop
+      />
     </v-overlay>
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
-      <Leaflet :location="location" :width="mapWidth" height="500px" readonly 
-          v-on:close="locationOverlay = false" v-on:click.native.stop />
+      <Leaflet 
+        :location="location" 
+        :width="mapWidth" 
+        height="500px" 
+        readonly 
+        v-on:close="locationOverlay = false" 
+        v-on:click.native.stop 
+      />
     </v-overlay>
   </v-card>
 </template>
@@ -74,7 +99,7 @@ export default {
       locationOverlay: false,
       shift: null,
       location: null,
-      allTeams: false,
+      allTeams: true,
       headers: [
         { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
@@ -122,7 +147,6 @@ export default {
 
     showShiftOverlay(shift) {
       this.shift = shift
-      this.schedule = shift.schedule
       this.shiftOverlay = true
     },
     

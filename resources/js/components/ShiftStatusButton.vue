@@ -74,7 +74,7 @@
         color="primary" 
         @click="tradeOverlay = true"
       >
-        <v-icon>mdi-account-switch</v-icon>
+        <v-icon :color="tableActions ? 'secondary' : ''">mdi-account-switch</v-icon>
       </v-btn>
     </div>
 
@@ -103,7 +103,7 @@
         color="secondary" 
         @click="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
       >
-        <v-icon color="primary">mdi-account-switch</v-icon>
+        <v-icon :color="tableActions ? 'primary' : 'secondary'">mdi-account-switch</v-icon>
       </v-btn>
     </div>
 
@@ -236,6 +236,7 @@ export default {
       .then(response => {
         this.shift.users = response.data.shiftusers
         this.storeUserShifts(response.data.usershifts)
+        this.storeTrades(response.data.trades)
         this.checkConflictsAllUserShifts()
         this.$emit('updated')
         this.loading = false
@@ -264,10 +265,10 @@ export default {
         .then(response => {
           this.shift.users = response.data.shiftusers
           this.storeUserShifts(response.data.usershifts)
+          this.storeTrades(response.data.trades)
           this.checkConflictsAllUserShifts()
           this.$emit('updated')
           this.loading = false
-
         })
         .catch(error => {
           this.loading = false

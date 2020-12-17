@@ -227,6 +227,7 @@ class ShiftController extends Controller
                 $data = [
                     'shiftusers' => $shiftusers,
                     'usershifts' => $usershifts,
+                    'trades' => $this->getTradeRequests($schedule->team_id)->original['trades'],
                     'teamusers' =>  $team->users()->with('shifts')->get()
                 ];
             }
@@ -272,8 +273,8 @@ class ShiftController extends Controller
                 $data = [
                     'shiftusers' => $shiftusers,
                     'usershifts' => $usershifts,
+                    'trades' => $this->getTradeRequests($schedule->team_id)->original['trades'],
                     'teamusers' =>  $team->users()->with('shifts')->get()
-
                 ];
             }
         }
@@ -315,7 +316,8 @@ class ShiftController extends Controller
 
             $data = [
                 'shiftusers' => $shiftusers,
-                'usershifts' => $usershifts
+                'usershifts' => $usershifts,
+                'trades' => $this->getTradeRequests($schedule->team_id)->original['trades']
             ];
         }
 
@@ -412,7 +414,7 @@ class ShiftController extends Controller
     
     /**
      * 
-     * Return all open trade requests
+     * make trade
      *  - ROLE: team member
      * 
      */
@@ -435,7 +437,7 @@ class ShiftController extends Controller
             $shiftusers = $this->getTradeRequests($teamid);
 
             $data = [
-                'trades' => $shiftusers->original,
+              'trades' => $this->getTradeRequests($teamid)->original['trades']
             ];
         }
 
@@ -504,7 +506,7 @@ class ShiftController extends Controller
 
 
             $data = [
-                'stats' => $stats,
+                'stats' => $stats
             ];
         }
 

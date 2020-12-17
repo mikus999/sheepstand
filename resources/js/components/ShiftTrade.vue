@@ -112,6 +112,7 @@ export default {
           this.storeUserShifts(response.data.usershifts)
           this.checkConflictsAllUserShifts()
           this.$emit('updated', response.data.shiftusers)
+          this.storeTrades(response.data.trades)
         })
 
       } 

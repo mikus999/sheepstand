@@ -12,11 +12,11 @@
     <v-card-text class="text-center pa-0">
       <v-row dense>
         <v-col cols=3 offset=3 class="pa-0">
-          <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
+          <v-chip small>{{ shift.min_participants }}</v-chip><br>
           <span>{{ $t('general.min') }}</span>
         </v-col>
         <v-col cols=3 class="pa-0">
-          <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
+          <v-chip small>{{ shift.max_participants }}</v-chip><br>
           <span>{{ $t('general.max') }}</span>
         </v-col>
       </v-row>

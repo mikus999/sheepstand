@@ -143,10 +143,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      schedule: 'scheduling/schedule',
-      shifts: 'scheduling/shifts',
-      user_shifts: 'scheduling/user_shifts',
-      shifts_available: 'scheduling/shifts_available',
       shift_conflicts: 'scheduling/shift_conflicts'
     }),
     

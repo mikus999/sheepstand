@@ -33,6 +33,7 @@
               :headers="shiftHeaders" 
               :items="shifts ? shifts : []" 
               :key="shiftTable_key" 
+              :loading="pageLoad"
               sort-by="time_start"
               multi-sort
             >
@@ -68,7 +69,7 @@
                 {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
               </template>
 
-              <template v-slot:item.location="{ item }">
+              <template v-slot:item.location_id="{ item }">
                 <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
               </template>
 
@@ -204,6 +205,7 @@ export default {
 
   data () {
     return {
+      pageLoad: true,
       dialog: false,
       date: '',
       shiftTable_key: 1,
@@ -217,8 +219,8 @@ export default {
         },
         { 
           text: this.$t('shifts.location'), 
-          value: 'location', 
-          align: 'center'
+          value: 'location_id', 
+          align: 'center',
         },
         { 
           text: this.$t('shifts.assignments'), 
@@ -256,9 +258,10 @@ export default {
   },
 
   methods: {
-    initialize () {
-      this.getSchedule()
-      this.getTeamUsers()
+    async initialize () {
+      await this.getSchedule()
+      await this.getTeamUsers()
+      this.pageLoad = false
     },
 
     async getSchedule () {

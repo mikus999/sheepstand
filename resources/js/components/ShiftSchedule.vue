@@ -1,5 +1,5 @@
 <template>
-  <v-card width="100%">
+  <v-card width="100%" :loading="pageLoad">
     <v-toolbar flat extended height="80">
       <v-select outlined :value="schedule" :items="schedules" item-value="id" item-text="date_start" return-object
         @change="changeSchedule" prepend-icon="mdi-calendar-week-begin" :label="$t('schedules.week_of')" class="mt-10">
@@ -92,6 +92,7 @@ export default {
       schedules: null,
       hover: false,
       filter_shifts: true,
+      pageLoad: true
     }
   },
 
@@ -134,7 +135,8 @@ export default {
 
   methods: {
     async initialize() {
-      this.getUserShifts()
+      await this.getUserShifts()
+      this.pageLoad = false
     },
 
     async getUserShifts () {
@@ -179,9 +181,11 @@ export default {
         })
     },
 
-    changeSchedule(value) {
-      this.storeSchedule(value)
-      this.getShiftData()
+    async changeSchedule(value) {
+      this.pageLoad = true
+      await this.storeSchedule(value)
+      await this.getShiftData()
+      this.pageLoad = false
     },
 
     dayOfWeek (daynum) {

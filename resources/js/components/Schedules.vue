@@ -1,6 +1,12 @@
 <template>
   <v-card width="100%">
-    <v-data-table :headers="templates ? templateHeaders : schedHeaders" :items="getTableItems" sort-by="date_start" sort-desc>
+    <v-data-table 
+      :headers="templates ? templateHeaders : schedHeaders" 
+      :items="getTableItems" 
+      :loading="pageLoad"
+      sort-by="date_start" 
+      sort-desc
+    >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
@@ -211,6 +217,7 @@ export default {
 
   data () {
     return {
+      pageLoad: true,
       dialog: false,
       dialog2: false,
       schedHeaders: [
@@ -262,6 +269,7 @@ export default {
       await axios.get(url)
         .then(response => {
           this.schedData = response.data
+          this.pageLoad = false
         })
     },
 

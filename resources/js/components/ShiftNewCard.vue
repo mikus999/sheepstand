@@ -55,7 +55,7 @@
                 :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
               >
                 <v-spacer></v-spacer>
-                <v-btn text color="secondary" @click="menu = false">{{ $t('general.cancel') }}</v-btn>
+                <v-btn text color="secondary" @click="date_menu = false">{{ $t('general.cancel') }}</v-btn>
                 <v-btn color="primary" @click="$refs.menu.save(shift_date)">{{ $t('general.ok') }}</v-btn>
               </v-date-picker>
 
