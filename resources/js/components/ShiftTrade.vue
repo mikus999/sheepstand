@@ -6,10 +6,10 @@
     </v-card-title>
 
 
-    <v-stepper v-model="stepper" >
+    <v-stepper v-model="stepper">
       <v-stepper-items>
         <!-- Trade with all or choose user/shift -->
-        <v-stepper-content step="1">
+        <v-stepper-content step="1" class="ma-0 pa-0">
           <v-card-text class="text-center">
             <v-row class="text-center">
               <v-col cols=12 class="text-center">
@@ -47,8 +47,51 @@
 
 
         <!-- Choose user/shift -->
-        <v-stepper-content step="2">
+        <v-stepper-content step="2" class="ma-0 pa-0">
           <v-card-text>
+            <v-select
+              v-model="selectedUser"
+              return-object
+              :items="teamUsers"
+              item-value="id"
+              item-text="name"
+              :label="$t('shifts.trade_choose_person')"
+              @change="getUserShifts"
+            >
+            </v-select>
+
+
+
+            <v-list :style="'overflow-y: auto; height: ' + height">
+              <v-list-item-group 
+                v-model="selectedShift"
+                v-if="selectedUser != null"
+                color="primary"
+                
+              >
+                <v-list-item
+                  v-for="shift in userShifts"
+                  :key="shift.id"
+                  :value="shift.id"
+                >
+                  <v-list-item-avatar>
+                    <v-avatar :color="shift.location.color_code" class="location-avatar">
+                      {{ shift.location.name.substring(0, 1) }}
+                    </v-avatar>
+                  </v-list-item-avatar>
+
+                  <v-list-item-content>
+                    <v-list-item-title class="text-left list-title">
+                      {{ shift.time_start | formatDay }} {{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}
+                    </v-list-item-title>
+
+                    <v-list-item-subtitle class="text-left list-title">
+                      {{ shift.location.name }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </v-card-text>
         </v-stepper-content>
 
@@ -58,6 +101,8 @@
     <v-card-actions>
       <v-spacer />
       <v-btn text @click="$emit('close')">{{ $t('general.cancel')}}</v-btn>
+
+      <v-btn color="primary" v-if="selectedShift != null" @click="updateStatus(false)">{{ $t('shifts.trade_offer') }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -79,21 +124,58 @@ export default {
     width: {
       type: [String, Number],
       default: '100%'
-    }
+    },
+    height: {
+      type: [String, Number],
+      default: '250px'
+    },
   },
 
   data() {
     return {
       stepper: 1,
+      teamUsers: [],
+      userShifts: [],
+      selectedUser: null,
+      selectedShift: null,
     }
   },
 
   created() {
-    
+    this.getTeamUsers()
   },
 
   methods: {
-    
+        
+    async getTeamUsers() {
+      await axios.get('/api/teams/' + this.shift.schedule.team_id + '/users/')
+        .then(response => {
+          this.teamUsers = response.data.filter(u => 
+            u.id != this.user.id &&
+            u.shifts.length > 0 &&
+            u.shifts.filter(s => s.pivot.status == 2).length > 0
+          )
+        })
+    },
+
+
+    async getUserShifts() {
+      if (this.selectedUser != null) {
+        await axios({
+          method: 'post',      
+          url: '/api/user/shifts/',
+          data: {
+            user_id: this.selectedUser.id,
+            team_id: this.shift.schedule.team_id,
+          }
+        })
+        .then(response => {
+          this.userShifts = response.data
+        })
+      }
+    },
+
+
     async updateStatus (offerAll) {
       var status = offerAll ? 4 : 5
 
@@ -105,6 +187,8 @@ export default {
           data: {
             user_id: this.user.id,
             shift_id: this.shift.id,
+            trade_user_id: this.selectedUser != null ? this.selectedUser.id : null,
+            trade_shift_id: this.selectedShift,
             status: status
           }
         })
@@ -113,6 +197,11 @@ export default {
           this.checkConflictsAllUserShifts()
           this.$emit('updated', response.data.shiftusers)
           this.storeTrades(response.data.trades)
+
+          var success_msg = offerAll ? this.$t('shifts.success_trade_offered') : this.$t('shifts.success_trade_offered_publisher')
+          this.showSnackbar(success_msg, 'success')
+          this.$emit('close')
+
         })
 
       } 
@@ -134,3 +223,15 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  .location-avatar
+  {
+    font-size: 1.5rem;
+  }
+
+  .list-title
+  {
+    font-size: 0.9rem;
+  }
+</style>

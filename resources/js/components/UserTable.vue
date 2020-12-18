@@ -202,7 +202,7 @@ export default {
     async getUserData() {
       var url = null
       if (this.teamUsers) {
-        url = '/api/teams/users/' + this.team.id
+        url = '/api/teams/' + this.team.id + '/users/'
       } else {
         url = '/api/users'
       }

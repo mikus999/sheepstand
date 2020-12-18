@@ -25,7 +25,7 @@
 
 
       <template v-slot:item.location="{ item }">
-        <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
+        <v-chip label small :color="item.location.color_code" @click="showLocationOverlay(item)">{{ item.location.name }}</v-chip>
       </template>
 
       <template v-slot:header.tradewith="{ header }">
@@ -54,6 +54,18 @@
       />
     </v-overlay>
     
+
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
+      <Leaflet 
+        :location="location" 
+        :width="mapWidth" 
+        height="500px" 
+        readonly 
+        v-on:close="locationOverlay = false" 
+        v-on:click.native.stop 
+      />
+    </v-overlay>
+
   </v-card>
 </template>
 
@@ -62,18 +74,22 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { helper, scheduling } from '~/mixins/helper'
 import ShiftCard from '~/components/ShiftCard.vue'
+import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   name: 'TradeRequests',
   mixins: [helper, scheduling],
   components: {
-    ShiftCard
+    ShiftCard,
+    Leaflet
   },
 
   data () {
     return {
       shiftOverlay: false,
+      locationOverlay: false,
       shift: null,
+      location: null,
       headersShift: [
         { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
@@ -87,6 +103,13 @@ export default {
     ...mapGetters({
       trades: 'scheduling/trades'
     }),
+
+
+    mapWidth() {
+      var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+      return newWidth
+    },
+
   },
 
   created () {
@@ -121,7 +144,13 @@ export default {
     showShiftOverlay(shift) {
       this.shift = shift
       this.shiftOverlay = true
-    }
+    },
+    
+    showLocationOverlay(shift) {
+      this.location = shift.location
+      this.locationOverlay = true
+    },
+
   }
 }
 </script>

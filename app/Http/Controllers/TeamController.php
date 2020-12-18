@@ -326,16 +326,16 @@ class TeamController extends Controller
     /**
      * 
      * Return all team users
-     *  - ROLE: elder, team_admin, super_admin
+     *  - ROLE: team member
      * 
      */
     public function getTeamUsers($id)
     {
       $user = Auth::user();
-      $team = Team::find($id);
+      $team = $user->teams->find($id);
       $teamUsers = [];
 
-      if ($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null)) {
+      if ($team) {
         $teamUsers = $team->users()->with('shifts')->get();
 
         foreach($teamUsers as $key => $user) {

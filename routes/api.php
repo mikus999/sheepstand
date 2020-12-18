@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam');
     Route::get('teams/resetcode/{id}', 'TeamController@changeTeamCode');
     Route::get('teams/findteam/{code}', 'TeamController@findTeamByCode');
-    Route::get('teams/users/{id}', 'TeamController@getTeamUsers');
+    Route::get('teams/{id}/users/', 'TeamController@getTeamUsers');
     Route::post('teams/settings/update', 'TeamController@updateSetting');
     Route::post('teams/default/update', 'TeamController@setDefault');
     Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings');
@@ -60,6 +60,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('teams/{id}/trades', 'ShiftController@getTradeRequests');
     Route::post('teams/{id}/trades', 'ShiftController@makeTrade');
     Route::get('user/shifts', 'ShiftController@userAllShifts');
+    Route::post('user/shifts', 'ShiftController@userTeamShifts');
+
 
     // SCHEDULE routes
     Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);

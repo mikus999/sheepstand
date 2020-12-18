@@ -162,7 +162,6 @@ class ShiftController extends Controller
         $data = ['message' => 'Access Denied'];
         $user = Auth::user();
         $schedule = $user->schedules->find($scheduleid);
-        $shift = null;
 
         if ($schedule) {
             $team = $user->teams->find($schedule->team_id);
@@ -195,11 +194,9 @@ class ShiftController extends Controller
         $user = Auth::user();
         $userid = $request->user_id;
         $shiftid = $request->shift_id;
-        $status = $request->status;
-        $date = date_create(now())->modify('-7 days');
-
         $shift = Shift::find($shiftid);
         $schedule = $user->schedules->find($shift->schedule_id);
+        $status = $request->status;
 
         if ($schedule) {
             $team = $user->teams->find($schedule->team_id);
@@ -216,18 +213,14 @@ class ShiftController extends Controller
 
                 $this->changeUserShiftStatus($request);
 
-                $shiftusers = Shift::find($shiftid)->users()->get();
+                $shiftusers = $this->shiftUsers($shift);
+                $usershifts = $this->userShifts($targetUser);
 
-                $usershifts = $targetUser->shifts()
-                ->with('schedule', 'location', 'users')
-                ->where('time_start','>',$date)
-                ->orderBy('time_start')
-                ->get();
 
                 $data = [
                     'shiftusers' => $shiftusers,
                     'usershifts' => $usershifts,
-                    'trades' => $this->getTradeRequests($schedule->team_id)->original['trades'],
+                    'trades' => $this->teamTrades($team),
                     'teamusers' =>  $team->users()->with('shifts')->get()
                 ];
             }
@@ -250,8 +243,6 @@ class ShiftController extends Controller
         $user = Auth::user();
         $userid = $request->user_id;
         $shiftid = $request->shift_id;
-        $date = date_create(now())->modify('-7 days');
-
         $shift = Shift::find($shiftid);
         $schedule = $user->schedules->find($shift->schedule_id);
 
@@ -262,18 +253,14 @@ class ShiftController extends Controller
                 $targetUser = User::find($userid);
                 $targetUser->shifts()->detach($shiftid); // First detach if already exists
 
-                $shiftusers = Shift::find($shiftid)->users()->get();
+                $shiftusers = $this->shiftUsers($shift);
+                $usershifts = $this->userShifts($targetUser);
 
-                $usershifts = $targetUser->shifts()
-                ->with('schedule', 'location', 'users')
-                ->where('time_start','>',$date)
-                ->orderBy('time_start')
-                ->get();
 
                 $data = [
                     'shiftusers' => $shiftusers,
                     'usershifts' => $usershifts,
-                    'trades' => $this->getTradeRequests($schedule->team_id)->original['trades'],
+                    'trades' => $this->teamTrades($team),
                     'teamusers' =>  $team->users()->with('shifts')->get()
                 ];
             }
@@ -293,31 +280,25 @@ class ShiftController extends Controller
     public function changeUserShiftStatus(Request $request)
     {
         $data = ['message' => 'Access Denied'];
-        $user = Auth::user();
-        $userid = $request->user_id;
-        $shiftid = $request->shift_id;
+        $targetUser = User::find($request->user_id);
+        $shift = Shift::find($request->shift_id);
+        $schedule = Schedule::find($shift->schedule_id);
         $status = $request->status;
-        $date = date_create(now())->modify('-7 days');
 
-        $shift = Shift::find($shiftid);
-        $schedule = $user->schedules->find($shift->schedule_id);
 
         if ($schedule) {
-            $targetUser = User::find($userid);
-            $targetUser->shifts()->updateExistingPivot($shiftid, ['status' => $status]);
+            $team = Team::find($schedule->team_id);
+            $targetUser->shifts()->updateExistingPivot($shift->id, ['status' => $status]);
+            $targetUser->shifts()->updateExistingPivot($shift->id, ['trade_user_id' => $request->trade_user_id]);
+            $targetUser->shifts()->updateExistingPivot($shift->id, ['trade_shift_id' => $request->trade_shift_id]);
 
-            $shiftusers = Shift::find($shiftid)->users()->get();
-
-            $usershifts = $targetUser->shifts()
-            ->with('schedule', 'location', 'users')
-            ->where('time_start','>',$date)
-            ->orderBy('time_start')
-            ->get();
+            $shiftusers = $this->shiftUsers($shift);
+            $usershifts = $this->userShifts($targetUser);
 
             $data = [
                 'shiftusers' => $shiftusers,
                 'usershifts' => $usershifts,
-                'trades' => $this->getTradeRequests($schedule->team_id)->original['trades']
+                'trades' => $this->teamTrades($team)
             ];
         }
 
@@ -335,11 +316,8 @@ class ShiftController extends Controller
      */
     public function approveAllRequests($id, $status)
     {
-        $data = ['message' => 'Access Denied'];
-        $user = Auth::user();
         $schedule = Schedule::find($id);
         $shifts = $schedule->shifts()->get();
-        $data = [];
 
         foreach ($shifts as $shift) {
           $shift->users()->updateExistingPivot($shift->users()->wherePivot('status', $status)->allRelatedIds(), ['status' => 2]);
@@ -366,11 +344,7 @@ class ShiftController extends Controller
         $shift = Shift::find($id);
 
         if ($shift) {
-            $schedule = $user->schedules->find($shift->schedule_id);
-
-            if ($schedule) {
-                $shiftusers = $shift->users()->get();
-            }
+          $shiftusers = $this->shiftUsers($shift);
         }
 
         return response()->json($shiftusers);
@@ -389,23 +363,12 @@ class ShiftController extends Controller
     public function getTradeRequests($teamid)
     {
         $data = ['message' => 'Team Not Found'];
-        $user = Auth::user();
         $team = Team::find($teamid);
-        $shiftusers = [];
 
         if ($team) {
-            $date = date_create(now())->modify('-7 days');
-            $shiftusers = $team->shifts()
-                        ->with(['trades','schedule','location','users'])
-                        ->whereHas('trades')
-                        ->where('schedules.date_start','>',$date)
-                        ->where('schedules.status','>',0)
-                        ->get();
-
-
-            $data = [
-                'trades' => $shiftusers,
-            ];
+          $data = [
+            'trades' => $this->teamTrades($team)
+          ];
         }
 
         return response()->json($data);
@@ -425,7 +388,6 @@ class ShiftController extends Controller
         $targetUser = User::find($request->user_id);
         $shift = Shift::find($request->shift_id);
         $team = $user->teams->find($teamid);
-        $shiftusers = [];
 
 
         if ($team) {
@@ -434,10 +396,8 @@ class ShiftController extends Controller
             $user->shifts()->attach($shift->id);
             $user->shifts()->updateExistingPivot($shift->id, ['status' => 2]);
 
-            $shiftusers = $this->getTradeRequests($teamid);
-
             $data = [
-              'trades' => $this->getTradeRequests($teamid)->original['trades']
+              'trades' => $this->teamTrades($team)
             ];
         }
 
@@ -525,19 +485,92 @@ class ShiftController extends Controller
     public function userAllShifts()
     {
         $user = Auth::user();
-        $date = date_create(now())->modify('-7 days');
-        $shifts = [];
-
-        if ($user) {
-            $shifts = $user->shifts()
-                        ->with('schedule', 'location', 'users')
-                        ->where('time_start','>',$date)
-                        ->wherePivot('status','!=','3')
-                        ->orderBy('time_start')
-                        ->get();
-        }
-        
+        $shifts = $this->userShifts($user);
         return response()->json($shifts);
+    }
+
+
+    /**
+     * 
+     * Show user's shifts for ALL TEAMS
+     *  - ROLE: authenticated user
+     * 
+     *  GET -> /user/shifts
+     * 
+     */
+    public function userTeamShifts(Request $request)
+    {
+      $date = date_create(now())->modify('-1 days');
+      $user = User::find($request->user_id);
+      $shifts = $user->shifts()
+                      ->with(['schedule', 'location'])
+                      ->whereHas('schedule', function($q) use($request) {
+                        $q->where('team_id', '=', $request->team_id);
+                      })
+                      ->withPivot('status')
+                      ->where('time_start','>',$date)
+                      ->wherePivot('status','=',2)
+                      ->orderBy('time_start')
+                      ->get();
+
+      return response()->json($shifts);
+    }
+
+
+
+
+
+
+
+
+
+
+    // Shared Shift Functions
+
+    public function userShifts(User $user)
+    {
+      $date = date_create(now())->modify('-7 days');
+      $shifts = [];
+
+      if ($user) {
+          $shifts = $user->shifts()
+                      ->with('schedule', 'location', 'users')
+                      ->where('time_start','>',$date)
+                      ->wherePivot('status','!=','3')
+                      ->orderBy('time_start')
+                      ->get();
+      }
+      
+      return $shifts;
+    }
+
+
+    public function shiftUsers(Shift $shift)
+    {
+      $user = Auth::user();
+      $schedule = $user->schedules->find($shift->schedule_id);
+      $shiftusers = [];
+
+      if ($schedule) {
+          $shiftusers = $shift->users()->get();
+      }
+
+      return $shiftusers;
+    }
+
+
+    public function teamTrades(Team $team)
+    {
+      $date = date_create(now())->modify('-7 days');
+      $trades = $team->shifts()
+                  ->with(['trades','schedule','location','users'])
+                  ->whereHas('trades')
+                  ->where('schedules.date_start','>',$date)
+                  ->where('schedules.status','>',0)
+                  ->get();
+
+
+      return $trades;
     }
 
 }

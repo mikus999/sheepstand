@@ -277,7 +277,7 @@ export default {
 
 
     async getTeamUsers (date) {
-      await axios.get('/api/teams/users/' + this.team.id)
+      await axios.get('/api/teams/' + this.team.id + '/users/')
         .then(response => {
           this.teamUsers = response.data
         })

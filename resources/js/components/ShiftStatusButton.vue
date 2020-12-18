@@ -95,7 +95,7 @@
 
 
     <!-- If trade offer is pending -->
-    <div v-else-if="myShiftStatus == 4">
+    <div v-else-if="myShiftStatus == 4 || myShiftStatus == 5">
       <v-btn 
         :fab="!tableActions" 
         :icon="tableActions" 
@@ -103,7 +103,7 @@
         color="secondary" 
         @click="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
       >
-        <v-icon :color="tableActions ? 'primary' : 'secondary'">mdi-account-switch</v-icon>
+        <v-icon color="primary">mdi-account-switch</v-icon>
       </v-btn>
     </div>
 
@@ -259,6 +259,8 @@ export default {
           data: {
             user_id: this.user.id,
             shift_id: this.shift.id,
+            trade_user_id: null,
+            trade_shift_id: null,
             status: status
           }
         })
@@ -280,7 +282,7 @@ export default {
 
 
     tradeUpdate(value) {
-      this.tradeOverlay = false
+      //this.tradeOverlay = false
       this.shift.users = value
     }
   },
