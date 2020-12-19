@@ -25,6 +25,8 @@ class UserController extends Controller
         $roles = Helper::getUserRoles($user);
 
         $user['roles'] = $roles;
+        $user['user_availabilities'] = $user->user_availabilities()->get();
+        $user['user_vacations'] = $user->user_vacations()->get();
 
         return response()->json($user);
     }

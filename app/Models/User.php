@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Team;
 use Laratrust\Traits\LaratrustUserTrait;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 {
     use LaratrustUserTrait;
     use Notifiable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -51,11 +53,11 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
      * @var array
      */
     protected $appends = [
-        'photo_url',
+        'photo_url'
     ];
 
 
-    protected $with = ['user_availabilities', 'user_vacations'];
+    //protected $with = ['user_availabilities', 'user_vacations'];
     
 
     public function teams()

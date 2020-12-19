@@ -162,6 +162,19 @@
             />
           </v-col>
         </v-row>
+
+
+        <v-row class="mt-8">
+          <v-col>
+            <v-switch
+              v-model="mandatory"
+              :label="$t('shifts.mandatory')"
+              :hint="$t('shifts.mandatory_explanation')"
+              persistent-hint
+              prepend-icon="mdi-heart"
+            />
+          </v-col>
+        </v-row>        
       </v-container>
     </v-card-text>
 
@@ -181,7 +194,7 @@ import helper from '~/mixins/helper'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
 
 export default {
-  name: 'ShiftEditCard',
+  name: 'ShiftNewCard',
   mixins: [helper],
   components: {
     ShiftNewCard
@@ -223,7 +236,8 @@ export default {
           show: false
         }
       },
-      participants: []
+      participants: [],
+      mandatory: false,
     }
   },
 
@@ -247,6 +261,7 @@ export default {
     this.time.start.value = this.$dayjs(this.shift.time_start).format('HH:mm')
     this.time.end.value = this.$dayjs(this.shift.time_end).format('HH:mm')
     this.participants = [this.shift.min_participants, this.shift.max_participants]
+    this.mandatory = this.shift.mandatory
   },
 
   methods: {
@@ -308,7 +323,8 @@ export default {
           time_start: tempStart,
           time_end: tempEnd,
           min_participants: this.participants[0],
-          max_participants: this.participants[1]
+          max_participants: this.participants[1],
+          mandatory: this.mandatory
         }
       })
       .then(response => {

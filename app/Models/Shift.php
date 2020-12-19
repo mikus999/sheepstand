@@ -12,7 +12,8 @@ class Shift extends Model
       'time_start',
       'time_end',
       'min_participants',
-      'max_participants'
+      'max_participants',
+      'mandatory'
     ];
 
     public function schedule()

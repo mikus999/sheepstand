@@ -77,7 +77,8 @@ class ShiftController extends Controller
                     'time_start' => $request->time_start,
                     'time_end' => $request->time_end,
                     'min_participants' => $request->min_participants,
-                    'max_participants' => $request->max_participants
+                    'max_participants' => $request->max_participants,
+                    'mandatory' => $request->mandatory
                 ]);
 
                 $data = [
@@ -137,6 +138,7 @@ class ShiftController extends Controller
                 $shift->time_end = $request->time_end;
                 $shift->min_participants = $request->min_participants;
                 $shift->max_participants = $request->max_participants;
+                $shift->mandatory = $request->mandatory;
                 $shift->save();
             }
 

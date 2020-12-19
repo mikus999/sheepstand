@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('teams/{id}/notificationsettings', 'NotificationController@updateTelegram');
     Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink');
     Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink');
+    Route::get('teams/{id}/availability', 'UserAvailabilityController@getAllAvailability');
 
     // SHIFT routes
     Route::post('schedules/joinshift', 'ShiftController@addUserToShift');

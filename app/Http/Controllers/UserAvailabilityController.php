@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Helper;
 use App\Models\User;
+use App\Models\Team;
 use App\Models\UserAvailability;
 use App\Models\UserVacation;
 use Auth;
@@ -28,6 +29,19 @@ class UserAvailabilityController extends Controller
     Helper::addDefaultAvailability($targetUser, $default);
 
     return response()->json($targetUser->user_availabilities);
+  }
+
+
+  public function getAllAvailability($teamid)
+  {
+    $team = Team::find($teamid);
+    
+    $data = [
+      'users' => $team->user_availability()->get()
+    ];
+
+    return response()->json($data);
+
   }
 
 
@@ -75,7 +89,6 @@ class UserAvailabilityController extends Controller
     $user = Auth::user();
     return response()->json($user->user_vacations);
   }
-
 
 
   public function setVacation(Request $request)

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-data-table :headers="headersShift" :items="trades" disable-sort width="100%">
+    <v-data-table :headers="headersShift" :items="trades || []" disable-sort width="100%">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>

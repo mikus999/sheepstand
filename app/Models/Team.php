@@ -57,4 +57,14 @@ class Team extends LaratrustTeam
   {
     return $this->name;
   }
+
+  public function user_availability()
+  {
+    return $this->belongsToMany('App\Models\User')->with(['user_availabilities', 'user_vacations']);
+  }
+
+  public function user_vacation()
+  {
+    return $this->hasManyThrough('App\Models\UserVacation', 'App\Models\User');
+  } 
 }

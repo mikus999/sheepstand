@@ -177,7 +177,8 @@ class ScheduleController extends Controller
               'time_start' => $shift_start,
               'time_end' => $shift_end,
               'min_participants' => $shift->min_participants,
-              'max_participants' => $shift->max_participants
+              'max_participants' => $shift->max_participants,
+              'mandatory' => $shift->mandatory
             ]);
           }
         }
@@ -218,7 +219,8 @@ class ScheduleController extends Controller
               'time_start' => $shift_start,
               'time_end' => $shift_end,
               'min_participants' => $shift->min_participants,
-              'max_participants' => $shift->max_participants
+              'max_participants' => $shift->max_participants,
+              'mandatory' => $shift->mandatory
             ]);
           }
         }

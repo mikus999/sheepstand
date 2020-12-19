@@ -75,9 +75,9 @@
 
               <template v-slot:item.assignments="{ item }">
 
-                <v-select 
+                <v-autocomplete 
                   :value="item.users" 
-                  :items="filterUsersAvailability(item, teamUsers)" 
+                  :items="showAvailableUsers(item)" 
                   :readonly="!$can('manage_schedules')"
                   hide-details 
                   multiple 
@@ -174,7 +174,7 @@
                     </v-list-item>
                   </template>
 
-                </v-select>
+                </v-autocomplete>
 
               </template>
             </v-data-table>
@@ -182,6 +182,17 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+
+    <v-overlay :value="pageLoad" :opacity=".9" class="text-center">
+      <v-progress-circular
+        indeterminate
+        color="primary"
+        size="64"
+      ></v-progress-circular>
+      <h1 class="mt-16 text-h4">{{ pageLoad_text }}</h1>
+    </v-overlay>
+
   </v-container>
 </template>
 
@@ -206,10 +217,13 @@ export default {
   data () {
     return {
       pageLoad: true,
+      pageLoad_progress: 0,
+      pageLoad_text: '',
       dialog: false,
       date: '',
       shiftTable_key: 1,
       shift_key: 1,
+      search: '',
       shiftHeaders: [
         { 
           text: this.$t('shifts.shift_time'), 
@@ -232,6 +246,7 @@ export default {
       ],
       teamUsers: [],
       shiftUsers: {},
+      availability: [],
     }
   },
 
@@ -251,6 +266,7 @@ export default {
       var result = this.shifts.filter(s => s.users.filter(u => u.pivot.status == 1).length > 0)
       return result.length > 0
     },
+
   },
 
   created () {
@@ -260,28 +276,60 @@ export default {
   methods: {
     async initialize () {
       await this.getSchedule()
+      await this.getUserAvailability()
       await this.getTeamUsers()
+      this.pageLoad_text = this.$t('schedules.loading_complete')
+      this.pageLoad_progress = 100
       this.pageLoad = false
     },
 
     async getSchedule () {
+      this.pageLoad_text = this.$t('schedules.loading_schedule')
+      this.pageLoad_progress = 5
+
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
           this.storeSchedule(response.data)
           this.storeShifts(response.data.shifts)
-
           this.date = this.$dayjs(response.data.date_start).format("YYYY-MM-DD")
+
+          this.pageLoad_progress = 10
+        })
+
+    },
+
+
+  
+    async getUserAvailability (date) {
+      this.pageLoad_text = this.$t('schedules.loading_availability')
+
+      await axios.get('/api/teams/' + this.team.id + '/availability/')
+        .then(response => {
+          this.availability = response.data.users
+          this.pageLoad_progress = 60
         })
 
     },
 
 
     async getTeamUsers (date) {
+      this.pageLoad_text = this.$t('schedules.loading_users')
+
       await axios.get('/api/teams/' + this.team.id + '/users/')
         .then(response => {
           this.teamUsers = response.data
+          this.pageLoad_progress = 80
         })
 
+    },
+
+
+
+    showAvailableUsers(shift) {
+      this.pageLoad_text = this.$t('schedules.loading_calculations')
+
+      var avail = this.filterUsersAvailability(shift, this.teamUsers, this.availability)
+      return avail
     },
 
     async removeShiftUser (data, shift) {
@@ -401,6 +449,11 @@ export default {
       }
 
       return color
+    },
+
+
+    handleKeyPress(event) {
+      console.log(event)
     },
 
     

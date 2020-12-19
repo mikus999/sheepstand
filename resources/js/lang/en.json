@@ -249,7 +249,12 @@
         "approve_all_assignments": "Approve Assignments",
         "confirm_approve_all_requests": "Are you sure you want to approve all shift requests for this schedule?",
         "confirm_approve_all_assignments": "Are you sure you want to approve all pending assignments for this schedule?",
-        "week_of": "Week of:"
+        "week_of": "Week of:",
+        "loading_schedule": "Loading Schedule Data...",
+        "loading_availability": "Loading Availability Data...",
+        "loading_users": "Loading User Data",
+        "loading_calculations": "Calculating Shift Availability...",
+        "loading_complete": "Loading Complete."
     },
     "shifts": {
         "status_0": "Pending User Approval",
@@ -266,6 +271,8 @@
         "location": "Location",
         "number_of_participants": "Number of Participants",
         "participants": "Participants",
+        "mandatory": "Mandatory Shift",
+        "mandatory_explanation": "Only mandatory shifts will be filled when using the Automatic Assignment feature",
         "assignments": "Assignments",
         "my_shifts": "My Shifts",
         "trade_requests": "Trade Requests",

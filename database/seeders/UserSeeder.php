@@ -3,6 +3,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Helper\Helper;
+use App\Models\User;
+use App\Models\Team;
 
 class UserSeeder extends Seeder
 {
@@ -13,14 +16,13 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\User::class, 10)->create()->each(function ($user) {
-            DB::table('team_user')->insert([
-                'user_id' => $user->id,
-                'team_id' => 26,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+        User::factory()->count(150)->create()->each(function ($user) {
+          $team = Team::find(21);
+          $user->teams()->attach($team);
+          $user->attachRole('publisher', $team);
             
+          Helper::addDefaultAvailability($user, true);
+
         });
     }
 }

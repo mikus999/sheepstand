@@ -102,6 +102,12 @@ export const helper = {
           text: this.$t('shifts.status_4'), 
           color: 'blue',
           icon: 'mdi-account-switch'
+        },
+        { 
+          value: 5,
+          text: this.$t('shifts.status_4'), 
+          color: 'blue',
+          icon: 'mdi-account-switch'
         }
       ],
 
@@ -337,10 +343,11 @@ export const scheduling = {
       return avail_shifts
     },
 
-    filterUsersAvailability (shift, users) {
+    filterUsersAvailability (shift, users, users_with_availability) {
+
       var avail_users = users.filter(user => 
         shift.users.filter(u => u.id == user.id).length > 0 || // include user if he is already assigned, regardless of availability
-        this.checkShiftAvailability(shift, user)
+        this.checkShiftAvailability(shift, users_with_availability.filter(a => a.id == user.id))
       )
 
       // Show selected users at top of list
@@ -356,6 +363,9 @@ export const scheduling = {
       // Day of Week: Monday = 1, Sunday = 7 (ISO standard)
 
       var result = true
+      if (user.length != undefined && user.length > 0) {
+        user = user[0]
+      }
       const availability = user.user_availabilities
       const vacations = user.user_vacations
       const shift_date = this.$dayjs(shift.time_start).format('YYYY-MM-DD')
