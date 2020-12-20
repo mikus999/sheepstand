@@ -295,12 +295,14 @@
         "show_all_dates": "Show all dates",
         "offered_by": "Offered By",
         "make_next_shift": "Duplicate and Make Consecutive",
+        "conflicts": "Shift Conflicts",
         "conflict_shift_another_team": "Conflicts with another assignment",
         "conflict_shift_adjacent": "Adjacent to another assignment at different location",
         "see_more": "See More Shifts",
         "shifts_30": "Shifts (30 days)",
         "shifts_14": "Shifts (14 days)",
-        "shifts_7": "Shifts (7 days)"
+        "shifts_7": "Shifts (7 days)",
+        "shifts_7_14_30": "Shifts (7/14/30 days)"
     },
     "translation": {
         "management_system": "Translation Management System",

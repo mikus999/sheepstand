@@ -91,7 +91,7 @@
                   </v-btn>
                   
                   <v-chip small label 
-                    v-for="shift_user in item.users"
+                    v-for="shift_user in filterShiftUsers(item.users)"
                     :key="shift_user.id"
                     :color="shift_user.pivot.status !== undefined ? shiftStatus[shift_user.pivot.status].color : ''"
                   >
@@ -313,6 +313,7 @@ export default {
       return avail
     },
 
+
     async removeShiftUser (user, shift) {
 
       await axios({
@@ -431,11 +432,6 @@ export default {
       return color
     },
 
-
-    handleKeyPress(event) {
-      console.log(event)
-    },
-
     
     getConflictMessage(conflicts) {
       var result = ''
@@ -467,7 +463,6 @@ export default {
 
     closeParticipantDialog() {
       this.participantDialog = false
-      this.tempShift = []
     }
   }
 }
