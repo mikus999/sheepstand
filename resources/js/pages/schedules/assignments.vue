@@ -151,7 +151,7 @@
 
 
       <v-dialog fullscreen v-model="participantDialog">
-        <ShiftAssignments :shift="tempShift" :teamUsers="teamUsers" v-on:close="closeParticipantDialog" />
+        <ShiftAssignments :key="saKey" :shift="tempShift" :teamUsers="teamUsers" :availability="availability" v-on:close="closeParticipantDialog" />
       </v-dialog>
     </v-card>
 
@@ -195,6 +195,7 @@ export default {
       pageLoad_text: '',
       dialog: false,
       participantDialog: false,
+      saKey: 1,
       date: '',
       shiftTable_key: 1,
       shift_key: 1,
@@ -463,6 +464,7 @@ export default {
 
     closeParticipantDialog() {
       this.participantDialog = false
+      this.saKey += 1
     }
   }
 }

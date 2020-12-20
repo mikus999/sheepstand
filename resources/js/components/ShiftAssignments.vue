@@ -104,6 +104,9 @@ export default {
     },
     teamUsers: {
       type: [Object, Array]
+    },
+    availability: {
+      type: [Object, Array]
     }
   },
 
@@ -114,6 +117,8 @@ export default {
   data() {
     return {
       locationOverlay: false,
+      teamUsersAvail: [],
+      showAvailUsers: true,
       headers: [
         { 
           text: '',
@@ -157,14 +162,16 @@ export default {
     },
 
     sortUsers() {
-      this.teamUsers.sort((a,b) => {
+      var tempArr = this.showAvailUsers ? this.teamUsersAvail : this.teamUsers
+      tempArr.sort((a,b) => {
         return this.isShiftMember(a.id) ? -1 : 1
       })
-      return this.teamUsers
+      return tempArr
     }
   },
 
   created() {
+    this.teamUsersAvail = this.getAvailableUsers()
   },
 
   methods: {
@@ -189,6 +196,11 @@ export default {
       } else {
         return []
       }
+    },
+
+
+    getAvailableUsers() {
+      return this.filterUsersAvailability(this.shift, this.teamUsers, this.availability)
     },
 
     async removeShiftUser (user) {
