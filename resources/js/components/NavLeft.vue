@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawer" class="light-blue darken-4 white--text" dark style="z-index: 500;" app>
+  <v-navigation-drawer v-model="drawer" class="light-blue darken-4 white--text" dark app>
     <v-list flat class="mb-0 pb-0" v-show="!isMobile">
       <v-list-item>
         <Logo width="35" height="35" class="mb-1 mr-2"/>

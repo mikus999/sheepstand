@@ -73,114 +73,86 @@
                 <v-chip label small :color="item.location.color_code">{{ item.location.name }}</v-chip>
               </template>
 
+
+              <template v-slot:item.participants="{ item }">
+                <v-chip small dark label 
+                  :color="checkMax(item.max_participants, filterShiftUsers(item.users).length)"
+                >
+                  {{ filterShiftUsers(item.users).length }}/{{ item.max_participants }}
+                </v-chip>
+              </template>
+
+
               <template v-slot:item.assignments="{ item }">
 
-                <v-autocomplete 
-                  :value="item.users" 
-                  :items="showAvailableUsers(item)" 
-                  :readonly="!$can('manage_schedules')"
-                  hide-details 
-                  multiple 
-                  dense
-                  class="no-border"
-                  return-object 
-                  item-text="name" 
-                  item-value="id" 
-                  :id="'shift'+item.id"
-                  :menu-props="{ bottom: true, offsetY: true }"
-                  :key="shift_key + item.id"
-                >
-
-                  <!-- NUMBER OF SHIFT ASSIGNMENTS -->
-                  <template v-slot:prepend-inner v-if="$vuetify.breakpoint.smAndUp">
-                    <v-chip 
-                      small 
-                      dark 
-                      label 
-                      :color="checkMax(item.max_participants, filterShiftUsers(item.users).length)"
+                <v-chip-group column>
+                  <v-btn icon @click="openParticipantDialog(item)" class="mr-2">
+                    <v-icon>mdi-account-multiple-plus</v-icon>
+                  </v-btn>
+                  
+                  <v-chip small label 
+                    v-for="shift_user in item.users"
+                    :key="shift_user.id"
+                    :color="shift_user.pivot.status !== undefined ? shiftStatus[shift_user.pivot.status].color : ''"
+                  >
+                    <v-tooltip
+                      bottom
+                      color="red"
+                      v-if="checkShiftConflicts(item, getUserShifts(shift_user.id), true, false).length > 0"
                     >
-                      {{ filterShiftUsers(item.users).length }}/{{ item.max_participants }}
-                    </v-chip>
-                  </template>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon small left v-bind="attrs" v-on="on">mdi-alert</v-icon>
+                      </template>
+                      <span>{{ getConflictMessage(checkShiftConflicts(item, getUserShifts(shift_user.id), true, false)) }}</span>
+                    </v-tooltip>
 
-                  <!-- SELECTION SLOT: DISPLAYED IN TEXTBOX -->
-                  <template v-slot:selection="shift_user">
-                    <v-chip 
+                    {{ shift_user.name}}
+                  
+                    <v-icon 
                       small 
-                      label 
-                      v-bind="shift_user.attrs" 
-                      :input-value="shift_user.selected" 
-                      :color="item.users[shift_user.index].pivot.status !== undefined ? shiftStatus[item.users[shift_user.index].pivot.status].color : ''"
-                      v-if="item.users[shift_user.index].pivot.status != 3"
+                      right
+                      color="green darken-2"
+                      v-if="shift_user.pivot.status < 2"
+                      @click.stop="updateStatus(shift_user, item, 2)"
+                      class="ml-2"
                     >
-                      <v-icon
-                        small
-                        left
-                        v-if="checkShiftConflicts(item, shift_user.item.shifts, true, false).length > 0"
-                      >
-                        mdi-alert
-                      </v-icon>
+                      mdi-thumb-up
+                    </v-icon>
 
-                      {{ shift_user.item.name}}
-                      
-                      <v-icon 
-                        small 
-                        right
-                        color="green darken-2"
-                        v-if="item.users[shift_user.index].pivot.status < 2"
-                        @click.stop="updateStatus(shift_user, item, 2)"
-                        class="ml-2"
-                      >
-                        mdi-thumb-up
-                      </v-icon>
+                    <v-icon 
+                      small 
+                      right
+                      color="black"
+                      v-if="shift_user.pivot.status == 0"
+                      @click.stop="removeShiftUser(shift_user, item)"
+                      class="ml-3"
+                    >
+                      mdi-close-circle
+                    </v-icon>
 
-                      <v-icon 
-                        small 
-                        right
-                        color="black"
-                        v-if="item.users[shift_user.index].pivot.status == 0"
-                        @click.stop="removeShiftUser(shift_user, item)"
-                        class="ml-3"
-                      >
-                        mdi-close-circle
-                      </v-icon>
-
-                      <v-icon 
-                        small 
-                        right
-                        color="black"
-                        v-if="item.users[shift_user.index].pivot.status == 1"
-                        @click.stop="updateStatus(shift_user, item, 3)"
-                        class="ml-3"
-                      >
-                        mdi-thumb-down
-                      </v-icon>
-                    </v-chip>
-                  </template>
-
-
-                  <!-- ITEM SLOT: DISPLAYED IN DROPDOWN LIST -->
-                  <template v-slot:item="shift_user">
-                    <v-list-item dense @click="addShiftUser(shift_user, item)" :disabled="getStatus_List(shift_user, item) == 3">
-                      <v-list-item-avatar class="ma-0">
-                        <v-icon small :color="(getStatus_List(shift_user, item) != 3 && shift_user.attrs['aria-selected']==='true') ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
-                      </v-list-item-avatar>
-                      <v-list-item-content>
-                        <v-list-item-title :class="getStatus_List(shift_user, item) == 3 ? 'text-decoration-line-through' : ''">{{ shift_user.item.name }}</v-list-item-title>
-                        <v-list-item-subtitle class="red--text">
-                          <span v-html="getConflictMessage(checkShiftConflicts(item, shift_user.item.shifts, true, false))"></span>
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-
-                </v-autocomplete>
+                    <v-icon 
+                      small 
+                      right
+                      color="black"
+                      v-if="shift_user.pivot.status == 1"
+                      @click.stop="updateStatus(shift_user, item, 3)"
+                      class="ml-3"
+                    >
+                      mdi-thumb-down
+                    </v-icon>
+                  </v-chip>
+                </v-chip-group>
 
               </template>
             </v-data-table>
           </v-col>
         </v-row>
       </v-card-text>
+
+
+      <v-dialog fullscreen v-model="participantDialog">
+        <ShiftAssignments :shift="tempShift" :teamUsers="teamUsers" v-on:close="closeParticipantDialog" />
+      </v-dialog>
     </v-card>
 
 
@@ -200,6 +172,7 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { helper, scheduling } from '~/mixins/helper'
+import ShiftAssignments from '~/components/ShiftAssignments.vue'
 
 export default {
   middleware: ['auth', 'teams'],
@@ -212,6 +185,7 @@ export default {
     }
   },
   components: {
+    ShiftAssignments
   },
 
   data () {
@@ -220,6 +194,7 @@ export default {
       pageLoad_progress: 0,
       pageLoad_text: '',
       dialog: false,
+      participantDialog: false,
       date: '',
       shiftTable_key: 1,
       shift_key: 1,
@@ -236,6 +211,11 @@ export default {
           value: 'location_id', 
           align: 'center',
         },
+        {
+          text: this.$t('shifts.participants'), 
+          value: 'participants', 
+          align: 'center',
+        },
         { 
           text: this.$t('shifts.assignments'), 
           value: 'assignments', 
@@ -247,6 +227,7 @@ export default {
       teamUsers: [],
       shiftUsers: {},
       availability: [],
+      tempShift: [],
     }
   },
 
@@ -332,9 +313,7 @@ export default {
       return avail
     },
 
-    async removeShiftUser (data, shift) {
-      var user = data.item
-      var attrs = data.attrs
+    async removeShiftUser (user, shift) {
 
       await axios({
         method: 'post',      
@@ -350,37 +329,28 @@ export default {
       })
     },
 
-    async addShiftUser (data, shift) {
-      var user = data.item
-      var attrs = data.attrs
+    async addShiftUser (user, shift) {
       var status = this.team.setting_shift_assignment_autoaccept ? 2 : 0
 
-      if (attrs['aria-selected']==='true') {
-        this.removeShiftUser(data, shift)
-
-      } else {
-
-        await axios({
-          method: 'post',      
-          url: '/api/schedules/joinshift',
-          data: {
-            user_id: user.id,
-            shift_id: shift.id,
-            status: status
-          }
-        })
-        .then(response => {
-          user.pivot.status = status
-          shift.users = response.data.shiftusers
-          this.teamUsers = response.data.teamusers
-        })
-      }
+      await axios({
+        method: 'post',      
+        url: '/api/schedules/joinshift',
+        data: {
+          user_id: user.id,
+          shift_id: shift.id,
+          status: status
+        }
+      })
+      .then(response => {
+        user.pivot.status = status
+        shift.users = response.data.shiftusers
+        this.teamUsers = response.data.teamusers
+      })
 
     },
 
 
-    async updateStatus (data, shift, status) {
-      var user = data.item
+    async updateStatus (user, shift, status) {
 
       await axios({
         method: 'post',      
@@ -425,6 +395,16 @@ export default {
 
     filterShiftUsers(shiftUsers) {
       return shiftUsers.filter(u => u.pivot.status != 3)
+    },
+
+
+    getUserShifts(user_id) {
+      var tempArr = this.teamUsers.filter(u => u.id == user_id)
+      if (tempArr.length > 0) {
+        return tempArr[0].shifts
+      } else {
+        return []
+      }
     },
 
 
@@ -477,6 +457,18 @@ export default {
 
       return result
     },
+
+
+
+    openParticipantDialog(shift) {
+      this.tempShift = shift
+      this.participantDialog = true
+    },
+
+    closeParticipantDialog() {
+      this.participantDialog = false
+      this.tempShift = []
+    }
   }
 }
 

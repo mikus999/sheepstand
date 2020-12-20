@@ -126,7 +126,7 @@
         "vacation_schedule": "Vacation Schedule",
         "confirm_delete_vacation": "Are you sure you want to delete this vacation?",
         "time_slot": "Time Slot",
-        "fts_status": "Fulltime Service Status",
+        "fts_status": "Fulltime Service",
         "fts_publisher": "Publisher",
         "fts_pioneer": "Regular Pioneer",
         "fts_sfts": "Special Pioneer/Missionary",
@@ -297,7 +297,10 @@
         "make_next_shift": "Duplicate and Make Consecutive",
         "conflict_shift_another_team": "Conflicts with another assignment",
         "conflict_shift_adjacent": "Adjacent to another assignment at different location",
-        "see_more": "See More Shifts"
+        "see_more": "See More Shifts",
+        "shifts_30": "Shifts (30 days)",
+        "shifts_14": "Shifts (14 days)",
+        "shifts_7": "Shifts (7 days)"
     },
     "translation": {
         "management_system": "Translation Management System",
