@@ -51,7 +51,8 @@
         "warning": "Warning",
         "sort_by": "Sort By",
         "approve": "Approve",
-        "all": "All"
+        "all": "All",
+        "please_wait": "Please Wait..."
     },
     "menu": {
         "dashboard": "Dashboard",

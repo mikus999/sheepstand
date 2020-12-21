@@ -6,7 +6,7 @@
 
 
     <v-row>
-      <ScheduleEdit v-if="!pageLoad.value" :schedule="schedule" />
+      <ScheduleEdit v-if="!pageLoad.value" :team_availability="team_availability" />
     </v-row>
 
     <!-- PAGE LOAD OVERLAY -->
@@ -49,6 +49,7 @@ export default {
         progress: 0,
         text: ''
       },
+      team_availability: []
     }
   },
   
@@ -56,7 +57,6 @@ export default {
     ...mapGetters({
       schedule: 'scheduling/schedule',
       shifts: 'scheduling/shifts',
-      team_availability: 'scheduling/team_availability',
       team_users: 'scheduling/team_users',
     }),
 
@@ -113,7 +113,7 @@ export default {
 
       await axios.get('/api/teams/' + this.team.id + '/availability/')
         .then(response => {
-          this.storeTeamAvailability(response.data.users)
+          this.team_availability = response.data.users
           this.pageLoad.progress = 60
         })
     },

@@ -70,8 +70,10 @@
                   @click="showParticipantDialog()"
                   v-bind="attrs"
                   v-on="on"
+                  :disabled="!assignmentsLoaded"
+                  :loading="!assignmentsLoaded"
                 >
-                  <v-icon small>mdi-account-multiple</v-icon>
+                  <v-icon small>mdi-account-multiple }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('shifts.participants') }}</span>
@@ -152,7 +154,7 @@
 
 
       <v-dialog fullscreen v-model="participantDialog">
-        <ShiftAssignments :shift="shift" v-on:close="closeParticipantDialog" />
+        <ShiftAssignments :shift="shift" :team_availability="team_availability" v-on:close="closeParticipantDialog" />
       </v-dialog>
 
 
@@ -176,6 +178,9 @@ export default {
   },
   props: {
     shift: {
+      type: [Object, Array]
+    },
+    team_availability: {
       type: [Object, Array]
     },
     width: {
@@ -209,7 +214,6 @@ export default {
     ...mapGetters({
       schedule: 'scheduling/schedule',
       shifts: 'scheduling/shifts',
-      team_availability: 'scheduling/team_availability',
       team_users: 'scheduling/team_users',
     }),
 
@@ -220,9 +224,12 @@ export default {
 
     hasParticipants() {
       return this.filterShiftUsers(this.shift.users).length > 0
+    },
+
+    assignmentsLoaded() {
+      return this.team_availability.length > 0
     }
   },
-
 
   methods: {
 

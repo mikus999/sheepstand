@@ -28,8 +28,8 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-btn icon @click="showLanguageOverly(item)">
-          <v-icon>mdi-account-edit</v-icon>
+        <v-btn icon small @click="showLanguageOverly(item)">
+          <v-icon small>mdi-account-edit</v-icon>
         </v-btn>
       </template>
     </v-data-table>

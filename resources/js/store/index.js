@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from "vuex-persistedstate";
+import persistedState from "vuex-persistedstate";
 import SecureLS from "secure-ls";
 var ls = new SecureLS({ isCompression: false });
 
@@ -23,18 +23,44 @@ const modules = requireContext.keys()
     return { ...modules, [name]: module }
   }, {})
 
+  const encryptStorage = {
+    getItem: (key) => ls.get(key),
+    setItem: (key, value) => ls.set(key, value),
+    removeItem: (key) => ls.remove(key),
+  }
+
 export default new Vuex.Store({
   modules,
   plugins: [
-    process.env.NODE_ENV != 'production' ? 
-      createPersistedState() : 
-      createPersistedState({ 
-        storage: {
-          getItem: (key) => ls.get(key),
-          setItem: (key, value) => ls.set(key, value),
-          removeItem: (key) => ls.remove(key),
-        }
-      })
-    
+    persistedState(
+      { 
+        key: 'vuex_auth',
+        paths: [
+          "auth",
+        ],
+        storage: process.env.NODE_ENV != 'production' ? '' : encryptStorage
+      }
+    ),
+    persistedState(
+      { 
+        key: 'vuex_public',
+        paths: [
+          "general",
+          "route",
+          "lang",
+          "snackbar"
+        ],
+        storage: process.env.NODE_ENV != 'production' ? '' : encryptStorage
+      }
+    ),
+    persistedState(
+      { 
+        key: 'vuex_schedule',
+        paths: [
+          "scheduling",
+        ],
+        storage: process.env.NODE_ENV != 'production' ? '' : encryptStorage
+      }
+    ),    
   ],
 })

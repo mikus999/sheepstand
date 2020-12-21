@@ -102,7 +102,7 @@ export default {
       shifts: 'scheduling/shifts',
       user_shifts: 'scheduling/user_shifts',
       shifts_available: 'scheduling/shifts_available',
-      shift_conflicts: 'scheduling/shift_conflits',
+      shift_conflicts: 'scheduling/shift_conflicts',
     }),
 
     cardWidth () {

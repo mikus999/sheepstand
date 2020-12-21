@@ -81,6 +81,7 @@
                     :id="shift.id"
                     :key="shift.id" 
                     :shift="shift" 
+                    :team_availability="team_availability"
                     v-on:update="parseSchedule()" 
                     v-on:location="showLocationOverlay(shift)"
                     class="shift"
@@ -198,6 +199,11 @@ export default {
     ShiftNewCard,
     Leaflet
   },
+  props: {
+    team_availability: {
+      type: [Object, Array]
+    }
+  },
 
   data () {
     return {
@@ -309,7 +315,6 @@ export default {
     ...mapGetters({
       schedule: 'scheduling/schedule',
       shifts: 'scheduling/shifts',
-      team_availability: 'scheduling/team_availability',
       team_users: 'scheduling/team_users',
     }),
 

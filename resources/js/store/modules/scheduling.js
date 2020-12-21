@@ -8,7 +8,6 @@ export const state = {
   shifts_available: null,
   shift_conflicts: null,
   trades: null,
-  team_availability: null,
   team_users: null,
 }
 
@@ -21,7 +20,6 @@ export const getters = {
   shifts_available: state => state.shifts_available,
   shift_conflicts: state => state.shift_conflicts,
   trades: state => state.trades,
-  team_availability: state => state.team_availability,
   team_users: state => state.team_users
 }
 
@@ -53,10 +51,6 @@ export const mutations = {
 
   [types.SET_TRADES] (state, payload) {
     state.trades = payload
-  },
-
-  [types.SET_TEAM_AVAILABILITY] (state, payload) {
-    state.team_availability = payload
   },
 
   [types.SET_TEAM_USERS] (state, payload) {

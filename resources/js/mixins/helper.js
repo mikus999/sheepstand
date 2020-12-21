@@ -334,10 +334,6 @@ export const scheduling = {
       this.$store.commit('scheduling/SET_TRADES', data)
     },
 
-    async storeTeamAvailability (data) {
-      this.$store.commit('scheduling/SET_TEAM_AVAILABILITY', data)
-    },
-
     async storeTeamUsers (data) {
       this.$store.commit('scheduling/SET_TEAM_USERS', data)
     },

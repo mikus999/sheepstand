@@ -31,9 +31,22 @@
     <v-data-table
       :headers="headers"
       :items="sortUsers || []"
+      :search="userSearch"
       disable-pagination
       hide-default-footer
     >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-text-field
+            v-model="userSearch"
+            :label="$t('general.search')"
+            prepend-inner-icon="mdi-magnify"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-toolbar>
+      </template>
+
       <template v-slot:item.action="{ item }">
         <v-btn v-if="!isShiftMember(item.id)" icon @click="addShiftUser(item)">
           <v-icon>mdi-plus-box</v-icon>
@@ -107,6 +120,9 @@ export default {
     shift: {
       type: [Object, Array]
     },
+    team_availability: {
+      type: [Object, Array]
+    },
   },
 
   components: {
@@ -118,6 +134,7 @@ export default {
       locationOverlay: false,
       team_users_avail: [],
       showAvailUsers: true,
+      userSearch: '',
       headers: [
         { 
           text: '',
@@ -158,7 +175,6 @@ export default {
     ...mapGetters({
       schedule: 'scheduling/schedule',
       shifts: 'scheduling/shifts',
-      team_availability: 'scheduling/team_availability',
       team_users: 'scheduling/team_users',
     }),
 

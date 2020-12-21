@@ -47,7 +47,7 @@ class Team extends LaratrustTeam
 
   public function schedules()
   {
-    return $this->hasMany('App\Models\Schedules');
+    return $this->hasMany('App\Models\Schedule');
   }
 
   public function locations()

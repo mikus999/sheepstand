@@ -56,19 +56,10 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon small @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-pencil</v-icon>
+              <v-icon small>mdi-calendar-edit</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon small @click="editAssignments(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-account-multiple-plus</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('schedules.assignments') }}</span>
         </v-tooltip>
 
         <v-tooltip bottom>
@@ -86,7 +77,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon small @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-pencil</v-icon>
+              <v-icon small>mdi-calendar-edit</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
