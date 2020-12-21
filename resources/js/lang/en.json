@@ -271,6 +271,7 @@
         "location": "Location",
         "number_of_participants": "Number of Participants",
         "participants": "Participants",
+        "no_participants": "No Participants",
         "mandatory": "Mandatory Shift",
         "mandatory_explanation": "Only mandatory shifts will be filled when using the Automatic Assignment feature",
         "assignments": "Assignments",

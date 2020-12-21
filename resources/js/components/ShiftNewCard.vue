@@ -20,7 +20,11 @@
               persistent-hint
               :hint="$t('shifts.location')"
             />
+          </v-col>
+        </v-row>
 
+        <v-row class="mt-3">
+          <v-col>
 
             <!-- Shift Date Picker (SCHEDULES ONLY) -->
             <v-menu 
@@ -42,7 +46,6 @@
                   readonly
                   v-bind="attrs" 
                   v-on="on"
-                  class="mt-5"
                 >
                 </v-text-field>
               </template>
@@ -71,7 +74,6 @@
               item-text="date" 
               :label="$t('shifts.day')"
               prepend-icon="mdi-calendar"
-              class="mt-5"
             >
               <template v-slot:selection="{ item }">
                 {{ $dayjs(item.date).format('dddd') }}
@@ -84,7 +86,7 @@
           </v-col>
         </v-row>
 
-        <v-row class="mt-5">
+        <v-row class="mt-3">
           <v-col cols=6>
             <!-- Start Time Picker -->
             <v-dialog 
@@ -145,7 +147,7 @@
           </v-col>
         </v-row>
 
-        <v-row class="mt-10">
+        <v-row class="mt-8">
           <v-col>
             <!-- Number of Participants slider -->
             <v-range-slider 
@@ -164,7 +166,7 @@
         </v-row>
 
 
-        <v-row class="mt-8">
+        <v-row class="mt-3">
           <v-col>
             <v-switch
               v-model="mandatory"
@@ -190,20 +192,18 @@
 
 <script>
 import axios from 'axios'
-import helper from '~/mixins/helper'
+import { mapGetters } from 'vuex'
+import { helper, scheduling } from '~/mixins/helper'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
 
 export default {
   name: 'ShiftNewCard',
-  mixins: [helper],
+  mixins: [helper, scheduling],
   components: {
     ShiftNewCard
   },
   props: {
     shift: {
-      type: Object
-    },
-    schedule: {
       type: Object
     },
     width: {
@@ -243,6 +243,11 @@ export default {
 
     
   computed: {    
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+    }),
+
     timeFormat () {
       const localeTime = this.$dayjs().localeData().longDateFormat('LT')
       const isAmPm = localeTime.indexOf('A') >= 0
@@ -328,7 +333,8 @@ export default {
         }
       })
       .then(response => {
-        this.$emit('update', response.data.schedule)
+        this.storeSchedule(response.data.schedule)
+        this.$emit('update')
         this.close()  
       })
 

@@ -85,7 +85,15 @@
                 <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
                   @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
 
-                    <ShiftEditCard v-for="shift in day.list" :key="shift.id" :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" />                  
+                    <ShiftEditCard 
+                      v-for="shift in day.list" 
+                      :key="shift.id" 
+                      :shift="shift" 
+                      :teamUsers="teamUsers" 
+                      :availability="availability"
+                      v-on:update="parseSchedule()" 
+                      class="shift"
+                    />                  
 
                     <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
                     <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
@@ -136,9 +144,10 @@
       </v-card-actions>
     </v-card>
 
+
     <!-- NEW SHIFT DIALOG -->
     <v-dialog :value="dialog" @click:outside="closeShiftDialog()" width="500px">
-      <ShiftNewCard :shift="shift" :schedule="schedule" v-on:update="updateSchedule($event)" v-on:close="closeShiftDialog()" :key="keyShiftNewCard"/>
+      <ShiftNewCard :shift="shift" v-on:update="parseSchedule()" v-on:close="closeShiftDialog()" :key="keyShiftNewCard"/>
     </v-dialog>
 
 
@@ -166,14 +175,26 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+
+    <!-- PAGE LOAD OVERLAY -->
+    <v-overlay :value="pageLoad.value" :opacity=".9" class="text-center">
+      <v-progress-circular
+        indeterminate
+        color="primary"
+        size="64"
+      ></v-progress-circular>
+      <h1 class="mt-16 text-h4">{{ pageLoad.text }}</h1>
+    </v-overlay>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
-import helper from '~/mixins/helper'
+import { helper, scheduling } from '~/mixins/helper'
 import ShiftEditCard from '~/components/ShiftEditCard.vue'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
 
@@ -181,7 +202,7 @@ import ShiftNewCard from '~/components/ShiftNewCard.vue'
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
-  mixins: [helper],
+  mixins: [helper, scheduling],
   props: {
     id: {
       type: [String, Number],
@@ -209,8 +230,12 @@ export default {
       },
       tickLabels: [],
       shift: [],
-      schedule: {
-        status: 0
+      teamUsers: [],
+      availability: [],
+      pageLoad: {
+        value: true,
+        progress: 0,
+        text: ''
       },
       sw_status_visible: false,
       sw_status_closed: false,
@@ -288,7 +313,7 @@ export default {
           },
           1024: {
             slidesPerView: 4,
-            spaceBetween: 40,
+            spaceBetween: 30,
             allowTouchMove: false,
           },
           1500: {
@@ -303,6 +328,11 @@ export default {
   },
   
   computed: {
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+    }),
+
     dragOptions() {
       return {
         animation: 200,
@@ -328,16 +358,25 @@ export default {
   },
 
   methods: {
-    initialize () {
-      this.getSchedule()
-      this.makeStatusLabels()
+    async initialize () {
+      await this.getSchedule()
+      await this.getUserAvailability()
+      await this.getTeamUsers()
       this.shift = this.lodash.cloneDeep(this.shiftDefaults)
+
+      this.pageLoad.text = this.$t('schedules.loading_complete')
+      this.pageLoad.progress = 100
+      this.pageLoad.value = false
     },
 
     async getSchedule () {
+      this.pageLoad.text = this.$t('schedules.loading_schedule')
+      this.pageLoad.progress = 5
+
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
-          this.schedule = response.data
+          this.storeSchedule(response.data)
+          this.storeShifts(response.data.shifts)
           this.parseSchedule()
 
 
@@ -349,6 +388,32 @@ export default {
         })
 
     },
+
+
+  
+    async getUserAvailability (date) {
+      this.pageLoad.text = this.$t('schedules.loading_availability')
+
+      await axios.get('/api/teams/' + this.team.id + '/availability/')
+        .then(response => {
+          this.availability = response.data.users
+          this.pageLoad.progress = 60
+        })
+
+    },
+
+
+    async getTeamUsers (date) {
+      this.pageLoad.text = this.$t('schedules.loading_users')
+
+      await axios.get('/api/teams/' + this.team.id + '/users/')
+        .then(response => {
+          this.teamUsers = response.data
+          this.pageLoad.progress = 80
+        })
+
+    },
+
 
 
     parseSchedule () {
@@ -387,12 +452,6 @@ export default {
     },
 
 
-    updateSchedule (sched) {
-      this.schedule = sched
-      this.parseSchedule()
-    },
-
-
     async deleteSched () {
       const confirm_msg = this.isTemplate ? this.$t('schedules.confirm_delete_template') : this.$t('schedules.confirm_delete_schedule')
       const success_msg = this.isTemplate ? this.$t('schedules.success_delete_template') : this.$t('schedules.success_delete_schedule')
@@ -406,12 +465,6 @@ export default {
       }
     },
 
-
-    makeStatusLabels () {
-      this.scheduleStatus.forEach((obj) => {
-        this.tickLabels.push(obj.text)
-      })
-    },
 
     getStatusColor() {
       var textColor = "black--text"
@@ -451,7 +504,6 @@ export default {
           status = 3
         }
 
-        this.schedule.status = status
 
         await axios({
           method: 'post',      
@@ -461,7 +513,7 @@ export default {
           }
         })
         .then(response => {
-
+          this.storeSchedule(response.data)
         })
     },
 
@@ -518,11 +570,12 @@ export default {
           time_start: data.time_start,
           time_end: data.time_end,
           min_participants: data.min_participants,
-          max_participants: data.max_participants
+          max_participants: data.max_participants,
+          mandatory: data.mandatory
         }
       })
       .then(response => {
-        this.schedule = response.data.schedule
+        this.storeSchedule(response.data.schedule)
         this.parseSchedule()
       })
     },

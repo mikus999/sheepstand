@@ -61,7 +61,7 @@ class ScheduleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $schedule = Schedule::find($id);
+        $schedule = Schedule::with('shifts')->find($id);
         $schedule->status = $request->status;
         $schedule->date_start = date($request->date_start); // YYYY-MM-DD
         $schedule->save();
@@ -99,7 +99,7 @@ class ScheduleController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $schedule = Schedule::find($id);
+        $schedule = Schedule::with('shifts')->find($id);
         $schedule->status = $request->status;
         $schedule->save();
 
