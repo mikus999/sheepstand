@@ -87,11 +87,13 @@
 
                     <ShiftEditCard 
                       v-for="shift in day.list" 
+                      :id="shift.id"
                       :key="shift.id" 
                       :shift="shift" 
                       :teamUsers="teamUsers" 
                       :availability="availability"
                       v-on:update="parseSchedule()" 
+                      v-on:location="showLocationOverlay(shift)"
                       class="shift"
                     />                  
 
@@ -151,6 +153,13 @@
     </v-dialog>
 
 
+    <!-- LOCATION OVERLAY -->
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'" z-index="505">
+      <Leaflet :location="locShift.location" :width="mapWidth" height="500px" readonly 
+          v-on:close="locationOverlay = false" v-on:click.native.stop/>
+    </v-overlay>
+
+
     <!-- NEW TEMPLATE DIALOG -->
     <v-dialog v-model="dialog2" max-width="500px">
       <v-card>
@@ -197,6 +206,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import { helper, scheduling } from '~/mixins/helper'
 import ShiftEditCard from '~/components/ShiftEditCard.vue'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
+import Leaflet from '~/components/Leaflet.vue'
 
 
 export default {
@@ -214,12 +224,14 @@ export default {
     Swiper,
     SwiperSlide,
     ShiftEditCard,
-    ShiftNewCard
+    ShiftNewCard,
+    Leaflet
   },
 
   data () {
     return {
       shiftOverlay: false,
+      locationOverlay: false,
       dialog: false,
       dialog2: false,
       date: '',
@@ -232,6 +244,7 @@ export default {
       shift: [],
       teamUsers: [],
       availability: [],
+      locShift: [],
       pageLoad: {
         value: true,
         progress: 0,
@@ -249,7 +262,8 @@ export default {
           time_end: null,
           min_participants: 2,
           max_participants: 3,
-          location_id: null
+          location_id: null,
+          mandatory: false
       },
       days7: [
         { name: "Mon", 
@@ -350,7 +364,11 @@ export default {
 
     isTemplate () {
       return this.schedule.status == 9
-    }
+    },
+
+    mapWidth() {
+      return this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+    },
   },
 
   created () {
@@ -592,6 +610,13 @@ export default {
     closeSaveTemplateDialog() {
       this.newTemplateName = null
       this.dialog2 = false
+    },
+
+    showLocationOverlay(shift) {
+      if (shift.location.map != null) {
+        this.locShift = shift
+        this.locationOverlay = true
+      }
     },
 
     async saveAsTemplate() {

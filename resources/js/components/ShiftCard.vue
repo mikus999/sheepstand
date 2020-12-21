@@ -8,8 +8,8 @@
             {{ shift.location.name.substring(0, 1) }}
           </v-btn>
         </v-col>
-        <v-col cols=9 class="pa-1">
-          <div class="text-h6">{{ shift.location.name }}</div>
+        <v-col cols=9 class="pa-1 shift-subtitle">
+          <div class="text-h6 shift-title">{{ shift.location.name }}</div>
           <div>{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
           <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
         </v-col>
@@ -29,8 +29,8 @@
         <div v-else class="text-overline">{{ $t('shifts.participants') }}</div>
       </v-system-bar>
 
-      <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2" :title="shiftStatus[user.pivot.status].text" disabled>
-        <v-icon class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">
+      <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
+        <v-icon small class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">
           {{ shiftStatus[user.pivot.status].icon }}
         </v-icon>
         <span 
@@ -41,7 +41,7 @@
       </div>
 
       <div v-for="n in returnZero(shift.max_participants - filterShiftUsers(shift.users).length)" :key="n" class="ma-2" disabled>
-        <div class="ml-n5 dashed-border rounded" width="100%">
+        <div class="ml-n5 dashed-border rounded list-participants" width="100%">
           <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
           <span>{{ $t('general.available') }}</span>
         </div>
@@ -122,7 +122,7 @@ export default {
     },
     height: {
       type: [String, Number],
-      default: '250px'
+      default: '230px'
     },
     onlyinfo: {
       type: Boolean,
@@ -147,8 +147,7 @@ export default {
     }),
     
     mapWidth() {
-      var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
-      return newWidth
+      return this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
     },
 
     hasConflicts() {
@@ -219,6 +218,21 @@ export default {
   .location-avatar
   {
     font-size: 2.5rem;
+  }
+
+  .shift-title
+  {
+    font-size: 1.1rem !important;
+  }
+
+  .shift-subtitle
+  {
+    font-size: .8rem !important;
+  }
+
+  .list-participants
+  {
+    font-size: .75rem;
   }
 
   .dashed-border 

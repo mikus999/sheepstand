@@ -1,25 +1,36 @@
 <template>
-    <v-card ref="mainDiv" :id="shift.id" class="mt-5 handle">
-      <v-icon :style="mandatoryIcon" color="white">
-        {{ shift.mandatory ? 'mdi-heart' : 'mdi-heart-outline' }}
-      </v-icon>
+  <div ref="mainDiv">
+    <v-card :id="shift.id" class="mt-5 handle">
       
-      <v-card-title class="justify-center text-h6 shift-title" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
-        {{ shift.location.name }}
-      </v-card-title>
-
-
-      <v-card-subtitle class="text-center font-weight-bold shift-subtitle" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
-        <div v-if="!isTemplate">{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
-        <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
+      <v-card-subtitle class="text-center font-weight-bold" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
+        <v-row class="align-center">
+          <v-col cols=3 class="pa-0">
+            <v-btn fab class="location-avatar" @click="$emit('location')">
+              {{ shift.location.name.substring(0, 1) }}
+            </v-btn>
+          </v-col>
+          <v-col cols=9 class="pa-0 shift-subtitle">
+            <div class="text-h6 shift-title">{{ shift.location.name }}</div>
+            <div v-if="!isTemplate">{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
+            <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
+          </v-col>
+        </v-row>
       </v-card-subtitle>
+
 
       <v-card-text class="text-center pa-0" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
         <v-row dense>
-          <v-col cols=3 offset=3 class="pa-0">
+          <v-col cols=3 class="pa-1 text-center">
+            <v-icon color="white">
+              {{ shift.mandatory ? 'mdi-heart' : 'mdi-heart-outline' }}
+            </v-icon>
+          </v-col>
+
+          <v-col cols=3 offset=1 class="pa-0">
             <v-chip small>{{ shift.min_participants }}</v-chip><br>
             <span>{{ $t('general.min') }}</span>
           </v-col>
+          
           <v-col cols=3 class="pa-0">
             <v-chip small>{{ shift.max_participants }}</v-chip><br>
             <span>{{ $t('general.max') }}</span>
@@ -62,7 +73,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>mdi-account-multiple-plus</v-icon>
+                  <v-icon small>mdi-account-multiple</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('shifts.participants') }}</span>
@@ -145,7 +156,10 @@
       <v-dialog fullscreen v-model="participantDialog">
         <ShiftAssignments :shift="shift" :teamUsers="teamUsers" :availability="availability" v-on:close="closeParticipantDialog" />
       </v-dialog>
+
+
     </v-card>
+  </div>
 </template>
 
 <script>
@@ -160,7 +174,7 @@ export default {
   mixins: [helper, scheduling],
   components: {
     ShiftNewCard,
-    ShiftAssignments
+    ShiftAssignments,
   },
   props: {
     shift: {
@@ -192,8 +206,8 @@ export default {
       participantDialog: false,
       mandatoryIcon: {
         position: 'absolute',
-        top: '15px',
-        left: '15px',
+        top: '5px',
+        left: '5px',
         zIndex: '501'
       }
     }
@@ -205,6 +219,7 @@ export default {
       shifts: 'scheduling/shifts',
     }),
 
+
     isTemplate () {
       return this.schedule.status == 9
     },
@@ -213,6 +228,7 @@ export default {
       return this.filterShiftUsers(this.shift.users).length > 0
     }
   },
+
 
   methods: {
 
@@ -229,17 +245,22 @@ export default {
             newShiftData.time_end = this.$dayjs(newShiftData.time_start).add(this.team.default_shift_minutes, 'm').format('YYYY-MM-DD HH:mm:ss')
           }
 
-          const formData = new FormData()
-          formData.append('location_id', newShiftData.location_id)
-          formData.append('time_start', newShiftData.time_start)
-          formData.append('time_end', newShiftData.time_end)
-          formData.append('min_participants', newShiftData.min_participants)
-          formData.append('max_participants', newShiftData.max_participants)
-          axios.post('/api/schedules/' + this.schedule.id + '/shifts', formData)
-            .then(response => {
-              this.storeSchedule(response.data.schedule)
-              this.$emit('update')
-            })
+          axios({
+            method: 'post',      
+            url: '/api/schedules/' + this.schedule.id + '/shifts',
+            data: {
+              location_id: newShiftData.location_id,
+              time_start: newShiftData.time_start,
+              time_end: newShiftData.time_end,
+              min_participants: newShiftData.min_participants,
+              max_participants: newShiftData.max_participants,
+              mandatory: newShiftData.mandatory
+            }
+          })
+          .then(response => {
+            this.storeSchedule(response.data.schedule)
+            this.$emit('update')
+          })
         })
     },
     
@@ -274,7 +295,8 @@ export default {
 
     closeParticipantDialog() {
       this.participantDialog = false
-    }
+    },
+
 
   }
 }
@@ -282,9 +304,14 @@ export default {
 
 
 <style scoped>
+.location-avatar
+{
+  font-size: 2.5rem;
+}
+
 .shift-title
 {
-  font-size: 1rem !important;
+  font-size: 1.1rem !important;
 }
 
 .shift-subtitle

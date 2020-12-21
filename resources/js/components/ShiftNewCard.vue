@@ -16,14 +16,14 @@
               item-text="name" 
               outlined 
               dense
+              hide-details
               prepend-icon="mdi-map-marker"
-              persistent-hint
-              :hint="$t('shifts.location')"
+              :label="$t('shifts.location')"
             />
           </v-col>
         </v-row>
 
-        <v-row class="mt-3">
+        <v-row>
           <v-col>
 
             <!-- Shift Date Picker (SCHEDULES ONLY) -->
@@ -74,6 +74,7 @@
               item-text="date" 
               :label="$t('shifts.day')"
               prepend-icon="mdi-calendar"
+              hide-details
             >
               <template v-slot:selection="{ item }">
                 {{ $dayjs(item.date).format('dddd') }}
@@ -86,7 +87,7 @@
           </v-col>
         </v-row>
 
-        <v-row class="mt-3">
+        <v-row>
           <v-col cols=6>
             <!-- Start Time Picker -->
             <v-dialog 
@@ -101,8 +102,8 @@
                   outlined 
                   readonly 
                   dense 
-                  persistent-hint
-                  :hint="$t('shifts.time_start')"
+                  hide-details
+                  :label="$t('shifts.time_start')"
                   v-bind="attrs" 
                   v-on="on" 
                   prepend-icon="mdi-clock"
@@ -131,8 +132,8 @@
                   outlined 
                   readonly 
                   dense 
-                  persistent-hint
-                  :hint="$t('shifts.time_end')"
+                  hide-details
+                  :label="$t('shifts.time_end')"
                   v-bind="attrs" 
                   v-on="on"
                 ></v-text-field>
@@ -166,7 +167,7 @@
         </v-row>
 
 
-        <v-row class="mt-3">
+        <v-row>
           <v-col>
             <v-switch
               v-model="mandatory"
