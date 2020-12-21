@@ -27,27 +27,25 @@
           </v-col>
 
           <v-col cols=3 offset=1 class="pa-0">
-            <v-chip small>{{ shift.min_participants }}</v-chip><br>
-            <span>{{ $t('general.min') }}</span>
+            <v-chip x-small>{{ shift.min_participants }}</v-chip><br>
+            <span class="chip-participants--label">{{ $t('general.min') }}</span>
           </v-col>
           
           <v-col cols=3 class="pa-0">
-            <v-chip small>{{ shift.max_participants }}</v-chip><br>
-            <span>{{ $t('general.max') }}</span>
+            <v-chip x-small>{{ shift.max_participants }}</v-chip><br>
+            <span class="chip-participants--label">{{ $t('general.max') }}</span>
           </v-col>
         </v-row>
       </v-card-text>
       
 
-      <v-card-text class="text-left list-participants ma-2 pa-0">
+      <v-card-text v-if="!isTemplate" class="text-left list-participants ma-2 pa-0">
         <div v-if="hasParticipants">
-          <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="shiftStatus[user.pivot.status].text" disabled>
+          <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="shiftStatus[user.pivot.status].text">
             <v-icon small class="mr-2" :color="shiftStatus[user.pivot.status].color">
               {{ shiftStatus[user.pivot.status].icon }}
             </v-icon>
-            <span 
-              :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')"
-            >
+            <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
               {{ user.name }}
             </span>
           </div>
@@ -63,7 +61,7 @@
 
       <v-card-actions class="pa-0">
         <v-row dense>
-          <v-col>
+          <v-col v-if="!isTemplate">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn 
@@ -154,7 +152,7 @@
 
 
       <v-dialog fullscreen v-model="participantDialog">
-        <ShiftAssignments :shift="shift" :teamUsers="teamUsers" :availability="availability" v-on:close="closeParticipantDialog" />
+        <ShiftAssignments :shift="shift" v-on:close="closeParticipantDialog" />
       </v-dialog>
 
 
@@ -178,12 +176,6 @@ export default {
   },
   props: {
     shift: {
-      type: [Object, Array]
-    },
-    availability: {
-      type: [Object, Array]
-    },
-    teamUsers: {
       type: [Object, Array]
     },
     width: {
@@ -217,6 +209,8 @@ export default {
     ...mapGetters({
       schedule: 'scheduling/schedule',
       shifts: 'scheduling/shifts',
+      team_availability: 'scheduling/team_availability',
+      team_users: 'scheduling/team_users',
     }),
 
 
@@ -297,7 +291,9 @@ export default {
       this.participantDialog = false
     },
 
-
+    returnZero (n) {
+      return n < 0 ? 0 : n
+    },
   }
 }
 </script>
@@ -322,5 +318,10 @@ export default {
 .list-participants
 {
   font-size: .75rem;
+}
+
+.chip-participants--label
+{
+  font-size: .6rem;
 }
 </style>

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Laratrust\Models\LaratrustTeam;
 use App\Models\Message;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class Team extends LaratrustTeam
 {
@@ -25,7 +27,22 @@ class Team extends LaratrustTeam
 
   public function users()
   {
-    return $this->belongsToMany('App\Models\User')->withPivot('default_team');
+    return $this->belongsToMany('App\Models\User')
+                ->withCount([
+                  'shifts as shifts_30days' => function (Builder $query) {
+                    $query->where('time_start', '>=', Carbon::now()->sub(1, 'month'))
+                          ->where('shift_user.status', '<>', 3);
+                  },
+                  'shifts as shifts_14days' => function (Builder $query) {
+                    $query->where('time_start', '>=', Carbon::now()->sub(14, 'days'))
+                          ->where('shift_user.status', '<>', 3);
+                  },
+                  'shifts as shifts_7days' => function (Builder $query) {
+                    $query->where('time_start', '>=', Carbon::now()->sub(7, 'days'))
+                          ->where('shift_user.status', '<>', 3);
+                  },                                    
+                ])
+                ->withPivot('default_team');
   }
 
   public function schedules()

@@ -129,7 +129,7 @@ export default {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       edited: null,
       center: latLng(1, 1),
-      zoom: 13,
+      zoom: 5,
       shapeOptions: {
         fillColor: this.getFill,
         fillOpacity: 0.4,

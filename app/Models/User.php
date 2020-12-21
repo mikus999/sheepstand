@@ -75,9 +75,12 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function shifts()
     {
+        $date = Carbon::now()->sub(2, 'month');
+        
         return $this->belongsToMany('App\Models\Shift')
                     ->with('schedule')
                     ->withPivot('status', 'trade_user_id', 'trade_shift_id')
+                    ->where('time_start','>=',$date)
                     ->withTimeStamps();
     }
 
@@ -109,6 +112,13 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
                   ->where('date_start','>=',$oldestDate);
     }
 
+    public function shift_counts()
+    {
+      $shifts30 = $this->shifts()
+                        ->where('time_start', '>=', Carbon::now()->sub(1, 'month'))
+                        ->count();
+      return $shifts30;
+    }
 
 
 

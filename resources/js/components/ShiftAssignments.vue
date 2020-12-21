@@ -2,7 +2,7 @@
   <v-card app>
     <v-toolbar
       dark
-      color="primary"
+      color="primary" 
     >
       <v-toolbar-title>{{ $t('schedules.assignments') }}</v-toolbar-title>
 
@@ -61,6 +61,11 @@
       </template>
 
 
+      <template v-slot:item.shift_counts="{ item }">
+        {{ item.shifts_7days }} / {{ item.shifts_14days }} / {{ item.shifts_30days }}
+      </template>
+
+
       <template v-slot:item.conflicts="{ item }">
         <span class="red--text">
           {{ getConflictMessage(checkShiftConflicts(shift, getUserShifts(item.id), true, false)) }}
@@ -102,12 +107,6 @@ export default {
     shift: {
       type: [Object, Array]
     },
-    teamUsers: {
-      type: [Object, Array]
-    },
-    availability: {
-      type: [Object, Array]
-    }
   },
 
   components: {
@@ -117,7 +116,7 @@ export default {
   data() {
     return {
       locationOverlay: false,
-      teamUsersAvail: [],
+      team_users_avail: [],
       showAvailUsers: true,
       headers: [
         { 
@@ -156,13 +155,20 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      schedule: 'scheduling/schedule',
+      shifts: 'scheduling/shifts',
+      team_availability: 'scheduling/team_availability',
+      team_users: 'scheduling/team_users',
+    }),
+
     mapWidth() {
       var newWidth = this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
       return newWidth
     },
 
     sortUsers() {
-      var tempArr = this.showAvailUsers ? this.teamUsersAvail : this.teamUsers
+      var tempArr = this.showAvailUsers ? this.team_users_avail : this.team_users
       tempArr.sort((a,b) => {
         return this.isShiftMember(a.id) ? -1 : 1
       })
@@ -171,7 +177,7 @@ export default {
   },
 
   created() {
-    this.teamUsersAvail = this.getAvailableUsers()
+    this.team_users_avail = this.getAvailableUsers()
   },
 
   methods: {
@@ -190,7 +196,7 @@ export default {
     },
 
     getUserShifts(userid) {
-      var tempArr = this.teamUsers.filter(u => u.id == userid)
+      var tempArr = this.team_users.filter(u => u.id == userid)
       if (tempArr.length > 0) {
         return tempArr[0].shifts
       } else {
@@ -200,7 +206,7 @@ export default {
 
 
     getAvailableUsers() {
-      return this.filterUsersAvailability(this.shift, this.teamUsers, this.availability)
+      return this.filterUsersAvailability(this.shift, this.team_users, this.team_availability)
     },
 
     async removeShiftUser (user) {
@@ -214,7 +220,8 @@ export default {
       })
       .then(response => {
         this.shift.users = response.data.shiftusers
-        //this.teamUsers = response.data.teamusers
+        this.storeTeamUsers(response.data.teamusers)
+        this.team_users_avail = this.getAvailableUsers()
       })
     },
 
@@ -234,7 +241,8 @@ export default {
       .then(response => {
         user.pivot.status = status
         this.shift.users = response.data.shiftusers
-        //this.teamUsers = response.data.teamusers
+        this.storeTeamUsers(response.data.teamusers)
+        this.team_users_avail = this.getAvailableUsers()
       })
 
     },

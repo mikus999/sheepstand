@@ -16,7 +16,6 @@
 
 <script>
 import axios from 'axios'
-import Form from 'vform'
 import helper from '~/mixins/helper'
 import Schedules from '~/components/Schedules.vue'
 
