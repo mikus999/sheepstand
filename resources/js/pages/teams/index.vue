@@ -26,8 +26,8 @@
           <v-row class="mx-2">
             <v-col cols=12 sm=6>
 
-              <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.name.success">
-                <template v-slot:append v-if="validation.name.success">
+              <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.display_name.success">
+                <template v-slot:append v-if="validation.display_name.success">
                   <v-icon color="green">mdi-check-circle</v-icon>
                 </template>
               </v-text-field>
@@ -123,7 +123,7 @@ export default {
       tab: null,
       teamData: [],
       validation: {
-        name: {
+        display_name: {
           success: false,
           message: null
         }
@@ -195,7 +195,7 @@ export default {
         method: 'patch',
         url: '/api/teams/' + this.team.id,
         data: {
-          name: this.teamData.display_name,
+          display_name: this.teamData.display_name,
           user_id: this.teamData.user_id
         }
       })

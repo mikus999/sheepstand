@@ -1,19 +1,19 @@
 <template>
   <!-- IF LARGER DEVICE, SHOW SELECT -->
-  <v-select 
-    v-if="!$vuetify.breakpoint.mobile" 
-    :items="user.teams" 
-    item-text="display_name" 
-    item-value="id" 
-    :value="team !== null ? team.id : 0" 
-    return-object 
-    @change="setTeam($event)" 
-    outlined 
-    dense 
-    prepend-icon="mdi-account-group select-item"
-  >
+  <v-menu v-if="!$vuetify.breakpoint.mobile" offset-y top>
+    <template v-slot:activator="{ on, attrs }">
+      <div width="100%" v-bind="attrs" v-on="on">
+        <v-icon class="mx-4">mdi-account-group</v-icon>
+        <span class="menu-label d-inline-block text-truncate mb-n1" style="max-width: 150px;">{{ team != null ? team.display_name : ''}}</span>
+        <v-icon class="float-right">mdi-menu-up</v-icon>
+      </div>
+    </template>
 
-    <template v-slot:append-item>
+    <v-list dense>
+      <v-list-item v-for="t in teams" :key="t.id" @click="setTeam(t)">
+        <v-list-item-title>{{ t.display_name }}</v-list-item-title>
+      </v-list-item>
+
       <v-divider class="mb-2"></v-divider>
 
       <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none">
@@ -24,8 +24,10 @@
           <v-icon>mdi-account-multiple-plus</v-icon>
         </v-list-item-icon>
       </v-list-item>
-    </template>
-  </v-select>
+    </v-list>
+  </v-menu>
+
+
 
   <!-- IF MOBILE DEVICE, SHOW DROPDOWN MENU ON NAVBAR INSTEAD OF SELECT -->
   <v-menu v-else offset-y bottom left>
@@ -78,7 +80,7 @@ export default {
 </script>
 
 <style scoped>
-.v-input {
+.menu-label{
   font-size: 10pt;
 }
 </style>

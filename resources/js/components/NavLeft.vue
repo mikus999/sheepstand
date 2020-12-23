@@ -138,8 +138,11 @@
 
 
       <!-- SELECTORS -->
-      <div class="pa-1">
+      <div class="pa-1 my-2">
         <TeamSelector v-if="!$vuetify.breakpoint.mobile && user && hasTeam" />
+      </div>
+
+      <div class="pa-1 my-2">
         <LocaleSelector v-if="!$vuetify.breakpoint.mobile" />
       </div>
 
