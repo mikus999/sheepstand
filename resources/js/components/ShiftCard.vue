@@ -1,5 +1,5 @@
 <template>
-  <v-card :outlined="!onlyinfo" :width="width" elevation="2" min-width="300">
+  <v-card :outlined="!onlyinfo" :width="width" elevation="2" min-width="250">
 
     <v-card-subtitle class="text-center font-weight-bold" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
       <v-row class="align-center">
