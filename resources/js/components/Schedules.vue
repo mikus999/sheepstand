@@ -11,7 +11,7 @@
         <v-toolbar flat>
           <v-toolbar-title>
             <v-icon left>{{ templates ? 'mdi-calendar-star' : 'mdi-calendar-week' }}</v-icon>
-            {{ templates ? $t('schedules.templates') : $t('schedules.shift_schedules') }}
+            {{ templates ? $t('schedules.templates') : $t('schedules.weekly_schedules') }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -19,11 +19,15 @@
           <v-btn 
             color="secondary" 
             class="mb-2" 
-            :block="$vuetify.breakpoint.xs"
             @click="templates ? dialog2 = true : dialog = true" 
           >
-            <v-icon left small>mdi-calendar-plus</v-icon>
-            {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
+            <v-icon 
+              :left="$vuetify.breakpoint.smAndUp"
+              :small="$vuetify.breakpoint.smAndUp"
+            >mdi-calendar-plus</v-icon>
+            <span v-if="$vuetify.breakpoint.smAndUp">
+              {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
+            </span>
           </v-btn>
         </v-toolbar>
 

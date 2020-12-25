@@ -42,7 +42,6 @@
     <v-divider class="mb-8" />
 
     <v-row 
-      class="ma-2"
       v-for="d in getUniqueDates()"
       :key="d"
     >
@@ -52,14 +51,48 @@
       </div>
 
       <v-col cols=12>
-        <ShiftCard 
-          v-for="shift in sortedShifts(d)" 
-          :key="shift.id" 
-          :shift="shift" 
-          :schedule="shift.schedule" 
-          :user_shifts="user_shifts"
-          class="my-5"
-        ></ShiftCard>
+        <v-expansion-panels class="mt-3">
+          <v-expansion-panel
+            v-for="item in sortedShifts(d)"
+            :key="item.id"
+          >
+            <v-expansion-panel-header class="py-0">
+              <v-col cols="2" class="pa-0">
+                <v-btn fab small class="location-avatar" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
+                  {{ item.location.name.substring(0, 1) }}
+                </v-btn>
+              </v-col>
+
+              <v-col class="shift-subtitle">
+                <div class="shift-title mb-2">
+                  {{ item.time_start | formatDay }}<br>
+                  {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}<br>
+                </div>
+                {{ item.location.name }}
+              </v-col>
+            </v-expansion-panel-header>
+
+            <v-expansion-panel-content>
+              <div class="text-overline">{{ $t('shifts.participants') }}</div>
+
+              <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
+                <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
+                  {{ shiftStatus[user.pivot.status].icon }}
+                </v-icon>
+                <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+                  {{ user.name }}
+                </span>
+              </div>
+
+              <v-row>
+                <v-col class="text-center">
+                  <ShiftStatusButton :shift="item" />
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
       </v-col>
 
       <v-col>
@@ -73,14 +106,16 @@
 <script>
 import axios from 'axios'
 import { helper, scheduling } from '~/mixins/helper'
-import ShiftCard from '~/components/ShiftCard.vue'
+import Leaflet from '~/components/Leaflet.vue'
+import ShiftStatusButton from '~/components/ShiftStatusButton.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper, scheduling],
   components: {
-    ShiftCard
+    Leaflet,
+    ShiftStatusButton
   },
 
   data () {
@@ -256,7 +291,43 @@ export default {
         this.shiftsFiltered = []
       }
     },
+
+
+    filterShiftUsers(shiftUsers) {
+      return shiftUsers.filter(u => u.pivot.status != 3)
+    },
   }
 
 }
 </script>
+
+
+<style scoped>
+  .location-avatar
+  {
+    font-size: 1.5rem;
+  }
+
+  .location-avatar-xs
+  {
+    font-size: 1.2rem;
+  }
+
+  .shift-title
+  {
+    font-size: .9rem !important;
+    font-weight: bold;
+    line-height: 1.25;
+  }
+
+  .shift-subtitle
+  {
+    font-size: .8rem !important;
+  }
+
+  .list-participants
+  {
+    font-size: .75rem;
+  }
+
+</style>

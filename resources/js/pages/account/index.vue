@@ -1,149 +1,156 @@
 <template>
   <v-container fluid>
-    <v-row>
+    <v-row v-if="$vuetify.breakpoint.smAndUp">
       <PageTitle :title="$t('account.account_settings')"></PageTitle>
     </v-row>
 
-    <v-card width="100%">
-      <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
-        <v-tab href="#tab-general">
-          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
-          <v-icon>mdi-information</v-icon>
-        </v-tab>
-        <v-tab href="#tab-settings">
-          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
-          <v-icon>mdi-cog</v-icon>
-        </v-tab>
-        <v-tab href="#tab-security">
-          <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.security') }}</span>
-          <v-icon>mdi-security</v-icon>
-        </v-tab>
+    <v-row>
+      <v-card width="100%">
+        <v-card-title v-if="$vuetify.breakpoint.xs">
+          <v-icon left>mdi-account-tie</v-icon>
+          {{ $t('account.account_settings')}}
+        </v-card-title>
+
+        <v-tabs v-model="tab" icons-and-text grow class="tab-links">
+          <v-tab href="#tab-general">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
+            <v-icon>mdi-information</v-icon>
+          </v-tab>
+          <v-tab href="#tab-settings">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
+            <v-icon>mdi-cog</v-icon>
+          </v-tab>
+          <v-tab href="#tab-security">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.security') }}</span>
+            <v-icon>mdi-security</v-icon>
+          </v-tab>
 
 
-        <v-tabs-items v-model="tab" class="pt-10">
+          <v-tabs-items v-model="tab" class="pt-10">
 
-          <!-- TAB: GENERAL -->
-          <v-tab-item value="tab-general">
-            <v-row class="mx-2">
+            <!-- TAB: GENERAL -->
+            <v-tab-item value="tab-general">
+              <v-row class="mx-2">
+                <v-col cols=12>
+                  <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
+                      :success="validation.name.success">
+                    <template v-slot:append v-if="validation.name.success">
+                      <v-icon color="green">mdi-check-circle</v-icon>
+                    </template>
+                  </v-text-field>
+                  <v-text-field v-model="userData.email" name="email" :label="$t('general.email')" @input.native="updateUser($event)" 
+                      :success="validation.email.success">
+                    <template v-slot:append v-if="validation.email.success">
+                      <v-icon color="green">mdi-check-circle</v-icon>
+                    </template>
+                  </v-text-field>
+
+                  <div class="my-6">
+                    <v-subheader class="pa-0">{{ $t('account.fts_status') }}</v-subheader>
+                    <v-radio-group v-model="userData.fts_status" class="my-0" @change="updateFTS()">
+                      <v-radio v-for="fts in ftsStatus" :key="fts.value" :label="fts.text" />
+                    </v-radio-group>
+                  </div>
+
+
+                  <div class="my-6" v-if="hasTeam">
+                    <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
+                      {{ $t('teams.leave_team') }}
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+
+              <v-divider class="my-12" v-if="$vuetify.breakpoint.xs"></v-divider>
+
+              <v-row>
+                <v-col cols=12 md=7 lg=6 class="pa-sm-6">
+                  <AvailabilitySchedule :data="user" :key="availability_key" v-on:updated="availability_key++" />
+                </v-col>
+
+                <v-col cols=12 md=5 lg=6 class="pa-sm-6">
+                  <VacationSchedule :data="user" />
+                </v-col>
+              </v-row>
+            </v-tab-item>
+
+
+            <!-- TAB: SETTINGS -->
+            <v-tab-item value="tab-settings">
               <v-col cols=12>
-                <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
-                    :success="validation.name.success">
-                  <template v-slot:append v-if="validation.name.success">
-                    <v-icon color="green">mdi-check-circle</v-icon>
-                  </template>
-                </v-text-field>
-                <v-text-field v-model="userData.email" name="email" :label="$t('general.email')" @input.native="updateUser($event)" 
-                    :success="validation.email.success">
-                  <template v-slot:append v-if="validation.email.success">
-                    <v-icon color="green">mdi-check-circle</v-icon>
-                  </template>
-                </v-text-field>
+                <v-row>
+                  <div class="mx-auto">
+                    <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.appearance') }}</v-subheader>
+                  </div>
+                </v-row>
+                <v-row>
+                  <div :class="$vuetify.breakpoint.xs ? 'mx-auto' : 'ml-sm-auto'">
+                    <v-hover v-slot="{ hover }">
+                      <v-skeleton-loader
+                        type="article, actions"
+                        :width="$vuetify.breakpoint.smAndDown ? 250 : 300"
+                        :class="'ma-8 ' + (!$vuetify.theme.dark ? 'border-blue' : '')"
+                        :elevation="hover ? 15 : 5"
+                        boilerplate
+                        tile
+                        light
+                        @click="changeTheme('light')"
+                      ></v-skeleton-loader>
+                    </v-hover>
+                    <p class="text-center text-subtitle-1 font-weight-light">{{ $t('account.light_mode') }}</p>
+                  </div>
 
-                <div class="my-6">
-                  <v-subheader class="pa-0">{{ $t('account.fts_status') }}</v-subheader>
-                  <v-radio-group v-model="userData.fts_status" class="my-0" @change="updateFTS()">
-                    <v-radio v-for="fts in ftsStatus" :key="fts.value" :label="fts.text" />
-                  </v-radio-group>
-                </div>
+                  <div :class="$vuetify.breakpoint.xs ? 'mx-auto' : 'mr-sm-auto'">
+                    <v-hover v-slot="{ hover }">
+                      <v-skeleton-loader
+                        type="article, actions"
+                        :width="$vuetify.breakpoint.smAndDown ? 250 : 300"
+                        :class="'ma-8 ' + ($vuetify.theme.dark ? 'border-blue' : '')"
+                        :elevation="hover ? 15 : 5"
+                        boilerplate
+                        tile
+                        dark
+                        @click="changeTheme('dark')"
+                      ></v-skeleton-loader>
+                    </v-hover>
+                    <p class="text-center text-subtitle-1 font-weight-light">{{ $t('account.dark_mode') }}</p>
+                  </div>
+                </v-row>
 
+                <v-divider class="my-12"></v-divider>
 
-                <div class="my-6" v-if="hasTeam">
-                  <v-btn color="error" @click.prevent="leaveTeam" :disabled="isTeamOwner">
-                    {{ $t('teams.leave_team') }}
-                  </v-btn>
-                </div>
+                <v-row>
+                  <div class="mx-auto">
+                    <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.preferences') }}</v-subheader>
+                  </div>
+                </v-row>
               </v-col>
-            </v-row>
+            </v-tab-item>
 
-            <v-divider class="my-12" v-if="$vuetify.breakpoint.xs"></v-divider>
 
-            <v-row>
-              <v-col cols=12 md=7 lg=6 class="pa-sm-6">
-                <AvailabilitySchedule :data="user" :key="availability_key" v-on:updated="availability_key++" />
+            <!-- TAB: SECURITY -->
+            <v-tab-item value="tab-security">
+              <v-col md=8 offset-md=2>
+                <v-text-field v-model="password1" name="password1" :label="$t('auth.new_password')" 
+                  :error-messages="passwordErrors" @blur="$v.password1.$touch()"
+                  :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
+                  ></v-text-field>
+
+                <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')" 
+                  :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
+                  :append-icon="showPwd2 ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
+                  ></v-text-field>
+                
+                <v-btn type="submit" @click.prevent="updatePassword" color="primary">
+                  {{ $t('auth.reset_password') }}
+                </v-btn>
               </v-col>
+            </v-tab-item>
+          </v-tabs-items>
 
-              <v-col cols=12 md=5 lg=6 class="pa-sm-6">
-                <VacationSchedule :data="user" />
-              </v-col>
-            </v-row>
-          </v-tab-item>
-
-
-          <!-- TAB: SETTINGS -->
-          <v-tab-item value="tab-settings">
-            <v-col cols=12>
-              <v-row>
-                <div class="mx-auto">
-                  <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.appearance') }}</v-subheader>
-                </div>
-              </v-row>
-              <v-row>
-                <div :class="$vuetify.breakpoint.xs ? 'mx-auto' : 'ml-sm-auto'">
-                  <v-hover v-slot="{ hover }">
-                    <v-skeleton-loader
-                      type="article, actions"
-                      :width="$vuetify.breakpoint.smAndDown ? 250 : 300"
-                      :class="'ma-8 ' + (!$vuetify.theme.dark ? 'border-blue' : '')"
-                      :elevation="hover ? 15 : 5"
-                      boilerplate
-                      tile
-                      light
-                      @click="changeTheme('light')"
-                    ></v-skeleton-loader>
-                  </v-hover>
-                  <p class="text-center text-subtitle-1 font-weight-light">{{ $t('account.light_mode') }}</p>
-                </div>
-
-                <div :class="$vuetify.breakpoint.xs ? 'mx-auto' : 'mr-sm-auto'">
-                  <v-hover v-slot="{ hover }">
-                    <v-skeleton-loader
-                      type="article, actions"
-                      :width="$vuetify.breakpoint.smAndDown ? 250 : 300"
-                      :class="'ma-8 ' + ($vuetify.theme.dark ? 'border-blue' : '')"
-                      :elevation="hover ? 15 : 5"
-                      boilerplate
-                      tile
-                      dark
-                      @click="changeTheme('dark')"
-                    ></v-skeleton-loader>
-                  </v-hover>
-                  <p class="text-center text-subtitle-1 font-weight-light">{{ $t('account.dark_mode') }}</p>
-                </div>
-              </v-row>
-
-              <v-divider class="my-12"></v-divider>
-
-              <v-row>
-                <div class="mx-auto">
-                  <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.preferences') }}</v-subheader>
-                </div>
-              </v-row>
-            </v-col>
-          </v-tab-item>
-
-
-          <!-- TAB: SECURITY -->
-          <v-tab-item value="tab-security">
-            <v-col md=8 offset-md=2>
-              <v-text-field v-model="password1" name="password1" :label="$t('auth.new_password')" 
-                :error-messages="passwordErrors" @blur="$v.password1.$touch()"
-                :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
-                ></v-text-field>
-
-              <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')" 
-                :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
-                :append-icon="showPwd2 ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
-                ></v-text-field>
-              
-              <v-btn type="submit" @click.prevent="updatePassword" color="primary">
-                {{ $t('auth.reset_password') }}
-              </v-btn>
-            </v-col>
-          </v-tab-item>
-        </v-tabs-items>
-
-      </v-tabs>
-    </v-card>
+        </v-tabs>
+      </v-card>
+    </v-row>
   </v-container>
 </template>
 

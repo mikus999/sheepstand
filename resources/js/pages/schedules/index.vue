@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row>
+    <v-row v-if="$vuetify.breakpoint.smAndUp">
       <PageTitle :title="$t('schedules.shift_schedules')"></PageTitle>
     </v-row>
 

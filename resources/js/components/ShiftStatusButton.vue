@@ -21,20 +21,20 @@
         :fab="!tableActions" 
         :icon="tableActions"  
         :loading="loading"
-        color="secondary" 
+        color="secondary"
         @click.stop="updateStatus($t('shifts.confirm_accept'), 2)" 
       >
-        <v-icon color="green">mdi-thumb-up</v-icon>
+        <v-icon color="green" :small="tableActions">mdi-thumb-up</v-icon>
       </v-btn>
 
       <v-btn 
         :fab="!tableActions" 
         :icon="tableActions" 
         :loading="loading"
-        color="secondary" 
+        color="secondary"
         @click.stop="updateStatus($t('shifts.confirm_reject'), 3)" 
       >
-        <v-icon color="red">mdi-thumb-down</v-icon>
+        <v-icon color="red" :small="tableActions">mdi-thumb-down</v-icon>
       </v-btn>
     </div>
 
@@ -111,7 +111,6 @@
     <v-overlay :value="tradeOverlay" @click.stop.native="tradeOverlay = false" :dark="theme=='dark'">
       <ShiftTrade 
         :shift="shift" 
-        width="400px"
         v-on:close="tradeOverlay = false" 
         v-on:updated="tradeUpdate"
         v-on:click.native.stop 

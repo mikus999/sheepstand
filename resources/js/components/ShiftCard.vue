@@ -30,19 +30,17 @@
       </v-system-bar>
 
       <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-        <v-icon small class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">
+        <v-icon small class="ml-n1 mr-2" :color="shiftStatus[user.pivot.status].color">
           {{ shiftStatus[user.pivot.status].icon }}
         </v-icon>
-        <span 
-          :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')"
-        >
+        <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
           {{ user.name }}
         </span>
       </div>
 
       <div v-for="n in returnZero(shift.max_participants - filterShiftUsers(shift.users).length)" :key="n" class="ma-2" disabled>
-        <div class="ml-n5 dashed-border rounded list-participants" width="100%">
-          <v-icon class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
+        <div class="ml-n2 dashed-border rounded list-participants" width="100%">
+          <v-icon small class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
           <span>{{ $t('general.available') }}</span>
         </div>
       </div>

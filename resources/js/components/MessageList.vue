@@ -1,6 +1,7 @@
 <template>
   <v-card>
     <v-card-title v-if="showTitle">
+      <v-icon left>mdi-calendar-account</v-icon>
       {{ $t('messages.inbox')}}
     </v-card-title>
 

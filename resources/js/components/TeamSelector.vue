@@ -1,6 +1,6 @@
 <template>
   <!-- IF LARGER DEVICE, SHOW SELECT -->
-  <v-menu v-if="!$vuetify.breakpoint.mobile" offset-y top>
+  <v-menu offset-y top>
     <template v-slot:activator="{ on, attrs }">
       <div width="100%" v-bind="attrs" v-on="on">
         <v-icon class="mx-4">mdi-account-group</v-icon>
@@ -29,7 +29,7 @@
 
 
 
-  <!-- IF MOBILE DEVICE, SHOW DROPDOWN MENU ON NAVBAR INSTEAD OF SELECT -->
+  <!-- IF MOBILE DEVICE, SHOW DROPDOWN MENU ON NAVBAR INSTEAD OF SELECT
   <v-menu v-else offset-y bottom left>
     <template v-slot:activator="{ on, attrs }">
       <v-btn dark icon v-bind="attrs" v-on="on">
@@ -54,6 +54,7 @@
       </v-list-item>
     </v-list>
   </v-menu>
+  -->
 </template>
 
 <script>

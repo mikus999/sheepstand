@@ -48,9 +48,11 @@
               </v-col>
 
               <v-col class="shift-subtitle">
-                <div class="text-h6 shift-title">{{ item.location.name }}</div>
-                {{ item.time_start | formatDay }}<br>
-                {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}<br>
+                <div class="shift-title mb-2">
+                  {{ item.time_start | formatDay }}<br>
+                  {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}<br>
+                </div>
+                {{ item.location.name }}
               </v-col>
 
               <template v-slot:actions>
@@ -69,12 +71,10 @@
               <div class="text-overline">{{ $t('shifts.participants') }}</div>
 
               <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-                <v-icon small class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">
+                <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
                   {{ shiftStatus[user.pivot.status].icon }}
                 </v-icon>
-                <span 
-                  :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')"
-                >
+                <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
                   {{ user.name }}
                 </span>
               </div>
@@ -346,7 +346,9 @@ export default {
 
   .shift-title
   {
-    font-size: 1.0rem !important;
+    font-size: .9rem !important;
+    font-weight: bold;
+    line-height: 1.25;
   }
 
   .shift-subtitle

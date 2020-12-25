@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined :width="width" elevation="2" >
+  <v-card outlined :width="width" elevation="2" min-width="300">
     <v-card-title>
       <v-icon left>mdi-account-switch</v-icon>
       {{ $t('shifts.status_2a') }}

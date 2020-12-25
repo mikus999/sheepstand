@@ -139,11 +139,11 @@
 
       <!-- SELECTORS -->
       <div class="pa-1 my-2">
-        <TeamSelector v-if="!$vuetify.breakpoint.mobile && user && hasTeam" />
+        <TeamSelector v-if="user && hasTeam" />
       </div>
 
       <div class="pa-1 my-2">
-        <LocaleSelector v-if="!$vuetify.breakpoint.mobile" />
+        <LocaleSelector />
       </div>
 
 
@@ -213,6 +213,8 @@ export default {
   }
 
   .v-list-item__title {
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
   }
+
+
 </style>

@@ -497,7 +497,7 @@ class ShiftController extends Controller
      * Show user's shifts for ALL TEAMS
      *  - ROLE: authenticated user
      * 
-     *  GET -> /user/shifts
+     *  POST -> /user/shifts
      * 
      */
     public function userTeamShifts(Request $request)
@@ -537,6 +537,9 @@ class ShiftController extends Controller
       if ($user) {
           $shifts = $user->shifts()
                       ->with('schedule', 'location', 'users')
+                      ->whereHas('schedule', function($q) {
+                        $q->whereIn('status', [1,2]);
+                      })
                       ->where('time_start','>',$date)
                       ->wherePivot('status','!=','3')
                       ->orderBy('time_start')
