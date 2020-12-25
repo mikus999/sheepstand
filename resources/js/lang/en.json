@@ -208,6 +208,7 @@
     "schedules": {
         "schedule": "Schedule",
         "shift_schedules": "Shift Schedules",
+        "available_shifts": "Available Shifts",
         "create_new_schedule": "New Schedule",
         "choose_start_date": "Choose a start date",
         "status_closed": "CLOSED",
@@ -271,8 +272,8 @@
         "shift_time": "Shift Time",
         "location": "Location",
         "number_of_participants": "Number of Participants",
-        "participants": "Participants",
-        "no_participants": "No Participants",
+        "participants": "Shift Members",
+        "no_participants": "No Shift Members",
         "mandatory": "Mandatory Shift",
         "mandatory_explanation": "Only mandatory shifts will be filled when using the Automatic Assignment feature",
         "assignments": "Assignments",

@@ -1,6 +1,13 @@
 <template>
-  <v-card>
-    <v-data-table :headers="headers" :items="filteredShifts || []" disable-sort width="100%">
+  <v-card width="100%">
+    <v-data-table 
+      :headers="headers" 
+      :items="filteredShifts || []"  
+      disable-sort
+      :hide-default-header="$vuetify.breakpoint.xs" 
+      width="100%"
+      @click:row="showShiftOverlay"
+    >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
@@ -25,10 +32,66 @@
 
       </template>
 
+
+      <!-- MOBILE VIEW -->
+      <template v-slot:body="{ items }" v-if="$vuetify.breakpoint.xs">
+        <v-expansion-panels class="mt-3">
+          <v-expansion-panel
+            v-for="item in items"
+            :key="item.id"
+          >
+            <v-expansion-panel-header class="py-0" disable-icon-rotate>
+              <v-col cols="2" class="pa-0">
+                <v-btn fab small class="location-avatar" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
+                  {{ item.location.name.substring(0, 1) }}
+                </v-btn>
+              </v-col>
+
+              <v-col class="shift-subtitle">
+                <div class="text-h6 shift-title">{{ item.location.name }}</div>
+                {{ item.time_start | formatDay }}<br>
+                {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}<br>
+              </v-col>
+
+              <template v-slot:actions>
+                <v-icon :color="shiftStatus[item.pivot.status].color">
+                  {{ shiftStatus[item.pivot.status].icon }}
+                </v-icon>
+              </template>
+            </v-expansion-panel-header>
+
+            <v-expansion-panel-content>
+              <div class="shift-subtitle">
+                <span class="text-overline">{{ $t('teams.team_name') }}: </span>
+                {{ item.schedule.team.display_name }}
+              </div>
+
+              <div class="text-overline">{{ $t('shifts.participants') }}</div>
+
+              <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
+                <v-icon small class="ml-n4 mr-2" :color="shiftStatus[user.pivot.status].color">
+                  {{ shiftStatus[user.pivot.status].icon }}
+                </v-icon>
+                <span 
+                  :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')"
+                >
+                  {{ user.name }}
+                </span>
+              </div>
+
+              <v-row>
+                <v-col class="text-center">
+                  <ShiftStatusButton :shift="item" />
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </template>
+
+
+
       <template v-slot:item.team_name="{ item }">
-        <v-btn icon @click="showShiftOverlay(item)">
-          <v-icon>mdi-card-account-details-outline</v-icon>
-        </v-btn>
         {{ item.schedule.team.display_name }}
       </template>
 
@@ -38,7 +101,10 @@
       </template>
 
       <template v-slot:item.location="{ item }">
-        <v-chip label small :color="item.location.color_code" @click="showLocationOverlay(item)">{{ item.location.name }}</v-chip>
+        <v-btn fab x-small class="location-avatar-xs mr-2" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
+          {{ item.location.name.substring(0, 1) }}
+        </v-btn>
+        <span>{{ item.location.name }}</span>
       </template>
 
       <template v-slot:item.view="{ item }">
@@ -101,9 +167,9 @@ export default {
       location: null,
       allTeams: true,
       headers: [
-        { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
-        { text: this.$t('shifts.day'), value: 'day', align: 'left' },
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
+        { text: this.$t('shifts.day'), value: 'day', align: 'left' },
+        { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
         { text: this.$t('general.actions'), value: 'view', align: 'center' },
       ],
     }
@@ -257,7 +323,40 @@ export default {
         })
       }
     },
+
+    filterShiftUsers(shiftUsers) {
+      return shiftUsers.filter(u => u.pivot.status != 3)
+    },
   }
 }
 
 </script>
+
+
+<style scoped>
+  .location-avatar
+  {
+    font-size: 1.5rem;
+  }
+
+  .location-avatar-xs
+  {
+    font-size: 1.2rem;
+  }
+
+  .shift-title
+  {
+    font-size: 1.0rem !important;
+  }
+
+  .shift-subtitle
+  {
+    font-size: .8rem !important;
+  }
+
+  .list-participants
+  {
+    font-size: .75rem;
+  }
+
+</style>

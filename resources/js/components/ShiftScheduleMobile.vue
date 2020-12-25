@@ -1,5 +1,12 @@
 <template>
   <v-card width="100%">
+    <v-toolbar flat>
+      <v-toolbar-title>
+        <v-icon left>mdi-calendar-multiselect</v-icon>
+        {{ $t('schedules.available_shifts') }}
+      </v-toolbar-title>
+    </v-toolbar>
+
     <v-date-picker
       v-model="selectedDates"
       :allowed-dates="allowedDates"

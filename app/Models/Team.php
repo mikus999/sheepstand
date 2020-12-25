@@ -28,6 +28,7 @@ class Team extends LaratrustTeam
   public function users()
   {
     return $this->belongsToMany('App\Models\User')
+                ->using('App\Pivots\TeamUser')
                 ->withCount([
                   'shifts as shifts_30days' => function (Builder $query) {
                     $query->where('time_start', '>=', Carbon::now()->sub(1, 'month'))

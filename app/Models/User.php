@@ -63,6 +63,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function teams()
     {
         return $this->belongsToMany('App\Models\Team')
+                    ->using('App\Pivots\TeamUser')
                     ->withPivot('default_team')
                     ->with('notificationsettings')
                     ->withTimeStamps();
@@ -70,7 +71,14 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     public function schedules()
     {
-        return $this->hasManyThrough('App\Models\Schedule', 'App\Models\Team');
+      return $this->hasManyThrough(
+        'App\Models\Schedule',          // The model to access to
+        'App\Pivots\TeamUser', // The intermediate table that connects the User with the Podcast.
+        'user_id',                 // The column of the intermediate table that connects to this model by its ID.
+        'team_id',              // The column of the intermediate table that connects the Podcast by its ID.
+        'id',                      // The column that connects this model with the intermediate model table.
+        'team_id'               // The column of the Audio Files table that ties it to the Podcast.
+      );
     }
 
     public function shifts()

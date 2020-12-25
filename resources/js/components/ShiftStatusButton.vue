@@ -8,7 +8,7 @@
         :icon="tableActions" 
         :loading="loading"
         color="primary" 
-        @click="joinLeaveShift('join')"
+        @click.stop="joinLeaveShift('join')"
       >
         <v-icon>mdi-account-plus</v-icon>
       </v-btn>
@@ -22,7 +22,7 @@
         :icon="tableActions"  
         :loading="loading"
         color="secondary" 
-        @click="updateStatus($t('shifts.confirm_accept'), 2)" 
+        @click.stop="updateStatus($t('shifts.confirm_accept'), 2)" 
       >
         <v-icon color="green">mdi-thumb-up</v-icon>
       </v-btn>
@@ -32,7 +32,7 @@
         :icon="tableActions" 
         :loading="loading"
         color="secondary" 
-        @click="updateStatus($t('shifts.confirm_reject'), 3)" 
+        @click.stop="updateStatus($t('shifts.confirm_reject'), 3)" 
       >
         <v-icon color="red">mdi-thumb-down</v-icon>
       </v-btn>
@@ -46,7 +46,7 @@
         :icon="tableActions" 
         :loading="loading"
         color="secondary" 
-        @click="joinLeaveShift('leave')"
+        @click.stop="joinLeaveShift('leave')"
       >
         <v-icon>mdi-account-minus</v-icon>
       </v-btn>
@@ -61,7 +61,7 @@
         :icon="tableActions"  
         :loading="loading"
         color="secondary" 
-        @click="joinLeaveShift('leave')"
+        @click.stop="joinLeaveShift('leave')"
       >
         <v-icon>mdi-account-minus</v-icon>
       </v-btn>
@@ -72,7 +72,7 @@
         :icon="tableActions"  
         :loading="loading"
         color="primary" 
-        @click="tradeOverlay = true"
+        @click.stop="tradeOverlay = true"
       >
         <v-icon :color="tableActions ? 'secondary' : ''">mdi-account-switch</v-icon>
       </v-btn>
@@ -86,7 +86,7 @@
         :icon="tableActions"  
         :loading="loading"
         color="primary" 
-        @click="joinLeaveShift('join')"
+        @click.stop="joinLeaveShift('join')"
       >
         <v-icon>mdi-account-plus</v-icon>
       </v-btn>
@@ -101,14 +101,14 @@
         :icon="tableActions" 
         :loading="loading"
         color="secondary" 
-        @click="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
+        @click.stop="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
       >
         <v-icon color="primary">mdi-account-switch</v-icon>
       </v-btn>
     </div>
 
 
-    <v-overlay :value="tradeOverlay" @click.native="tradeOverlay = false" :dark="theme=='dark'">
+    <v-overlay :value="tradeOverlay" @click.stop.native="tradeOverlay = false" :dark="theme=='dark'">
       <ShiftTrade 
         :shift="shift" 
         width="400px"

@@ -49,7 +49,7 @@ class ShiftController extends Controller
                         ->orderBy('shifts.time_start')
                         ->get();
         }
-        
+
         return response()->json($shifts);
     }
 

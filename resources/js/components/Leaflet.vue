@@ -1,73 +1,83 @@
 <template>
   <div ref="mainDiv">
-    <v-toolbar v-if="!readonly" dense dark>
-      <v-item-group class="v-btn-toggle">
-        <v-btn @click="updateMapType()">
-          <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
-        </v-btn>
-      </v-item-group>
+    <v-card elevation="2">
+      <v-toolbar v-if="!readonly" dense dark>
+        <v-item-group class="v-btn-toggle">
+          <v-btn @click="updateMapType()">
+            <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
+          </v-btn>
+        </v-item-group>
 
-      <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-      <v-item-group class="v-btn-toggle" right>
-        <v-btn @click="saveShapes()" :input-value="isChanged" active-class="save-btn">
-          <v-icon>mdi-content-save</v-icon>
-        </v-btn>
-        <v-btn @click="revertChanges()">
-          <v-icon>mdi-undo</v-icon>
-        </v-btn>
-        <v-btn @click="$emit('close')">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-item-group>
-    </v-toolbar>
+        <v-item-group class="v-btn-toggle" right>
+          <v-btn @click="saveShapes()" :input-value="isChanged" active-class="save-btn">
+            <v-icon>mdi-content-save</v-icon>
+          </v-btn>
+          <v-btn @click="revertChanges()">
+            <v-icon>mdi-undo</v-icon>
+          </v-btn>
+          <v-btn @click="$emit('close')">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-item-group>
+      </v-toolbar>
 
-    <v-btn v-if="readonly" fab small :style="closeBtn" color="primary" @click="$emit('close')">
-      <v-icon>mdi-close</v-icon>
-    </v-btn>
+      <v-toolbar v-else dense dark>
+        <v-item-group class="v-btn-toggle">
+          <v-btn @click="updateMapType()">
+            <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
+          </v-btn>
+        </v-item-group>
 
-    <v-btn v-if="readonly" fab small :style="satelliteBtn" color="secondary" @click="updateMapType()">
-      <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
-    </v-btn>
+        <v-spacer></v-spacer>
 
-    <l-map 
-      ref="map" 
-      :center="center" 
-      :zoom="zoom"
-      :style="'width: ' + width + '; height: ' + height" 
-      @ready="onMapReady()">
-
-      <l-tile-layer :url="url" :attribution="attribution" />
-
-    </l-map>
+        <v-item-group class="v-btn-toggle" right>
+          <v-btn @click="$emit('close')">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-item-group>
+      </v-toolbar>
 
 
-    <v-toolbar v-if="!readonly" dense dark bottom>
-      <v-item-group class="v-btn-toggle">
-        <v-btn @click="changeDrawingMode('marker')" :input-value="isActiveButton('marker')">
-          <v-icon>mdi-map-marker</v-icon>
-        </v-btn>
-        <v-btn @click="changeDrawingMode('rectangle')" :input-value="isActiveButton('rectangle')">
-          <v-icon>mdi-vector-rectangle</v-icon>
-        </v-btn>
-        <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
-          <v-icon>mdi-vector-polygon</v-icon>
-        </v-btn>
-        <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
-          <v-icon>mdi-vector-circle</v-icon>
-        </v-btn>
-      </v-item-group>
+      <l-map 
+        ref="map" 
+        :center="center" 
+        :zoom="zoom"
+        :style="'width: ' + width + '; height: ' + height" 
+        @ready="onMapReady()">
+        
+        <l-tile-layer :url="url" :attribution="attribution" />
 
-      <v-spacer />
+      </l-map>
 
-      <v-item-group class="v-btn-toggle" right>
-        <v-btn @click="deleteSelection()">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-item-group>
 
-    </v-toolbar>
+      <v-toolbar v-if="!readonly" dense dark bottom>
+        <v-item-group class="v-btn-toggle">
+          <v-btn @click="changeDrawingMode('marker')" :input-value="isActiveButton('marker')">
+            <v-icon>mdi-map-marker</v-icon>
+          </v-btn>
+          <v-btn @click="changeDrawingMode('rectangle')" :input-value="isActiveButton('rectangle')">
+            <v-icon>mdi-vector-rectangle</v-icon>
+          </v-btn>
+          <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
+            <v-icon>mdi-vector-polygon</v-icon>
+          </v-btn>
+          <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
+            <v-icon>mdi-vector-circle</v-icon>
+          </v-btn>
+        </v-item-group>
 
+        <v-spacer />
+
+        <v-item-group class="v-btn-toggle" right>
+          <v-btn @click="deleteSelection()">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </v-item-group>
+
+      </v-toolbar>
+    </v-card>
   </div>
 </template>
 
@@ -110,11 +120,11 @@ export default {
     },
     width: {
       type: [String, Number],
-      default: '500px'
+      default: '500'
     },
     height: {
       type: [String, Number],
-      default: '500px'
+      default: '500'
     },
     fill: {
       type: String,

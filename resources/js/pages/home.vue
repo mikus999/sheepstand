@@ -1,24 +1,15 @@
 <template>
   <v-container fluid>
-    <v-row>
+    <v-row v-if="$vuetify.breakpoint.smAndUp">
       <PageTitle :title="$t('general.home')"></PageTitle>
     </v-row>
 
-    <v-row>
-    </v-row>
-
     <v-row v-if="user">
-      <v-col cols=12>
-        <MyShifts />
+      <MyShifts />
 
-        <v-spacer class="my-12" />
+      <v-col><v-spacer class="my-12" /></v-col>
 
-        <TradeRequests />
-      </v-col>
-      
-      <v-col cols=12>
-        <!--<ShiftStatistics v-if="$vuetify.breakpoint.smAndUp"/>-->
-      </v-col>
+      <TradeRequests />
     </v-row>
 
   </v-container>

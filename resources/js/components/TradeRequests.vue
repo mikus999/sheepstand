@@ -1,6 +1,12 @@
 <template>
-  <v-card>
-    <v-data-table :headers="headersShift" :items="trades || []" disable-sort width="100%">
+  <v-card width="100%">
+    <v-data-table 
+      :headers="headersShift" 
+      :items="trades || []" 
+      disable-sort 
+      width="100%"
+      @click:row="showShiftOverlay"
+    >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
@@ -11,10 +17,49 @@
       </template>
 
 
+
+      <!-- MOBILE VIEW -->
+      <template v-slot:body="{ items }" v-if="$vuetify.breakpoint.xs">
+        <v-expansion-panels class="mt-3">
+          <v-expansion-panel
+            v-for="item in items"
+            :key="item.id"
+          >
+            <v-expansion-panel-header class="py-0">
+              <v-col cols="2" class="pa-0">
+                <v-btn fab small class="location-avatar" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
+                  {{ item.location.name.substring(0, 1) }}
+                </v-btn>
+              </v-col>
+
+              <v-col class="shift-subtitle">
+                <div class="text-h6 shift-title">{{ item.location.name }}</div>
+                {{ item.time_start | formatDay }}<br>
+                {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}
+              </v-col>
+            </v-expansion-panel-header>
+
+            <v-expansion-panel-content>
+              <div class="shift-subtitle mb-2">
+                <div class="text-h6 text-overline">{{ $t('shifts.trade_requests') }}</div>
+                <div>{{ $t('shifts.trade_click_to_accept') }}</div>
+              </div>
+
+              <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click="makeTrade(trade)" class="me-2"
+                :disabled="trade.id === user.id" :outlined="trade.id === user.id">
+                <v-icon left small>mdi-swap-horizontal-bold</v-icon>
+                {{ trade.name }}
+              </v-chip>
+
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </template>
+
+
+
+
       <template v-slot:item.team_name="{ item }">
-        <v-btn icon @click="showShiftOverlay(item)">
-          <v-icon>mdi-card-account-details-outline</v-icon>
-        </v-btn>
         {{ item.schedule.team.display_name }}
       </template>
 
@@ -25,7 +70,10 @@
 
 
       <template v-slot:item.location="{ item }">
-        <v-chip label small :color="item.location.color_code" @click="showLocationOverlay(item)">{{ item.location.name }}</v-chip>
+        <v-btn fab x-small class="location-avatar-xs mr-2" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
+          {{ item.location.name.substring(0, 1) }}
+        </v-btn>
+        <span>{{ item.location.name }}</span>
       </template>
 
       <template v-slot:header.tradewith="{ header }">
@@ -34,7 +82,7 @@
       </template>
 
       <template v-slot:item.tradewith="{ item }">
-        <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click="makeTrade(trade)" class="me-2"
+        <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click.stop="makeTrade(trade)" class="me-2"
            :disabled="trade.id === user.id" :outlined="trade.id === user.id">
            <v-icon left small>mdi-swap-horizontal-bold</v-icon>
            {{ trade.name }}
@@ -91,9 +139,9 @@ export default {
       shift: null,
       location: null,
       headersShift: [
-        { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
-        { text: this.$t('shifts.day'), value: 'day', align: 'left' },
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
+        { text: this.$t('shifts.day'), value: 'day', align: 'left' },
+        { text: this.$t('teams.team_name'), value: 'team_name', align: 'left' },
         { text: this.$t('shifts.trade_requests'), value: 'tradewith', align: 'left' },
       ],
     }
@@ -125,7 +173,7 @@ export default {
     },
 
     async makeTrade (trade) {
-      if (await this.$root.$confirm(this.$t('shifts.confirm_trade'), null, 'primary')) {
+      if (await this.$root.$confirm(this.$t('shifts.confirm_accept'), null, 'primary')) {
         await axios({
           method: 'post',      
           url: '/api/teams/' + this.team.id + '/trades',
@@ -151,6 +199,41 @@ export default {
       this.locationOverlay = true
     },
 
+
+    filterShiftUsers(shiftUsers) {
+      return shiftUsers.filter(u => u.pivot.status != 3)
+    },
+
   }
 }
 </script>
+
+
+
+<style scoped>
+  .location-avatar
+  {
+    font-size: 1.5rem;
+  }
+
+  .location-avatar-xs
+  {
+    font-size: 1.2rem;
+  }
+  
+  .shift-title
+  {
+    font-size: 1.0rem !important;
+  }
+
+  .shift-subtitle
+  {
+    font-size: .8rem !important;
+  }
+
+  .list-participants
+  {
+    font-size: .75rem;
+  }
+
+</style>
