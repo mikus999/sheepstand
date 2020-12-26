@@ -1,5 +1,5 @@
 <template>
-  <v-card width="100%">
+  <v-card width="100%" flat>
     <v-toolbar flat>
       <v-toolbar-title>
         <v-icon left>mdi-calendar-multiselect</v-icon>
@@ -13,7 +13,7 @@
         <v-expansion-panel-header>
           <div>
             <v-icon left>mdi-tune</v-icon>
-            {{ $t('general.show_options') }}
+            {{ $t('general.filters') }}
           </div>
         </v-expansion-panel-header>
 

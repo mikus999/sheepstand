@@ -4,7 +4,7 @@
     <PageTitle :title="$t('teams.team_settings')"></PageTitle>
   </v-row>
 
-  <v-card width="100%">
+  <v-card width="100%" :flat="$vuetify.breakpoint.xs">
     <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
       <v-tab href="#tab-general">
         <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>

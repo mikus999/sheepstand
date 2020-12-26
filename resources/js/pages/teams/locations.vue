@@ -4,7 +4,7 @@
       <PageTitle :title="$tc('teams.cart_location', 1)"></PageTitle>
     </v-row>
 
-    <v-card width="100%">
+    <v-card width="100%" :flat="$vuetify.breakpoint.xs">
       <v-data-table :headers="headers" :items="locationData" sort-by="default, name" sort-desc>
         <template v-slot:top>
           <v-toolbar flat>

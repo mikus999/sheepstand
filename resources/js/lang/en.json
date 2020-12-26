@@ -18,6 +18,7 @@
         "home": "Home",
         "general": "General",
         "settings": "Settings",
+        "filters": "Filters",
         "language": "Language",
         "administrators": "Administrators",
         "users": "Users",
@@ -52,8 +53,7 @@
         "sort_by": "Sort By",
         "approve": "Approve",
         "all": "All",
-        "please_wait": "Please Wait...",
-        "show_options": "Show Options"
+        "please_wait": "Please Wait..."
     },
     "menu": {
         "dashboard": "Dashboard",

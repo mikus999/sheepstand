@@ -5,7 +5,7 @@
     </v-row>
 
     <v-row>
-      <v-card width="100%">
+      <v-card width="100%" :flat="$vuetify.breakpoint.xs">
         <v-card-title v-if="$vuetify.breakpoint.xs">
           <v-icon left>mdi-account-tie</v-icon>
           {{ $t('account.account_settings')}}
