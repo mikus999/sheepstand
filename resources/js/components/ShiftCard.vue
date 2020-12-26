@@ -56,25 +56,6 @@
         </v-col>
       </v-row>
 
-      <!--
-      <v-row dense>
-        <v-col class="text-center">
-          <v-btn icon @click.stop="showLocationOverlay" class="me-2" :disabled="shift.location.map === null">
-            <v-icon>mdi-map-search</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col class="text-center">
-          <v-btn :disabled="!showButton('request')" :color="(request && myShiftStatus) ? '' : ''" icon @click.stop="updateShiftUser" class='me-2'>
-            <v-icon>{{ request ? 'mdi-account-minus' : 'mdi-account-plus' }}</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col class="text-center">
-          <v-btn :disabled="!showButton('trade')" :color="trade ? 'blue' : ''" icon @click.stop="updateTrade">
-            <v-icon>mdi-account-convert</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-      -->
     </v-card-actions>
     
 

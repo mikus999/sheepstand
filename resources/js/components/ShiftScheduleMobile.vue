@@ -51,12 +51,12 @@
       </div>
 
       <v-col cols=12>
-        <v-expansion-panels class="mt-3">
+        <v-expansion-panels class="mt-3" >
           <v-expansion-panel
             v-for="item in sortedShifts(d)"
             :key="item.id"
           >
-            <v-expansion-panel-header class="py-0">
+            <v-expansion-panel-header class="py-0" disable-icon-rotate>
               <v-col cols="2" class="pa-0">
                 <v-btn fab small class="location-avatar" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
                   {{ item.location.name.substring(0, 1) }}
@@ -70,6 +70,22 @@
                 </div>
                 {{ item.location.name }}
               </v-col>
+
+              <template v-slot:actions>
+                <span v-if="isShiftMember(item)">
+                  <v-icon :color="getShiftStatus(item, user).color">
+                    {{ getShiftStatus(item, user).icon }}
+                  </v-icon>
+                </span>
+
+                <span v-else>
+                  <v-avatar size="23" :color="getNumberOpenSpots(item) > 0 ? 'primary' : 'grey'">
+                    <span class="white--text font-weight-bold pa-0">{{ getNumberOpenSpots(item) }}</span>
+                  </v-avatar>
+                </span>
+
+                <span><v-icon>mdi-chevron-down</v-icon></span>
+              </template>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content>
@@ -82,6 +98,14 @@
                 <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
                   {{ user.name }}
                 </span>
+              </div>
+
+
+              <div v-for="n in getNumberOpenSpots(item)" :key="n" class="ma-2" disabled>
+                <div class="ml-n2 dashed-border rounded list-participants" width="100%">
+                  <v-icon small class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
+                  <span>{{ $t('general.available') }}</span>
+                </div>
               </div>
 
               <v-row>
@@ -100,6 +124,13 @@
       </v-col>
       
     </v-row>
+
+
+    <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
+      <Leaflet :location="location" :width="mapWidth" height="500px" readonly 
+          v-on:close="locationOverlay = false" v-on:click.native.stop/>
+    </v-overlay>
+
   </v-card>
 </template>
 
@@ -121,6 +152,7 @@ export default {
   data () {
     return {
       tab: null,
+      location: null,
       shifts: [],
       schedules: null,
       schedule: null,
@@ -131,11 +163,15 @@ export default {
       shiftsFiltered: [],
       showAll: true,
       filter_shifts: true,
+      locationOverlay: false,
     }
   },
 
   computed: {
-
+    mapWidth() {
+      return this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+    },
+    
     calendarHeader() {
       var headerString = ''
       headerString += this.$t('schedules.shifts_displayed') + ': ' + this.shiftsFiltered.length
@@ -160,6 +196,13 @@ export default {
           this.getSchedData()
         })
     },
+
+    isShiftMember(shift) {
+      var temp = shift.users.map(o => o['id'])
+      var index = temp.indexOf(this.user.id)
+      return index > -1
+    },
+
 
     allowedDates (val) {
       return this.availableDates.indexOf(val) > -1
@@ -257,6 +300,7 @@ export default {
 
     },
 
+
     dayOfWeek (daynum) {
       var days = []
       days = this.$dayjs().localeData().weekdaysShort()
@@ -292,10 +336,27 @@ export default {
       }
     },
 
+    showLocationOverlay(shift) {
+      if (shift.location.map != null) {
+        this.location = shift.location
+        this.locationOverlay = true
+      }
+    },
+
 
     filterShiftUsers(shiftUsers) {
       return shiftUsers.filter(u => u.pivot.status != 3)
     },
+
+
+    getNumberOpenSpots(shift) {
+      return this.returnZero(shift.max_participants - this.filterShiftUsers(shift.users).length)
+    },
+
+    returnZero (n) {
+      return n < 0 ? 0 : n
+    }
+
   }
 
 }
@@ -330,4 +391,10 @@ export default {
     font-size: .75rem;
   }
 
+  .dashed-border 
+  {
+    border-style: dashed;
+    border-color: 'grey';
+    border-width: thin;
+  }
 </style>

@@ -151,6 +151,29 @@ export const helper = {
       }
     },
 
+
+    getShiftStatus(shift, user) {
+      var result = {
+        status: null,
+        text: '',
+        color: '',
+        icon: ''
+      }
+
+      var shiftUser = shift.users.filter(u => u.id == user.id)
+      if (shiftUser.length > 0) {
+        result = {
+          status: shiftUser[0].pivot.status,
+          text: this.shiftStatus[shiftUser[0].pivot.status].text,
+          color: this.shiftStatus[shiftUser[0].pivot.status].color,
+          icon: this.shiftStatus[shiftUser[0].pivot.status].icon
+        }
+      }
+
+      return result
+    },
+
+
     formatHoursMinutes (minutes) {
       if (minutes >= 30) {
         var newHours = Math.floor(minutes / 60);          
