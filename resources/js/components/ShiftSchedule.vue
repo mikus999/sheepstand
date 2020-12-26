@@ -6,15 +6,15 @@
 
         <template v-slot:selection="{ item }">
           <div v-if="item">
-            <v-icon :color="item.status == 1 ? 'green' : 'red'">mdi-circle</v-icon>
-            {{ item.date_start }}<span v-if="$vuetify.breakpoint.smAndUp">: {{scheduleStatus[item.status].text_user }}</span>
+            <v-icon :color="item.status == 1 ? 'primary' : 'grey'">{{ item.status == 1 ? 'mdi-lock-open-variant' : 'mdi-lock' }}</v-icon>
+            {{ item.date_start }} - {{ $dayjs(item.date_start).add(7, 'd').format('YYYY-MM-DD') }}
           </div>
         </template>
 
         <template v-slot:item="{ item }">
           <div v-if="item">
-            <v-icon :color="item.status == 1 ? 'green' : 'red'">mdi-circle</v-icon>
-            {{ item.date_start }}<span v-if="$vuetify.breakpoint.smAndUp">: {{scheduleStatus[item.status].text_user }}</span>
+            <v-icon :color="item.status == 1 ? 'primary' : 'grey'">{{ item.status == 1 ? 'mdi-lock-open-variant' : 'mdi-lock' }}</v-icon>
+            {{ item.date_start }} - {{ $dayjs(item.date_start).add(7, 'd').format('YYYY-MM-DD') }}
           </div>
         </template>
       </v-select>

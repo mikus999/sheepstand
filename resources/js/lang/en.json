@@ -52,7 +52,8 @@
         "sort_by": "Sort By",
         "approve": "Approve",
         "all": "All",
-        "please_wait": "Please Wait..."
+        "please_wait": "Please Wait...",
+        "show_options": "Show Options"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -295,8 +296,10 @@
         "success_trade_offered": "Your team has been notified of your trade offer",
         "success_trade_offered_publisher": "Trade is waiting for approval from the other publisher.",
         "show_all_teams": "Show for all my teams",
-        "show_according_to_availability": "Show shifts according to my availability",
+        "show_according_to_availability": "Only show shifts I am available for",
         "show_all_dates": "Show all dates",
+        "show_closed_schedules": "Only show open schedules",
+        "show_open_availability": "Only show shifts with openings",
         "offered_by": "Offered By",
         "make_next_shift": "Duplicate and Make Consecutive",
         "conflicts": "Shift Conflicts",

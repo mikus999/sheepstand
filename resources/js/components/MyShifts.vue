@@ -28,7 +28,11 @@
           </v-btn>
         </v-toolbar>
 
-        <v-switch v-model="allTeams" :label="$t('shifts.show_all_teams')"  hide-details class="mx-4" />
+        <v-switch v-model="allTeams" hide-details class="mx-4">
+          <template v-slot:label>
+            <span class="switch-label">{{ $t('shifts.show_all_teams') }}</span>
+          </template>
+        </v-switch>
 
       </template>
 
@@ -361,4 +365,8 @@ export default {
     font-size: .75rem;
   }
 
+  .switch-label
+  {
+    font-size: .85rem !important;
+  }
 </style>

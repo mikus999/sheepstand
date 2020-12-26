@@ -7,37 +7,87 @@
       </v-toolbar-title>
     </v-toolbar>
 
-    <v-date-picker
-      v-model="selectedDates"
-      :allowed-dates="allowedDates"
-      :events="dayShifts"
-      :locale="locale"
-      :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
-      no-title
-      multiple
-      @click:date="filterShifts()"
-      width="100%"
-    >
-    </v-date-picker>
+
+    <v-expansion-panels accordion flat focusable>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon left>mdi-tune</v-icon>
+            {{ $t('general.show_options') }}
+          </div>
+        </v-expansion-panel-header>
+
+        <v-expansion-panel-content>
+          <v-date-picker
+            v-model="selectedDates"
+            :allowed-dates="allowedDates"
+            :events="dayShifts"
+            :locale="locale"
+            :first-day-of-week="$dayjs().localeData().firstDayOfWeek()"
+            no-title
+            multiple
+            @click:date="filterShifts()"
+            width="100%"
+          >
+          </v-date-picker>
 
 
-    <v-switch 
-      v-model="showAll" 
-      :label="$t('shifts.show_all_dates')" 
-      hide-details
-      @change="toggleShowAllNone"
-    />
+          <div>
+            <v-switch 
+              v-model="showAll" 
+              hide-details
+              @change="toggleShowAllNone"
+              class="my-0"
+            >
+              <template v-slot:label>
+                <span class="switch-label">{{ $t('shifts.show_all_dates') }}</span>
+              </template>
+            </v-switch>
 
-    <v-switch 
-      v-model="filter_shifts" 
-      :label="$t('shifts.show_according_to_availability')" 
-      hide-details
-      @change="filterShifts"
-    />
+            <v-switch 
+              v-model="filter_shifts" 
+              hide-details
+              @change="filterShifts"
+              class="my-0"
+            >
+              <template v-slot:label>
+                <span class="switch-label">{{ $t('shifts.show_according_to_availability') }}</span>
+              </template>
+            </v-switch>
 
-    <v-row class="my-6">
-      <span class="mx-auto text-overline">{{ this.$t('schedules.shifts_displayed', [shiftsFiltered.length, shifts.length]) }}</span>
-    </v-row>
+            <v-switch 
+              v-model="filter_closed_schedules" 
+              hide-details
+              @change="filterShifts"
+              class="my-0"
+            >
+              <template v-slot:label>
+                <span class="switch-label">{{ $t('shifts.show_closed_schedules') }}</span>
+              </template>
+            </v-switch>
+
+            <v-switch 
+              v-model="filter_open_availability" 
+              hide-details
+              @change="filterShifts"
+              class="my-0"
+            >
+              <template v-slot:label>
+                <span class="switch-label">{{ $t('shifts.show_open_availability') }}</span>
+              </template>
+            </v-switch>
+
+          </div>
+
+
+
+          <v-row class="my-6">
+            <span class="mx-auto text-overline">{{ this.$t('schedules.shifts_displayed', [shiftsFiltered.length, shifts.length]) }}</span>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
 
     <v-divider class="mb-8" />
 
@@ -46,12 +96,12 @@
       :key="d"
     >
 
-      <div class="text-h5 mx-auto mb-4">
+      <div class="text-h5 mx-auto mb-2">
         {{ $dayjs(d).format('ddd, L') }}
       </div>
 
       <v-col cols=12>
-        <v-expansion-panels class="mt-3" >
+        <v-expansion-panels>
           <v-expansion-panel
             v-for="item in sortedShifts(d)"
             :key="item.id"
@@ -78,10 +128,14 @@
                   </v-icon>
                 </span>
 
-                <span v-else>
+                <span v-else-if="item.schedule.status == 1">
                   <v-avatar size="23" :color="getNumberOpenSpots(item) > 0 ? 'primary' : 'grey'">
                     <span class="white--text font-weight-bold pa-0">{{ getNumberOpenSpots(item) }}</span>
                   </v-avatar>
+                </span>
+
+                <span v-else>
+                  <v-icon>mdi-lock</v-icon>
                 </span>
 
                 <span><v-icon>mdi-chevron-down</v-icon></span>
@@ -91,22 +145,30 @@
             <v-expansion-panel-content>
               <div class="text-overline">{{ $t('shifts.participants') }}</div>
 
-              <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-                <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
-                  {{ shiftStatus[user.pivot.status].icon }}
-                </v-icon>
-                <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
-                  {{ user.name }}
-                </span>
-              </div>
+              <div v-if="filterShiftUsers(item.users).length > 0">
+                <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
+                  <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
+                    {{ shiftStatus[user.pivot.status].icon }}
+                  </v-icon>
+                  <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+                    {{ user.name }}
+                  </span>
+                </div>
 
-
-              <div v-for="n in getNumberOpenSpots(item)" :key="n" class="ma-2" disabled>
-                <div class="ml-n2 dashed-border rounded list-participants" width="100%">
-                  <v-icon small class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
-                  <span>{{ $t('general.available') }}</span>
+                <div v-if="item.schedule.status == 1">
+                  <div v-for="n in getNumberOpenSpots(item)" :key="n" class="ma-2" disabled>
+                    <div class="ml-n2 dashed-border rounded list-participants" width="100%">
+                      <v-icon small class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
+                      <span>{{ $t('general.available') }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div v-else>
+                <span class="ma-2 list-participants">{{ $t('shifts.no_participants') }}</span>
+              </div>
+
 
               <v-row>
                 <v-col class="text-center">
@@ -163,7 +225,10 @@ export default {
       shiftsFiltered: [],
       showAll: true,
       filter_shifts: true,
+      filter_closed_schedules: false,
+      filter_open_availability: false,
       locationOverlay: false,
+      calendarPanel: false,
     }
   },
 
@@ -321,6 +386,22 @@ export default {
         this.shiftsFiltered = this.filterShiftsAvailability(this.shiftsFiltered, this.user)
       }
 
+      // Third, filter by closed/open schedule (depending on switch)
+      if (this.filter_closed_schedules) {
+        this.shiftsFiltered = this.shiftsFiltered.filter(s => 
+            s.schedule.status == 1 ||
+            this.isShiftMember(s)
+          )
+      }
+
+      // Fourth, filter by open availability (depending on switch)\
+      if (this.filter_open_availability) {
+        this.shiftsFiltered = this.shiftsFiltered.filter(s => 
+            this.getNumberOpenSpots(s) > 0 ||
+            this.isShiftMember(s)
+          )
+      }
+
     },
 
     toggleShowAllNone() {
@@ -389,6 +470,11 @@ export default {
   .list-participants
   {
     font-size: .75rem;
+  }
+
+  .switch-label
+  {
+    font-size: .85rem !important;
   }
 
   .dashed-border 
