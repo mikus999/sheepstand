@@ -58,7 +58,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('schedules/{id}/approveall/{status}', 'ShiftController@approveAllRequests');
     Route::get('schedules/shiftusers/{id}', 'ShiftController@getShiftUsers');
     Route::get('teams/{id}/stats', 'ShiftController@showStatistics');
-    Route::get('teams/{id}/trades', 'ShiftController@getTradeRequests');
+    Route::get('teams/trades', 'ShiftController@getTradeRequests');
     Route::post('teams/{id}/trades', 'ShiftController@makeTrade');
     Route::get('user/shifts', 'ShiftController@userAllShifts');
     Route::post('user/shifts', 'ShiftController@userTeamShifts');

@@ -66,6 +66,7 @@
         >
           {{ shiftStatus[userShiftStatus(item.id)].text }}
         </v-chip>
+
       </template>
 
 
@@ -86,24 +87,12 @@
       </template>
     </v-data-table>
 
-    <!--
-    <v-list-item dense @click="addShiftUser(shift_user, item)" :disabled="getStatus_List(shift_user, item) == 3">
-      <v-list-item-avatar class="ma-0">
-        <v-icon small :color="(getStatus_List(shift_user, item) != 3 && shift_user.attrs['aria-selected']==='true') ? 'green' : 'red'">mdi-checkbox-blank-circle</v-icon>
-      </v-list-item-avatar>
-      <v-list-item-content>
-        <v-list-item-title :class="getStatus_List(shift_user, item) == 3 ? 'text-decoration-line-through' : ''">{{ shift_user.item.name }}</v-list-item-title>
-        <v-list-item-subtitle class="red--text">
-          <span v-html="getConflictMessage(checkShiftConflicts(item, shift_user.item.shifts, true, false))"></span>
-        </v-list-item-subtitle>
-      </v-list-item-content>
-    </v-list-item>
-    -->
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="shift.location" :fill="shift.location.color_code" :width="mapWidth" height="500px" readonly 
           v-on:close="locationOverlay = false" v-on:click.native.stop/>
     </v-overlay>
+
   </v-card>
 </template>
 
@@ -238,6 +227,7 @@ export default {
         this.shift.users = response.data.shiftusers
         this.storeTeamUsers(response.data.teamusers)
         this.team_users_avail = this.getAvailableUsers()
+        this.userSearch = ''
       })
     },
 
@@ -259,6 +249,7 @@ export default {
         this.shift.users = response.data.shiftusers
         this.storeTeamUsers(response.data.teamusers)
         this.team_users_avail = this.getAvailableUsers()
+        this.userSearch = ''
       })
 
     },

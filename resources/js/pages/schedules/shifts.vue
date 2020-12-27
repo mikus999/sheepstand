@@ -1,9 +1,5 @@
 <template>
   <v-container fluid>
-    <v-row v-if="$vuetify.breakpoint.smAndUp">
-      <PageTitle :title="$t('schedules.available_shifts')"></PageTitle>
-    </v-row>
-
     <v-row>
       <ShiftSchedule v-if="$vuetify.breakpoint.smAndUp" />
       <ShiftScheduleMobile v-else />

@@ -1,11 +1,7 @@
 <template>
   <v-container fluid>
-    <v-row v-if="$vuetify.breakpoint.smAndUp">
-      <PageTitle :title="$t('messages.inbox')"></PageTitle>
-    </v-row>
-
     <v-row>
-      <MessageList :show-title="$vuetify.breakpoint.xs" :key="messageList_key"/>
+      <MessageList show-title :flat="$vuetify.breakpoint.xs" :key="messageList_key"/>
     </v-row>
   </v-container>
 </template>

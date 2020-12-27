@@ -1,5 +1,32 @@
 <template>
   <v-card width="100%">
+    <v-toolbar flat>
+      <v-toolbar-title>
+        <v-icon left>mdi-calendar-account</v-icon>
+        {{ $t('shifts.my_shifts') }}
+      </v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+      <v-btn 
+        color="secondary" 
+        v-if="$vuetify.breakpoint.smAndUp"
+        :to="{ name: 'schedules.shifts' }"
+      >
+        <v-icon left small>mdi-calendar</v-icon>
+        {{ $t('shifts.see_more') }}
+      </v-btn>
+      
+      <template v-slot:extension>
+        <v-switch v-model="allTeams" hide-details class="mx-4">
+          <template v-slot:label>
+            <span class="switch-label">{{ $t('shifts.show_all_teams') }}</span>
+          </template>
+        </v-switch>
+      </template>
+    </v-toolbar>
+
+    
     <v-data-table 
       :headers="headers" 
       :items="filteredShifts || []"  
@@ -7,94 +34,9 @@
       :hide-default-header="$vuetify.breakpoint.xs" 
       width="100%"
       @click:row="showShiftOverlay"
+      v-if="$vuetify.breakpoint.smAndUp"
     >
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>
-            <v-icon left>mdi-calendar-account</v-icon>
-            {{ $t('shifts.my_shifts') }}
-          </v-toolbar-title>
-
-
-          <v-spacer></v-spacer>
-
-          <v-btn 
-            color="secondary" 
-            v-if="$vuetify.breakpoint.smAndUp"
-            :to="{ name: 'schedules.shifts' }"
-          >
-            <v-icon left small>mdi-calendar</v-icon>
-            {{ $t('shifts.see_more') }}
-          </v-btn>
-        </v-toolbar>
-
-        <v-switch v-model="allTeams" hide-details class="mx-4">
-          <template v-slot:label>
-            <span class="switch-label">{{ $t('shifts.show_all_teams') }}</span>
-          </template>
-        </v-switch>
-
-      </template>
-
-
-      <!-- MOBILE VIEW -->
-      <template v-slot:body="{ items }" v-if="$vuetify.breakpoint.xs">
-        <v-expansion-panels class="mt-3">
-          <v-expansion-panel
-            v-for="item in items"
-            :key="item.id"
-          >
-            <v-expansion-panel-header class="py-0" disable-icon-rotate>
-              <v-col cols="2" class="pa-0">
-                <v-btn fab small class="location-avatar" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
-                  {{ item.location.name.substring(0, 1) }}
-                </v-btn>
-              </v-col>
-
-              <v-col class="shift-subtitle">
-                <div class="shift-title mb-2">
-                  {{ item.time_start | formatDay }}<br>
-                  {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}<br>
-                </div>
-                {{ item.location.name }}
-              </v-col>
-
-              <template v-slot:actions>
-                <v-icon :color="shiftStatus[item.pivot.status].color">
-                  {{ shiftStatus[item.pivot.status].icon }}
-                </v-icon>
-              </template>
-            </v-expansion-panel-header>
-
-            <v-expansion-panel-content>
-              <div class="shift-subtitle">
-                <span class="text-overline">{{ $t('teams.team_name') }}: </span>
-                {{ item.schedule.team.display_name }}
-              </div>
-
-              <div class="text-overline">{{ $t('shifts.participants') }}</div>
-
-              <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-                <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
-                  {{ shiftStatus[user.pivot.status].icon }}
-                </v-icon>
-                <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
-                  {{ user.name }}
-                </span>
-              </div>
-
-              <v-row>
-                <v-col class="text-center">
-                  <ShiftStatusButton :shift="item" />
-                </v-col>
-              </v-row>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </template>
-
-
-
+    
       <template v-slot:item.team_name="{ item }">
         {{ item.schedule.team.display_name }}
       </template>
@@ -116,6 +58,21 @@
       </template>
 
     </v-data-table>
+
+
+
+
+    <!-- MOBILE VIEW -->
+    <v-expansion-panels v-else class="mt-3">
+      <ShiftCardMobile 
+        v-for="item in filteredShifts"
+        :key="item.id" 
+        :shift="item"
+        v-on:location="showLocationOverlay(item)"
+        />
+    </v-expansion-panels>
+
+
 
     <v-overlay :value="shiftOverlay" @click.native="shiftOverlay = false" :dark="theme=='dark'">
       <ShiftCard 
@@ -150,6 +107,7 @@ import { mtproto } from '~/mixins/telegram'
 import ShiftCard from '~/components/ShiftCard.vue'
 import Leaflet from '~/components/Leaflet.vue'
 import ShiftStatusButton from '~/components/ShiftStatusButton.vue'
+import ShiftCardMobile from '~/components/ShiftCardMobile.vue'
 
 
 export default {
@@ -159,7 +117,8 @@ export default {
   components: {
     ShiftCard,
     Leaflet,
-    ShiftStatusButton
+    ShiftStatusButton,
+    ShiftCardMobile
   },
 
   data () {

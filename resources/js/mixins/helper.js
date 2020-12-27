@@ -535,8 +535,8 @@ export const scheduling = {
 
 export const messages = {
   methods: {
-    message_trade_offer (publisher, time_start, time_end, location) {
-      const lang = this.team.language || 'en'     
+    message_trade_offer (publisher, time_start, time_end, location, language = null) {
+      const lang = language || this.team.language || 'en'     
 
       var shiftDayTime = this.$dayjs(time_start).locale(lang).format('ddd, ll') 
       shiftDayTime += ' ' + this.$dayjs(time_start).locale(lang).format('LT') + ' - '

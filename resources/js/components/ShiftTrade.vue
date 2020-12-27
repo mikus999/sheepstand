@@ -197,6 +197,7 @@ export default {
           this.checkConflictsAllUserShifts()
           this.$emit('updated', response.data.shiftusers)
           this.storeTrades(response.data.trades)
+          this.sendNotification(status)
 
           var success_msg = offerAll ? this.$t('shifts.success_trade_offered') : this.$t('shifts.success_trade_offered_publisher')
           this.showSnackbar(success_msg, 'success')
@@ -208,12 +209,15 @@ export default {
     },
 
 
-    async sendNotification() {
+    async sendNotification(status) {
       // If notifications are enabled for this team, send a group message via Telegram
-      
-      if (this.notificationsEnabled && newStatus == 4) {
-        const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name)
-        const channel_id = this.team.notificationsettings.telegram_channel_id
+      const team = this.shift.schedule.team
+      const hasNotifications = (team.notificationsettings != null && team.notificationsettings.telegram_channel_id != null)
+
+
+      if (hasNotifications && status == 4) {
+        const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name, team.language)
+        const channel_id = team.notificationsettings.telegram_channel_id
 
         await this.mtInitialize()
         await this.sendMessage(channel_id, message_text)

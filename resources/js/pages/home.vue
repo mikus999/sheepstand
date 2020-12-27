@@ -1,9 +1,5 @@
 <template>
   <v-container fluid>
-    <v-row v-if="$vuetify.breakpoint.smAndUp">
-      <PageTitle :title="$t('general.home')"></PageTitle>
-    </v-row>
-
     <v-row v-if="user">
       <MyShifts />
 

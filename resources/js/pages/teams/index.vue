@@ -1,104 +1,107 @@
 <template>
-<v-container fluid>
-  <v-row>
-    <PageTitle :title="$t('teams.team_settings')"></PageTitle>
-  </v-row>
+  <v-container fluid>
+    <v-row>
+      <v-card width="100%" :flat="$vuetify.breakpoint.xs">
+        <v-card-title>
+          <v-icon left>mdi-account-group</v-icon>
+          {{ $t('teams.team_settings')}}
+        </v-card-title>
 
-  <v-card width="100%" :flat="$vuetify.breakpoint.xs">
-    <v-tabs v-model="tab" icons-and-text grow class="tab-links mt-10">
-      <v-tab href="#tab-general">
-        <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
-        <v-icon>mdi-information</v-icon>
-      </v-tab>
-      <v-tab href="#tab-settings">
-        <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
-        <v-icon>mdi-cog</v-icon>
-      </v-tab>
-      <v-tab href="#tab-users">
-        <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</span>
-        <v-icon>mdi-account-multiple</v-icon>
-      </v-tab>
+        <v-tabs v-model="tab" icons-and-text grow class="tab-links">
+          <v-tab href="#tab-general">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
+            <v-icon>mdi-information</v-icon>
+          </v-tab>
+          <v-tab href="#tab-settings">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
+            <v-icon>mdi-cog</v-icon>
+          </v-tab>
+          <v-tab href="#tab-users">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</span>
+            <v-icon>mdi-account-multiple</v-icon>
+          </v-tab>
 
-      <v-tabs-items v-model="tab" class="pt-10">
+          <v-tabs-items v-model="tab" class="pt-10">
 
-        <!-- TAB: GENERAL -->
-        <v-tab-item value="tab-general">
-          <v-row class="mx-2">
-            <v-col cols=12 sm=6>
+            <!-- TAB: GENERAL -->
+            <v-tab-item value="tab-general">
+              <v-row class="mx-2">
+                <v-col cols=12 sm=6>
 
-              <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.display_name.success">
-                <template v-slot:append v-if="validation.display_name.success">
-                  <v-icon color="green">mdi-check-circle</v-icon>
-                </template>
-              </v-text-field>
+                  <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.display_name.success">
+                    <template v-slot:append v-if="validation.display_name.success">
+                      <v-icon color="green">mdi-check-circle</v-icon>
+                    </template>
+                  </v-text-field>
 
-              <v-text-field name="code" :label="$t('teams.team_code')" :value="teamData.code" readonly>
-                <template v-slot:append>
-                  <v-icon @click="resetCode" color="error">mdi-lock-reset</v-icon>
-                </template>
-              </v-text-field>
+                  <v-text-field name="code" :label="$t('teams.team_code')" :value="teamData.code" readonly>
+                    <template v-slot:append>
+                      <v-icon @click="resetCode" color="error">mdi-lock-reset</v-icon>
+                    </template>
+                  </v-text-field>
 
-              <v-text-field name="team_date" :label="$t('teams.date_created')" :value="teamData.created_at | formatDate" readonly></v-text-field>
+                  <v-text-field name="team_date" :label="$t('teams.date_created')" :value="teamData.created_at | formatDate" readonly></v-text-field>
 
-              <v-select v-model="teamData.language" :items="languages" item-text="native_name" item-value="code" :label="$t('teams.default_language')" :hint="$t('teams.default_language_hint')" persistent-hint
-                @change="changeSetting('language', 'str')" outlined class="mt-4"></v-select>
+                  <v-select v-model="teamData.language" :items="languages" item-text="native_name" item-value="code" :label="$t('teams.default_language')" :hint="$t('teams.default_language_hint')" persistent-hint
+                    @change="changeSetting('language', 'str')" outlined class="mt-4"></v-select>
 
-              <div class="my-6">
-                <v-btn color="error" @click.prevent="deleteTeam">
-                  {{ $t('teams.delete_team') }}
-                </v-btn>
-              </div>
-            </v-col>
+                  <div class="my-6">
+                    <v-btn color="error" @click.prevent="deleteTeam">
+                      {{ $t('teams.delete_team') }}
+                    </v-btn>
+                  </div>
+                </v-col>
 
-            <v-col cols=12 sm=6>
-              <NotificationInfo v-on:updated="notification_key++" :key="notification_key" />
-            </v-col>
-          </v-row>
-        </v-tab-item>
+                <v-col cols=12 sm=6>
+                  <NotificationInfo v-on:updated="notification_key++" :key="notification_key" />
+                </v-col>
+              </v-row>
+            </v-tab-item>
 
-        <!-- TAB: SETTINGS -->
-        <v-tab-item value="tab-settings">
-          <v-col cols=12>
-            <v-row>
-              <div class="mx-auto">
-                <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
-              </div>
-            </v-row>
-            
-            <v-divider></v-divider>
+            <!-- TAB: SETTINGS -->
+            <v-tab-item value="tab-settings">
+              <v-col cols=12>
+                <v-row>
+                  <div class="mx-auto">
+                    <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
+                  </div>
+                </v-row>
+                
+                <v-divider></v-divider>
 
-            <v-row>
-              <div class="mx-auto">
-                <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" 
-                  :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
-                </v-switch>
+                <v-row>
+                  <div class="mx-auto">
+                    <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" 
+                      :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
+                    </v-switch>
 
-                <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
-                  <v-input class="ml-5">
-                    <v-chip color="primary" class="mr-3">
-                      <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
-                      <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
-                      <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
-                    </v-chip>
-                    <v-label class="float-right">{{ num.text }}</v-label>
-                  </v-input>
-                </div>
-              </div>
-            </v-row>
+                    <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
+                      <v-input class="ml-5">
+                        <v-chip color="primary" class="mr-3">
+                          <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
+                          <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
+                          <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
+                        </v-chip>
+                        <v-label class="float-right">{{ num.text }}</v-label>
+                      </v-input>
+                    </div>
+                  </div>
+                </v-row>
 
-          </v-col>
-        </v-tab-item>
+              </v-col>
+            </v-tab-item>
 
-        <!-- TAB: USERS -->
-        <v-tab-item value="tab-users">
-          <UserTable team-users />
-        </v-tab-item>
-      </v-tabs-items>
+            <!-- TAB: USERS -->
+            <v-tab-item value="tab-users">
+              <UserTable team-users />
+            </v-tab-item>
+          </v-tabs-items>
 
-    </v-tabs>
+        </v-tabs>
 
-  </v-card>
-</v-container>
+      </v-card>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

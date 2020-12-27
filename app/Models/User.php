@@ -65,7 +65,6 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         return $this->belongsToMany('App\Models\Team')
                     ->using('App\Pivots\TeamUser')
                     ->withPivot('default_team')
-                    ->with('notificationsettings')
                     ->withTimeStamps();
     }
 
@@ -127,6 +126,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
                         ->count();
       return $shifts30;
     }
+
 
 
 

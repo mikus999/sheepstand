@@ -362,16 +362,11 @@ class ShiftController extends Controller
      *  - ROLE: team member
      * 
      */
-    public function getTradeRequests($teamid)
+    public function getTradeRequests()
     {
-        $data = ['message' => 'Team Not Found'];
-        $team = Team::find($teamid);
-
-        if ($team) {
-          $data = [
-            'trades' => $this->teamTrades($team)
-          ];
-        }
+        $data = [
+          'trades' => $this->teamTrades()
+        ];
 
         return response()->json($data);
     }
@@ -399,7 +394,8 @@ class ShiftController extends Controller
             $user->shifts()->updateExistingPivot($shift->id, ['status' => 2]);
 
             $data = [
-              'trades' => $this->teamTrades($team)
+              'trades' => $this->teamTrades(),
+              'usershifts' => $this->userShifts($user)
             ];
         }
 
@@ -564,18 +560,32 @@ class ShiftController extends Controller
     }
 
 
-    public function teamTrades(Team $team)
+    public function teamTrades()
     {
-      $date = date_create(now())->modify('-7 days');
-      $trades = $team->shifts()
-                  ->with(['trades','schedule','location','users'])
-                  ->whereHas('trades')
-                  ->where('schedules.date_start','>',$date)
-                  ->where('schedules.status','>',0)
-                  ->get();
+      $user = Auth::user();
+      $teams = $user->teams->all();
+      $alltrades = [];
+
+      foreach ($teams as $team) {
+        $date = date_create(now())->modify('-7 days');
+        $trades = $team->shifts()
+                    ->with(['trades','schedule','location','users'])
+                    ->whereHas('trades')
+                    ->whereHas('schedule', function($q) use($date) {
+                      $q->where('status','>',0)
+                        ->where('date_start','>',$date);
+                    })
+                    ->get();
+
+        foreach ($trades as $trade) {
+          $alltrades[] = $trade;
+        }
+      }
 
 
-      return $trades;
+      return $alltrades;
     }
+
+
 
 }

@@ -183,12 +183,14 @@ export const actions = {
     commit(types.SET_TGGROUP, payload)
   },
 
-  async logout ({ commit }) {
+  async logout ({ commit, dispatch }) {
     try {
       await axios.post('/api/logout')
     } catch (e) { }
 
     commit(types.LOGOUT)
+    dispatch('scheduling/clear', null, { root: true })
+
   },
 
   async fetchOauthUrl (ctx, { provider }) {

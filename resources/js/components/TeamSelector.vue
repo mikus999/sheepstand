@@ -1,10 +1,9 @@
 <template>
   <!-- IF LARGER DEVICE, SHOW SELECT -->
-  <v-menu offset-y top>
+  <v-menu offset-y bottom>
     <template v-slot:activator="{ on, attrs }">
-      <div width="100%" v-bind="attrs" v-on="on">
-        <v-icon class="mx-4">mdi-account-group</v-icon>
-        <span class="menu-label d-inline-block text-truncate mb-n1" style="max-width: 150px;">{{ team != null ? team.display_name : ''}}</span>
+      <div width="100%" v-bind="attrs" v-on="on" class="ma-0 pt-1">
+        <span class="menu-label d-inline-block text-truncate" style="max-width: 150px;">{{ team != null ? team.display_name : ''}}</span>
         <v-icon class="float-right">mdi-menu-up</v-icon>
       </div>
     </template>

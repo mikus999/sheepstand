@@ -1,5 +1,10 @@
 <template>
   <v-card width="100%">
+    <v-card-title>
+      <v-icon left>{{ isTemplate ? 'mdi-calendar-star' : 'mdi-calendar-week' }}</v-icon>
+      {{ isTemplate ? $t('schedules.templates') : $t('schedules.weekly_schedules') }}
+    </v-card-title>
+
     <v-card-text>
       <v-row>
         <v-col xs=1 sm=4 class="text-left" >

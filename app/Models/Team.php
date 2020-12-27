@@ -25,6 +25,9 @@ class Team extends LaratrustTeam
     'default_shift_minutes'
   ];
 
+  protected $with = ['notificationsettings'];
+
+
   public function users()
   {
     return $this->belongsToMany('App\Models\User')

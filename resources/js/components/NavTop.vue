@@ -2,6 +2,8 @@
   <v-app-bar dark fixed dense flat class="light-blue darken-4 white--text" app>
     <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')"></v-app-bar-nav-icon>
 
+    <v-spacer />
+
     <v-toolbar-title class="mb-0 pa-0">
       <Logo width="30" height="30" class="mb-n2 mr-1"/>
       <span class="head sheep small">SHEEP<span class="head stand">STAND</span></span>

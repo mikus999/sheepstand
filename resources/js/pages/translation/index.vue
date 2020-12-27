@@ -1,14 +1,16 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <PageTitle :title="$t('translation.management_system')"></PageTitle>
-
+    <v-card width="100%">
+      <v-card-title>
+      <div>
+        <v-icon left>mdi-google-translate</v-icon>
+        {{ $t('translation.management_system') }}
+      </div>
       <div class="ml-auto">
         <v-switch v-model="saveFab.autoSave" :label="$t('general.autosave')" @change="toggleAutoSave"></v-switch>
       </div>
-    </v-row>
+      </v-card-title>
 
-    <v-card width="100%">
       <!-- LANGUAGE SELECTOR -->
       <v-row class="mx-2">
         <v-col cols=12 sm=6>

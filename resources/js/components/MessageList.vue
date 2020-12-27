@@ -1,7 +1,7 @@
 <template>
-  <v-card>
+  <v-card width="100%" :flat="flat">
     <v-card-title v-if="showTitle">
-      <v-icon left>mdi-calendar-account</v-icon>
+      <v-icon left>mdi-message</v-icon>
       {{ $t('messages.inbox')}}
     </v-card-title>
 
@@ -34,12 +34,12 @@
                 </v-list-item-action-text>
 
                 <div class="my-auto">
-                  <v-btn icon small v-if="message.named_route" :to="{ name: message.named_route }" class="mb-n2">
-                    <v-icon small>mdi-link</v-icon>
+                  <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" class="mb-n2">
+                    <v-icon>mdi-link</v-icon>
                   </v-btn>
 
-                  <v-btn icon small v-if="editor" @click="deleteMessage(message.id)">
-                    <v-icon small>mdi-delete</v-icon>
+                  <v-btn icon v-if="editor" @click="deleteMessage(message.id)">
+                    <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </div>
               </v-list-item-action>
@@ -74,6 +74,10 @@ export default {
       default: false
     },
     showTitle: {
+      type: Boolean,
+      default: false
+    },
+    flat: {
       type: Boolean,
       default: false
     }

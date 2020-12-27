@@ -1,9 +1,5 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <PageTitle title="Site Administration"></PageTitle>
-    </v-row>
-
     <v-row class="mb-12">
       <UserTable :team-users="false" />
     </v-row>

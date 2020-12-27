@@ -23,7 +23,7 @@
 
       <v-list-item router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" active-class="menu-selected-item" v-if="user && hasTeam">
         <v-list-item-icon>
-          <v-icon>mdi-calendar</v-icon>
+          <v-icon>mdi-calendar-multiselect</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.shifts') }}</v-list-item-title>
@@ -67,6 +67,27 @@
 
 
 
+    <v-list dense>
+
+      <v-list-item class="text-decoration-none" v-if="user && hasTeam">
+        <v-list-item-icon>
+          <v-icon>mdi-account-group</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <TeamSelector v-if="user && hasTeam" />
+        </v-list-item-content>
+      </v-list-item>
+      
+      <v-list-item class="text-decoration-none">
+        <v-list-item-icon>
+          <v-icon>mdi-translate</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <LocaleSelector />
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+
     <v-list v-if="user && hasTeam && $can(['view_schedules','manage_schedules'])" dense>
       <v-subheader>{{ $t('menu.team_admin')}}</v-subheader>
 
@@ -109,7 +130,7 @@
 
 
     <v-list v-if="user && $is(['translator','super_admin'])" dense>
-      <v-divider />
+      <v-subheader>{{ $t('menu.site_admin')}}</v-subheader>
 
       <v-list-item v-if="$is('translator')" router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
@@ -136,19 +157,8 @@
         <v-switch v-model="$vuetify.theme.dark" hide-details color="black"></v-switch>
       </div>
 
-
-      <!-- SELECTORS -->
-      <div class="pa-1 my-2">
-        <TeamSelector v-if="user && hasTeam" />
-      </div>
-
-      <div class="pa-1 my-2">
-        <LocaleSelector />
-      </div>
-
-
       <!-- LOGOUT BUTTON -->
-      <div class="pa-1">
+      <div :class="'pa-1 ' + ($vuetify.breakpoint.xs ? 'mb-16' : '')">
         <v-btn block @click.prevent="logout" v-if="!$vuetify.breakpoint.mobile && user">
           <v-icon>mdi-logout-variant</v-icon>
           <span class="ml-3">{{ $t('auth.logout') }}</span>

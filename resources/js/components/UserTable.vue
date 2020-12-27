@@ -1,5 +1,9 @@
 <template>
   <v-card width="100%">
+    <v-card-title v-if="!teamUsers">
+      <v-icon left>mdi-security</v-icon>
+      Site Security
+    </v-card-title>
 
     <v-data-table 
       :headers="teamUsers ? userHeadersTeam : userHeadersAdmin" 
@@ -78,12 +82,12 @@
 
 
       <template v-slot:item.actions="{ item }">           
-        <v-btn icon small @click="showRolesOverlay(item)" v-if="!teamUsers">
-          <v-icon small>mdi-shield-edit</v-icon>
+        <v-btn icon @click="showRolesOverlay(item)" v-if="!teamUsers">
+          <v-icon>mdi-shield-edit</v-icon>
         </v-btn>
 
-        <v-btn icon small @click="removeUser(item)" v-if="teamUsers && team && (team.user_id != item.id)">
-          <v-icon small>mdi-account-minus</v-icon>
+        <v-btn icon @click="removeUser(item)" v-if="teamUsers && team && (team.user_id != item.id)">
+          <v-icon>mdi-account-minus</v-icon>
         </v-btn>
       </template>
 

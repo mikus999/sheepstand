@@ -187,7 +187,7 @@
         "success_leave_team": "You have successfully left the team",
         "welcome_to_team": "Welcome to the team!",
         "error_creating_team": "There was an error while creating the team",
-        "cart_location": "Cart Location | Cart Locations",
+        "cart_locations": "Cart Locations",
         "create_new_location": "New Location",
         "location_name": "Location Name",
         "location_color": "Display Color",

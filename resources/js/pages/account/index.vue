@@ -1,12 +1,8 @@
 <template>
   <v-container fluid>
-    <v-row v-if="$vuetify.breakpoint.smAndUp">
-      <PageTitle :title="$t('account.account_settings')"></PageTitle>
-    </v-row>
-
     <v-row>
       <v-card width="100%" :flat="$vuetify.breakpoint.xs">
-        <v-card-title v-if="$vuetify.breakpoint.xs">
+        <v-card-title>
           <v-icon left>mdi-account-tie</v-icon>
           {{ $t('account.account_settings')}}
         </v-card-title>

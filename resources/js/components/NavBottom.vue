@@ -7,7 +7,7 @@
 
   <v-btn router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" v-if="hasTeam">
     <span>{{ $t('menu.shifts') }}</span>
-    <v-icon>mdi-calendar</v-icon>
+    <v-icon>mdi-calendar-multiselect</v-icon>
   </v-btn>
 
   <v-btn router :to="{ name: 'account.index' }" class="text-decoration-none">

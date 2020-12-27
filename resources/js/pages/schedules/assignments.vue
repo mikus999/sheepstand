@@ -1,12 +1,7 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <PageTitle :title="$t('schedules.schedule')"></PageTitle>
-    </v-row>
-
     <v-card width="100%">
       <v-card-text>
-
         <v-row>
           <v-col xs=1 sm=4 class="text-left" >
             <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">

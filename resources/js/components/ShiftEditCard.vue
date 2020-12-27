@@ -5,7 +5,12 @@
       <v-card-subtitle class="text-center font-weight-bold" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
         <v-row class="align-center">
           <v-col cols=3 class="pa-0">
-            <v-btn fab class="location-avatar" @click="$emit('location')">
+            <v-btn 
+              fab 
+              :small="$vuetify.breakpoint.smAndDown"
+              :class="$vuetify.breakpoint.smAndDown ? 'location-avatar-sm' : 'location-avatar'" 
+              @click="$emit('location')"
+            >
               {{ shift.location.name.substring(0, 1) }}
             </v-btn>
           </v-col>
@@ -310,6 +315,11 @@ export default {
 .location-avatar
 {
   font-size: 2.5rem;
+}
+
+.location-avatar-sm
+{
+  font-size: 1.5rem;
 }
 
 .shift-title

@@ -1,20 +1,28 @@
 <template>
   <v-card width="100%">
+    <v-toolbar flat>
+      <v-toolbar-title>
+        <v-icon left>mdi-account-switch</v-icon>
+        {{ $t('shifts.trade_requests') }}
+      </v-toolbar-title>
+            
+      <template v-slot:extension>
+        <v-switch v-model="allTeams" hide-details class="mx-4">
+          <template v-slot:label>
+            <span class="switch-label">{{ $t('shifts.show_all_teams') }}</span>
+          </template>
+        </v-switch>
+      </template>
+    </v-toolbar>
+
+
     <v-data-table 
       :headers="headersShift" 
-      :items="trades || []" 
+      :items="filteredShifts || []" 
       disable-sort 
       width="100%"
       @click:row="showShiftOverlay"
     >
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>
-            <v-icon left>mdi-account-switch</v-icon>
-            {{ $t('shifts.trade_requests') }}
-          </v-toolbar-title>
-        </v-toolbar>
-      </template>
 
 
 
@@ -138,6 +146,7 @@ export default {
       locationOverlay: false,
       shift: null,
       location: null,
+      allTeams: true,
       headersShift: [
         { text: this.$t('shifts.location'), value: 'location', align: 'left' },
         { text: this.$t('shifts.day'), value: 'day', align: 'left' },
@@ -158,6 +167,14 @@ export default {
       return newWidth
     },
 
+
+    filteredShifts() {
+      if (this.allTeams) {
+          return this.trades
+      } else {
+          return this.trades.filter(shift => shift.schedule.team_id === this.team.id)
+      }
+    }
   },
 
   created () {
@@ -166,7 +183,7 @@ export default {
 
   methods: {
     async getTrades () {
-      await axios.get('/api/teams/' + this.team.id + '/trades')
+      await axios.get('/api/teams/trades')
         .then(response => {
           this.storeTrades(response.data.trades)
         })
@@ -183,6 +200,7 @@ export default {
           }
         })
         .then(response => {
+          this.storeUserShifts(response.data.usershifts)
           this.storeTrades(response.data.trades)
           this.showSnackbar(this.$t('shifts.success_trade_made'), 'success')
         })
@@ -236,4 +254,8 @@ export default {
     font-size: .75rem;
   }
 
+  .switch-label
+  {
+    font-size: .85rem !important;
+  }
 </style>

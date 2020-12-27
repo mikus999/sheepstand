@@ -1,9 +1,5 @@
 <template>
   <v-container fluid>
-    <v-row v-if="$vuetify.breakpoint.smAndUp">
-      <PageTitle :title="$t('schedules.shift_schedules')"></PageTitle>
-    </v-row>
-
     <v-row class="mb-12">
       <Schedules :key="schedules_key" v-on:updated="forceRerender" />
     </v-row>

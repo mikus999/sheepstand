@@ -94,6 +94,7 @@
     <v-row 
       v-for="d in getUniqueDates()"
       :key="d"
+       class="my-16"
     >
 
       <div class="text-h5 mx-auto mb-2">
@@ -102,113 +103,40 @@
 
       <v-col cols=12>
         <v-expansion-panels>
-          <v-expansion-panel
+          <ShiftCardMobile 
             v-for="item in sortedShifts(d)"
-            :key="item.id"
-          >
-            <v-expansion-panel-header class="py-0" disable-icon-rotate>
-              <v-col cols="2" class="pa-0">
-                <v-btn fab small class="location-avatar" :color="item.location.color_code" @click.stop="showLocationOverlay(item)">
-                  {{ item.location.name.substring(0, 1) }}
-                </v-btn>
-              </v-col>
-
-              <v-col class="shift-subtitle">
-                <div class="shift-title mb-2">
-                  {{ item.time_start | formatDay }}<br>
-                  {{ item.time_start | formatTime }} - {{ item.time_end | formatTime }}<br>
-                </div>
-                {{ item.location.name }}
-              </v-col>
-
-              <template v-slot:actions>
-                <span v-if="isShiftMember(item)">
-                  <v-icon :color="getShiftStatus(item, user).color">
-                    {{ getShiftStatus(item, user).icon }}
-                  </v-icon>
-                </span>
-
-                <span v-else-if="item.schedule.status == 1">
-                  <v-avatar size="23" :color="getNumberOpenSpots(item) > 0 ? 'primary' : 'grey'">
-                    <span class="white--text font-weight-bold pa-0">{{ getNumberOpenSpots(item) }}</span>
-                  </v-avatar>
-                </span>
-
-                <span v-else>
-                  <v-icon>mdi-lock</v-icon>
-                </span>
-
-                <span><v-icon>mdi-chevron-down</v-icon></span>
-              </template>
-            </v-expansion-panel-header>
-
-            <v-expansion-panel-content>
-              <div class="text-overline">{{ $t('shifts.participants') }}</div>
-
-              <div v-if="filterShiftUsers(item.users).length > 0">
-                <div v-for="user in filterShiftUsers(item.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-                  <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
-                    {{ shiftStatus[user.pivot.status].icon }}
-                  </v-icon>
-                  <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
-                    {{ user.name }}
-                  </span>
-                </div>
-
-                <div v-if="item.schedule.status == 1">
-                  <div v-for="n in getNumberOpenSpots(item)" :key="n" class="ma-2" disabled>
-                    <div class="ml-n2 dashed-border rounded list-participants" width="100%">
-                      <v-icon small class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
-                      <span>{{ $t('general.available') }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-else>
-                <span class="ma-2 list-participants">{{ $t('shifts.no_participants') }}</span>
-              </div>
-
-
-              <v-row>
-                <v-col class="text-center">
-                  <ShiftStatusButton :shift="item" />
-                </v-col>
-              </v-row>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+            :key="item.id" 
+            :shift="item"
+            v-on:location="showLocationOverlay(item)"
+            />
         </v-expansion-panels>
 
       </v-col>
 
-      <v-col>
-        <v-divider class="my-8" />
-      </v-col>
-      
     </v-row>
+
 
 
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="location" :width="mapWidth" height="500px" readonly 
-          v-on:close="locationOverlay = false" v-on:click.native.stop/>
+          v-on:close="locationOverlay = false" v-on:click.native.stop />
     </v-overlay>
-
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
 import { helper, scheduling } from '~/mixins/helper'
+import ShiftCardMobile from '~/components/ShiftCardMobile.vue'
 import Leaflet from '~/components/Leaflet.vue'
-import ShiftStatusButton from '~/components/ShiftStatusButton.vue'
 
 export default {
   middleware: ['auth', 'teams'],
   layout: 'vuetify',
   mixins: [helper, scheduling],
   components: {
-    Leaflet,
-    ShiftStatusButton
+    ShiftCardMobile,
+    Leaflet
   },
 
   data () {
@@ -225,24 +153,23 @@ export default {
       shiftsFiltered: [],
       showAll: true,
       filter_shifts: true,
-      filter_closed_schedules: false,
-      filter_open_availability: false,
+      filter_closed_schedules: true,
+      filter_open_availability: true,
       locationOverlay: false,
       calendarPanel: false,
     }
   },
 
   computed: {
-    mapWidth() {
-      return this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
-    },
-    
     calendarHeader() {
       var headerString = ''
       headerString += this.$t('schedules.shifts_displayed') + ': ' + this.shiftsFiltered.length
       return headerString
     },
-
+    
+    mapWidth() {
+      return this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
+    },
   },
 
   created() {
@@ -261,13 +188,6 @@ export default {
           this.getSchedData()
         })
     },
-
-    isShiftMember(shift) {
-      var temp = shift.users.map(o => o['id'])
-      var index = temp.indexOf(this.user.id)
-      return index > -1
-    },
-
 
     allowedDates (val) {
       return this.availableDates.indexOf(val) > -1
@@ -305,8 +225,8 @@ export default {
 
 
     dayShifts (date) {
-      if (this.shifts) {
-        var shiftTemp = this.shifts.filter(shift => this.$dayjs(shift.time_start).format('YYYY-MM-DD') == date)
+      if (this.shiftsFiltered) {
+        var shiftTemp = this.shiftsFiltered.filter(shift => this.$dayjs(shift.time_start).format('YYYY-MM-DD') == date)
 
         if (shiftTemp.length > 0) {
           var color_array = []
@@ -404,18 +324,26 @@ export default {
 
     },
 
-    toggleShowAllNone() {
+    async toggleShowAllNone() {
       if (this.showAll) {
         this.shifts.forEach((shift) => {
           this.availableDates.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
           this.selectedDates.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
-          this.filterShifts()
         })
+        this.filterShifts()
+
       } else {
         this.selectedDates = []
         this.shiftsFiltered = []
       }
     },
+
+
+    filterShiftUsers(shiftUsers) {
+      return shiftUsers.filter(u => u.pivot.status != 3)
+    },
+
+    
 
     showLocationOverlay(shift) {
       if (shift.location.map != null) {
@@ -425,10 +353,11 @@ export default {
     },
 
 
-    filterShiftUsers(shiftUsers) {
-      return shiftUsers.filter(u => u.pivot.status != 3)
+    isShiftMember(shift) {
+      var temp = shift.users.map(o => o['id'])
+      var index = temp.indexOf(this.user.id)
+      return index > -1
     },
-
 
     getNumberOpenSpots(shift) {
       return this.returnZero(shift.max_participants - this.filterShiftUsers(shift.users).length)
@@ -445,42 +374,9 @@ export default {
 
 
 <style scoped>
-  .location-avatar
-  {
-    font-size: 1.5rem;
-  }
-
-  .location-avatar-xs
-  {
-    font-size: 1.2rem;
-  }
-
-  .shift-title
-  {
-    font-size: .9rem !important;
-    font-weight: bold;
-    line-height: 1.25;
-  }
-
-  .shift-subtitle
-  {
-    font-size: .8rem !important;
-  }
-
-  .list-participants
-  {
-    font-size: .75rem;
-  }
-
   .switch-label
   {
     font-size: .85rem !important;
   }
 
-  .dashed-border 
-  {
-    border-style: dashed;
-    border-color: 'grey';
-    border-width: thin;
-  }
 </style>

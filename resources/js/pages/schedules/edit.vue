@@ -1,11 +1,6 @@
 <template>
   <v-container fluid>
     <v-row>
-      <PageTitle :title="$t('schedules.schedule')"></PageTitle>
-    </v-row>
-
-
-    <v-row>
       <ScheduleEdit v-if="!pageLoad.value" :team_availability="team_availability" />
     </v-row>
 

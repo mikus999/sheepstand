@@ -59,8 +59,8 @@
       <template v-slot:item.schedule_actions="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon small @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-calendar-edit</v-icon>
+            <v-btn icon @click="editSched(item)" v-bind="attrs" v-on="on">
+              <v-icon>mdi-calendar-edit</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
@@ -68,8 +68,8 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
-            <v-btn icon small @click="deleteSched(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-delete</v-icon>
+            <v-btn icon @click="deleteSched(item)" v-bind="attrs" v-on="on">
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.delete') }}</span>
@@ -80,8 +80,8 @@
       <template v-slot:item.template_actions="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon small @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-calendar-edit</v-icon>
+            <v-btn icon @click="editSched(item)" v-bind="attrs" v-on="on">
+              <v-icon>mdi-calendar-edit</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
@@ -89,8 +89,8 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
-            <v-btn icon small @click="convertToSchedule(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-calendar-plus</v-icon>
+            <v-btn icon @click="convertToSchedule(item)" v-bind="attrs" v-on="on">
+              <v-icon>mdi-calendar-plus</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('schedules.make_new_schedule') }}</span>
@@ -98,8 +98,8 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
-            <v-btn icon small @click="deleteSched(item)" v-bind="attrs" v-on="on">
-              <v-icon small>mdi-delete</v-icon>
+            <v-btn icon @click="deleteSched(item)" v-bind="attrs" v-on="on">
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.delete') }}</span>

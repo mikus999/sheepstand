@@ -1,111 +1,116 @@
 <template>
   <v-container fluid>
     <v-row>
-      <PageTitle :title="$tc('teams.cart_location', 1)"></PageTitle>
-    </v-row>
+      <v-card width="100%" :flat="$vuetify.breakpoint.xs">
+        <v-data-table :headers="headers" :items="locationData" sort-by="default, name" sort-desc>
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-toolbar-title>
+                <v-icon left>mdi-map-marker-multiple</v-icon>
+                {{ $t('teams.cart_locations') }}
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn 
+                color="secondary" 
+                class="mb-2" 
+                @click="showDialog(tempData, false)" 
+              >
+                <v-icon 
+                  :left="$vuetify.breakpoint.smAndUp"
+                  :small="$vuetify.breakpoint.smAndUp"
+                >mdi-map-marker-plus</v-icon>
+                <span v-if="$vuetify.breakpoint.smAndUp">
+                  {{ $t('teams.create_new_location') }}
+                </span>
+              </v-btn>
 
-    <v-card width="100%" :flat="$vuetify.breakpoint.xs">
-      <v-data-table :headers="headers" :items="locationData" sort-by="default, name" sort-desc>
-        <template v-slot:top>
-          <v-toolbar flat>
-            <v-toolbar-title v-show="$vuetify.breakpoint.smAndUp">{{ $tc('teams.cart_location', 1) }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn 
-              color="secondary" 
-              class="mb-2" 
-              @click="showDialog(tempData, false)" 
-              :block="$vuetify.breakpoint.xs"
-            >
-              <v-icon left small>mdi-map-marker-plus</v-icon>
-              {{ $t('teams.create_new_location') }}
+
+              <!-- NEW/EDIT DIALOG -->
+              <v-dialog v-model="dialog" max-width="500px">
+                <v-card>
+                  <v-card-title class="text-center">
+                    <span class="headline">{{ $t('teams.create_new_location') }}</span>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <v-container>
+                      <v-text-field v-model="tempData.name" prepend-icon="mdi-form-textbox" :label="$t('teams.location_name')" 
+                        :error-messages="nameErrors" @blur="$v.tempData.name.$touch()" />
+
+                      <v-menu v-model="menu" top nudge-bottom="105" nudge-left="16" :open-on-click="true" :close-on-content-click="false">
+                        <template v-slot:activator="{ on }">
+                          <v-text-field v-model="tempData.color_code" :label="$t('teams.location_color_optional')" v-on="on" prepend-icon="mdi-palette" hide-details >
+                              <template v-slot:prepend-inner>
+                                <v-icon :color="tempData.color_code">mdi-square-rounded</v-icon>
+                              </template>
+                            </v-text-field>
+                        </template>
+                        <v-card>
+                          <v-card-text class="pa-0">
+                            <v-color-picker 
+                              v-model="tempData.color_code" 
+                              flat 
+                              hide-canvas
+                              hide-inputs
+                              hide-mode-switch
+                              mode="hexa"
+                              :swatches="swatches"
+                              show-swatches
+                            />
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn text @click="menu = false">{{ $t('general.ok') }}</v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-menu>
+                      
+                      <!--<v-file-input v-model="tempData.map" show-size :label="$t('teams.location_map_optional')" prepend-icon="mdi-map"></v-file-input>-->
+                        
+                      <!-- DEFAULT CHECKBOX -->
+                  
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="close">{{ $t('general.cancel') }}</v-btn>
+                    <v-btn color="primary" @click="createOrUpdate">
+                      {{ isEdit ? $t('general.save') : $t('general.create') }}
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+            </v-toolbar>
+          </template>
+          
+          <template v-slot:item.color_code="{ item }">
+            <v-chip :color="item.color_code" label small>{{ item.color_code }}</v-chip>
+          </template>
+        
+          <template v-slot:item.map="{ item }">
+            <v-chip label small @click="showLocationOverlay(item)">Edit Map</v-chip>
+          </template>
+
+          <template v-slot:item.default="{ item }">
+            <v-icon v-if="item.default" color="green">mdi-check-circle</v-icon>
+            <v-icon v-else @click.prevent="updateDefault(item.id)">mdi-circle-outline</v-icon>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-btn icon @click="showDialog(item, true)">
+              <v-icon>mdi-pencil</v-icon>
             </v-btn>
 
+            <v-btn icon @click="deleteLoc(item)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
 
-            <!-- NEW/EDIT DIALOG -->
-            <v-dialog v-model="dialog" max-width="500px">
-              <v-card>
-                <v-card-title class="text-center">
-                  <span class="headline">{{ $tc('teams.cart_location', 0) }}</span>
-                </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-text-field v-model="tempData.name" prepend-icon="mdi-form-textbox" :label="$t('teams.location_name')" 
-                      :error-messages="nameErrors" @blur="$v.tempData.name.$touch()" />
-
-                    <v-menu v-model="menu" top nudge-bottom="105" nudge-left="16" :open-on-click="true" :close-on-content-click="false">
-                      <template v-slot:activator="{ on }">
-                        <v-text-field v-model="tempData.color_code" :label="$t('teams.location_color_optional')" v-on="on" prepend-icon="mdi-palette" hide-details >
-                            <template v-slot:prepend-inner>
-                              <v-icon :color="tempData.color_code">mdi-square-rounded</v-icon>
-                            </template>
-                          </v-text-field>
-                      </template>
-                      <v-card>
-                        <v-card-text class="pa-0">
-                          <v-color-picker 
-                            v-model="tempData.color_code" 
-                            flat 
-                            hide-canvas
-                            hide-inputs
-                            hide-mode-switch
-                            mode="hexa"
-                            :swatches="swatches"
-                            show-swatches
-                          />
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer />
-                          <v-btn text @click="menu = false">{{ $t('general.ok') }}</v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-menu>
-                    
-                    <!--<v-file-input v-model="tempData.map" show-size :label="$t('teams.location_map_optional')" prepend-icon="mdi-map"></v-file-input>-->
-                      
-                    <!-- DEFAULT CHECKBOX -->
-                
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn text @click="close">{{ $t('general.cancel') }}</v-btn>
-                  <v-btn color="primary" @click="createOrUpdate">
-                    {{ isEdit ? $t('general.save') : $t('general.create') }}
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-
-          </v-toolbar>
-        </template>
-        
-        <template v-slot:item.color_code="{ item }">
-          <v-chip :color="item.color_code" label small>{{ item.color_code }}</v-chip>
-        </template>
-      
-        <template v-slot:item.map="{ item }">
-          <v-chip label small @click="showLocationOverlay(item)">Edit Map</v-chip>
-        </template>
-
-        <template v-slot:item.default="{ item }">
-          <v-icon v-if="item.default" color="green">mdi-check-circle</v-icon>
-          <v-icon v-else @click.prevent="updateDefault(item.id)">mdi-circle-outline</v-icon>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-          <v-btn icon small @click="showDialog(item, true)">
-            <v-icon small>mdi-pencil</v-icon>
-          </v-btn>
-
-          <v-btn icon small @click="deleteLoc(item)">
-            <v-icon small>mdi-delete</v-icon>
-          </v-btn>
-        </template>
-      </v-data-table>
-
-    </v-card>
+      </v-card>
+    </v-row>
     
     <v-overlay :value="locationOverlay" @click.native="locationOverlay = false" :dark="theme=='dark'">
       <Leaflet :location="location" :width="mapWidth" height="500px"  

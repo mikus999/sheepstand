@@ -1,6 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
+      <v-icon left>mdi-message-plus</v-icon>
       {{ $t('messages.create_new_message')}}
     </v-card-title>
 

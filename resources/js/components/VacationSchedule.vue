@@ -122,9 +122,18 @@ export default {
 
     async saveVacation () {
       if (this.vacation_dates.length > 0) {
-        const date_start = this.vacation_dates[0]
-        const date_end = this.vacation_dates[this.vacation_dates.length - 1]
+        var date_start = this.vacation_dates[0]
+        var date_end = this.vacation_dates[this.vacation_dates.length - 1]
         const note = this.vacation_note
+
+
+        // Make sure start date is before end date
+        if (this.$dayjs(date_start).isAfter(this.$dayjs(date_end))) {
+          var temp_date = date_start
+          date_start = date_end
+          date_end = temp_date
+        }
+
 
         await axios({
           method: 'post',      

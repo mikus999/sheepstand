@@ -55,5 +55,22 @@ export const mutations = {
 
   [types.SET_TEAM_USERS] (state, payload) {
     state.team_users = payload
-  }
+  },
+
+  [types.LOGOUT] (state) {
+    state.schedule = null
+    state.shifts = null
+    state.user_shifts = null
+    state.shift_users = null
+    state.shifts_available = null
+    state.shift_conflicts = null
+    state.trades = null
+    state.team_users = null
+  },
+}
+
+export const actions = {
+  async clear ({ commit }) {
+    commit(types.LOGOUT)
+  },
 }

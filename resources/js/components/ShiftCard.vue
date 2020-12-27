@@ -21,7 +21,7 @@
       <v-system-bar :color="$vuetify.theme.dark ? '#1c1c1c' : '#ffffff'">
         <MarqueeText v-if="hasConflicts">
             <span v-for="(conflict, index) in conflicts" :key="index" class="warning-text">
-              <v-icon color="red" class="ml-6">mdi-alert-box</v-icon>
+              <v-icon color="red" class="ml-6">mdi-alert</v-icon>
               {{ getConflictMessage(conflict) }}
             </span>
         </MarqueeText>
@@ -52,7 +52,9 @@
 
       <v-row>
         <v-col class="text-center">
-          <ShiftStatusButton :shift="shift" />
+          <ShiftStatusButton v-if="!isFinalized || isShiftMember" :shift="shift" />
+
+          <v-icon v-else large>mdi-lock</v-icon>
         </v-col>
       </v-row>
 
@@ -131,6 +133,16 @@ export default {
 
     hasConflicts() {
       return this.conflicts.length > 0
+    },
+    
+    isShiftMember() {
+      var temp = this.shift.users.map(o => o['id'])
+      var index = temp.indexOf(this.user.id)
+      return index > -1
+    },
+
+    isFinalized() {
+      return this.shift.schedule.status == 2
     },
 
     conflicts() {
