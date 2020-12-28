@@ -24,9 +24,10 @@ class UserController extends Controller
         $user = Auth::user();
         $roles = Helper::getUserRoles($user);
 
-        $user['roles'] = $roles;
-        $user['user_availabilities'] = $user->user_availabilities()->get();
-        $user['user_vacations'] = $user->user_vacations()->get();
+        $user->roles = $roles;
+        $user->user_availabilities = $user->user_availabilities()->get();
+        $user->user_vacations = $user->user_vacations()->get();
+        $user->marriage_mate = $user->marriage_mate()->first();
 
         return response()->json($user);
     }
@@ -45,7 +46,7 @@ class UserController extends Controller
       $siteUsers = [];
 
       if ($user->hasRole('super_admin', null)) {
-        $siteUsers = User::with('languages')->get();
+        $siteUsers = User::with('languages', 'marriage_mate')->get();
 
         foreach($siteUsers as $key => $user) {
           $targetUser = User::find($user->id);
@@ -96,6 +97,45 @@ class UserController extends Controller
       $targetUser->save();
 
       return response()->json($targetUser);
+
+    }
+
+
+
+
+
+    public function updateMarriageMate(Request $request)
+    {
+      $user = Auth::user();
+      $team = $user->teams->find($request->team_id);
+
+      if (($team && $user->hasRole('team_admin', $team)) || $request->mate1_id == $user->id) {     
+
+        $mate1User = User::find($request->mate1_id);
+        $currentMate = $mate1User->mate_id;
+        $mate1User->mate_id = $request->mate2_id ? $request->mate2_id : null;
+        $mate1User->save();
+
+        if ($request->mate2_id) {
+          $newMate = User::find($request->mate2_id);
+          $newMate->mate_id = $request->mate1_id;
+          $newMate->save();
+        }
+
+        if ($currentMate) {
+          $oldMate = User::find($currentMate);
+          if ($oldMate) {
+            $oldMate->mate_id = null;
+            $oldMate->save();
+          }
+        }
+        
+      } else {
+        $mate1User = $user;
+      }
+
+
+      return response()->json($mate1User);
 
     }
 }

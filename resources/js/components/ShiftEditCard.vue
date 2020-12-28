@@ -46,14 +46,19 @@
 
       <v-card-text v-if="!isTemplate" class="text-left list-participants ma-2 pa-0">
         <div v-if="hasParticipants">
-          <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="shiftStatus[user.pivot.status].text">
-            <v-icon small class="mr-2" :color="shiftStatus[user.pivot.status].color">
-              {{ shiftStatus[user.pivot.status].icon }}
-            </v-icon>
-            <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
-              {{ user.name }}
-            </span>
-          </div>
+          <v-row v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="shiftStatus[user.pivot.status].text">
+            <v-col cols=9 class="ml-3 pa-0">
+              <v-icon small class="mr-2" :color="shiftStatus[user.pivot.status].color">
+                {{ shiftStatus[user.pivot.status].icon }}
+              </v-icon>
+              <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+                {{ user.name }}
+              </span>
+            </v-col>
+            <v-col cols=1 class="pa-0">
+              <v-icon small v-if="user.driver">mdi-car</v-icon>
+            </v-col>
+          </v-row>
         </div>
 
         <div v-else>

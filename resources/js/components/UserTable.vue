@@ -58,17 +58,22 @@
         </v-toolbar>
       </template>
 
-      <template v-slot:item.fts_status="{ item }">
-        <a @click="showFTSOverlay(item)" class="text-no-decoration">
-          {{ ftsStatus[item.fts_status].text }}
-        </a>
+      <template v-slot:item.marriage_mate="{ item }">
+        {{ item.marriage_mate ? item.marriage_mate.name : '' }}
       </template>
 
+      <template v-slot:item.fts_status="{ item }">
+        {{ ftsStatus[item.fts_status].text }}
+      </template>
+
+      <template v-slot:item.driver="{ item }">
+        <v-icon v-if="item.driver">mdi-car</v-icon>
+      </template>      
+
       <template v-slot:item.team_role="{ item }">
-        <a @click="showRolesOverlay(item)" class="text-no-decoration" v-if="team && (team.user_id != item.id)">
-          <v-icon small>mdi-shield-account</v-icon>
+        <span v-if="team && (team.user_id != item.id)">
           {{ item.team_role ? $t('roles.' + item.team_role) : $t('roles.not_assigned') }}
-        </a>
+        </span>
 
         <a @click="showChangeOwnerOverlay(item)" class="text-no-decoration" v-else>
           <v-icon small>mdi-shield-account</v-icon>
@@ -81,7 +86,11 @@
       </template>
 
 
-      <template v-slot:item.actions="{ item }">           
+      <template v-slot:item.actions="{ item }">   
+        <v-btn icon @click="showFTSOverlay(item)">
+          <v-icon>mdi-account-cog</v-icon>
+        </v-btn>
+
         <v-btn icon @click="showRolesOverlay(item)" v-if="!teamUsers">
           <v-icon>mdi-shield-edit</v-icon>
         </v-btn>
@@ -94,17 +103,12 @@
     </v-data-table>
 
 
-
-    <v-overlay :value="rolesOverlay" :dark="theme=='dark'">
-      <UserRoles :data="currUser" width="300px" height="100%" :admin-roles="!teamUsers" @close="rolesOverlay = false; getUserData()"></UserRoles>
-    </v-overlay>
-
     <v-overlay :value="changeOwnerOverlay" :dark="theme=='dark'">
       <ChangeOwner :data="userData" :owner="currUser" width="300px" height="100%" @close="changeOwnerOverlay = false; getUserData()"></ChangeOwner>
     </v-overlay>
 
     <v-overlay :value="changeFTSOverlay" :dark="theme=='dark'">
-      <FTSStatus :data="currUser" width="300px" height="100%" @close="changeFTSOverlay = false; getUserData()"></FTSStatus>
+      <UserProfile :data="currUser" :admin-roles="!teamUsers" width="300px" height="100%" @close="changeFTSOverlay = false; getUserData()"></UserProfile>
     </v-overlay>
   </v-card>
 </template>
@@ -112,17 +116,15 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
-import UserRoles from '~/components/UserRoles.vue'
 import ChangeOwner from '~/components/ChangeOwner.vue'
-import FTSStatus from '~/components/FTSStatus.vue'
+import UserProfile from '~/components/UserProfile.vue'
 
 export default {
   name: 'UserTable',
   mixins: [helper],
   components: { 
-    UserRoles,
     ChangeOwner,
-    FTSStatus
+    UserProfile
   },
   
   props: {
@@ -153,8 +155,18 @@ export default {
           value: 'email'
         },
         {
+          text: this.$t('account.marriage_mate'),
+          value: 'marriage_mate'
+        },
+        {
           text: this.$t('account.fts_status'),
           value: 'fts_status'
+        },
+        {
+          text: this.$t('account.has_auto'),
+          value: 'driver',
+          align: 'center',
+          sortable: false
         },
         {
           text: this.$t('account.user_code'),
@@ -179,6 +191,10 @@ export default {
         {
           text: this.$t('general.email'),
           value: 'email'
+        },
+        {
+          text: this.$t('account.marriage_mate'),
+          value: 'marriage_mate'
         },
         {
           text: this.$t('account.user_code'),

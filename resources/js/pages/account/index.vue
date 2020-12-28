@@ -41,6 +41,18 @@
                     </template>
                   </v-text-field>
 
+                  <v-select 
+                    v-model="mate" 
+                    :items="teamUsers" 
+                    item-text="name" 
+                    item-value="id" 
+                    return-object 
+                    @change="updateMarriageMate"
+                    :label="$t('account.marriage_mate')"
+                    clearable
+                  />
+
+
                   <div class="my-6">
                     <v-subheader class="pa-0">{{ $t('account.fts_status') }}</v-subheader>
                     <v-radio-group v-model="userData.fts_status" class="my-0" @change="updateFTS()">
@@ -200,6 +212,8 @@ export default {
         }
       },
       userData: [],
+      teamUsers: null,
+      mate: null,
       password1: null,
       password2: null,
       showPwd: false,
@@ -230,12 +244,24 @@ export default {
 
   created () {
     this.getUserData()
+    this.getTeamUsers()
   },
 
   methods: {
 
     async getUserData () {
       this.userData = this.user
+      this.mate = this.user.marriage_mate
+    },
+
+            
+    async getTeamUsers() {
+      await axios.get('/api/teams/' + this.team.id + '/users/')
+        .then(response => {
+          this.teamUsers = response.data.filter(u => 
+            u.id != this.user.id
+          )
+        })
     },
 
     updateUser: _.debounce(async function(e) {
@@ -301,6 +327,27 @@ export default {
           this.refreshUser()
           this.showSnackbar(this.$t('general.info_updated'), 'success')
       });
+    },
+
+
+    async updateMarriageMate () {
+      if (await this.$root.$confirm(this.$t('account.confirm_change_mate'), null, 'error')) {
+        await axios({
+          method: 'post',      
+          url: '/api/account/marriage',
+          data: {
+            team_id: this.team.id,
+            mate1_id: this.user.id,
+            mate2_id: this.mate == undefined ? null : this.mate.id
+          }
+        })
+        .then(response => {
+            this.refreshUser()
+            this.showSnackbar(this.$t('general.info_updated'), 'success')
+        });
+      } else {
+        this.mate = this.user.marriage_mate
+      }
     },
 
     async leaveTeam() {

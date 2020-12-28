@@ -54,7 +54,7 @@ class SecurityController extends Controller
         $user = User::find($request->user_id);
         $role = $request->role;
         $changetype = $request->changetype;
-        $teamScope = $request->team_id !== null;
+        $teamScope = $request->team_id != null;
         $team = [];
 
         if ($teamScope) {
@@ -78,11 +78,10 @@ class SecurityController extends Controller
           }
 
           $roles = Helper::getUserRoles($user);
-
-
           $data = [
             'roles' => $roles
           ];
+
 
         } else {
             $data = 'Role not found';

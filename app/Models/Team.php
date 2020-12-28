@@ -46,6 +46,7 @@ class Team extends LaratrustTeam
                           ->where('shift_user.status', '<>', 3);
                   },                                    
                 ])
+                ->with('marriage_mate')
                 ->withPivot('default_team');
   }
 

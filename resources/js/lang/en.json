@@ -112,9 +112,12 @@
     },
     "account": {
         "profile": "Profile",
+        "user_profile": "User Profile",
         "password_updated": "Your password has been updated!",
         "your_info": "Your Info",
         "user_code": "User Code",
+        "marriage_mate": "Marriage Mate",
+        "has_auto": "Car Owner",
         "account_created": "Account Created",
         "account_settings": "Account Settings",
         "dark_mode": "Dark Mode",
@@ -134,7 +137,8 @@
         "fts_sfts": "Special Pioneer/Missionary",
         "fts_co": "Circuit Overseer/Wife",
         "fts_bethelite": "Bethelite",
-        "fts_construction": "Construction Servant"
+        "fts_construction": "Construction Servant",
+        "confirm_change_mate": "Are you sure you want to update your marriage mate? This will also update your mates account."
     },
     "roles": {
         "publisher": "Publisher",

@@ -1,35 +1,32 @@
 <template>
   <v-card width="100%">
+    <v-toolbar flat>
+      <v-toolbar-title>
+        <v-icon left>mdi-account-multiple</v-icon>
+        Translators
+      </v-toolbar-title>
+
+        
+      <v-spacer />
+
+      <v-btn 
+        color="secondary" 
+        class="mb-2" 
+        @click="showSiteLanguageOverly()"
+      >
+        <v-icon small :left="$vuetify.breakpoint.smAndUp">mdi-translate</v-icon>
+        <span v-if="$vuetify.breakpoint.smAndUp">Site Languages</span>
+      </v-btn>
+    </v-toolbar>
+
     <v-data-table :headers="translatorHeaders" :items="translators" no-data-text="No Data" width="100%">
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>
-            <v-icon left>mdi-account-multiple</v-icon>
-            Translators
-          </v-toolbar-title>
-
-            
-          <v-spacer />
-
-          <v-btn 
-            color="secondary" 
-            class="mb-2" 
-            :block="$vuetify.breakpoint.xs"
-            @click="showSiteLanguageOverly()"
-            >
-            <v-icon left small>mdi-translate</v-icon>
-            Site Languages
-          </v-btn>
-        </v-toolbar>
-      </template>
-
       <template v-slot:item.lang="{ item }">
         <div v-for="lang in item.languages">{{ lang.name }}</div>
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-btn icon small @click="showLanguageOverly(item)">
-          <v-icon small>mdi-account-edit</v-icon>
+        <v-btn icon @click="showLanguageOverly(item)">
+          <v-icon>mdi-account-edit</v-icon>
         </v-btn>
       </template>
     </v-data-table>

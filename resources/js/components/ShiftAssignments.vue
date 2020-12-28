@@ -47,6 +47,30 @@
         </v-toolbar>
       </template>
 
+      <template v-slot:item.marriage_mate="{ item }">
+        <div v-if="item.marriage_mate">
+          <v-btn icon v-if="!isShiftMember(item.marriage_mate.id) && isAvailable(item.marriage_mate.id)" @click="addShiftUser(item.marriage_mate, true)">
+            <v-icon>mdi-plus-box</v-icon>
+          </v-btn>
+
+          <v-avatar v-else-if="userShiftStatus(item.marriage_mate.id) > -1" size="35">
+            <v-icon :color="shiftStatus[userShiftStatus(item.marriage_mate.id)].color">
+              {{ shiftStatus[userShiftStatus(item.marriage_mate.id)].icon }}
+            </v-icon>
+          </v-avatar>
+
+          <v-avatar v-else size="35">
+            <v-icon>mdi-cancel</v-icon>
+          </v-avatar>
+
+          {{ item.marriage_mate.name }}
+        </div>
+      </template>
+
+      <template v-slot:item.driver="{ item }">
+        <v-icon v-if="item.driver">mdi-car</v-icon>
+      </template> 
+
       <template v-slot:item.action="{ item }">
         <v-btn v-if="!isShiftMember(item.id)" icon @click="addShiftUser(item)">
           <v-icon>mdi-plus-box</v-icon>
@@ -147,6 +171,17 @@ export default {
           align: 'start',
         },
         {
+          text: this.$t('account.has_auto'),
+          value: 'driver',
+          align: 'center',
+          sortable: false
+        },
+        { 
+          text: this.$t('account.marriage_mate'), 
+          value: 'marriage_mate', 
+          align: 'start', 
+        },
+        {
           text: this.$t('shifts.shifts_7_14_30'), 
           value: 'shift_counts', 
           align: 'center',
@@ -194,6 +229,10 @@ export default {
       return tempArr.length > 0
     },
 
+    isAvailable(userid) {
+      var tempArr = this.team_users_avail.filter(u => u.id == userid)
+      return tempArr.length > 0
+    },
 
     userShiftStatus(userid) {
       var tempArr = this.shift.users.filter(u => u.id == userid)
@@ -232,7 +271,7 @@ export default {
     },
 
 
-    async addShiftUser (user) {
+    async addShiftUser (user, isMate = false) {
       var status = this.team.setting_shift_assignment_autoaccept ? 2 : 0
 
       await axios({
@@ -245,7 +284,7 @@ export default {
         }
       })
       .then(response => {
-        user.pivot.status = status
+        if (!isMate) user.pivot.status = status
         this.shift.users = response.data.shiftusers
         this.storeTeamUsers(response.data.teamusers)
         this.team_users_avail = this.getAvailableUsers()
