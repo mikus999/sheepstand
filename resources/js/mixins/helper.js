@@ -219,6 +219,10 @@ export const helper = {
       await this.$store.dispatch('auth/fetchUser')
     },
 
+    async getMessageCounts () {
+      await this.$store.dispatch('general/scheduledTasks')
+    },
+
     setLocale (locale) {
       if (this.$i18n.locale !== locale) {
         this.$i18n.locale = locale
@@ -551,7 +555,44 @@ export const messages = {
       message = encodeURIComponent(message)
       
       return message
+    },
+
+    
+    async send_message_user_inbox (message) {
+      /**
+       * Requires:
+       *  - recipient_id
+       *  - message_text
+       *  - named_route (nullable)
+       *  - color (nullable)
+       *  - type (nullable)
+       *  - icon (nullable)
+       *  - show_banner
+       *  - expires_on (nullable)
+       */
+
+      await axios({
+        method: 'POST',      
+        url: '/api/messages',
+        data: {
+          recipient_id: message.recipient.id,
+          recipient_type: 'App\\Models\\User',
+          for_roles: null,
+          system_message: null,
+          message_text: message.message_text,
+          message_i18n_string: null,
+          named_route: message.named_route,
+          color: message.color || '#7E7E7E',
+          type: message.type || 'info',
+          icon: message.icon,
+          dismissable: true,
+          outlined: true,
+          show_banner: message.show_banner,
+          expires_on: message.expires_on 
+        }
+      })
     }
+
   }
 }
 

@@ -25,9 +25,8 @@
 
             <!-- TAB: GENERAL -->
             <v-tab-item value="tab-general">
-              <v-row class="mx-2">
-                <v-col cols=12 sm=6>
-
+              <v-row>
+                <v-col cols=12 sm=6 class="px-6">
                   <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.display_name.success">
                     <template v-slot:append v-if="validation.display_name.success">
                       <v-icon color="green">mdi-check-circle</v-icon>
@@ -52,7 +51,7 @@
                   </div>
                 </v-col>
 
-                <v-col cols=12 sm=6>
+                <v-col cols=12 sm=6 class="pa-0">
                   <NotificationInfo v-on:updated="notification_key++" :key="notification_key" />
                 </v-col>
               </v-row>

@@ -169,10 +169,6 @@ export default {
           sortable: false
         },
         {
-          text: this.$t('account.user_code'),
-          value: 'user_code'
-        },
-        {
           text: this.$t('account.user_role'),
           value: 'team_role'
         },
@@ -195,10 +191,6 @@ export default {
         {
           text: this.$t('account.marriage_mate'),
           value: 'marriage_mate'
-        },
-        {
-          text: this.$t('account.user_code'),
-          value: 'user_code'
         },
         {
           text: this.$t('account.site_roles'),

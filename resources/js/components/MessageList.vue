@@ -5,12 +5,12 @@
       {{ $t('messages.inbox')}}
     </v-card-title>
 
-    <v-card-text>
+    <v-card-text class="px-0">
       <v-list flat>
         <v-list-item-group>
           <v-divider />
           <template v-for="(message, index) in messages">
-            <v-list-item :key="message.id" @click.native="markAsRead(message.id)">
+            <v-list-item :key="message.id" @click.native="showMessage(message)">
 
               <v-list-item-avatar>
                 <v-icon>{{ message.users.length > 0 ? 'mdi-email-open' : 'mdi-email' }}</v-icon>
@@ -19,10 +19,10 @@
               <v-list-item-content 
                 :class="message.users.length > 0 ? '' : 'font-weight-black'">
                   <v-list-item-title>
-                    {{ message.system_message ? 'SheepStand' : message.team.display_name}}
+                    {{ getRecipientName(message)}}
                   </v-list-item-title>
 
-                  <v-list-item-subtitle class="word-wrap">
+                  <v-list-item-subtitle>
                     {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
                   </v-list-item-subtitle>
 
@@ -34,11 +34,11 @@
                 </v-list-item-action-text>
 
                 <div class="my-auto">
-                  <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" class="mb-n2">
+                  <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" @click.stop class="mb-n2">
                     <v-icon>mdi-link</v-icon>
                   </v-btn>
 
-                  <v-btn icon v-if="editor" @click="deleteMessage(message.id)">
+                  <v-btn icon v-if="editor" @click.stop="deleteMessage(message.id)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </div>
@@ -47,17 +47,27 @@
             </v-list-item>
 
             <v-divider :key="'div-'+message.id" v-if="index < messages.length - 1" />
+      
           </template>
           
         </v-list-item-group>
       </v-list>
     </v-card-text>
+
+
+    <v-dialog v-model="messageDialog" width="500">
+      <MessageView 
+        :message="message" 
+        v-on:close="closeMessage" 
+      />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
+import MessageView from '~/components/MessageView.vue'
 
 export default {
   name: 'MessageList',
@@ -65,7 +75,7 @@ export default {
   layout: 'vuetify',
   mixins: [helper],
   components: {
-    
+    MessageView
   },
 
   props: {
@@ -86,6 +96,8 @@ export default {
   data () {
     return {
       messages: [],
+      message: null,
+      messageDialog: false,
       base_url: process.env.MIX_APP_URL,
       apiInterval: null
     }
@@ -130,16 +142,14 @@ export default {
       }
     },
 
-    async markAsRead (id) {
-      await axios({
-        method: 'get',      
-        url: '/api/messages/' + id + '/markread',
-      })
-      .then(response => {
-        this.messages = response.data.messages
-        
-        this.$store.dispatch('general/scheduledTasks')
-      })
+    showMessage (message) {
+      this.message = message
+      this.messageDialog = true
+    },
+
+    closeMessage() {
+      this.messageDialog = false
+      this.getMessages()
     },
 
     goToRoute (named_route) {
@@ -147,6 +157,16 @@ export default {
         this.$router.push({ name: named_route })
       }
     },
+
+    getRecipientName(message) {
+      if (message.recipient_type == null) {
+        return 'SheepStand'
+      } else if (message.recipient_type == 'App\\Models\\Team') {
+        return message.recipient.display_name
+      } else if (message.recipient_type == 'App\\Models\\User') {
+        return 'SheepStand'
+      }
+    }
 
   }
   

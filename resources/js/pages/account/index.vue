@@ -53,12 +53,20 @@
                   />
 
 
-                  <div class="my-6">
-                    <v-subheader class="pa-0">{{ $t('account.fts_status') }}</v-subheader>
-                    <v-radio-group v-model="userData.fts_status" class="my-0" @change="updateFTS()">
-                      <v-radio v-for="fts in ftsStatus" :key="fts.value" :label="fts.text" />
-                    </v-radio-group>
-                  </div>
+                  <v-select 
+                    v-model="userData.fts_status" 
+                    :items="ftsStatus"
+                    item-text="text"
+                    item-value="value"
+                    @change="updateStatusField('fts')"
+                    :label="$t('account.fts_status')"
+                  />
+
+                  <v-switch
+                    v-model="userData.driver"
+                    @change="updateStatusField('driver')"
+                    :label="$t('account.has_auto')"
+                  />
 
 
                   <div class="my-6" v-if="hasTeam">
@@ -315,12 +323,23 @@ export default {
     },
 
 
-    async updateFTS () {
+    async updateStatusField (field) {
+      var url = null
+      var status = null
+
+      if (field == 'fts') {
+        url = '/api/account/fts'
+        status = this.userData.fts_status
+      } else if (field == 'driver') {
+        url = '/api/account/driver'
+        status = this.userData.driver
+      }
+
       await axios({
         method: 'post',      
-        url: '/api/account/fts',
+        url: url,
         data: {
-          status: this.userData.fts_status
+          status: status
         }
       })
       .then(response => {

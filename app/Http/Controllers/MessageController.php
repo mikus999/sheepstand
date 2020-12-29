@@ -52,7 +52,8 @@ class MessageController extends Controller
       if ($team_admin || $user->hasRole('super_admin', null)) {
 
         $alert = Message::create([
-          'team_id' => $request->team_id,
+          'recipient_id' => $request->recipient_id,
+          'recipient_type' => $request->recipient_type,
           'for_roles' => $request->for_roles,
           'system_message' => $request->system_message,
           'message_text' => $request->message_text,
@@ -111,9 +112,9 @@ class MessageController extends Controller
       $user = Auth::user();
       $message = Message::find($id);
 
-      if ($message->team_id) {
+      if ($message->recipient_type == 'App\Models\Team') {
         // If this is a team message check rights
-        $team = Team::find($message->team_id);
+        $team = Team::find($message->recipient_id);
 
         if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
           $access_allowed = true;

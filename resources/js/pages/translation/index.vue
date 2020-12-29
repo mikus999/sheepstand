@@ -56,12 +56,16 @@
             <template v-slot:default="props">
               <v-row v-for="item in props.items" :key="item.key" class="mt-3">
                 <v-col cols=12>
-                  <v-text-field :hint="item.key" v-model="langTargetStrings[props.items.indexOf(item)].value" placeholder="---" 
-                    persistent-hint :prefix="langTargetLocale.toUpperCase() + ': '">
-                    <template v-slot:label>
-                      <span class="translation-label">EN: {{ item.value}}</span>
-                    </template>
-                  </v-text-field>
+                  <v-textarea
+                    v-model="langTargetStrings[props.items.indexOf(item)].value" 
+                    placeholder="---" 
+                    persistent-hint 
+                    :hint="'EN: ' + item.value" 
+                    :prefix="langTargetLocale.toUpperCase() + ': '" 
+                    class="ma-0 pa-0"
+                    rows=1
+                    auto-grow>
+                  </v-textarea>
                 </v-col>
               </v-row>
             </template>
@@ -336,7 +340,7 @@ export default {
 
 
 <style scoped>
-  .translation-label {
-    color: var(--v-primary-base);
+  .v-messages__message {
+    color: var(--v-primary-base) !important;
   }
 </style>

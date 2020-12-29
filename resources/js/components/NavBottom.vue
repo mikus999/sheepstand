@@ -1,5 +1,5 @@
 <template>
-<v-bottom-navigation dark grow fixed class="light-blue darken-4 white--text" :horizontal="$vuetify.breakpoint.smAndUp" app>
+<v-bottom-navigation dark grow fixed class="light-blue darken-4 white--text" app>
   <v-btn router :to="{ name: 'home' }" class="text-decoration-none">
     <span>{{ $t('menu.dashboard') }}</span>
     <v-icon>mdi-view-dashboard</v-icon>
@@ -10,6 +10,13 @@
     <v-icon>mdi-calendar-multiselect</v-icon>
   </v-btn>
 
+  <v-btn router :to="{ name: 'account.inbox' }" class="text-decoration-none">
+    <span>{{ $t('menu.inbox') }}</span>
+    <v-badge :content="message_count.unread" color="red" overlap :value="message_count.unread">
+      <v-icon>mdi-message</v-icon>
+    </v-badge>
+  </v-btn>
+
   <v-btn router :to="{ name: 'account.index' }" class="text-decoration-none">
     <span>{{ $t('menu.account') }}</span>
     <v-icon>mdi-account-tie</v-icon>
@@ -18,18 +25,11 @@
 </template>
 
 <script>
-import {
-  mapGetters,
-  mapState
-} from 'vuex'
 import axios from 'axios'
+import helper from '../mixins/helper'
 
 export default {
-  computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      hasTeam: 'auth/hasTeam',
-    }),
-  }
+  mixins: [helper],
+
 }
 </script>

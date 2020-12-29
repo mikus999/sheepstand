@@ -54,7 +54,7 @@
         :items="ftsStatus"
         item-text="text"
         item-value="value"
-        @change="updateFTS()"
+        @change="updateStatusField('fts')"
         :label="$t('account.fts_status')"
       />
 
@@ -67,6 +67,12 @@
         @change="updateMarriageMate"
         :label="$t('account.marriage_mate')"
         clearable
+      />
+
+      <v-switch
+        v-model="userData.driver"
+        @change="updateStatusField('driver')"
+        :label="$t('account.has_auto')"
       />
 
     </v-card-text>
@@ -151,13 +157,24 @@ export default {
 
 
 
-    async updateFTS () {
+    async updateStatusField (field) {
+      var url = null
+      var status = null
+
+      if (field == 'fts') {
+        url = '/api/account/fts'
+        status = this.userData.fts_status
+      } else if (field == 'driver') {
+        url = '/api/account/driver'
+        status = this.userData.driver
+      }
+
       await axios({
         method: 'post',      
-        url: '/api/account/fts',
+        url: url,
         data: {
           user_id: this.userData.id,
-          status: this.userData.fts_status
+          status: status
         }
       })
       .then(response => {

@@ -72,7 +72,7 @@ class Team extends LaratrustTeam
 
   public function messages()
   {
-    return $this->hasMany('App\Models\Message');
+    return $this->morphMany(Message::class, 'recipient')->with('users','recipient');
   }
 
   public function getTeamRoleAttribute()

@@ -10,10 +10,21 @@ trait MessageTrait
   public function getMessages()
   {
     $user = Auth::user();
+    $teams = $user->teams()->get();
 
-    $messages_team = $user->messages()->withCount('users as unread_count')->get();
+    $messages_user = $user->messages()->withCount('users as unread_count')->get();
     $messages_global = $user->messages_global()->withCount('users as unread_count')->get();
-    $messages = array_merge(json_decode($messages_team, true), json_decode($messages_global, true));
+
+
+    $messages_team = [];
+    foreach ($teams as $team) {
+      $temp = $team->messages()->withCount('users as unread_count')->get();
+      $messages_team = array_merge($messages_team, json_decode($temp, true));
+    }
+    $messages_team = json_encode($messages_team);
+
+
+    $messages = array_merge(json_decode($messages_user, true), json_decode($messages_team, true), json_decode($messages_global, true));
     usort($messages, 'self::date_compare');
 
     return $messages;

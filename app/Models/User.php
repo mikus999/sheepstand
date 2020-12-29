@@ -74,16 +74,17 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         return $this->belongsToMany(Language::class);
     }
 
+
     public function messages()
     {
-      return $this->hasManyThrough(Message::class, Team::class)
-                  ->with('users','team');
+      return $this->morphMany(Message::class, 'recipient')->with('users','recipient');
     }
 
     public function messages_global()
     {
-      return Message::where('team_id','=',null)->with('users','team');
+      return Message::where('recipient_id','=',null)->with('users');
     }
+
 
     public function user_availabilities()
     {

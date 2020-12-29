@@ -65,7 +65,7 @@
       </v-menu>
 
 
-      <v-switch v-model="show_inbox" :label="$t('messages.show_in_inbox')" disabled />
+      <v-switch v-model="show_inbox" :label="$t('messages.show_in_inbox')" readonly />
       <v-switch v-model="send_telegram" :label="$t('messages.send_to_telegram')" :disabled="!notificationsEnabled" />
       <v-switch v-model="show_banner" :label="$t('messages.show_as_banner')" />
       
@@ -260,7 +260,7 @@ export default {
 
     this.getRoutes()
     this.getStrings()
-
+    this.send_telegram = this.notificationsEnabled
   },
 
   methods: {
@@ -295,7 +295,7 @@ export default {
     async createMessage() {
 
       // SEND TELEGRAM MESSAGE
-      if (this.send_telegram) {
+      if (this.send_telegram && this.team.notificationsettings) {
         await this.mtInitialize()
 
         const channel_id = this.team.notificationsettings.telegram_channel_id
@@ -317,7 +317,8 @@ export default {
         method: 'POST',      
         url: '/api/messages',
         data: {
-          team_id: this.system_message ? null : this.team.id,
+          recipient_id: this.system_message ? null : this.team.id,
+          recipient_type: this.system_message ? null : 'App\\Models\\Team',
           for_roles: null,
           system_message: this.system_message,
           message_text: this.system_message ? null : this.message_text,

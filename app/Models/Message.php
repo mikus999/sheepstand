@@ -8,7 +8,8 @@ use Auth;
 class Message extends Model
 {
   protected $fillable = [
-    'team_id',
+    'recipient_id',
+    'recipient_type',
     'for_roles',
     'system_message',
     'message_text',
@@ -25,14 +26,15 @@ class Message extends Model
     'expires_on'
   ];
 
-  public function messages_global()
+
+  public function recipient()
   {
-    return $this->where('team_id','=',null);
+    return $this->morphTo();
   }
 
-  public function team()
+  public function messages_global()
   {
-      return $this->belongsTo('App\Models\Team');
+    return $this->where('recipient_id','=',null);
   }
 
   public function users()

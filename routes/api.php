@@ -35,8 +35,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('account/vacation', 'UserAvailabilityController@getVacation');
     Route::post('account/vacation', 'UserAvailabilityController@setVacation');
     Route::delete('account/vacation/{id}', 'UserAvailabilityController@deleteVacation');
-    Route::post('account/fts', 'Auth\UserController@updateFTSStatus');
-    Route::post('account/marriage', 'Auth\UserController@updateMarriageMate');
+    Route::post('account/fts', 'Settings\ProfileController@updateFTSStatus');
+    Route::post('account/marriage', 'Settings\ProfileController@updateMarriageMate');
+    Route::post('account/driver', 'Settings\ProfileController@updateDriverStatus');
 
     // TEAM routes
     Route::post('teams/jointeam', 'TeamController@addUserToTeam');
