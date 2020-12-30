@@ -54,7 +54,8 @@
         "approve": "Approve",
         "all": "All",
         "please_wait": "Please Wait...",
-        "team": "Team"
+        "team": "Team",
+        "expired": "Expired"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -290,6 +291,8 @@
         "trade_requests": "Trade Requests",
         "trade_offer_all": "Offer to everyone",
         "trade_offer": "Offer Trade",
+        "trade_my_shift": "My Shift",
+        "trade_your_shift": "Your Shift",
         "trade_choose_person": "Choose team member",
         "trade_with_notification": "A notification will be sent to your team",
         "trade_click_to_accept": "Click on a name to accept the shift",
@@ -386,11 +389,15 @@
         "to_me": "Me",
         "to_everyone": "Everyone",
         "to_all_team_members": "All Team Members",
-        "from_team_administrators": "Team Administrators"
+        "from_team_administrators": "Team Administrators",
+        "show_expired_messages": "Show Expired Messages",
+        "sent": "Sent",
+        "received": "Received"
     },
     "system_messages": {
         "new_schedule_available": "A new schedule is available. Click here to view.",
         "new_trade_offer": "Someone on your team has offered their shift. Please sign in to sheepstand.com if you would like to accept the shift.",
+        "user_trade_offer": "Hey! I would like to trade shifts with you. Here's my offer:",
         "trade_completed": "Shift accepted by: "
     }
 }

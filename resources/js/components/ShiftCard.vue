@@ -52,9 +52,7 @@
 
       <v-row>
         <v-col class="text-center">
-          <ShiftStatusButton v-if="!isFinalized || isShiftMember" :shift="shift" />
-
-          <v-icon v-else large>mdi-lock</v-icon>
+          <ShiftStatusButton :shift="shift" />
         </v-col>
       </v-row>
 

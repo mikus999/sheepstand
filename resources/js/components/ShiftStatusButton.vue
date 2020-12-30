@@ -1,6 +1,13 @@
 <template>
-  <div>
+  <div v-if="isExpired || (isFinalized && !isShiftMember)">
+    <v-icon 
+      :large="!tableActions"
+    >
+      mdi-lock
+    </v-icon>
+  </div>
 
+  <div v-else>
     <!-- If user is not a shift member -->
     <div v-if="!isShiftMember && !isFinalized && !isShiftFull">
       <v-btn 
@@ -118,6 +125,7 @@
     </v-overlay>
 
   </div>
+
 </template>
 
 <script>
@@ -201,6 +209,9 @@ export default {
       return result
     },
 
+    isExpired() {
+      return this.$dayjs(this.shift.time_end).isBefore(this.$dayjs())
+    }
   },
 
   created() {

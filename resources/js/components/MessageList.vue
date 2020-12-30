@@ -1,25 +1,44 @@
 <template>
   <v-card width="100%" :flat="flat">
-    <v-card-title v-if="showTitle">
-      <v-icon left>mdi-message</v-icon>
-      {{ $t('messages.inbox')}}
-    </v-card-title>
+    <v-toolbar flat>
+      <v-toolbar-title v-if="showTitle">
+        <v-icon left>mdi-message</v-icon>
+        {{ $t('messages.inbox')}}
+      </v-toolbar-title>
+
+      <v-spacer></v-spacer>
+      
+      <template v-slot:extension>
+        <v-switch v-model="allMessages" hide-details class="mx-4">
+          <template v-slot:label>
+            <span class="switch-label">{{ $t('messages.show_expired_messages') }}</span>
+          </template>
+        </v-switch>
+      </template>
+    </v-toolbar>
 
     <v-card-text class="px-0">
+      <v-tabs v-model="message_type" icons-and-text grow class="tab-links">
+        <v-tab>{{ $t('messages.received') }}</v-tab>
+        <v-tab>{{ $t('messages.sent') }}</v-tab>
+      </v-tabs>
+
       <v-list flat>
         <v-list-item-group>
           <v-divider />
-          <template v-for="(message, index) in messages">
+          <template v-for="(message, index) in filteredMessages">
             <v-list-item :key="message.id" @click.native="showMessage(message)">
-
               <v-list-item-avatar>
-                <v-icon>{{ message.users.length > 0 ? 'mdi-email-open' : 'mdi-email' }}</v-icon>
+                <v-icon v-if="isExpired(message.expires_on)">mdi-email-off</v-icon>
+                <v-icon v-else>{{ isUnread(message) ? 'mdi-email' : 'mdi-email-open' }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content 
-                :class="message.users.length > 0 ? '' : 'font-weight-black'">
+                :class="isUnread(message) ? 'font-weight-black' : ''">
                   <v-list-item-title>
-                    {{ getSenderName(message)}}
+                    <span v-if="message_type == 1">{{ $t('messages.sent_to') }}: </span>
+                    <span>{{ message_type == 0 ? getSenderName(message) : getRecipientName(message) }}</span>
+                    <span class="red--text text-overline ml-3" v-if="isExpired(message.expires_on)">{{ $t('general.expired') }}</span>
                   </v-list-item-title>
 
                   <v-list-item-subtitle>
@@ -46,7 +65,7 @@
 
             </v-list-item>
 
-            <v-divider :key="'div-'+message.id" v-if="index < messages.length - 1" />
+            <v-divider :key="'div-'+message.id" v-if="index < received.length - 1" />
       
           </template>
           
@@ -57,6 +76,7 @@
 
     <v-dialog v-model="messageDialog" width="500">
       <MessageView 
+        :key="message ? message.id : 1"
         :message="message" 
         v-on:close="closeMessage" 
       />
@@ -95,16 +115,26 @@ export default {
 
   data () {
     return {
-      messages: [],
+      received: [],
+      sent: [],
       message: null,
       messageDialog: false,
+      allMessages: false,
       base_url: process.env.MIX_APP_URL,
-      apiInterval: null
+      apiInterval: null,
+      message_type: 0
     }
   },
 
   computed: {
-
+    filteredMessages() {
+      if (this.allMessages) {
+        return this.message_type == 0 ? this.received : this.sent
+      } else {
+        var messages = this.message_type == 0 ? this.received : this.sent
+        return messages.filter(message => !this.isExpired(message.expires_on))
+      }
+    }
   },
 
   created () {
@@ -125,7 +155,12 @@ export default {
         url: '/api/messages',
       })
       .then(response => {
-        this.messages = response.data.messages
+        this.received = response.data.received.filter(message => 
+                          message.sender_type != 'App\\Models\\User' ||
+                          (message.sender_type == 'App\\Models\\User' && 
+                          message.sender_id != this.user.id))
+
+        this.sent = response.data.sent
       })
     },
 
@@ -137,7 +172,8 @@ export default {
         })
         .then(response => {
           this.showSnackbar(this.$t('messages.success_delete_message'), 'success')
-          this.messages = response.data.messages
+          this.received = response.data.received
+          this.sent = response.data.sent
         })
       }
     },
@@ -172,10 +208,23 @@ export default {
       if (message.recipient_type == null) {
         return 'SheepStand'
       } else if (message.recipient_type == 'App\\Models\\Team') {
-        return this.$t('messages.to_all_team_members')
+        return message.recipient.display_name + ' (' + this.$t('general.team') + ')'
       } else if (message.recipient_type == 'App\\Models\\User') {
-        return this.$t('messages.to_me')
+        return message.recipient.name
       }
+    },
+
+    isExpired(expired_on) {
+      if (expired_on != null) {
+        return this.$dayjs(expired_on).isBefore(this.$dayjs())
+      } else {
+        return false
+      }
+    },
+
+    isUnread(message) {
+      var unread = message.users.length == 0
+      return this.message_type == 0 ? unread : false
     }
 
   }
@@ -184,9 +233,19 @@ export default {
 </script>
 
 <style scoped>
-.word-wrap 
-{
-  -webkit-line-clamp: unset !important;
-  white-space: normal;
-}
+  .word-wrap 
+  {
+    -webkit-line-clamp: unset !important;
+    white-space: normal;
+  }
+
+  .switch-label
+  {
+    font-size: .85rem !important;
+  }
+
+  .tab-links a {
+    text-decoration: none;
+  }
+
 </style>

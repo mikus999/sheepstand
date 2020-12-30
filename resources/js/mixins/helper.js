@@ -232,6 +232,7 @@ export const helper = {
     },
 
     async logout () {
+
       // Log out the user.
       await this.$store.dispatch('auth/logout')
 
@@ -358,7 +359,8 @@ export const scheduling = {
     },
 
     async storeTrades (data) {
-      this.$store.commit('scheduling/SET_TRADES', data)
+      var trade_temp = data.filter(shift => this.$dayjs(shift.time_start).isAfter(this.$dayjs()))
+      this.$store.commit('scheduling/SET_TRADES', trade_temp)
     },
 
     async storeTeamUsers (data) {
@@ -539,8 +541,10 @@ export const scheduling = {
 
 export const messages = {
   methods: {
-    message_trade_offer (publisher, time_start, time_end, location, language = null) {
+    message_trade_offer (publisher, time_start, time_end, location, language = null, for_telegram = false) {
       const lang = language || this.team.language || 'en'     
+
+      const nl = for_telegram ? '\n' : '<br>'
 
       var shiftDayTime = this.$dayjs(time_start).locale(lang).format('ddd, ll') 
       shiftDayTime += ' ' + this.$dayjs(time_start).locale(lang).format('LT') + ' - '
@@ -549,25 +553,49 @@ export const messages = {
 
       var message = ''
       message += this.$t('system_messages.new_trade_offer')
-      message += '\n\n' + this.$t('shifts.offered_by') + ": " + publisher
-      message += '\n' + this.$t('shifts.shift_time') + ": " + shiftDayTime
-      message += '\n' + this.$t('shifts.location') + ": " + location
-      message = encodeURIComponent(message)
+      message += nl + nl + this.$t('shifts.offered_by') + ": " + publisher
+      message += nl + this.$t('shifts.shift_time') + ": " + shiftDayTime
+      message += nl + this.$t('shifts.location') + ": " + location
       
       return message
     },
 
+
+    message_user_trade_offer (shift1, shift2, language = null, for_telegram = false) {
+      const lang = language || this.team.language || 'en'     
+
+      const nl = for_telegram ? '\n' : '<br>'
+
+      var shiftDayTime1 = this.$dayjs(shift1.time_start).locale(lang).format('ddd, ll') 
+      shiftDayTime1 += ' ' + this.$dayjs(shift1.time_start).locale(lang).format('LT') + ' - '
+      shiftDayTime1 += ' ' + this.$dayjs(shift1.time_end).locale(lang).format('LT')
+
+      var shiftDayTime2 = this.$dayjs(shift2.time_start).locale(lang).format('ddd, ll') 
+      shiftDayTime2 += ' ' + this.$dayjs(shift2.time_start).locale(lang).format('LT') + ' - '
+      shiftDayTime2 += ' ' + this.$dayjs(shift2.time_end).locale(lang).format('LT')
+
+
+      var message = ''
+      message += this.$t('system_messages.user_trade_offer')
+      message += nl + nl + this.$t('shifts.trade_my_shift')
+      message += nl + this.$t('shifts.shift_time') + ": " + shiftDayTime1
+      message += nl + this.$t('shifts.location') + ": " + shift1.location.name
+      message += nl + nl + this.$t('shifts.trade_your_shift')
+      message += nl + this.$t('shifts.shift_time') + ": " + shiftDayTime2
+      message += nl + this.$t('shifts.location') + ": " + shift2.location.name
+      
+      return message
+    },
     
+
     async send_message_user_inbox (message) {
       /**
        * Requires:
+       *  - sender_id
+       *  - sender_type ('Team', 'User')
        *  - recipient_id
+       *  - recipient_type ('Team', 'User')
        *  - message_text
-       *  - named_route (nullable)
-       *  - color (nullable)
-       *  - type (nullable)
-       *  - icon (nullable)
-       *  - show_banner
        *  - expires_on (nullable)
        */
 
@@ -575,20 +603,15 @@ export const messages = {
         method: 'POST',      
         url: '/api/messages',
         data: {
-          recipient_id: message.recipient.id,
-          recipient_type: 'App\\Models\\User',
-          for_roles: null,
-          system_message: null,
+          sender_id: message.sender_id,
+          sender_type: 'App\\Models\\' + message.sender_type,
+          recipient_id: message.recipient_id,
+          recipient_type: 'App\\Models\\' + message.recipient_type,
           message_text: message.message_text,
-          message_i18n_string: null,
-          named_route: message.named_route,
-          color: message.color || '#7E7E7E',
-          type: message.type || 'info',
-          icon: message.icon,
-          dismissable: true,
-          outlined: true,
-          show_banner: message.show_banner,
-          expires_on: message.expires_on 
+          expires_on: message.expires_on,
+          dismissable: false,
+          outlined: false,
+          show_banner: false
         }
       })
     }

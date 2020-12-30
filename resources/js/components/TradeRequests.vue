@@ -200,8 +200,8 @@ export default {
           }
         })
         .then(response => {
-          this.storeUserShifts(response.data.usershifts)
           this.storeTrades(response.data.trades)
+          this.storeUserShifts(response.data.usershifts)
           this.showSnackbar(this.$t('shifts.success_trade_made'), 'success')
         })
       }

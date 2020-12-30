@@ -293,6 +293,13 @@ export default {
     },
 
     async createMessage() {
+      var expires_date = this.expires_on
+      if (expires_date != null) {
+        // Set the expire date to midnight the same day
+        expires_date = this.$dayjs(this.expires_on).format('YYYY-MM-DD') + ' 23:59:59'
+      }
+      console.log(expires_date)
+
 
       // SEND TELEGRAM MESSAGE
       if (this.send_telegram && this.team.notificationsettings) {
@@ -332,7 +339,7 @@ export default {
           dismissable: this.dismissable,
           outlined: this.outlined,
           show_banner: this.show_banner,
-          expires_on: this.expires_on 
+          expires_on: expires_date 
         }
       })
       .then(response => {

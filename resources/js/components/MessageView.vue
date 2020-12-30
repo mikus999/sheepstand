@@ -1,13 +1,13 @@
 <template>
   <v-card>
     <v-card-title color="grey lighten-2">
-      {{ getSenderName() }}
+      {{ senderName }}
     </v-card-title>
 
     <v-card-subtitle color="grey lighten-2" class="py-2">
       <div>
         <span>{{ $t('messages.sent_to') }}: </span>
-        <span class="font-weight-bold">{{ getRecipientName() }}</span>
+        <span class="font-weight-bold">{{ recipientName }}</span>
       </div>
       <div>
         <span>{{ $t('messages.sent_date') }}: </span>
@@ -16,7 +16,7 @@
     </v-card-subtitle>
 
     <v-card-text class="py-6 my-2 overflow-auto" style="height: 300px;">
-      {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
+      <span v-html="message.system_message ? $t(message.message_i18n_string) : message.message_text"></span>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -57,6 +57,32 @@ export default {
     }
   },
 
+  computed: {
+    isSent() {
+      return (this.message.sender_type == 'App\\Models\\User' && this.message.sender_id == this.user.id)
+    },
+
+    senderName() {
+      if (this.message.sender_type == null) {
+        return 'SheepStand'
+      } else if (this.message.sender_type == 'App\\Models\\Team') {
+        return this.message.sender.display_name + ' (' + this.$t('general.team') + ')'
+      } else if (this.message.sender_type == 'App\\Models\\User') {
+        return this.message.sender.name
+      }
+    },
+
+    recipientName() {
+      if (this.message.recipient_type == null) {
+        return this.$t('messages.to_everyone')
+      } else if (this.message.recipient_type == 'App\\Models\\Team') {
+        return this.message.recipient.display_name + ' (' + this.$t('general.team') + ')'
+      } else if (this.message.recipient_type == 'App\\Models\\User') {
+        return this.message.recipient.name
+      }
+    }
+  },
+
   created() {
     this.markAsRead()
   },
@@ -92,26 +118,6 @@ export default {
         this.$router.push({ name: named_route })
       }
     },
-
-    getSenderName() {
-      if (this.message.sender_type == null) {
-        return 'SheepStand'
-      } else if (this.message.sender_type == 'App\\Models\\Team') {
-        return this.message.sender.display_name + ' (' + this.$t('general.team') + ')'
-      } else if (this.message.sender_type == 'App\\Models\\User') {
-        return this.message.sender.name
-      }
-    },
-
-    getRecipientName() {
-      if (this.message.recipient_type == null) {
-        return this.$t('messages.to_everyone')
-      } else if (this.message.recipient_type == 'App\\Models\\Team') {
-        return this.$t('messages.to_all_team_members')
-      } else if (this.message.recipient_type == 'App\\Models\\User') {
-        return this.$t('messages.to_me')
-      }
-    }
 
   },
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Laratrust\Models\LaratrustTeam;
 use App\Models\Message;
 use Carbon\Carbon;
+use Auth;
 use Illuminate\Database\Eloquent\Builder;
 
 class Team extends LaratrustTeam
@@ -72,7 +73,15 @@ class Team extends LaratrustTeam
 
   public function messages()
   {
-    return $this->morphMany(Message::class, 'recipient')->with('users','recipient','sender');
+    // Get all messages sent to the team but where user is not the sender
+    $user = Auth::user();
+    return $this->morphMany(Message::class, 'recipient')
+                ->with('users','recipient','sender')
+                ->where(function($query) use($user) {
+                  $query->where('sender_type','App\Models\User')
+                        ->where('sender_id','<>',$user->id)
+                        ->orWhere('sender_type','<>','App\Models\User');
+                });
   }
 
   public function getTeamRoleAttribute()

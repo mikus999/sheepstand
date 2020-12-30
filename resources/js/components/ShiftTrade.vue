@@ -67,12 +67,11 @@
                 v-model="selectedShift"
                 v-if="selectedUser != null"
                 color="primary"
-                
               >
                 <v-list-item
                   v-for="shift in userShifts"
                   :key="shift.id"
-                  :value="shift.id"
+                  :value="shift"
                 >
                   <v-list-item-avatar>
                     <v-avatar :color="shift.location.color_code" class="location-avatar">
@@ -188,7 +187,7 @@ export default {
             user_id: this.user.id,
             shift_id: this.shift.id,
             trade_user_id: this.selectedUser != null ? this.selectedUser.id : null,
-            trade_shift_id: this.selectedShift,
+            trade_shift_id: this.selectedUser != null ? this.selectedShift.id : null,
             status: status
           }
         })
@@ -198,6 +197,7 @@ export default {
           this.$emit('updated', response.data.shiftusers)
           this.storeTrades(response.data.trades)
           this.sendNotification(status)
+          this.createMessage(status)
 
           var success_msg = offerAll ? this.$t('shifts.success_trade_offered') : this.$t('shifts.success_trade_offered_publisher')
           this.showSnackbar(success_msg, 'success')
@@ -210,20 +210,60 @@ export default {
 
 
     async sendNotification(status) {
-      // If notifications are enabled for this team, send a group message via Telegram
+      /**
+       * Send a group message via Telegram if... 
+       *  - notifications are enabled for this team
+       *  - offering trade to all
+       *  */ 
+      
       const team = this.shift.schedule.team
       const hasNotifications = (team.notificationsettings != null && team.notificationsettings.telegram_channel_id != null)
 
 
       if (hasNotifications && status == 4) {
-        const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name, team.language)
+        const message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name, team.language, true)
         const channel_id = team.notificationsettings.telegram_channel_id
 
         await this.mtInitialize()
         await this.sendMessage(channel_id, message_text)
       }
       
-    }
+    },
+
+
+
+    async createMessage(status) {
+      const team = this.shift.schedule.team
+      var expires_date = this.shift.time_start
+
+      if (status == 4) {
+        // Send message to team
+        var s_id = this.user.id
+        var s_type = 'User'
+        var r_id = this.shift.schedule.team_id
+        var r_type = 'Team'
+        var message_text = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name, team.language)
+      } else {
+        // Send message to user
+        var s_id = this.user.id
+        var s_type = 'User'
+        var r_id = this.selectedUser.id
+        var r_type = 'User'
+        var message_text = this.message_user_trade_offer(this.shift, this.selectedShift, team.language)
+      }
+
+      const message = {
+        sender_id: s_id,
+        sender_type: s_type,
+        recipient_id: r_id,
+        recipient_type: r_type,
+        message_text: message_text,
+        expires_on: expires_date
+      }
+
+      this.send_message_user_inbox(message)
+      
+    },
   },
 }
 </script>

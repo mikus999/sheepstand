@@ -168,8 +168,8 @@ export default {
     async getShifts () {
       await axios.get('/api/user/shifts')
         .then(response => {
-          this.storeUserShifts(response.data)
-
+          var shift_temp = response.data.filter(shift => this.$dayjs(shift.time_end).isAfter(this.$dayjs().subtract(1, 'd')))
+          this.storeUserShifts(shift_temp)
         })
     },
 
@@ -287,9 +287,10 @@ export default {
       }
     },
 
-    filterShiftUsers(shiftUsers) {
-      return shiftUsers.filter(u => u.pivot.status != 3)
-    },
+
+    isExpired(time_end) {
+      return this.$dayjs(time_end).isBefore(this.$dayjs())
+    }
   }
 }
 

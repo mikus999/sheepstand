@@ -62,12 +62,36 @@
           />
         </v-col>
 
-        <v-col cols=12 :sm="!isTemplate ? '6' : '12'">
+        <v-col cols=12 :sm="!isTemplate ? '3' : '12'">
           <v-subheader class="pa-0">{{ $t('general.sort_by') }}</v-subheader>
           <v-radio-group v-model="sort_options" class="my-0" @change="parseSchedule()">
             <v-radio :label="$t('shifts.shift_time')" value="time_start" />
             <v-radio :label="$t('shifts.location')" value="location" />
           </v-radio-group>
+        </v-col>
+
+        <v-col cols=12 sm=3>
+          <v-btn
+            color="deep-orange"
+            block
+            class="my-2"
+            @click="approveAllRequests(0)"
+            v-if="hasPendingAssignments"
+          >
+            <v-icon small left>mdi-thumb-up</v-icon>
+            <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_assignments') }}</span>
+          </v-btn>
+
+          <v-btn
+            color="grey"
+            block
+            class="my-2"
+            @click="approveAllRequests(1)"
+            v-if="hasPendingRequests"
+          >
+            <v-icon small left>mdi-thumb-up</v-icon>
+            <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_requests') }}</span>
+          </v-btn>
         </v-col>
       </v-row>
 
@@ -345,6 +369,16 @@ export default {
     mapWidth() {
       return this.$vuetify.breakpoint.width < 500 ? (this.$vuetify.breakpoint.width - 50) + 'px' : '500px'
     },
+
+    hasPendingAssignments() {
+      var result = this.shifts.filter(s => s.users.filter(u => u.pivot.status == 0).length > 0)
+      return result.length > 0
+    },
+
+    hasPendingRequests() {
+      var result = this.shifts.filter(s => s.users.filter(u => u.pivot.status == 1).length > 0)
+      return result.length > 0
+    },
   },
 
   created () {
@@ -565,8 +599,31 @@ export default {
           this.closeSaveTemplateDialog()
         })
       }
-    }
+    },
 
+
+    async approveAllRequests(status) {
+      var confirm_msg = null
+
+      if (status == 0) {
+        confirm_msg = this.$t('schedules.confirm_approve_all_assignments')
+      } else if (status == 1) {
+        confirm_msg = this.$t('schedules.confirm_approve_all_requests')
+      }
+
+      if (await this.$root.$confirm(confirm_msg, null, 'error')) {
+        await axios({
+          method: 'get',      
+          url: '/api/schedules/' + this.schedule.id + '/approveall/' + status,
+        })
+        .then(response => {
+          this.storeSchedule(response.data)
+          this.storeShifts(response.data.shifts)
+          this.showSnackbar(this.$t('general.info_updated'), 'success')
+          this.parseSchedule()
+        })
+      }
+    },
   },
 
 }

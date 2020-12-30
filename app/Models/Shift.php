@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Auth;
 class Shift extends Model
 {
     protected $fillable = [
@@ -35,9 +35,15 @@ class Shift extends Model
 
     public function trades()
     {
+        $user = Auth::user();
+
         return $this->belongsToMany('App\Models\User')
                     ->with('marriage_mate')
                     ->withPivot('status', 'trade_user_id', 'trade_shift_id')
-                    ->wherePivot('status',4);
+                    ->where(function($query) use($user) {
+                      $query->where('shift_user.status', 5)
+                            ->where('shift_user.trade_user_id', $user->id)
+                            ->orWhere('shift_user.status', 4);
+                      });
     }
 }

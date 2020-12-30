@@ -24,7 +24,8 @@ class MessageController extends Controller
     {
 
       $data = [
-        'messages' => $this->getMessages()
+        'received' => $this->getMessages(),
+        'sent' => $this->getSentMessages()
       ];
 
       return response()->json($data);
@@ -42,14 +43,17 @@ class MessageController extends Controller
     {
       $data = ['message' => 'Access Denied'];
       $user = Auth::user();
-      $team_admin = false;
+      $access_allowed = false;
 
-      if ($request->team_id) {
-        $team = Team::find($request->team_id);
-        $team_admin = $user->hasRole('team_admin', $team);
+      if ($request->sender_type == 'App\Models\Team') {
+        $team = Team::find($request->sender_id);
+        $access_allowed = $user->hasRole('team_admin', $team);
+        
+      } else if ($request->sender_type == 'App\Models\User') {
+        $access_allowed = $user->id == $request->sender_id;
       }
 
-      if ($team_admin || $user->hasRole('super_admin', null)) {
+      if ($access_allowed || $user->hasRole('super_admin', null)) {
 
         $alert = Message::create([
           'sender_id' => $request->sender_id,
@@ -71,7 +75,8 @@ class MessageController extends Controller
         ]);
 
         $data = [
-          'messages' => $this->getMessages(),
+          'received' => $this->getMessages(),
+          'sent' => $this->getSentMessages()
         ];
       }
 
@@ -114,9 +119,9 @@ class MessageController extends Controller
       $user = Auth::user();
       $message = Message::find($id);
 
-      if ($message->recipient_type == 'App\Models\Team') {
+      if ($message->sender_type == 'App\Models\Team') {
         // If this is a team message check rights
-        $team = Team::find($message->recipient_id);
+        $team = Team::find($message->sender_id);
 
         if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
           $access_allowed = true;
@@ -132,7 +137,8 @@ class MessageController extends Controller
         Message::destroy($id);
 
         $data = [
-          'messages' => $this->getMessages(),
+          'received' => $this->getMessages(),
+          'sent' => $this->getSentMessages()
         ];
       }
 
@@ -151,7 +157,8 @@ class MessageController extends Controller
       );
 
       $data = [
-        'messages' => $this->getMessages(),
+        'received' => $this->getMessages(),
+        'sent' => $this->getSentMessages()
       ];
 
       return response()->json($data);

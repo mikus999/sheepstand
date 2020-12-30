@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Auth;
+use Carbon\Carbon;
 
 trait MessageTrait 
 {
@@ -12,13 +13,21 @@ trait MessageTrait
     $user = Auth::user();
     $teams = $user->teams()->get();
 
-    $messages_user = $user->messages()->withCount('users as unread_count')->get();
-    $messages_global = $user->messages_global()->withCount('users as unread_count')->get();
+    $messages_user = $user->messages()
+                          ->withCount('users as unread_count')
+                          ->get();
+
+    $messages_global = $user->messages_global()
+                            ->withCount('users as unread_count')
+                            ->get();
 
 
     $messages_team = [];
     foreach ($teams as $team) {
-      $temp = $team->messages()->withCount('users as unread_count')->get();
+      $temp = $team->messages()
+                    ->withCount('users as unread_count')
+                    ->get();
+
       $messages_team = array_merge($messages_team, json_decode($temp, true));
     }
     $messages_team = json_encode($messages_team);
@@ -31,14 +40,32 @@ trait MessageTrait
   }
 
 
+  public function getSentMessages()
+  {
+    $user = Auth::user();
+
+    $messages = $user->messages_sent()
+                          ->withCount('users as unread_count')
+                          ->get();
+    
+    $messages = json_decode($messages, true);
+    usort($messages, 'self::date_compare');
+    
+    return $messages;
+  }
+
+
   public function getCount()
   {
+    $user = Auth::user();
     $messages = $this->getMessages();
     $total = 0;
     $unread = 0;
 
     foreach ($messages as $message) {
-      if ($message['unread_count'] == 0) {
+      if (($message['unread_count'] == 0) && 
+          ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now())) 
+      {
         $unread += 1;
       }
       $total += 1;
