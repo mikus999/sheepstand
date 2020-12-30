@@ -339,7 +339,8 @@ export const scheduling = {
     },
 
     async storeShifts (data) {
-      this.$store.commit('scheduling/SET_SHIFTS', data)
+      var shift_temp = data.filter(shift => this.$dayjs(shift.time_end).isAfter(this.$dayjs().subtract(1, 'd')))
+      this.$store.commit('scheduling/SET_SHIFTS', shift_temp)
     },
 
     async storeUserShifts (data) {

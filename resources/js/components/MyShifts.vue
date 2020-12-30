@@ -168,8 +168,7 @@ export default {
     async getShifts () {
       await axios.get('/api/user/shifts')
         .then(response => {
-          var shift_temp = response.data.filter(shift => this.$dayjs(shift.time_end).isAfter(this.$dayjs().subtract(1, 'd')))
-          this.storeUserShifts(shift_temp)
+          this.storeUserShifts(response.data)
         })
     },
 
