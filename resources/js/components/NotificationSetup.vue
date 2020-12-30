@@ -183,7 +183,7 @@ export default {
 
   created() {
     if (this.notificationsEnabled) {
-      this.$router.push({ name: 'teams.index'})
+      this.$router.push({ name: 'teams.index', params: { tab: 'general' } })
     }
 
     this.mtInitialize()

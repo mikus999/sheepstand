@@ -53,7 +53,8 @@
         "sort_by": "Sort By",
         "approve": "Approve",
         "all": "All",
-        "please_wait": "Please Wait..."
+        "please_wait": "Please Wait...",
+        "team": "Team"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -71,7 +72,7 @@
         "locations": "Locations",
         "messages": "Messages",
         "inbox": "Inbox",
-        "account": "Account",
+        "account": "Profile",
         "change_password": "Change Password",
         "account_settings": "Account Settings",
         "dark_theme": "Dark Theme"
@@ -133,6 +134,7 @@
         "time_slot": "Time Slot",
         "fts_status": "Fulltime Service",
         "fts_publisher": "Publisher",
+        "fts_none": "None",
         "fts_pioneer": "Regular Pioneer",
         "fts_sfts": "Special Pioneer/Missionary",
         "fts_co": "Circuit Overseer/Wife",
@@ -153,6 +155,7 @@
         "team_not_found": "Team not found",
         "team_code": "Team Code",
         "owner": "Owner",
+        "members": "Team Members",
         "change_owner": "Change Team Owner",
         "select_an_admin": "Select a New Team Owner",
         "confirm_change_owner": "Are you sure you want to transfer ownership of this team to the following user?",
@@ -376,7 +379,14 @@
         "type": "Message Type",
         "inbox": "Inbox",
         "confirm_delete_message": "Are you sure you want to delete this message?",
-        "success_delete_message": "Message was deleted successfully"
+        "success_delete_message": "Message was deleted successfully",
+        "sent_date": "Date",
+        "sent_from": "From",
+        "sent_to": "To",
+        "to_me": "Me",
+        "to_everyone": "Everyone",
+        "to_all_team_members": "All Team Members",
+        "from_team_administrators": "Team Administrators"
     },
     "system_messages": {
         "new_schedule_available": "A new schedule is available. Click here to view.",

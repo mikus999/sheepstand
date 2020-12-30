@@ -19,7 +19,7 @@
               <v-list-item-content 
                 :class="message.users.length > 0 ? '' : 'font-weight-black'">
                   <v-list-item-title>
-                    {{ getRecipientName(message)}}
+                    {{ getSenderName(message)}}
                   </v-list-item-title>
 
                   <v-list-item-subtitle>
@@ -158,13 +158,23 @@ export default {
       }
     },
 
+    getSenderName(message) {
+      if (message.sender_type == null) {
+        return 'SheepStand'
+      } else if (message.sender_type == 'App\\Models\\Team') {
+        return message.sender.display_name + ' (' + this.$t('general.team') + ')'
+      } else if (message.sender_type == 'App\\Models\\User') {
+        return message.sender.name
+      }
+    },
+
     getRecipientName(message) {
       if (message.recipient_type == null) {
         return 'SheepStand'
       } else if (message.recipient_type == 'App\\Models\\Team') {
-        return message.recipient.display_name
+        return this.$t('messages.to_all_team_members')
       } else if (message.recipient_type == 'App\\Models\\User') {
-        return 'SheepStand'
+        return this.$t('messages.to_me')
       }
     }
 

@@ -5,6 +5,11 @@
       Site Security
     </v-card-title>
 
+    <v-card-title v-else-if="$vuetify.breakpoint.xs">
+      <v-icon left>mdi-account-multiple</v-icon>
+      {{ $t('teams.members')}}
+    </v-card-title>
+
     <v-data-table 
       :headers="teamUsers ? userHeadersTeam : userHeadersAdmin" 
       :items="userData"

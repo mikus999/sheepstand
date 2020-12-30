@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div v-else>
+      <div v-else-if="filterShiftUsers(shift.users).length == 0">
         <span class="ma-2 list-participants">{{ $t('shifts.no_participants') }}</span>
       </div>
 

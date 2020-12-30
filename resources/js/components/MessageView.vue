@@ -1,11 +1,18 @@
 <template>
   <v-card>
     <v-card-title color="grey lighten-2">
-      {{ getRecipientName() }}
+      {{ getSenderName() }}
     </v-card-title>
 
     <v-card-subtitle color="grey lighten-2" class="py-2">
-      {{ message.created_at | formatDate }}
+      <div>
+        <span>{{ $t('messages.sent_to') }}: </span>
+        <span class="font-weight-bold">{{ getRecipientName() }}</span>
+      </div>
+      <div>
+        <span>{{ $t('messages.sent_date') }}: </span>
+        <span class="font-weight-bold">{{ $dayjs(message.created_at).format('llll') }}</span>
+      </div>
     </v-card-subtitle>
 
     <v-card-text class="py-6 my-2 overflow-auto" style="height: 300px;">
@@ -20,9 +27,9 @@
       </v-btn>
 
       <v-spacer></v-spacer>
-      <v-btn text color="red" @click="deleteMessage(message.id)">
+      <!--<v-btn text color="red" @click="deleteMessage(message.id)">
         {{ $t('general.delete') }}
-      </v-btn>
+      </v-btn>-->
       <v-btn color="primary" @click="$emit('close')">
         {{ $t('general.close') }}
       </v-btn>
@@ -86,13 +93,23 @@ export default {
       }
     },
 
+    getSenderName() {
+      if (this.message.sender_type == null) {
+        return 'SheepStand'
+      } else if (this.message.sender_type == 'App\\Models\\Team') {
+        return this.message.sender.display_name + ' (' + this.$t('general.team') + ')'
+      } else if (this.message.sender_type == 'App\\Models\\User') {
+        return this.message.sender.name
+      }
+    },
+
     getRecipientName() {
       if (this.message.recipient_type == null) {
-        return 'SheepStand'
+        return this.$t('messages.to_everyone')
       } else if (this.message.recipient_type == 'App\\Models\\Team') {
-        return this.message.recipient.display_name
+        return this.$t('messages.to_all_team_members')
       } else if (this.message.recipient_type == 'App\\Models\\User') {
-        return 'SheepStand'
+        return this.$t('messages.to_me')
       }
     }
 

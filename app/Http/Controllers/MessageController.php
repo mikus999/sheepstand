@@ -52,6 +52,8 @@ class MessageController extends Controller
       if ($team_admin || $user->hasRole('super_admin', null)) {
 
         $alert = Message::create([
+          'sender_id' => $request->sender_id,
+          'sender_type' => $request->sender_type,
           'recipient_id' => $request->recipient_id,
           'recipient_type' => $request->recipient_type,
           'for_roles' => $request->for_roles,

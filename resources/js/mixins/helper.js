@@ -114,7 +114,7 @@ export const helper = {
       ftsStatus: [
         {
           value: 0,
-          text: this.$t('account.fts_publisher')
+          text: '---'
         },
         {
           value: 1,

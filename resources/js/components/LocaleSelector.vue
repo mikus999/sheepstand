@@ -4,7 +4,7 @@
     <template v-slot:activator="{ on, attrs }">
       <div width="100%" v-bind="attrs" v-on="on">
         <span class="menu-label d-inline-block text-truncate mb-n1" style="max-width: 150px;">{{ languageName }}</span>
-        <v-icon class="float-right">mdi-menu-up</v-icon>
+        <v-icon class="float-right">mdi-menu-down</v-icon>
       </div>
     </template>
 

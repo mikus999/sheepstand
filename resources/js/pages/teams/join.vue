@@ -149,7 +149,7 @@
                       {{ $t('notifications.feature_explanation_team')}}
                     </p>
 
-                    <v-btn text id="cancel" router :to="{ name: 'teams.index' }">
+                    <v-btn text id="cancel" router :to="{ name: 'teams.index', params: { tab: 'general' } }">
                       {{ $t('general.later') }}
                     </v-btn>
                     <v-btn color="primary" router :to="{ name: 'notifications.setup' }">

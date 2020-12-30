@@ -8,6 +8,8 @@ use Auth;
 class Message extends Model
 {
   protected $fillable = [
+    'sender_id',
+    'sender_type',
     'recipient_id',
     'recipient_type',
     'for_roles',
@@ -26,6 +28,11 @@ class Message extends Model
     'expires_on'
   ];
 
+
+  public function sender()
+  {
+    return $this->morphTo();
+  }
 
   public function recipient()
   {

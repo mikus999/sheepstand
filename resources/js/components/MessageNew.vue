@@ -317,6 +317,8 @@ export default {
         method: 'POST',      
         url: '/api/messages',
         data: {
+          sender_id: this.system_message ? null : this.team.id,
+          sender_type: this.system_message ? null : 'App\\Models\\Team',
           recipient_id: this.system_message ? null : this.team.id,
           recipient_type: this.system_message ? null : 'App\\Models\\Team',
           for_roles: null,

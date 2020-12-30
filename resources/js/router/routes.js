@@ -23,8 +23,7 @@ export default [
 
   // TEAM routes
   { path: '/team/join', name: 'teams.join', component: page('teams/join.vue'), meta: { roles: [], auth: true } },
-  { path: '/team/settings', name: 'teams.index', component: page('teams/index.vue'), meta: { roles: ['elder','team_admin'], auth: true } },
-  { path: '/team/locations', name: 'teams.locations', component: page('teams/locations.vue'), meta: { roles: ['elder','team_admin'], auth: true } },
+  { path: '/team/settings/:tab', name: 'teams.index', component: page('teams/index.vue'), meta: { roles: ['elder','team_admin'], auth: true, props: true, params: { tab: 'general' } } },
   { path: '/team/notifications', name: 'notifications.setup', component: page('teams/notifications.vue'), meta: { roles: ['team_admin'], auth: true } },
   { path: '/team/notifications/join', name: 'notifications.join', component: NotificationJoin, meta: { roles: [], auth: true } },
   { path: '/team/messages', name: 'teams.messages', component: page('teams/messages.vue'), meta: { roles: ['team_admin'], auth: true } },

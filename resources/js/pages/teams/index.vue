@@ -7,21 +7,31 @@
           {{ $t('teams.team_settings')}}
         </v-card-title>
 
-        <v-tabs v-model="tab" icons-and-text grow class="tab-links">
+        <v-tabs 
+          v-model="selectedTab" 
+          grow
+          :icons-and-text="$vuetify.breakpoint.smAndUp"
+          class="tab-links"
+        >
           <v-tab href="#tab-general">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
             <v-icon>mdi-information</v-icon>
           </v-tab>
-          <v-tab href="#tab-settings">
+          <v-tab href="#tab-preferences">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
             <v-icon>mdi-cog</v-icon>
           </v-tab>
-          <v-tab href="#tab-users">
-            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.users') }}</span>
+          <v-tab href="#tab-locations">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('menu.locations') }}</span>
+            <v-icon>mdi-map-marker-multiple</v-icon>
+          </v-tab>
+          <v-tab href="#tab-members">
+            <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('teams.members') }}</span>
             <v-icon>mdi-account-multiple</v-icon>
           </v-tab>
 
-          <v-tabs-items v-model="tab" class="pt-10">
+
+          <v-tabs-items v-model="selectedTab" class="pt-10">
 
             <!-- TAB: GENERAL -->
             <v-tab-item value="tab-general">
@@ -58,40 +68,48 @@
             </v-tab-item>
 
             <!-- TAB: SETTINGS -->
-            <v-tab-item value="tab-settings">
-              <v-col cols=12>
-                <v-row>
-                  <div class="mx-auto">
-                    <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
-                  </div>
-                </v-row>
-                
-                <v-divider></v-divider>
-
-                <v-row>
-                  <div class="mx-auto">
-                    <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" 
-                      :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
-                    </v-switch>
-
-                    <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
-                      <v-input class="ml-5">
-                        <v-chip color="primary" class="mr-3">
-                          <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
-                          <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
-                          <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
-                        </v-chip>
-                        <v-label class="float-right">{{ num.text }}</v-label>
-                      </v-input>
+            <v-tab-item value="tab-preferences">
+              <v-row>
+                <v-col cols=12>
+                  <v-row>
+                    <div class="mx-auto">
+                      <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('schedules.shifts') }}</v-subheader>
                     </div>
-                  </div>
-                </v-row>
+                  </v-row>
+                  
+                  <v-divider></v-divider>
 
-              </v-col>
+                  <v-row>
+                    <div class="mx-auto">
+                      <v-switch v-model="teamData[sw.column]" v-for="sw in settings.shifts.switches" :key="sw.index" 
+                        :value="teamData[sw.column]" :label="sw.text" @change="changeSetting(sw.column, 'bool')" class="pl-5">
+                      </v-switch>
+
+                      <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
+                        <v-input class="ml-5">
+                          <v-chip color="primary" class="mr-3">
+                            <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
+                            <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
+                            <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
+                          </v-chip>
+                          <v-label class="float-right">{{ num.text }}</v-label>
+                        </v-input>
+                      </div>
+                    </div>
+                  </v-row>
+                </v-col>
+              </v-row>
             </v-tab-item>
 
-            <!-- TAB: USERS -->
-            <v-tab-item value="tab-users">
+
+            <!-- TAB: LOCATIONS -->
+            <v-tab-item value="tab-locations">
+              <Locations />
+            </v-tab-item>
+
+
+            <!-- TAB: MEMBERS -->
+            <v-tab-item value="tab-members">
               <UserTable team-users />
             </v-tab-item>
           </v-tabs-items>
@@ -108,6 +126,7 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
 import UserTable from '~/components/UserTable.vue'
+import Locations from '~/components/Locations.vue'
 import NotificationInfo from '~/components/NotificationInfo.vue'
 
 export default {
@@ -116,13 +135,20 @@ export default {
   mixins: [helper, mtproto],
   components: { 
     UserTable,
+    Locations,
     NotificationInfo
+  },
+  props: {
+    tab: {
+      type: String,
+      default: 'general'
+    }
   },
 
   data() {
     return {
       hasError: false,
-      tab: null,
+      selectedTab: null,
       teamData: [],
       validation: {
         display_name: {
@@ -170,6 +196,8 @@ export default {
 
 
   created() {
+    this.selectedTab = 'tab-' + this.$route.params.tab
+    console.log(this.$route.params)
     this.refreshTeam()
     this.getLanguages()
 
@@ -260,6 +288,11 @@ export default {
 </script>
 
 <style scoped>
+.v-tab {
+  padding: 0 !important;
+  min-width: 0px !important;
+}
+
 .tab-links a {
   text-decoration: none;
 }

@@ -100,21 +100,12 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-list-item router :to="{ name: 'teams.index' }" class="text-decoration-none" active-class="menu-selected-item">
+      <v-list-item router :to="{ name: 'teams.index', params: { tab: 'general' } }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
           <v-icon>mdi-cog</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.team_settings') }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list-item router :to="{ name: 'teams.locations' }" class="text-decoration-none" active-class="menu-selected-item">
-        <v-list-item-icon>
-          <v-icon>mdi-map-marker-multiple</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{ $t('menu.locations') }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
