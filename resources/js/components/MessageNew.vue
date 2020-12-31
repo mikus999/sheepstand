@@ -75,7 +75,6 @@
         </v-card-title>
 
         <v-card-text>
-          <v-switch v-model="dismissable" :label="$t('messages.dismissable')" />
           <v-switch v-model="outlined" :label="$t('messages.outlined')" />
 
           <v-menu 
@@ -94,15 +93,14 @@
                 v-model="color_code" 
                 :label="$t('general.color')"
                 v-on="on" 
-                hide-details>
+                hide-details
+                :clearable="false"
+              >
 
                 <template v-slot:prepend>
                   <v-icon :color="color_code">mdi-square-rounded</v-icon>
                 </template>
 
-                <template v-slot:append>
-                  <v-icon @click.prevent="color_code=null">mdi-close</v-icon>
-                </template>
               </v-text-field>
             </template>
             <v-card>
@@ -213,7 +211,7 @@ export default {
       dismissable: true,
       outlined: true,
       show_inbox: true,
-      send_telegram: true,
+      send_telegram: false,
       show_banner: false,
       expires_on: null,
       i18n_strings: [],
@@ -260,7 +258,7 @@ export default {
 
     this.getRoutes()
     this.getStrings()
-    this.send_telegram = this.notificationsEnabled
+    //this.send_telegram = this.notificationsEnabled
   },
 
   methods: {
@@ -298,7 +296,6 @@ export default {
         // Set the expire date to midnight the same day
         expires_date = this.$dayjs(this.expires_on).format('YYYY-MM-DD') + ' 23:59:59'
       }
-      console.log(expires_date)
 
 
       // SEND TELEGRAM MESSAGE

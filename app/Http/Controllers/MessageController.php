@@ -172,4 +172,13 @@ class MessageController extends Controller
       return response()->json($data);
 
     }
+
+
+    public function getActiveBanners()
+    {
+      $data = $this->getBanners();
+      
+      return response()->json($data);
+
+    }
 }

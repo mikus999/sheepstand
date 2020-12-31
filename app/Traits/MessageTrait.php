@@ -14,18 +14,18 @@ trait MessageTrait
     $teams = $user->teams()->get();
 
     $messages_user = $user->messages()
-                          ->withCount('users as unread_count')
+                          ->withCount('users as read_count')
                           ->get();
 
     $messages_global = $user->messages_global()
-                            ->withCount('users as unread_count')
+                            ->withCount('users as read_count')
                             ->get();
 
 
     $messages_team = [];
     foreach ($teams as $team) {
       $temp = $team->messages()
-                    ->withCount('users as unread_count')
+                    ->withCount('users as read_count')
                     ->get();
 
       $messages_team = array_merge($messages_team, json_decode($temp, true));
@@ -45,13 +45,28 @@ trait MessageTrait
     $user = Auth::user();
 
     $messages = $user->messages_sent()
-                          ->withCount('users as unread_count')
+                          ->withCount('users as read_count')
                           ->get();
     
     $messages = json_decode($messages, true);
     usort($messages, 'self::date_compare');
     
     return $messages;
+  }
+
+
+  public function getBanners()
+  {
+    $user = Auth::user();
+    $messages = collect($this->getMessages());
+    $banners = [];
+
+    $banners = $messages->filter(function ($message, $key) {
+                            return $message['read_count'] == 0 && $message['show_banner'] == true &&
+                            ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now());
+                          })->sortByDesc('created_at')->values();
+    
+    return $banners;
   }
 
 
@@ -63,7 +78,7 @@ trait MessageTrait
     $unread = 0;
 
     foreach ($messages as $message) {
-      if (($message['unread_count'] == 0) && 
+      if (($message['read_count'] == 0) && 
           ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now())) 
       {
         $unread += 1;
@@ -89,4 +104,11 @@ trait MessageTrait
     $t2 = strtotime($a['created_at']);
     return $t1 - $t2;
   } 
+
+
+  public function banner_filter($message)
+  {
+    return $message['read_count'] == 1 && $message['show_banner'] == false &&
+          ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now());
+  }
 }

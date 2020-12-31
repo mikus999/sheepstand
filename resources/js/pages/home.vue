@@ -1,5 +1,9 @@
 <template>
   <v-container fluid>
+    <v-row v-if="banners.length > 0">
+      <MessageBanner v-for="banner in banners" :message="banner" :key="banner.id" />
+    </v-row>
+
     <v-row v-if="user">
       <MyShifts />
 
@@ -18,6 +22,7 @@ import ShiftStatistics from '~/components/ShiftStatistics.vue'
 import TradeRequests from '~/components/TradeRequests.vue'
 import MyShifts from '~/components/MyShifts.vue'
 import NotificationJoin from '~/components/NotificationJoin.vue'
+import MessageBanner from '~/components/MessageBanner.vue'
 
 
 export default {
@@ -28,8 +33,27 @@ export default {
     ShiftStatistics,
     TradeRequests,
     MyShifts,
-    NotificationJoin
+    NotificationJoin,
+    MessageBanner
   },
 
+  data() {
+    return {
+      banners: []
+    }
+  },
+
+  created() {
+    this.getBanners()
+  },
+
+  methods: {
+    async getBanners() {
+      await axios.get('/api/messages/banners')
+      .then(response => {
+        this.banners = response.data
+      })
+    }
+  },
 }
 </script>
