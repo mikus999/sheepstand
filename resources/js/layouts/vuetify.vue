@@ -11,7 +11,9 @@
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
         <!-- If using vue-router -->
-        <router-view />
+        <RouterTransition>
+          <router-view />
+        </RouterTransition>
       </v-container>
     </v-main>
 
@@ -27,12 +29,14 @@ import { mapGetters, mapState } from 'vuex'
 import NavTop from '../components/NavTop.vue'
 import NavLeft from '../components/NavLeft.vue'
 import NavBottom from '../components/NavBottom.vue'
+import RouterTransition from '../components/RouterTransition.vue'
 
 export default {
   components: {
     NavTop,
     NavLeft,
-    NavBottom
+    NavBottom,
+    RouterTransition
   },
 
   computed: {

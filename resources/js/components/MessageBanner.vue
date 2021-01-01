@@ -4,11 +4,14 @@
     :color="message.color"
     :type="message.type || 'info'"
     :icon="message.icon"
-    :outlined="message.outlined == 1"
+    border="left"
+    outlined
+    text
+    dense
     dismissible
     @input="markAsRead"
   >
-    {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
+    {{ message.system_message ? $t(message.message_i18n_string) : message.message_subject }}
   </v-alert>
 </template>
 

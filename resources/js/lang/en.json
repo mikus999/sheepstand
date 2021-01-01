@@ -55,7 +55,8 @@
         "all": "All",
         "please_wait": "Please Wait...",
         "team": "Team",
-        "expired": "Expired"
+        "expired": "Expired",
+        "max_char": "Maximum characters: {char}"
     },
     "menu": {
         "dashboard": "Dashboard",
@@ -366,7 +367,8 @@
     "messages": {
         "messages": "Messages",
         "create_new_message": "Create New Message",
-        "message_text": "Message Text",
+        "message_subject": "Subject",
+        "message_body": "Message Body",
         "message_text_i18n": "i18n string (For system messages only)",
         "link_text": "Link Display Text",
         "named_route": "Page for Link",
@@ -390,13 +392,14 @@
         "to_everyone": "Everyone",
         "to_all_team_members": "All Team Members",
         "from_team_administrators": "Team Administrators",
-        "show_expired_messages": "Show Expired Messages",
+        "show_expired_messages": "Show Expired",
         "sent": "Sent",
         "received": "Received"
     },
     "system_messages": {
         "new_schedule_available": "A new schedule is available. Click here to view.",
-        "new_trade_offer": "Someone on your team has offered their shift. Please sign in to sheepstand.com if you would like to accept the shift.",
+        "new_trade_offer_subject": "Trade Request",
+        "new_trade_offer_team": "Someone on your team has offered their shift. Please sign in to sheepstand.com if you would like to accept the shift.",
         "user_trade_offer": "Hey! I would like to trade shifts with you. Here's my offer:",
         "trade_completed": "Shift accepted by: "
     }

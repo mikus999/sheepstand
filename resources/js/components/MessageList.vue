@@ -8,13 +8,11 @@
 
       <v-spacer></v-spacer>
       
-      <template v-slot:extension>
         <v-switch v-model="allMessages" hide-details class="mx-4">
           <template v-slot:label>
             <span class="switch-label">{{ $t('messages.show_expired_messages') }}</span>
           </template>
         </v-switch>
-      </template>
     </v-toolbar>
 
     <v-card-text class="px-0">
@@ -42,7 +40,7 @@
                   </v-list-item-title>
 
                   <v-list-item-subtitle>
-                    {{ message.system_message ? $t(message.message_i18n_string) : message.message_text }}
+                    {{ message.system_message ? $t(message.message_i18n_string) : message.message_subject }}
                   </v-list-item-subtitle>
 
               </v-list-item-content>

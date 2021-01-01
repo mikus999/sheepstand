@@ -15,9 +15,12 @@
       </v-radio-group>
 
       <v-textarea 
-        v-model="message_text" 
+        v-model="message_subject" 
         v-if="!system_message" 
-        :label="$t('messages.message_text')"
+        :label="$t('messages.message_subject')"
+        :hint="$t('general.max_char', {char: 100})"
+        maxlength="100"
+        counter
         auto-grow
         rows=1 />
 
@@ -30,6 +33,12 @@
         item-value="value" 
         menu-props="overflowY"
         clearable />
+
+      <v-textarea 
+        v-model="message_body" 
+        :label="$t('messages.message_body')"
+        auto-grow
+        rows=2 />
 
       <v-select 
         v-model="named_route" 
@@ -75,7 +84,6 @@
         </v-card-title>
 
         <v-card-text>
-          <v-switch v-model="outlined" :label="$t('messages.outlined')" />
 
           <v-menu 
             v-model="color_menu" 
@@ -149,17 +157,18 @@
           <div class="mt-16">
             <v-alert 
               :color="color_code"
-              :dismissible="dismissable"
-              :outlined="outlined"
-              dark
               border="left"
+              outlined
+              text
+              dismissible
+              dense
             >
               <template v-slot:prepend>
                 <v-icon style="color: inherit !important;">{{ icon }}</v-icon>
               </template>
 
               <div class="mx-3">
-                {{ system_message ? $t(message_text_i18n) : message_text }}
+                {{ system_message ? $t(message_text_i18n) : message_subject }}
               </div>
 
               <template v-slot:append v-if="named_route != null && named_route != ''">
@@ -200,7 +209,8 @@ export default {
       color_menu: false,
       date_menu: false,
       system_message: false,
-      message_text: null,
+      message_subject: null,
+      message_body: null,
       message_text_i18n: null,
       link_text: null,
       named_route: null,
@@ -303,7 +313,12 @@ export default {
         await this.mtInitialize()
 
         const channel_id = this.team.notificationsettings.telegram_channel_id
-        var message_text = this.system_message ? this.$t(this.message_text_i18n) : this.message_text
+        var message_text = this.system_message ? this.$t(this.message_text_i18n) : this.message_subject
+
+        if (this.message_body) {
+          message_text += '\n\n' + this.message_body
+        }
+
         if (this.named_route) {
           var url = this.$router.resolve({ name: this.named_route }).href
           if (url !== '/') {
@@ -311,7 +326,6 @@ export default {
           }
         }
 
-        message_text = encodeURIComponent(message_text)
         await this.sendMessage(channel_id, message_text)
       }
 
@@ -327,7 +341,8 @@ export default {
           recipient_type: this.system_message ? null : 'App\\Models\\Team',
           for_roles: null,
           system_message: this.system_message,
-          message_text: this.system_message ? null : this.message_text,
+          message_subject: this.system_message ? null : this.message_subject,
+          message_body: this.message_body,
           message_i18n_string: !this.system_message ? null : this.message_text_i18n,
           named_route: this.named_route,
           color: this.custom_color ? this.color_code : null,

@@ -553,7 +553,7 @@ export const messages = {
 
 
       var message = ''
-      message += this.$t('system_messages.new_trade_offer')
+      message += this.$t('system_messages.new_trade_offer_team')
       message += nl + nl + this.$t('shifts.offered_by') + ": " + publisher
       message += nl + this.$t('shifts.shift_time') + ": " + shiftDayTime
       message += nl + this.$t('shifts.location') + ": " + location
@@ -608,7 +608,8 @@ export const messages = {
           sender_type: 'App\\Models\\' + message.sender_type,
           recipient_id: message.recipient_id,
           recipient_type: 'App\\Models\\' + message.recipient_type,
-          message_text: message.message_text,
+          message_subject: message.message_subject,
+          message_body: message.message_body,
           expires_on: message.expires_on,
           dismissable: false,
           outlined: false,

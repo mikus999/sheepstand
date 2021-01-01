@@ -13,10 +13,14 @@
         <span>{{ $t('messages.sent_date') }}: </span>
         <span class="font-weight-bold">{{ $dayjs(message.created_at).format('llll') }}</span>
       </div>
+
+      <div class="mt-2">
+        <span class="black--text font-weight-bold">{{ message.system_message ? $t(message.message_i18n_string) : message.message_subject }}</span>
+      </div>
     </v-card-subtitle>
 
-    <v-card-text class="py-6 my-2 overflow-auto" style="height: 300px;">
-      <span v-html="message.system_message ? $t(message.message_i18n_string) : message.message_text"></span>
+    <v-card-text class="py-2 my-2 overflow-auto" style="height: 300px;">
+      <span class="message-body">{{ message.message_body }}</span>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -122,3 +126,12 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.message-body {
+  white-space: pre-wrap; 
+  word-wrap: break-word;
+  font-family: inherit;
+}
+</style>
