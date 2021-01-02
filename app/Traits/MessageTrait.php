@@ -13,28 +13,28 @@ trait MessageTrait
     $user = Auth::user();
     $teams = $user->teams()->get();
 
-    $messages_user = $user->messages()
-                          ->withCount('users as read_count')
-                          ->get();
 
-    $messages_global = $user->messages_global()
-                            ->withCount('users as read_count')
-                            ->get();
+    // GET ALL MESSAGES WITH USER AS RECIPIENT
+    $messages = collect($user->messages()->get());
 
 
-    $messages_team = [];
+    // GET ALL GLOBAL MESSAGES (WITH RECIPIENT == NULL)
+    $messages_global = collect($user->messages_global()->get());
+    $messages = $messages->merge($messages_global);
+
+
+    // GET MESSAGES WITH TEAM AS RECIPIENT (FOR ALL USER'S TEAMS)
     foreach ($teams as $team) {
-      $temp = $team->messages()
-                    ->withCount('users as read_count')
-                    ->get();
-
-      $messages_team = array_merge($messages_team, json_decode($temp, true));
+      $temp = collect($team->messages()->get());
+      $messages = $messages->merge($temp);
     }
-    $messages_team = json_encode($messages_team);
 
 
-    $messages = array_merge(json_decode($messages_user, true), json_decode($messages_team, true), json_decode($messages_global, true));
-    usort($messages, 'self::date_compare');
+    // FINAL SORTING AND FILTERING
+    $messages = $messages
+                  ->sortByDesc('created_at')
+                  ->filter(function($model) { return $model->is_hidden == false; })
+                  ->values();
 
     return $messages;
   }
@@ -44,13 +44,14 @@ trait MessageTrait
   {
     $user = Auth::user();
 
-    $messages = $user->messages_sent()
-                          ->withCount('users as read_count')
-                          ->get();
-    
-    $messages = json_decode($messages, true);
-    usort($messages, 'self::date_compare');
-    
+    $messages = collect($user->messages_sent()->get());
+
+    // FINAL SORTING AND FILTERING
+    $messages = $messages
+    ->sortByDesc('created_at')
+    ->filter(function($model) { return $model->is_hidden == false; })
+    ->values();
+
     return $messages;
   }
 
@@ -59,10 +60,9 @@ trait MessageTrait
   {
     $user = Auth::user();
     $messages = collect($this->getMessages());
-    $banners = [];
 
     $banners = $messages->filter(function ($message, $key) {
-                            return $message['read_count'] == 0 && $message['show_banner'] == true &&
+                            return $message['is_read'] == 0 && $message['show_banner'] == true &&
                             ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now());
                           })->sortByDesc('created_at')->values();
     
@@ -73,12 +73,12 @@ trait MessageTrait
   public function getCount()
   {
     $user = Auth::user();
-    $messages = $this->getMessages();
+    $messages = collect($this->getMessages());
     $total = 0;
     $unread = 0;
 
     foreach ($messages as $message) {
-      if (($message['read_count'] == 0) && 
+      if (($message['is_read'] == 0) && 
           ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now())) 
       {
         $unread += 1;
@@ -95,20 +95,4 @@ trait MessageTrait
   }
 
  
-
-
-  // Function used by usort to sort an array of objects by date
-  public function date_compare($a, $b) 
-  { 
-    $t1 = strtotime($b['created_at']);
-    $t2 = strtotime($a['created_at']);
-    return $t1 - $t2;
-  } 
-
-
-  public function banner_filter($message)
-  {
-    return $message['read_count'] == 1 && $message['show_banner'] == false &&
-          ($message['expires_on'] == null || $message['expires_on'] >= Carbon::now());
-  }
 }

@@ -12,23 +12,18 @@ class Message extends Model
     'sender_type',
     'recipient_id',
     'recipient_type',
-    'for_roles',
-    'system_message',
     'message_subject',
     'message_body',
-    'message_i18n_string',
-    'link_text',
-    'link_i18n_string',
     'named_route',
     'color',
-    'type',
     'icon',
-    'dismissable',
-    'outlined',
     'show_banner',
     'expires_on'
   ];
 
+  protected $appends = ['is_read','is_hidden'];
+
+  
 
   public function sender()
   {
@@ -45,13 +40,22 @@ class Message extends Model
     return $this->where('recipient_id','=',null);
   }
 
-  public function users()
+
+  public function getIsReadAttribute()
   {
     $user = Auth::user();
     return $this->belongsToMany('App\Models\User')
                 ->wherePivot('user_id', $user->id)
-                ->wherePivot('dismissed', 1)
-                ->withPivot('dismissed');
+                ->wherePivot('read', 1)
+                ->count();
   }
-  
+
+  public function getIsHiddenAttribute()
+  {
+    $user = Auth::user();
+    return $this->belongsToMany('App\Models\User')
+                ->wherePivot('user_id', $user->id)
+                ->wherePivot('hidden', 1)
+                ->count();
+  }
 }

@@ -6,33 +6,37 @@
     </v-card-title>
 
     <v-card-text>
-      <v-radio-group
-        v-model="system_message"
-        v-if="$is('super_admin')"
-        row>
-        <v-radio label="Local Message" :value="false"></v-radio>
-        <v-radio label="System Message" :value="true"></v-radio>
-      </v-radio-group>
+      <v-row>
+        <v-col cols=12 sm=6>
+
+          <v-radio-group
+            v-model="sender_type"
+            :label="$t('messages.sent_from')"
+            column>
+            <v-radio :label="user.name" value="User"></v-radio>
+            <v-radio :label="team.display_name" value="Team"></v-radio>
+            <v-radio label="Site Administrators" value="Site" v-if="$is('super_admin')"></v-radio>
+          </v-radio-group>
+        </v-col>
+        <v-col cols=12 sm=6>
+          <v-radio-group
+            v-model="recipient_type"
+            :label="$t('messages.sent_to')"
+            column>
+            <v-radio :label="$t('messages.to_all_team_members')" value="Team" v-if="sender_type != 'Site'"></v-radio>
+            <v-radio label="All Users" value="Site" v-if="$is('super_admin') && sender_type == 'Site'"></v-radio>
+          </v-radio-group>
+        </v-col>
+      </v-row>
 
       <v-textarea 
         v-model="message_subject" 
-        v-if="!system_message" 
         :label="$t('messages.message_subject')"
         :hint="$t('general.max_char', {char: 100})"
         maxlength="100"
         counter
         auto-grow
         rows=1 />
-
-      <v-select 
-        v-model="message_text_i18n" 
-        v-if="system_message"
-        :label="$t('messages.message_text_i18n')" 
-        :items="i18n_strings" 
-        item-text="text" 
-        item-value="value" 
-        menu-props="overflowY"
-        clearable />
 
       <v-textarea 
         v-model="message_body" 
@@ -168,7 +172,7 @@
               </template>
 
               <div class="mx-3">
-                {{ system_message ? $t(message_text_i18n) : message_subject }}
+                {{ message_subject }}
               </div>
 
               <template v-slot:append v-if="named_route != null && named_route != ''">
@@ -208,23 +212,18 @@ export default {
     return {
       color_menu: false,
       date_menu: false,
-      system_message: false,
+      sender_type: 'User',
+      recipient_type: 'Team',
       message_subject: null,
       message_body: null,
-      message_text_i18n: null,
-      link_text: null,
       named_route: null,
       custom_color: true,
       color_code: '#7E7E7E',
-      type: null,
       icon: 'mdi-alert',
-      dismissable: true,
-      outlined: true,
       show_inbox: true,
       send_telegram: false,
       show_banner: false,
       expires_on: null,
-      i18n_strings: [],
       routes: [],
       types: [
         'success',
@@ -267,8 +266,6 @@ export default {
   created () {
 
     this.getRoutes()
-    this.getStrings()
-    //this.send_telegram = this.notificationsEnabled
   },
 
   methods: {
@@ -283,23 +280,6 @@ export default {
       })
     },
 
-    async getStrings() {
-      await axios({
-        method: 'get',      
-        url: '/api/translation/strings/en',
-      })
-      .then(response => {
-          const enStrings = response.data
-          const tempStrings = enStrings["system_messages"]
-
-          Object.keys(tempStrings).forEach (key2 => {
-            const tempKey = 'system_messages.' + key2
-            const tempValue = tempStrings[key2]
-            this.i18n_strings.push({"value": tempKey, "text": tempValue});
-          })
-      })
-    },
-
     async createMessage() {
       var expires_date = this.expires_on
       if (expires_date != null) {
@@ -308,12 +288,13 @@ export default {
       }
 
 
+
       // SEND TELEGRAM MESSAGE
       if (this.send_telegram && this.team.notificationsettings) {
         await this.mtInitialize()
 
         const channel_id = this.team.notificationsettings.telegram_channel_id
-        var message_text = this.system_message ? this.$t(this.message_text_i18n) : this.message_subject
+        var message_text = this.message_subject
 
         if (this.message_body) {
           message_text += '\n\n' + this.message_body
@@ -335,21 +316,15 @@ export default {
         method: 'POST',      
         url: '/api/messages',
         data: {
-          sender_id: this.system_message ? null : this.team.id,
-          sender_type: this.system_message ? null : 'App\\Models\\Team',
-          recipient_id: this.system_message ? null : this.team.id,
-          recipient_type: this.system_message ? null : 'App\\Models\\Team',
-          for_roles: null,
-          system_message: this.system_message,
-          message_subject: this.system_message ? null : this.message_subject,
+          sender_id: this.getSenderId(this.sender_type),
+          sender_type: this.getModelType(this.sender_type),
+          recipient_id: this.getRecipientId(this.recipient_type),
+          recipient_type: this.getModelType(this.recipient_type),
+          message_subject: this.message_subject,
           message_body: this.message_body,
-          message_i18n_string: !this.system_message ? null : this.message_text_i18n,
           named_route: this.named_route,
           color: this.custom_color ? this.color_code : null,
-          type: this.type,
           icon: this.icon,
-          dismissable: this.dismissable,
-          outlined: this.outlined,
           show_banner: this.show_banner,
           expires_on: expires_date 
         }
@@ -358,6 +333,42 @@ export default {
         this.$emit('updated')
       })
       
+    },
+
+    getSenderId (sender_type) {
+      var value = null
+      if (sender_type == 'Site') {
+        value = null
+      } else if (sender_type == 'Team') {
+        value = this.team.id
+      } else {
+        value = this.user.id
+      }
+      return value
+    },
+
+    getRecipientId (recipient_type) {
+      var value = null
+      if (this.sender_type == 'Site') {
+        value = null // Send to all users
+      } else if (recipient_type == 'Team') {
+        value = this.team.id
+      } else {
+        value = this.user.id
+      }
+      return value
+    },
+
+    getModelType(model_type) {
+      var value = null
+      if (this.sender_type == 'Site') {
+        value = null
+      } else if (model_type == 'Team') {
+        value = 'App\\Models\\Team'
+      } else {
+        value = 'App\\Models\\User'
+      }
+      return value
     },
 
     resetForm() {

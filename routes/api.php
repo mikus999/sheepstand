@@ -89,6 +89,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // MESSAGE routes
     Route::get('messages/{id}/markread', 'MessageController@markAsRead');
+    Route::get('messages/{id}/markunread', 'MessageController@markAsUnread');
+    Route::get('messages/{id}/hide', 'MessageController@hideMessage');
     Route::get('messages/count', 'MessageController@getMessageCount');
     Route::get('messages/banners', 'MessageController@getActiveBanners');
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ModifyMessagesTableSubjectColumn extends Migration
+class UpdateTableMessages extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,9 @@ class ModifyMessagesTableSubjectColumn extends Migration
     public function up()
     {
       Schema::table('messages', function (Blueprint $table) {
-        $table->string('message_subject', 200)->nullable();
-        $table->renameColumn('message_text', 'message_body');
-      });
+        $table->dropColumn(['for_roles', 'message_i18n_string', 'link_text', 'link_i18n_string', 'type', 'dismissable', 'outlined']);
+      });   
+
     }
 
     /**
@@ -26,8 +26,6 @@ class ModifyMessagesTableSubjectColumn extends Migration
      */
     public function down()
     {
-      Schema::table('messages', function (Blueprint $table) {
-        $table->dropColumn(['message_subject']);
-      }); 
+        //
     }
 }

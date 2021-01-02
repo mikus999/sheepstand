@@ -76,7 +76,7 @@ class Team extends LaratrustTeam
     // Get all messages sent to the team but where user is not the sender
     $user = Auth::user();
     return $this->morphMany(Message::class, 'recipient')
-                ->with('users','recipient','sender')
+                ->with('recipient','sender')
                 ->where(function($query) use($user) {
                   $query->where('sender_type','App\Models\User')
                         ->where('sender_id','<>',$user->id)

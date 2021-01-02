@@ -2,7 +2,6 @@
   <v-alert
     width="100%"
     :color="message.color"
-    :type="message.type || 'info'"
     :icon="message.icon"
     border="left"
     outlined
@@ -11,7 +10,7 @@
     dismissible
     @input="markAsRead"
   >
-    {{ message.system_message ? $t(message.message_i18n_string) : message.message_subject }}
+    {{ message.message_subject }}
   </v-alert>
 </template>
 
