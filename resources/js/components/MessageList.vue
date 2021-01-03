@@ -25,13 +25,14 @@
         <v-list-item-group>
           <v-divider />
           <template v-for="(message, index) in filteredMessages">
-            <v-list-item :key="message.id" @click.native="showMessage(message)">
+            <v-list-item :key="message.id">
               <v-list-item-avatar>
                 <v-icon v-if="isExpired(message.expires_on)">mdi-email-off</v-icon>
                 <v-icon v-else>{{ isUnread(message) ? 'mdi-email' : 'mdi-email-open' }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content 
+                @click.stop="showMessage(message)"
                 :class="isUnread(message) ? 'font-weight-black' : ''">
                   <v-list-item-title>
                     <span v-if="message_type == 1">{{ $t('messages.sent_to') }}: </span>
@@ -40,7 +41,7 @@
                   </v-list-item-title>
 
                   <v-list-item-subtitle>
-                    {{ message.system_message ? $t(message.message_i18n_string) : message.message_subject }}
+                    {{ message.message_subject }}
                   </v-list-item-subtitle>
 
               </v-list-item-content>
@@ -55,7 +56,15 @@
                     <v-icon>mdi-link</v-icon>
                   </v-btn>
 
-                  <v-btn icon v-if="editor" @click.stop="deleteMessage(message.id)">
+                  <v-btn icon v-if="!isUnread(message) && !editor" @click.stop="markAsUnread(message.id)">
+                    <v-icon>mdi-email-mark-as-unread</v-icon>
+                  </v-btn>
+                  
+                  <v-btn icon v-else-if="isUnread(message) && !editor" @click.stop="markAsRead(message.id)">
+                    <v-icon>mdi-email-open</v-icon>
+                  </v-btn>
+
+                  <v-btn icon @click.stop="deleteOrHide(message.id)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </div>
@@ -162,18 +171,52 @@ export default {
       })
     },
 
-    async deleteMessage(id) {
+    async deleteOrHide(id) {
       if (await this.$root.$confirm(this.$t('messages.confirm_delete_message'), null, 'error')) {
+        if (this.editor) {
+          var url = '/api/messages/' + id
+          var method = 'delete'
+        } else {
+          var url = '/api/messages/' + id + '/hide'
+          var method = 'get'
+        }
+
+
         await axios({
-          method: 'delete',      
-          url: '/api/messages/' + id,
+          method: method,      
+          url: url,
         })
         .then(response => {
           this.showSnackbar(this.$t('messages.success_delete_message'), 'success')
           this.received = response.data.received
           this.sent = response.data.sent
+          this.getMessageCounts()
         })
       }
+    },
+
+    async markAsRead (message_id) {
+      await axios({
+        method: 'get',      
+        url: '/api/messages/' + message_id + '/markread',
+      })
+      .then(response => {    
+        this.received = response.data.received
+        this.sent = response.data.sent
+        this.getMessageCounts()
+      })
+    },
+
+    async markAsUnread (message_id) {
+      await axios({
+        method: 'get',      
+        url: '/api/messages/' + message_id + '/markunread',
+      })
+      .then(response => {    
+        this.received = response.data.received
+        this.sent = response.data.sent
+        this.getMessageCounts()
+      })
     },
 
     showMessage (message) {
@@ -221,7 +264,7 @@ export default {
     },
 
     isUnread(message) {
-      var unread = message.users.length == 0
+      var unread = message.is_read == 0
       return this.message_type == 0 ? unread : false
     }
 

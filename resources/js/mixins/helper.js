@@ -553,7 +553,7 @@ export const messages = {
 
 
       var message = ''
-      message += this.$t('system_messages.new_trade_offer_team')
+      message += this.$t('system_messages_body.new_trade_offer_team')
       message += nl + nl + this.$t('shifts.offered_by') + ": " + publisher
       message += nl + this.$t('shifts.shift_time') + ": " + shiftDayTime
       message += nl + this.$t('shifts.location') + ": " + location
@@ -577,7 +577,7 @@ export const messages = {
 
 
       var message = ''
-      message += this.$t('system_messages.user_trade_offer')
+      message += this.$t('system_messages_body.user_trade_offer')
       message += nl + nl + this.$t('shifts.trade_my_shift')
       message += nl + this.$t('shifts.shift_time') + ": " + shiftDayTime1
       message += nl + this.$t('shifts.location') + ": " + shift1.location.name

@@ -60,17 +60,11 @@ class MessageController extends Controller
           'sender_type' => $request->sender_type,
           'recipient_id' => $request->recipient_id,
           'recipient_type' => $request->recipient_type,
-          'for_roles' => $request->for_roles,
-          'system_message' => $request->system_message,
           'message_subject' => $request->message_subject,
           'message_body' => $request->message_body,
-          'message_i18n_string' => $request->message_i18n_string,
           'named_route' => $request->named_route,
           'color' => $request->color,
-          'type' => $request->type,
           'icon' => $request->icon,
-          'dismissable' => $request->dismissable,
-          'outlined' => $request->outlined,
           'show_banner' => $request->show_banner,
           'expires_on' => $request->expires_on
         ]);
@@ -154,7 +148,7 @@ class MessageController extends Controller
 
       DB::table('message_user')->updateOrInsert(
         ['user_id' => $user->id, 'message_id' => $id],
-        ['dismissed' => true]
+        ['read' => true]
       );
 
       $data = [
@@ -163,23 +157,58 @@ class MessageController extends Controller
       ];
 
       return response()->json($data);
-
     }
+
+
+    public function markAsUnread($id)
+    {
+      $user = Auth::user();
+
+      DB::table('message_user')->updateOrInsert(
+        ['user_id' => $user->id, 'message_id' => $id],
+        ['read' => false]
+      );
+
+      $data = [
+        'received' => $this->getMessages(),
+        'sent' => $this->getSentMessages()
+      ];
+
+      return response()->json($data);
+    }
+
+
+
+
+    public function hideMessage($id)
+    {
+      $user = Auth::user();
+
+      DB::table('message_user')->updateOrInsert(
+        ['user_id' => $user->id, 'message_id' => $id],
+        ['hidden' => true]
+      );
+
+      $data = [
+        'received' => $this->getMessages(),
+        'sent' => $this->getSentMessages()
+      ];
+
+      return response()->json($data);
+    }
+
+
 
     public function getMessageCount()
     {
       $data = $this->getCount();
-      
       return response()->json($data);
-
     }
 
 
     public function getActiveBanners()
     {
       $data = $this->getBanners();
-      
       return response()->json($data);
-
     }
 }

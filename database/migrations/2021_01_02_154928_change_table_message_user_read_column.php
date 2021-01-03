@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ModifyMessagesTableSubjectColumn extends Migration
+class ChangeTableMessageUserReadColumn extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class ModifyMessagesTableSubjectColumn extends Migration
      */
     public function up()
     {
-      Schema::table('messages', function (Blueprint $table) {
-        $table->string('message_subject', 200)->nullable();
-        $table->renameColumn('message_text', 'message_body');
+      Schema::table('message_user', function (Blueprint $table) {
+        $table->renameColumn('dismissed', 'read');
       });
     }
 
@@ -26,8 +25,6 @@ class ModifyMessagesTableSubjectColumn extends Migration
      */
     public function down()
     {
-      Schema::table('messages', function (Blueprint $table) {
-        $table->dropColumn(['message_subject']);
-      }); 
+        //
     }
 }

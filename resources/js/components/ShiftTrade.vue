@@ -242,7 +242,7 @@ export default {
         var s_type = 'User'
         var r_id = this.shift.schedule.team_id
         var r_type = 'Team'
-        var message_subject = this.$t('system_messages.new_trade_offer_subject')
+        var message_subject = this.$t('system_messages_subject.trade_request')
         var message_body = this.message_trade_offer(this.user.name, this.shift.time_start, this.shift.time_end, this.shift.location.name, team.language, true)
       } else {
         // Send message to user
@@ -250,7 +250,7 @@ export default {
         var s_type = 'User'
         var r_id = this.selectedUser.id
         var r_type = 'User'
-        var message_subject = this.$t('system_messages.new_trade_offer_subject')
+        var message_subject = this.$t('system_messages_subject.trade_request')
         var message_body = this.message_user_trade_offer(this.shift, this.selectedShift, team.language, true)
       }
 
