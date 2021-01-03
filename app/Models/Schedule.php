@@ -14,6 +14,7 @@ class Schedule extends Model
         'template_name'
     ];
 
+    protected $with = ['team'];
 
     public function user()
     {

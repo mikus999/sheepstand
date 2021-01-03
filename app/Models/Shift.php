@@ -16,6 +16,8 @@ class Shift extends Model
       'mandatory'
     ];
 
+    protected $with = ['schedule','location'];
+
     public function schedule()
     {
         return $this->belongsTo('App\Models\Schedule')->with('team');

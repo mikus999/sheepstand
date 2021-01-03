@@ -220,8 +220,6 @@ class TeamController extends Controller
         ];
       } else {
         $data = [
-          'error' => $error,
-          'message' => $message,
           'team' => $team,
           'teams' => $targetUser->teams,
           'user' => $targetUser
@@ -266,7 +264,6 @@ class TeamController extends Controller
       }
 
       $data = [
-          'users' => 'Successfully left team!',
           'teams' => $targetUser->teams
       ];
       return response()->json($data);

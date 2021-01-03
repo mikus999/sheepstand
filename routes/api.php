@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('account/password', 'Settings\PasswordController@update');
     Route::get('account/availability', 'UserAvailabilityController@getAvailability');
     Route::post('account/availability', 'UserAvailabilityController@setAvailability');
-    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability'); // TODO OpenAPI
+    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability');
     Route::get('account/vacation', 'UserAvailabilityController@getVacation');
     Route::post('account/vacation', 'UserAvailabilityController@setVacation');
     Route::delete('account/vacation/{id}', 'UserAvailabilityController@deleteVacation');
@@ -39,11 +39,11 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('account/driver', 'Settings\ProfileController@updateDriverStatus');
 
     // TEAM routes
-    Route::post('teams/jointeam', 'TeamController@addUserToTeam'); // TODO OpenAPI
-    Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam'); // TODO OpenAPI
-    Route::get('teams/resetcode/{id}', 'TeamController@changeTeamCode'); // TODO OpenAPI
-    Route::get('teams/findteam/{code}', 'TeamController@findTeamByCode'); // TODO OpenAPI
-    Route::get('teams/{id}/users/', 'TeamController@getTeamUsers'); // TODO OpenAPI
+    Route::post('teams/jointeam', 'TeamController@addUserToTeam');
+    Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam');
+    Route::get('teams/{id}/resetcode', 'TeamController@changeTeamCode');
+    Route::get('teams/{code}/findteam', 'TeamController@findTeamByCode');
+    Route::get('teams/{id}/users/', 'TeamController@getTeamUsers');
     Route::post('teams/settings/update', 'TeamController@updateSetting'); // TODO OpenAPI
     Route::post('teams/default/update', 'TeamController@setDefault'); // TODO OpenAPI
     Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings'); // TODO OpenAPI

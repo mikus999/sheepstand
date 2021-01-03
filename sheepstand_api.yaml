@@ -9,7 +9,7 @@ paths:
   /logout:
     post:
       tags:
-        - auth
+        - auth 
       responses:
         200:
           description: OK
@@ -18,12 +18,14 @@ paths:
       tags:
         - auth
         - guest
+      security: []
       parameters:
         - name: email
           in: query
           required: true
           schema:
             type: string
+            format: email
         - name: password
           in: query
           required: true
@@ -43,6 +45,7 @@ paths:
                     example: Bearer
                   expires_in:
                     type: integer
+
   /user:
     get:
       summary: Get currently authenticated user
@@ -302,6 +305,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserAvailability'
+  /account/availability/default:
+    post:
+      summary: Sets all user availability according to request (all/none)
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: user_id
+          in: query
+          description: Optional. Will use authenticated user.
+          required: false
+          schema:
+            type: integer
+        - name: default
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAvailability'
   /account/vacation:
     get:
       summary: Returns vacation schedule for authenticated user
@@ -449,6 +479,153 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
+  /teams/jointeam:
+    post:
+      summary: Join an existing team
+      tags:
+        - team
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: user_code
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            oneOf:
+              - type: string
+              - type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - properties:
+                      team:
+                        $ref: '#/components/schemas/Team'
+                      teams:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Team'
+                      user:
+                        $ref: '#/components/schemas/User'
+  /teams/leaveteam:
+    post:
+      summary: Remove user from team
+      tags:
+        - team
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  teams:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+  /teams/{id}/resetcode:
+    get:
+      summary: Change a team's unique code
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+  /teams/{code}/findteam:
+    get:
+      summary: Find a team by code
+      tags:
+        - team
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - properties:
+                      message:
+                        type: string
+                      team:
+                        $ref: '#/components/schemas/Team'
+                      user:
+                        $ref: '#/components/schemas/User'
+  /teams/{id}/users:
+    get:
+      summary: Return all team members
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/User'
+                - properties:
+                    shifts_30days:
+                      type: integer
+                    shifts_14days:
+                      type: integer
+                    shifts_7days:
+                      type: integer
+                    team_role:
+                      type: string
+                      example: 'publisher'
+                    marriage_mate:
+                      $ref: '#/components/schemas/User'
+                    shifts:
+                      type: array
+                      description: All user's shifts
+                      items:
+                        $ref: '#/components/schemas/Shift'
+
 components:
   schemas:
     NotificationSettings:
@@ -517,6 +694,29 @@ components:
         updated_at:
           type: string
           format: date-time
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        team_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        color_code:
+          type: string
+        map:
+          type: string
+        default: 
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
     Permission:
       type: object
       properties:
@@ -560,6 +760,67 @@ components:
         updated_at:
           type: string
           format: date-time
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        team_id:
+          type: integer
+          format: int64
+        user_id:
+          type: integer
+          format: int64
+        status:
+          type: integer
+        date_start:
+          type: string
+          format: date-time
+        template_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        team:
+          $ref: '#/components/schemas/Team'
+    Shift:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        schedule_id:
+          type: integer
+          format: int64
+        location_id:
+          type: integer
+          format: int64
+        time_start:
+          type: string
+          format: date-time
+        time_end:
+          type: string
+          format: date-time
+        min_participants:
+          type: integer
+        max_participants:
+          type: integer
+        mandatory:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        location:
+          $ref: '#/components/schemas/Location'
     Team:
       type: object
       properties:
@@ -701,6 +962,10 @@ components:
           type: string
           format: date-time
   securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
     oauth:
       type: oauth2
       flows:
@@ -708,3 +973,6 @@ components:
           authorizationUrl: https://sheepstand.com/oauth
           scopes:
             full: Full API access
+security:
+  - bearerAuth: []
+  - oauth: []

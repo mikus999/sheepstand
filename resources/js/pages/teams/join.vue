@@ -238,7 +238,7 @@ export default {
       this.teamFound = false
 
       if (this.teamid !== '') {
-        await axios.get('/api/teams/findteam/' + this.teamid)
+        await axios.get('/api/teams/' + this.teamid + '/findteam')
           .then(response => {
             if (response.data.message === 'NOT_FOUND') {
               this.teamNotFound = true

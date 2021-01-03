@@ -251,7 +251,7 @@ export default {
     },
 
     async resetCode() {
-      await axios.get('/api/teams/resetcode/' + this.team.id)
+      await axios.get('/api/teams/' + this.team.id + '/resetcode')
         .then(response => {
           this.teamData = response.data
         })
