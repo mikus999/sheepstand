@@ -142,11 +142,8 @@ export default {
 
     async getUserRoles() {
       await axios({
-        method: 'post',
-        url: '/api/user/roles/get',
-        data: {
-          user_id: this.data.id
-        }
+        method: 'get',
+        url: '/api/user/' + this.data.id + 'roles',
       })
       .then(response => {
         this.userRoles = response.data.roles
@@ -202,9 +199,8 @@ export default {
 
       await axios({
         method: 'post',
-        url: '/api/user/roles/set',
+        url: '/api/user/' + this.userData.id + 'roles',
         data: {
-          user_id: this.userData.id,
           role: role,
           changetype: changetype,
           team_id: this.adminRoles ? null : this.team.id

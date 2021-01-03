@@ -28,11 +28,11 @@ class SecurityController extends Controller
     }
 
 
-    // POST
-    public function getRoles(Request $request)
+    // GET
+    public function getRoles($id)
     {
-        if ($request->user_id) {
-          $user = User::find($request->user_id);
+        if ($id) {
+          $user = User::find($id);
         } else {
           $user = Auth::user();
         }
@@ -49,9 +49,9 @@ class SecurityController extends Controller
 
 
     // POST
-    public function setRoles(Request $request)
+    public function setRoles(Request $request, $id)
     {
-        $user = User::find($request->user_id);
+        $user = User::find($id);
         $role = $request->role;
         $changetype = $request->changetype;
         $teamScope = $request->team_id != null;

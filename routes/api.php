@@ -16,14 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
+    // SECURITY routes
     Route::get('/user', 'Auth\UserController@current');
     Route::get('/users', 'Auth\UserController@getAllUsers'); // GLOBAL Roles Only
     Route::get('/users/{role}', 'Auth\UserController@getUsersByRole'); // GLOBAL Roles Only
-
-    // SECURITY routes
+    Route::get('user/{id}/roles', 'SecurityController@getRoles');
+    Route::post('user/{id}/roles', 'SecurityController@setRoles');
     Route::get('roles', 'SecurityController@getRolesWithPermissions');
-    Route::post('user/roles/get', 'SecurityController@getRoles');
-    Route::post('user/roles/set', 'SecurityController@setRoles');
     //Route::post('user/permissions', 'Auth\UserController@setPermissions');
 
     // ACCOUNT routes
@@ -31,7 +30,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('account/password', 'Settings\PasswordController@update');
     Route::get('account/availability', 'UserAvailabilityController@getAvailability');
     Route::post('account/availability', 'UserAvailabilityController@setAvailability');
-    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability');
+    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability'); // TODO OpenAPI
     Route::get('account/vacation', 'UserAvailabilityController@getVacation');
     Route::post('account/vacation', 'UserAvailabilityController@setVacation');
     Route::delete('account/vacation/{id}', 'UserAvailabilityController@deleteVacation');
@@ -40,87 +39,87 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('account/driver', 'Settings\ProfileController@updateDriverStatus');
 
     // TEAM routes
-    Route::post('teams/jointeam', 'TeamController@addUserToTeam');
-    Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam');
-    Route::get('teams/resetcode/{id}', 'TeamController@changeTeamCode');
-    Route::get('teams/findteam/{code}', 'TeamController@findTeamByCode');
-    Route::get('teams/{id}/users/', 'TeamController@getTeamUsers');
-    Route::post('teams/settings/update', 'TeamController@updateSetting');
-    Route::post('teams/default/update', 'TeamController@setDefault');
-    Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings');
-    Route::post('teams/{id}/notificationsettings', 'NotificationController@updateTelegram');
-    Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink');
-    Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink');
-    Route::get('teams/{id}/availability', 'UserAvailabilityController@getAllAvailability');
+    Route::post('teams/jointeam', 'TeamController@addUserToTeam'); // TODO OpenAPI
+    Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam'); // TODO OpenAPI
+    Route::get('teams/resetcode/{id}', 'TeamController@changeTeamCode'); // TODO OpenAPI
+    Route::get('teams/findteam/{code}', 'TeamController@findTeamByCode'); // TODO OpenAPI
+    Route::get('teams/{id}/users/', 'TeamController@getTeamUsers'); // TODO OpenAPI
+    Route::post('teams/settings/update', 'TeamController@updateSetting'); // TODO OpenAPI
+    Route::post('teams/default/update', 'TeamController@setDefault'); // TODO OpenAPI
+    Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings'); // TODO OpenAPI
+    Route::post('teams/{id}/notificationsettings', 'NotificationController@updateTelegram'); // TODO OpenAPI
+    Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink'); // TODO OpenAPI
+    Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink'); // TODO OpenAPI
+    Route::get('teams/{id}/availability', 'UserAvailabilityController@getAllAvailability'); // TODO OpenAPI
 
     // SHIFT routes
-    Route::post('schedules/joinshift', 'ShiftController@addUserToShift');
-    Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift');
-    Route::post('schedules/shiftuserstatus', 'ShiftController@changeUserShiftStatus');
-    Route::get('schedules/{id}/approveall/{status}', 'ShiftController@approveAllRequests');
-    Route::get('schedules/shiftusers/{id}', 'ShiftController@getShiftUsers');
-    Route::get('teams/{id}/stats', 'ShiftController@showStatistics');
-    Route::get('teams/trades', 'ShiftController@getTradeRequests');
-    Route::post('teams/{id}/trades', 'ShiftController@makeTrade');
-    Route::get('user/shifts', 'ShiftController@userAllShifts');
-    Route::post('user/shifts', 'ShiftController@userTeamShifts');
+    Route::post('schedules/joinshift', 'ShiftController@addUserToShift'); // TODO OpenAPI
+    Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift'); // TODO OpenAPI
+    Route::post('schedules/shiftuserstatus', 'ShiftController@changeUserShiftStatus'); // TODO OpenAPI
+    Route::get('schedules/{id}/approveall/{status}', 'ShiftController@approveAllRequests'); // TODO OpenAPI
+    Route::get('schedules/shiftusers/{id}', 'ShiftController@getShiftUsers'); // TODO OpenAPI
+    Route::get('teams/{id}/stats', 'ShiftController@showStatistics'); // TODO OpenAPI
+    Route::get('teams/trades', 'ShiftController@getTradeRequests'); // TODO OpenAPI
+    Route::post('teams/{id}/trades', 'ShiftController@makeTrade'); // TODO OpenAPI
+    Route::get('user/shifts', 'ShiftController@userAllShifts'); // TODO OpenAPI
+    Route::post('user/shifts', 'ShiftController@userTeamShifts'); // TODO OpenAPI
 
 
     // SCHEDULE routes
-    Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);
-    Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']);
-    Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts');
-    Route::post('schedules/{id}/status', 'ScheduleController@updateStatus');
-    Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates');
-    Route::post('schedules/templates', 'ScheduleController@newTemplate');
-    Route::post('schedules/templates/{id}/copy', 'ScheduleController@makeFromTemplate');
-    Route::post('schedules/{id}/templates/make', 'ScheduleController@saveAsTemplate');
+    Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']); // TODO OpenAPI
+    Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']); // TODO OpenAPI
+    Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts'); // TODO OpenAPI
+    Route::post('schedules/{id}/status', 'ScheduleController@updateStatus'); // TODO OpenAPI
+    Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates'); // TODO OpenAPI
+    Route::post('schedules/templates', 'ScheduleController@newTemplate'); // TODO OpenAPI
+    Route::post('schedules/templates/{id}/copy', 'ScheduleController@makeFromTemplate'); // TODO OpenAPI
+    Route::post('schedules/{id}/templates/make', 'ScheduleController@saveAsTemplate'); // TODO OpenAPI
 
     // LOCATION routes
-    Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');
+    Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault'); // TODO OpenAPI
 
     // TRANSLATION routes
-    Route::post('translation/update', 'TranslationController@updateString');
-    Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
-    Route::get('translation/permissions', 'TranslationController@getUserLanguages');
-    Route::post('translation/permissions', 'TranslationController@setUserLanguages');
-    Route::post('translation/languages/edit', 'TranslationController@setSiteLanguage');
+    Route::post('translation/update', 'TranslationController@updateString'); // TODO OpenAPI
+    Route::get('translation/strings/{lang}', 'TranslationController@getStrings'); // TODO OpenAPI
+    Route::get('translation/permissions', 'TranslationController@getUserLanguages'); // TODO OpenAPI
+    Route::post('translation/permissions', 'TranslationController@setUserLanguages'); // TODO OpenAPI
+    Route::post('translation/languages/edit', 'TranslationController@setSiteLanguage'); // TODO OpenAPI
 
 
     // MESSAGE routes
-    Route::get('messages/{id}/markread', 'MessageController@markAsRead');
-    Route::get('messages/{id}/markunread', 'MessageController@markAsUnread');
-    Route::get('messages/{id}/hide', 'MessageController@hideMessage');
-    Route::get('messages/count', 'MessageController@getMessageCount');
-    Route::get('messages/banners', 'MessageController@getActiveBanners');
+    Route::get('messages/{id}/markread', 'MessageController@markAsRead'); // TODO OpenAPI
+    Route::get('messages/{id}/markunread', 'MessageController@markAsUnread'); // TODO OpenAPI
+    Route::get('messages/{id}/hide', 'MessageController@hideMessage'); // TODO OpenAPI
+    Route::get('messages/count', 'MessageController@getMessageCount'); // TODO OpenAPI
+    Route::get('messages/banners', 'MessageController@getActiveBanners'); // TODO OpenAPI
 
 
     // TASKS routs
-    Route::get('tasks/scheduled', 'TaskController@scheduledTasks');
+    Route::get('tasks/scheduled', 'TaskController@scheduledTasks'); // TODO OpenAPI
 
 
     // API routes (must be listed after all other routes are declared)
-    Route::apiResource('teams', 'TeamController');
-    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);
-    Route::apiResource('schedules.shifts', 'ShiftController');
-    Route::apiResource('teams.locations', 'LocationController');
-    Route::apiResource('messages', 'MessageController');
+    Route::apiResource('teams', 'TeamController'); // TODO OpenAPI
+    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]); // TODO OpenAPI
+    Route::apiResource('schedules.shifts', 'ShiftController'); // TODO OpenAPI
+    Route::apiResource('teams.locations', 'LocationController'); // TODO OpenAPI
+    Route::apiResource('messages', 'MessageController'); // TODO OpenAPI
 
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
     Route::post('login', 'Auth\LoginController@login');
-    Route::post('register', 'Auth\RegisterController@register');
+    Route::post('register', 'Auth\RegisterController@register'); // TODO OpenAPI
 
-    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
-    Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'); // TODO OpenAPI
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset'); // TODO OpenAPI
 
-    Route::post('email/verify/{user}', 'Auth\VerificationController@verify')->name('verification.verify');
-    Route::post('email/resend', 'Auth\VerificationController@resend');
+    Route::post('email/verify/{user}', 'Auth\VerificationController@verify')->name('verification.verify'); // TODO OpenAPI
+    Route::post('email/resend', 'Auth\VerificationController@resend'); // TODO OpenAPI
 
-    Route::post('oauth/{driver}', 'Auth\OAuthController@redirectToProvider');
-    Route::get('oauth/{driver}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback');
-    Route::post('oauth/{driver}/mobile', 'Auth\OAuthController@getTokenFromMobile');
+    Route::post('oauth/{driver}', 'Auth\OAuthController@redirectToProvider'); // TODO OpenAPI
+    Route::get('oauth/{driver}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback'); // TODO OpenAPI
+    Route::post('oauth/{driver}/mobile', 'Auth\OAuthController@getTokenFromMobile'); // TODO OpenAPI
 
 });
 

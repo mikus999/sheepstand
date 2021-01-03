@@ -96,5 +96,6 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $this->guard()->logout();
+        return response(200);
     }
 }

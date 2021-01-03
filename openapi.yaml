@@ -6,9 +6,46 @@ info:
 servers:
   - url: https://sheepstand.com/api
 paths:
+  /logout:
+    post:
+      tags:
+        - auth
+      responses:
+        200:
+          description: OK
+  /login:
+    post:
+      tags:
+        - auth
+        - guest
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: Bearer
+                  expires_in:
+                    type: integer
   /user:
     get:
-      description: Get currently authenticated user
+      summary: Get currently authenticated user
       tags: 
         - user
       responses:
@@ -36,9 +73,69 @@ paths:
                       type: array
                       items:
                         $ref: '#/components/schemas/Team'
+  /user/{id}/roles:
+    get:
+      summary: Returns user's current roles
+      tags:
+        - security
+        - user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  roles:
+                    $ref: '#/components/schemas/CombinedRoles'
+    post:
+      summary: Sets user's current roles
+      tags:
+        - security
+        - user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+        - name: role
+          in: query
+          required: true
+          schema:
+            type: string
+            example: publisher
+        - name: changetype
+          in: query
+          required: true
+          schema:
+            type: string
+            description: add, remove, sync
+        - name: team_id
+          in: query
+          schema:
+            type: integer
+            description: null for global roles
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  roles:
+                    $ref: '#/components/schemas/CombinedRoles'
   /users:
     get:
-      description: Show all users (superadmin only)
+      summary: Show all users (superadmin only)
       tags:
         - user
         - superadmin
@@ -67,14 +164,15 @@ paths:
                         $ref: '#/components/schemas/Language'
   /users/{role}:
     get:
-      description: Show all users with specified role type
+      summary: Show all users with specified role type
       tags:
         - user
         - superadmin
         - security
       parameters:
         - name: role
-          in: query
+          in: path
+          required: true
           description: Role name
           schema:
             type: string
@@ -94,6 +192,263 @@ paths:
                         description: Allowed translation languages
                         items:
                           $ref: '#/components/schemas/Language'
+  /roles:
+    get:
+      summary: Returns all site roles
+      tags:
+        - security
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                  - $ref: '#/components/schemas/Role'
+                  - properties:
+                      permissions:
+                        type: array
+                        description: Attached permissions
+                        items:
+                          $ref: '#/components/schemas/Permission'
+  /account/profile:
+    patch:
+      summary: Update profile
+      tags:
+        - user
+        - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  roles:
+                    $ref: '#/components/schemas/User'
+  /account/password:
+    patch:
+      summary: Update password
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: user
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/User'
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  roles:
+                    $ref: '#/components/schemas/User'
+  /account/availability:
+    get:
+      summary: Returns weekly availability for authenticated user
+      tags:
+        - user
+        - profile
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAvailability'
+    post:
+      summary: Sets weekly availability
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: user_id
+          in: query
+          description: Optional. Will use authenticated user.
+          required: false
+          schema:
+            type: integer
+        - name: availability
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UserAvailability'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAvailability'
+  /account/vacation:
+    get:
+      summary: Returns vacation schedule for authenticated user
+      tags:
+        - user
+        - profile
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserVacation'
+    post:
+      summary: Adds vacation period
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: date_start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: date_end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: note
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserVacation'
+  /account/vacation/{id}:
+    delete:
+      summary: Deletes vacation period
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserVacation'
+  /account/fts:
+    post:
+      summary: Changes FTS status
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          description: Optional. Will use authenticated user.
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /account/marriage:
+    post:
+      summary: Changes marriage mate
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: mate1_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: mate2_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /account/driver:
+    post:
+      summary: Changes driver status
+      tags:
+        - user
+        - profile
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          description: Optional. Will use authenticated user.
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
 components:
   schemas:
     NotificationSettings:
@@ -156,6 +511,49 @@ components:
           example: "srpski"
         site_language:
           type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Permission:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: 'view_shifts'
+        display_name:
+          type: string
+          example: 'View and apply for shifts'
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: 'publisher'
+        display_name:
+          type: string
+          example: 'Publisher'
+        description:
+          type: string
+        global:
+          type: boolean
+          description: true = global, false = team
         created_at:
           type: string
           format: date-time
