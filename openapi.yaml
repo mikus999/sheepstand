@@ -1,0 +1,312 @@
+openapi: 3.0.2
+info:
+  title: SheepStand
+  description: 'Internal API for SheepStand.com'
+  version: '1.0.0'
+servers:
+  - url: https://sheepstand.com/api
+paths:
+  /user:
+    get:
+      description: Get currently authenticated user
+      tags: 
+        - user
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/User'
+                - properties:
+                    roles:
+                      $ref: '#/components/schemas/CombinedRoles'
+                    marriage_mate:
+                      $ref: '#/components/schemas/User'
+                    user_availabilities:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserAvailability'
+                    user_vacations:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserVacation'
+                    teams:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Team'
+  /users:
+    get:
+      description: Show all users (superadmin only)
+      tags:
+        - user
+        - superadmin
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/User'
+                - properties:
+                    site_roles:
+                      type: array
+                      items:
+                        type: string
+                        description: List of user's global site roles
+                        example:
+                          'translator'
+                    marriage_mate:
+                      $ref: '#/components/schemas/User'
+                    languages:
+                      type: array
+                      description: Allowed translation languages
+                      items:
+                        $ref: '#/components/schemas/Language'
+  /users/{role}:
+    get:
+      description: Show all users with specified role type
+      tags:
+        - user
+        - superadmin
+        - security
+      parameters:
+        - name: role
+          in: query
+          description: Role name
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                  - $ref: '#/components/schemas/User'
+                  - properties:
+                      languages:
+                        type: array
+                        description: Allowed translation languages
+                        items:
+                          $ref: '#/components/schemas/Language'
+components:
+  schemas:
+    NotificationSettings:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64  
+        team_id:
+          type: integer
+          format: int64
+        telegram_channel_id:
+          type: string
+        telegram_access_hash:
+          type: string
+        telegram_group_link:
+          type: string
+        setting_notify_trade_requests:
+          type: boolean
+        setting_notify_trade_filled:
+          type: boolean
+        setting_notify_schedule_open:
+          type: boolean
+        setting_notify_schedule_closed:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    CombinedRoles:
+      type: object
+      properties:
+        TEAMID:
+          type: array
+          items:
+            type: string
+          example: 'publisher'
+          description: Each user team has team id as key and contains the user's role as string
+        global:
+          type: array
+          items:
+            type: string
+          example: 'translator'
+    Language:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        code:
+          type: string
+          example: 'sr'
+        name:
+          type: string
+          example: "Serbian"
+        native_name:
+          type: string
+          example: "srpski"
+        site_language:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Team:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: '000000000000'
+          description: Random number used for roles
+        display_name:
+          type: string
+          example: 'Team Name'
+        description:
+          type: string
+        code:
+          type: string
+        user_id:
+          type: integer
+          format: int64
+          description: Team Owner
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        setting_shift_request_autoapproval:
+          type: boolean
+        setting_shift_assignment_autoaccept:
+          type: boolean
+        default_participants_min:
+          type: integer
+        default_participants_max:
+          type: integer
+        default_shift_minutes:
+          type: integer
+        setting_shift_trade_autoapproval: 
+          type: boolean
+        language:
+          type: string
+          example: 'en'
+          description: ISO 639-1 (2-digit)
+        notificationsettings:
+          $ref: '#/components/schemas/NotificationSettings'
+    TeamUser:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        team_id:
+          type: integer
+          format: int64
+        default_team:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+        email_verified_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time      
+        updated_at:
+          type: string
+          format: date-time
+        gdpr_consent:
+          type: string
+          format: date-time
+        user_code:
+          type: string
+        fts_status:
+          type: integer
+        driver:
+          type: boolean
+        mate_id:
+          type: integer
+        photo_url:
+          type: string
+    UserAvailability:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        day_of_week:
+          type: integer
+          format: int64
+        start_time:
+          type: string
+          description: HH:MM:SS
+        end_time:
+          type: string
+          description: HH:MM:SS
+        available:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    UserVacation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user_id:
+          type: integer
+          format: int64
+        date_start:
+          type: string
+          format: date
+        date_end:
+          type: string
+          format: date
+        note:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://sheepstand.com/oauth
+          scopes:
+            full: Full API access
