@@ -1243,6 +1243,44 @@ paths:
                                 type: integer
         403:
           $ref: '#/components/responses/AccessDenied'
+  /teams/{teamid}/locations/{locid}/makedefault:
+    post:
+      summary: Change default location for team
+      tags:
+        - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: teamid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: locid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:  
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          location:
+                            $ref: '#/components/schemas/Location'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
 
   /schedules/joinshift:
     post:
@@ -1345,7 +1383,6 @@ paths:
                                       description: All user's shifts
                                       items:
                                         $ref: '#/components/schemas/Shift'
-
         400:
           $ref: '#/components/responses/BadRequest'
         403:
@@ -1833,7 +1870,7 @@ paths:
 
 
 
-          
+
 
 components:
   responses:

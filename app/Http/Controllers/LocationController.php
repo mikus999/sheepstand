@@ -10,6 +10,7 @@ use App\File;
 use Helper;
 use Auth;
 use DB;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 
 class LocationController extends Controller
@@ -89,14 +90,35 @@ class LocationController extends Controller
 
     public function setDefault($teamid, Request $request, $locid)
     {
-        // Set 'default' for all team locations to 'false'
-        $affected = DB::table('locations')->where('team_id', '=', $teamid)->update(array('default' => false));
+      $user = Auth::user();
+      $team = Team::find($teamid);
 
-        // Set the selected location 'default' to 'true'
-        $location = Location::find($locid);
-        $location->default = true;
-        $location->save();
+      if ($team) {
+        if ($user->hasRole('team_admin', $team)) {
 
-        return response()->json($location);
+          // Set 'default' for all team locations to 'false'
+          $affected = DB::table('locations')->where('team_id', '=', $teamid)->update(array('default' => false));
+
+          // Set the selected location 'default' to 'true'
+          $location = $team->locations->find($locid);
+
+          if ($location) {
+            $location->default = true;
+            $location->save();
+
+            return RB::success(['location' => $location]);
+
+          } else {
+            return RB::error(400); // location not found
+          }
+
+        } else {
+          return RB::error(403); // access denied
+        }
+
+      } else {
+        return RB::error(400); // team not found
+      }
+
     }
 }
