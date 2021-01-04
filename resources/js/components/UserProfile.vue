@@ -171,6 +171,7 @@ export default {
         url: url,
         data: {
           user_id: this.userData.id,
+          team_id: this.team.id,
           status: status
         }
       })

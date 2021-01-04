@@ -614,11 +614,11 @@ export default {
       if (await this.$root.$confirm(confirm_msg, null, 'error')) {
         await axios({
           method: 'get',      
-          url: '/api/schedules/' + this.schedule.id + '/approveall/' + status,
+          url: '/api/schedules/' + this.schedule.id + '/approveall' + status,
         })
         .then(response => {
-          this.storeSchedule(response.data)
-          this.storeShifts(response.data.shifts)
+          this.storeSchedule(response.data.data.schedule)
+          this.storeShifts(response.data.data.schedule.shifts)
           this.showSnackbar(this.$t('general.info_updated'), 'success')
           this.parseSchedule()
         })

@@ -51,16 +51,16 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink');
     Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink');
     Route::get('teams/{id}/availability', 'UserAvailabilityController@getAllAvailability');
+    Route::get('teams/{id}/stats', 'ShiftController@showStatistics');
 
     // SHIFT routes
-    Route::post('schedules/joinshift', 'ShiftController@addUserToShift'); // TODO OpenAPI
-    Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift'); // TODO OpenAPI
-    Route::post('schedules/shiftuserstatus', 'ShiftController@changeUserShiftStatus'); // TODO OpenAPI
-    Route::get('schedules/{id}/approveall/{status}', 'ShiftController@approveAllRequests'); // TODO OpenAPI
-    Route::get('schedules/shiftusers/{id}', 'ShiftController@getShiftUsers'); // TODO OpenAPI
-    Route::get('teams/{id}/stats', 'ShiftController@showStatistics'); // TODO OpenAPI
-    Route::get('teams/trades', 'ShiftController@getTradeRequests'); // TODO OpenAPI
-    Route::post('teams/{id}/trades', 'ShiftController@makeTrade'); // TODO OpenAPI
+    Route::post('schedules/joinshift', 'ShiftController@addUserToShift');
+    Route::post('schedules/leaveshift', 'ShiftController@removeUserFromShift');
+    Route::post('schedules/shiftuserstatus', 'ShiftController@changeUserShiftStatus');
+    Route::get('schedules/{id}/approveall/{status}', 'ShiftController@approveAllRequests');
+    Route::get('schedules/shifts/{id}/users', 'ShiftController@getShiftUsers');
+    Route::get('schedules/trades', 'ShiftController@getTradeRequests'); // TODO OpenAPI
+    Route::post('schedules/trades', 'ShiftController@makeTrade'); // TODO OpenAPI
     Route::get('user/shifts', 'ShiftController@userAllShifts'); // TODO OpenAPI
     Route::post('user/shifts', 'ShiftController@userTeamShifts'); // TODO OpenAPI
 

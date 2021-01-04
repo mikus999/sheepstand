@@ -52,6 +52,10 @@ paths:
       summary: Get currently authenticated user
       tags: 
         - user
+      description: |
+        __Roles__
+        ___
+        * self
       responses:
         200:
           description: OK
@@ -92,6 +96,10 @@ paths:
       tags:
         - security
         - user
+      description: |
+        __Roles__
+        ___
+        * everyone
       parameters:
         - name: id
           in: path
@@ -161,6 +169,10 @@ paths:
   /users:
     get:
       summary: Show all users (superadmin only)
+      description: |
+        __Roles__
+        ___
+        * super_admin
       tags:
         - user
         - superadmin
@@ -205,6 +217,10 @@ paths:
         - user
         - superadmin
         - security
+      description: |
+        __Roles__
+        ___
+        * super_admin
       parameters:
         - name: role
           in: path
@@ -242,6 +258,10 @@ paths:
       summary: Returns all site roles
       tags:
         - security
+      description: |
+        __Roles__
+        ___
+        * everyone
       responses:
         200:           
           description: OK
@@ -272,6 +292,10 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
       requestBody:
         content:
           application/json:
@@ -297,6 +321,10 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
       parameters:
         - name: user
           in: query
@@ -328,6 +356,10 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
       responses:
         200:
           description: OK
@@ -349,6 +381,11 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
+        * super_admin
       parameters:
         - name: user_id
           in: query
@@ -381,10 +418,15 @@ paths:
                               $ref: '#/components/schemas/UserAvailability'
   /account/availability/default:
     post:
-      summary: Sets all user availability according to request (all/none)
+      summary: Reset user availability according to request (all/none)
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
+        * super_admin
       parameters:
         - name: user_id
           in: query
@@ -413,12 +455,18 @@ paths:
                             type: array
                             items:
                               $ref: '#/components/schemas/UserAvailability'
+        403:
+        $ref: '#/components/responses/AccessDenied'
   /account/vacation:
     get:
       summary: Returns vacation schedule for authenticated user
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
       responses:
         200:
           description: OK
@@ -440,6 +488,10 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
       parameters:
         - name: date_start
           in: query
@@ -480,6 +532,10 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
       parameters:
         - name: id
           in: path
@@ -510,11 +566,22 @@ paths:
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+        * super_admin
       parameters:
         - name: user_id
           in: query
           required: false
           description: Optional. Will use authenticated user.
+          schema:
+            type: integer
+        - name: team_id
+          in: query
+          required: true
           schema:
             type: integer
         - name: status
@@ -536,12 +603,22 @@ paths:
                         properties: # List all returned objects/data here
                           user:
                             $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /account/marriage:
     post:
       summary: Changes marriage mate
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+        * super_admin
       parameters:
         - name: team_id
           in: query
@@ -572,17 +649,32 @@ paths:
                         properties: # List all returned objects/data here
                           user:
                             $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /account/driver:
     post:
       summary: Changes driver status
       tags:
         - user
         - profile
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+        * super_admin
       parameters:
         - name: user_id
           in: query
           required: false
           description: Optional. Will use authenticated user.
+          schema:
+            type: integer
+        - name: team_id
+          in: query
+          required: true
           schema:
             type: integer
         - name: status
@@ -604,12 +696,22 @@ paths:
                         properties: # List all returned objects/data here
                           user:
                             $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
 
   /teams/jointeam:
     post:
       summary: Join an existing team
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+        * super_admin
       parameters:
         - name: user_id
           in: query
@@ -657,6 +759,12 @@ paths:
       summary: Remove user from team
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+        * super_admin
       parameters:
         - name: user_id
           in: query
@@ -693,6 +801,11 @@ paths:
       summary: Change a team's unique code
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+        * super_admin
       parameters:
         - name: id
           in: path
@@ -722,6 +835,10 @@ paths:
       summary: Find a team by code
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * everyone
       parameters:
         - name: code
           in: path
@@ -751,6 +868,10 @@ paths:
       summary: Return all team members
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * everyone
       parameters:
         - name: id
           in: path
@@ -798,6 +919,11 @@ paths:
       summary: Update a team setting
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+        * super_admin
       parameters:
         - name: team_id
           in: query
@@ -840,6 +966,10 @@ paths:
       summary: Set the user's default team
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * self
       parameters:
         - name: team_id
           in: query
@@ -869,6 +999,11 @@ paths:
       summary: Returns team notification settings
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+        * super_admin
       parameters:
         - name: id
           in: path
@@ -898,6 +1033,11 @@ paths:
       summary: Updates team notification settings
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+        * super_admin
       parameters:
         - name: id
           in: path
@@ -943,6 +1083,11 @@ paths:
       summary: Gets team Telegram group link
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+        * super_admin
       parameters:
         - name: id
           in: path
@@ -972,6 +1117,11 @@ paths:
       summary: Updates team Telegram group link
       tags:
         - team
+      description: |
+        __Roles__
+        ___
+        * team_admin
+        * super_admin
       parameters:
         - name: id
           in: path
@@ -1007,7 +1157,12 @@ paths:
       summary: Gets availability for all team members
       tags:
         - team
-      x-roles: ["elder","team_admin"]
+      description: |
+        __Roles__
+        ___
+        * elder
+        * team_admin
+        * super_admin
       parameters:
         - name: id
           in: path
@@ -1045,8 +1200,542 @@ paths:
           $ref: '#/components/responses/BadRequest'
         403:
           $ref: '#/components/responses/AccessDenied'
+  /teams/{id}/stats:
+    get:
+      summary: Get scheduling statistics for a team
+      tags:
+        - scheduling
+        - teams
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:  
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          stats:
+                            type: object
+                            properties:                        
+                              total_spots:
+                                type: integer
+                              available_spots:
+                                type: integer
+                              total_shifts:
+                                type: integer
+                              shifts_with_needs:
+                                type: integer
+                              shifts_with_trades:
+                                type: integer
+        403:
+          $ref: '#/components/responses/AccessDenied'
 
+  /schedules/joinshift:
+    post:
+      summary: Add user to shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shiftusers:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                          usershifts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                          trades:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    trades:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                          teamusers:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    shifts_30days:
+                                      type: integer
+                                    shifts_14days:
+                                      type: integer
+                                    shifts_7days:
+                                      type: integer
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                                    shifts:
+                                      type: array
+                                      description: All user's shifts
+                                      items:
+                                        $ref: '#/components/schemas/Shift'
 
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /schedules/leaveshift:
+    post:
+      summary: Remove user to shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shiftusers:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                          usershifts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                          trades:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    trades:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                          teamusers:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    shifts_30days:
+                                      type: integer
+                                    shifts_14days:
+                                      type: integer
+                                    shifts_7days:
+                                      type: integer
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                                    shifts:
+                                      type: array
+                                      description: All user's shifts
+                                      items:
+                                        $ref: '#/components/schemas/Shift'
+
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /schedules/shiftuserstatus:
+    post:
+      summary: Change user's shift status
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * self
+        * team_admin
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: trade_user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: trade_shift_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shiftusers:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                          usershifts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                          trades:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    trades:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /schedules/{id}/approveall/{status}:
+    get:
+      summary: Mass change shift status
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Schedule ID
+          schema:
+            type: integer
+        - name: status
+          in: path
+          required: true
+          description: Status to change to approved
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          schedule:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Schedule'
+                                - properties:
+                                    shifts:
+                                      type: array
+                                      items:
+                                        $ref: '#/components/schemas/Shift'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /schedules/shifts/{id}/users:
+    get:
+      summary: Get all users assigned to a shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          users:
+                            type: array
+                            items:            
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /schedules/trades:
+    get:
+      summary: Get trades for all user's shifts
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          trades:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    trades:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+
+    post:
+      summary: Make a trade
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          trades:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    trades:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
 
 
 components:

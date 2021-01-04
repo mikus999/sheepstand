@@ -190,7 +190,7 @@ export default {
     async getStats () {
       await axios.get('/api/teams/' + this.team.id + '/stats')
         .then(response => {
-          this.stats = response.data.stats
+          this.stats = response.data.data.stats
 
           const avail_spots_pct = (this.stats.available_spots / this.stats.total_spots) * 100
           const avail_trades_pct = (this.stats.available_trades / this.stats.total_spots) * 100

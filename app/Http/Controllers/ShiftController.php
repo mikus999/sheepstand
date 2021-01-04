@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Auth;
 use Helper;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class ShiftController extends Controller
 {
@@ -225,10 +226,16 @@ class ShiftController extends Controller
                     'trades' => $this->teamTrades($team),
                     'teamusers' =>  $team->users()->with('shifts')->get()
                 ];
+
+                return RB::success($data);
+
+            } else {
+              return RB::error(403); // access denied
             }
+        } else {
+          return RB::error(400); // schedule not found
         }
 
-        return response()->json($data);
     }
 
 
@@ -265,10 +272,16 @@ class ShiftController extends Controller
                     'trades' => $this->teamTrades($team),
                     'teamusers' =>  $team->users()->with('shifts')->get()
                 ];
+
+                return RB::success($data);
+
+            } else {
+              return RB::error(403); // access denied
             }
+        } else {
+          return RB::error(400); // schedule not found
         }
 
-        return response()->json($data);
     }
 
 
@@ -281,6 +294,7 @@ class ShiftController extends Controller
      */
     public function changeUserShiftStatus(Request $request)
     {
+        $user = Auth::user();
         $data = ['message' => 'Access Denied'];
         $targetUser = User::find($request->user_id);
         $shift = Shift::find($request->shift_id);
@@ -290,45 +304,66 @@ class ShiftController extends Controller
 
         if ($schedule) {
             $team = Team::find($schedule->team_id);
-            $targetUser->shifts()->updateExistingPivot($shift->id, ['status' => $status]);
-            $targetUser->shifts()->updateExistingPivot($shift->id, ['trade_user_id' => $request->trade_user_id]);
-            $targetUser->shifts()->updateExistingPivot($shift->id, ['trade_shift_id' => $request->trade_shift_id]);
 
-            $shiftusers = $this->shiftUsers($shift);
-            $usershifts = $this->userShifts($targetUser);
+            if ($user->hasRole('team_admin', $team) || $targetUser->id == $user->id) {     
 
-            $data = [
-                'shiftusers' => $shiftusers,
-                'usershifts' => $usershifts,
-                'trades' => $this->teamTrades($team)
-            ];
+              $targetUser->shifts()->updateExistingPivot($shift->id, ['status' => $status]);
+              $targetUser->shifts()->updateExistingPivot($shift->id, ['trade_user_id' => $request->trade_user_id]);
+              $targetUser->shifts()->updateExistingPivot($shift->id, ['trade_shift_id' => $request->trade_shift_id]);
+
+              $shiftusers = $this->shiftUsers($shift);
+              $usershifts = $this->userShifts($targetUser);
+
+              $data = [
+                  'shiftusers' => $shiftusers,
+                  'usershifts' => $usershifts,
+                  'trades' => $this->teamTrades($team)
+              ];
+
+              return RB::success($data);
+
+            } else {
+              return RB::error(403); // access denied
+            }
+
+        } else {
+          return RB::error(400); // schedule not found
         }
-
-
-        return response()->json($data);
 
     }
 
 
         /**
      * 
-     * Change a user's shift status
+     * Mass change shift status
      *  - ROLE: 
      * 
      */
     public function approveAllRequests($id, $status)
     {
+        $user = Auth::user();
         $schedule = Schedule::find($id);
-        $shifts = $schedule->shifts()->get();
 
-        foreach ($shifts as $shift) {
-          $shift->users()->updateExistingPivot($shift->users()->wherePivot('status', $status)->allRelatedIds(), ['status' => 2]);
-        };
+        if ($schedule) {
+          $shifts = $schedule->shifts()->get();
+          $team = $schedule->team;
 
-        $schedule = Schedule::with('shifts')->find($id);
+          if ($user->hasRole('team_admin', $team)) {     
 
-        return response()->json($schedule);
+            foreach ($shifts as $shift) {
+              $shift->users()->updateExistingPivot($shift->users()->wherePivot('status', $status)->allRelatedIds(), ['status' => 2]);
+            };
 
+            $schedule = Schedule::with('shifts')->find($id);
+
+            return RB::success(['schedule' => $schedule]);
+
+          } else {
+            return RB::error(403); // access denied
+          }
+        } else {
+          return RB::error(400); // schedule not found
+        }
     }
 
 
@@ -341,15 +376,23 @@ class ShiftController extends Controller
      */
     public function getShiftUsers($id)
     {
-        $user = Auth::user();
-        $shiftusers = null;
-        $shift = Shift::find($id);
+      $user = Auth::user();
+      $shiftusers = null;
+      $shift = Shift::find($id);
+  
+      if ($shift) {
+        $schedule = $user->schedules->find($shift->schedule_id);
 
-        if ($shift) {
+        if ($schedule) {
           $shiftusers = $this->shiftUsers($shift);
+          return RB::success(['users' => $shiftusers]);
+        } else {
+          return RB::error(403); // access denied
         }
 
-        return response()->json($shiftusers);
+      } else {
+        return RB::error(400); // shift not found
+        }
     }
 
 
@@ -364,11 +407,7 @@ class ShiftController extends Controller
      */
     public function getTradeRequests()
     {
-        $data = [
-          'trades' => $this->teamTrades()
-        ];
-
-        return response()->json($data);
+      return RB::success(['trades' => $this->teamTrades()]);
     }
 
     
@@ -378,13 +417,13 @@ class ShiftController extends Controller
      *  - ROLE: team member
      * 
      */
-    public function makeTrade($teamid, Request $request)
+    public function makeTrade(Request $request)
     {
         $data = ['message' => 'Team Not Found'];
         $user = Auth::user();
         $targetUser = User::find($request->user_id);
         $shift = Shift::find($request->shift_id);
-        $team = $user->teams->find($teamid);
+        $team = $user->teams->find($request->team_id);
 
 
         if ($team) {
@@ -459,16 +498,12 @@ class ShiftController extends Controller
             $stats['shifts_with_needs'] = $shiftWithNeeds;
             $stats['shifts_with_trades'] = $shiftWithTrades;
 
-            
+            return RB::success(['stats' => $stats]);
 
-
-
-            $data = [
-                'stats' => $stats
-            ];
+        } else {
+          return RB::error(403); // access denied
         }
 
-        return response()->json($data);
     }
 
 
@@ -532,7 +567,7 @@ class ShiftController extends Controller
 
       if ($user) {
           $shifts = $user->shifts()
-                      ->with('schedule', 'location', 'users')
+                      ->with('users')
                       ->whereHas('schedule', function($q) {
                         $q->whereIn('status', [1,2]);
                       })
@@ -569,7 +604,7 @@ class ShiftController extends Controller
       foreach ($teams as $team) {
         $date = date_create(now())->modify('-7 days');
         $trades = $team->shifts()
-                    ->with(['trades','schedule','location','users'])
+                    ->with(['trades','users'])
                     ->whereHas('trades')
                     ->whereHas('schedule', function($q) use($date) {
                       $q->where('status','>',0)

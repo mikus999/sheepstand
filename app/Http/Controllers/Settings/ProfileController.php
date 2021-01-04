@@ -38,10 +38,17 @@ class ProfileController extends Controller
     public function updateFTSStatus(Request $request)
     {
       $user = Auth::user();
+      $team = $user->teams->find($request->team_id);
       $targetUser = $user;
 
+      if (!$team) return RB::error(400); // team not found
+
       if ($request->user_id) {
-        $targetUser = User::find($request->user_id);
+        if (($team && $user->hasRole('team_admin', $team)) || $user->hasRole('super_admin', null)) {
+          $targetUser = User::find($request->user_id);
+        } else {
+          return RB::error(403); //Access denied
+        }
       }
 
       $targetUser->fts_status = $request->status;
@@ -58,7 +65,10 @@ class ProfileController extends Controller
       $user = Auth::user();
       $team = $user->teams->find($request->team_id);
 
-      if (($team && $user->hasRole('team_admin', $team)) || $request->mate1_id == $user->id) {     
+      if (!$team) return RB::error(400); // team not found
+
+      if (($team && $user->hasRole('team_admin', $team)) || $request->mate1_id == $user->id ||
+          $user->hasRole('super_admin', null)) {     
 
         $mate1User = User::find($request->mate1_id);
         $currentMate = $mate1User->mate_id;
@@ -92,10 +102,17 @@ class ProfileController extends Controller
     public function updateDriverStatus(Request $request)
     {
       $user = Auth::user();
+      $team = $user->teams->find($request->team_id);
       $targetUser = $user;
+      
+      if (!$team) return RB::error(400); // team not found
 
       if ($request->user_id) {
-        $targetUser = User::find($request->user_id);
+        if (($team && $user->hasRole('team_admin', $team)) || $user->hasRole('super_admin', null)) {
+          $targetUser = User::find($request->user_id);
+        } else {
+          return RB::error(403); //Access denied
+        }
       }
 
       $targetUser->driver = $request->status;

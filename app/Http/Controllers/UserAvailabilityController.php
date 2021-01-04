@@ -21,6 +21,8 @@ class UserAvailabilityController extends Controller
     $default = $request->default || null;
 
     if ($request->user_id) {
+      if (!$user->hasRole('super_admin', null)) return RB::error(403); // Access denied
+
       $targetUser = User::find($request->user_id);
     } else {
       $targetUser = $user;
@@ -58,6 +60,8 @@ class UserAvailabilityController extends Controller
 
 
     if ($request->user_id) {
+      if (!$user->hasRole('super_admin', null)) return RB::error(403); // Access denied
+
       $targetUser = User::find($request->user_id);
     } else {
       $targetUser = $user;

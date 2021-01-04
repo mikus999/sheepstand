@@ -230,7 +230,7 @@ export default {
             }
           })
           .then(response => {
-            this.storeUserShifts(response.data.usershifts)
+            this.storeUserShifts(response.data.data.usershifts)
           })
         }
       }
@@ -249,7 +249,7 @@ export default {
         }
       })
       .then(response => {
-        this.storeUserShifts(response.data.usershifts)
+        this.storeUserShifts(response.data.data.usershifts)
       })
 
     },
@@ -281,7 +281,7 @@ export default {
           }
         })
         .then(response => {
-          this.storeUserShifts(response.data.usershifts)
+          this.storeUserShifts(response.data.data.usershifts)
         })
       }
     },

@@ -244,9 +244,9 @@ export default {
         }
       })
       .then(response => {
-        this.shift.users = response.data.shiftusers
-        this.storeUserShifts(response.data.usershifts)
-        this.storeTrades(response.data.trades)
+        this.shift.users = response.data.data.shiftusers
+        this.storeUserShifts(response.data.data.usershifts)
+        this.storeTrades(response.data.data.trades)
         this.checkConflictsAllUserShifts()
         this.$emit('updated')
         this.loading = false
@@ -275,9 +275,9 @@ export default {
           }
         })
         .then(response => {
-          this.shift.users = response.data.shiftusers
-          this.storeUserShifts(response.data.usershifts)
-          this.storeTrades(response.data.trades)
+          this.shift.users = response.data.data.shiftusers
+          this.storeUserShifts(response.data.data.usershifts)
+          this.storeTrades(response.data.data.trades)
           this.checkConflictsAllUserShifts()
           this.$emit('updated')
           this.loading = false

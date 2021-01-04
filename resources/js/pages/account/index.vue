@@ -339,6 +339,7 @@ export default {
         method: 'post',      
         url: url,
         data: {
+          team_id: this.team.id,
           status: status
         }
       })

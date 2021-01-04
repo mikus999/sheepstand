@@ -192,10 +192,10 @@ export default {
           }
         })
         .then(response => {
-          this.storeUserShifts(response.data.usershifts)
+          this.storeUserShifts(response.data.data.usershifts)
           this.checkConflictsAllUserShifts()
-          this.$emit('updated', response.data.shiftusers)
-          this.storeTrades(response.data.trades)
+          this.$emit('updated', response.data.data.shiftusers)
+          this.storeTrades(response.data.data.trades)
           this.sendNotification(status)
           this.createMessage(status)
 

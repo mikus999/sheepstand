@@ -183,9 +183,9 @@ export default {
 
   methods: {
     async getTrades () {
-      await axios.get('/api/teams/trades')
+      await axios.get('/api/schedules/trades')
         .then(response => {
-          this.storeTrades(response.data.trades)
+          this.storeTrades(response.data.data.trades)
         })
     },
 
@@ -193,15 +193,16 @@ export default {
       if (await this.$root.$confirm(this.$t('shifts.confirm_accept'), null, 'primary')) {
         await axios({
           method: 'post',      
-          url: '/api/teams/' + this.team.id + '/trades',
+          url: '/api/schedules/trades',
           data: {
+            team_id: this.team.id,
             shift_id: trade.pivot.shift_id,
             user_id: trade.pivot.user_id
           }
         })
         .then(response => {
-          this.storeTrades(response.data.trades)
-          this.storeUserShifts(response.data.usershifts)
+          this.storeTrades(response.data.data.trades)
+          this.storeUserShifts(response.data.data.usershifts)
           this.showSnackbar(this.$t('shifts.success_trade_made'), 'success')
         })
       }

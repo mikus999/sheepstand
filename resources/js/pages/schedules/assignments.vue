@@ -321,8 +321,8 @@ export default {
         }
       })
       .then(response => {
-        shift.users = response.data.shiftusers
-        this.teamUsers = response.data.teamusers
+        shift.users = response.data.data.shiftusers
+        this.teamUsers = response.data.data.teamusers
       })
     },
 
@@ -340,8 +340,8 @@ export default {
       })
       .then(response => {
         user.pivot.status = status
-        shift.users = response.data.shiftusers
-        this.teamUsers = response.data.teamusers
+        shift.users = response.data.data.shiftusers
+        this.teamUsers = response.data.data.teamusers
       })
 
     },
@@ -360,7 +360,7 @@ export default {
       })
       .then(response => {
         user.pivot.status = status
-        shift.users = response.data.shiftusers
+        shift.users = response.data.data.shiftusers
       })
 
     },
@@ -381,8 +381,8 @@ export default {
           url: '/api/schedules/' + this.id + '/approveall/' + status,
         })
         .then(response => {
-          this.storeSchedule(response.data)
-          this.storeShifts(response.data.shifts)
+          this.storeSchedule(response.data.data.schedule)
+          this.storeShifts(response.data.data.schedule.shifts)
           this.showSnackbar(this.$t('general.info_updated'), 'success')
           this.shiftTable_key += 1
         })

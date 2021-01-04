@@ -263,8 +263,8 @@ export default {
         }
       })
       .then(response => {
-        this.shift.users = response.data.shiftusers
-        this.storeTeamUsers(response.data.teamusers)
+        this.shift.users = response.data.data.shiftusers
+        this.storeTeamUsers(response.data.data.teamusers)
         this.team_users_avail = this.getAvailableUsers()
         this.userSearch = ''
       })
@@ -285,8 +285,8 @@ export default {
       })
       .then(response => {
         if (!isMate) user.pivot.status = status
-        this.shift.users = response.data.shiftusers
-        this.storeTeamUsers(response.data.teamusers)
+        this.shift.users = response.data.data.shiftusers
+        this.storeTeamUsers(response.data.data.teamusers)
         this.team_users_avail = this.getAvailableUsers()
         this.userSearch = ''
       })
