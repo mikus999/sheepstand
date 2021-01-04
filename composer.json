@@ -14,6 +14,7 @@
         "laravel/socialite": "^5.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
+        "marcin-orlowski/laravel-api-response-builder": "^9.2",
         "santigarcor/laratrust": "^6.2",
         "spatie/laravel-permission": "^3.13",
         "staudenmeir/eloquent-has-many-deep": "^1.12",

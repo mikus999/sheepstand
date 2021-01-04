@@ -133,7 +133,7 @@ export default {
     async getTeamUsers() {
       await axios.get('/api/teams/' + this.team.id + '/users/')
         .then(response => {
-          this.teamUsers = response.data.filter(u => 
+          this.teamUsers = response.data.data.users.filter(u => 
             u.id != this.userData.id
           )
         })
@@ -143,10 +143,10 @@ export default {
     async getUserRoles() {
       await axios({
         method: 'get',
-        url: '/api/user/' + this.data.id + 'roles',
+        url: '/api/user/' + this.data.id + '/roles',
       })
       .then(response => {
-        this.userRoles = response.data.roles
+        this.userRoles = response.data.data.roles
         this.teamRole = this.userRoles[this.team.id] ? this.userRoles[this.team.id][0] : null
         this.globalRoles = this.userRoles.global
       })
@@ -199,7 +199,7 @@ export default {
 
       await axios({
         method: 'post',
-        url: '/api/user/' + this.userData.id + 'roles',
+        url: '/api/user/' + this.userData.id + '/roles',
         data: {
           role: role,
           changetype: changetype,
@@ -208,7 +208,7 @@ export default {
       })
       .then(response => {
         this.showSnackbar(this.$t('general.info_updated'), 'success')
-        this.userRoles = response.data.roles
+        this.userRoles = response.data.data.roles
         this.teamRole = this.userRoles[this.team.id] ? this.userRoles[this.team.id][0] : null
         this.globalRoles = this.userRoles.global
       })

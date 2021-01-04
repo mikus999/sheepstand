@@ -332,7 +332,7 @@ export const mtproto = {
         }
       })
       .then(response => {
-        this.$store.commit('auth/SET_TEAM', response.data)
+        this.$store.commit('auth/SET_TEAM', response.data.data.team)
         this.setGroupLink(group.id)
       })
       
@@ -350,7 +350,7 @@ export const mtproto = {
         })
         .then(response => {
           this.showSnackbar(this.$t('notifications.success_disable_notifications'), 'success')
-          this.$store.commit('auth/SET_TEAM', response.data)
+          this.$store.commit('auth/SET_TEAM', response.data.data.team)
         })
       }
     },
@@ -376,7 +376,7 @@ export const mtproto = {
           }
         })
         .then(result => {
-          this.$store.commit('auth/SET_TEAM', result.data)
+          this.$store.commit('auth/SET_TEAM', result.data.data.team)
         })
 
       })
@@ -393,8 +393,8 @@ export const mtproto = {
         url: '/api/teams/' + this.team.id + '/grouplink',
       })
       .then(response => {
-        channel_id = response.data.channel_id
-        link = response.data.link
+        channel_id = response.data.data.channel_id
+        link = response.data.data.link
       })
 
       const data = {
@@ -420,7 +420,7 @@ export const mtproto = {
         url: '/api/teams/' + this.team.id + '/notificationsettings',
       })
       .then(response => {
-        const settings = response.data.settings
+        const settings = response.data.data.team.notificationsettings
         
         // Create an invitation link
         const peerChannel = {

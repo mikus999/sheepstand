@@ -59,24 +59,33 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/User'
-                - properties:
-                    roles:
-                      $ref: '#/components/schemas/CombinedRoles'
-                    marriage_mate:
-                      $ref: '#/components/schemas/User'
-                    user_availabilities:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/UserAvailability'
-                    user_vacations:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/UserVacation'
-                    teams:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/Team'
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            allOf:
+                            - $ref: '#/components/schemas/User'
+                            - properties:
+                                roles:
+                                  $ref: '#/components/schemas/CombinedRoles'
+                                marriage_mate:
+                                  $ref: '#/components/schemas/User'
+                                user_availabilities:
+                                  type: array
+                                  items:
+                                    $ref: '#/components/schemas/UserAvailability'
+                                user_vacations:
+                                  type: array
+                                  items:
+                                    $ref: '#/components/schemas/UserVacation'
+                                teams:
+                                  type: array
+                                  items:
+                                    $ref: '#/components/schemas/Team'
+        401:
+          $ref: '#/components/responses/Unauthorized'
   /user/{id}/roles:
     get:
       summary: Returns user's current roles
@@ -96,9 +105,14 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  roles:
-                    $ref: '#/components/schemas/CombinedRoles'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          roles:
+                            $ref: '#/components/schemas/CombinedRoles'
     post:
       summary: Sets user's current roles
       tags:
@@ -134,9 +148,16 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  roles:
-                    $ref: '#/components/schemas/CombinedRoles'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          roles:
+                            $ref: '#/components/schemas/CombinedRoles'
+        400:
+          $ref: '#/components/responses/BadRequest'
   /users:
     get:
       summary: Show all users (superadmin only)
@@ -144,28 +165,39 @@ paths:
         - user
         - superadmin
       responses:
-        200:
+        200:           
           description: OK
           content:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/User'
-                - properties:
-                    site_roles:
-                      type: array
-                      items:
-                        type: string
-                        description: List of user's global site roles
-                        example:
-                          'translator'
-                    marriage_mate:
-                      $ref: '#/components/schemas/User'
-                    languages:
-                      type: array
-                      description: Allowed translation languages
-                      items:
-                        $ref: '#/components/schemas/Language'
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          users:
+                            type: array
+                            items:            
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    site_roles:
+                                      type: array
+                                      items:
+                                        type: string
+                                        description: List of user's global site roles
+                                        example:
+                                          'translator'
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                                    languages:
+                                      type: array
+                                      description: Allowed translation languages
+                                      items:
+                                        $ref: '#/components/schemas/Language'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /users/{role}:
     get:
       summary: Show all users with specified role type
@@ -181,42 +213,59 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        200:           
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  allOf:
-                  - $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
                   - properties:
-                      languages:
-                        type: array
-                        description: Allowed translation languages
-                        items:
-                          $ref: '#/components/schemas/Language'
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          users:
+                            type: array
+                            items:            
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    languages:
+                                      type: array
+                                      description: Allowed translation languages
+                                      items:
+                                        $ref: '#/components/schemas/Language'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /roles:
     get:
       summary: Returns all site roles
       tags:
         - security
       responses:
-        200:
+        200:           
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  allOf:
-                  - $ref: '#/components/schemas/Role'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
                   - properties:
-                      permissions:
-                        type: array
-                        description: Attached permissions
-                        items:
-                          $ref: '#/components/schemas/Permission'
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          users:
+                            type: array
+                            items:            
+                              allOf:
+                                - $ref: '#/components/schemas/Role'
+                                - properties:
+                                    permissions:
+                                      type: array
+                                      description: Attached permissions
+                                      items:
+                                        $ref: '#/components/schemas/Permission'
+
   /account/profile:
     patch:
       summary: Update profile
@@ -234,9 +283,14 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  roles:
-                    $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            $ref: '#/components/schemas/User'
   /account/password:
     patch:
       summary: Update password
@@ -260,9 +314,14 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  roles:
-                    $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            $ref: '#/components/schemas/User'
   /account/availability:
     get:
       summary: Returns weekly availability for authenticated user
@@ -275,9 +334,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserAvailability'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          availability:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/UserAvailability'
     post:
       summary: Sets weekly availability
       tags:
@@ -303,9 +369,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserAvailability'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          availability:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/UserAvailability'
   /account/availability/default:
     post:
       summary: Sets all user availability according to request (all/none)
@@ -330,9 +403,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserAvailability'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          availability:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/UserAvailability'
   /account/vacation:
     get:
       summary: Returns vacation schedule for authenticated user
@@ -345,9 +425,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserVacation'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          vacation:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/UserVacation'
     post:
       summary: Adds vacation period
       tags:
@@ -377,9 +464,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserVacation'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          vacation:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/UserVacation'
   /account/vacation/{id}:
     delete:
       summary: Deletes vacation period
@@ -398,9 +492,18 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserVacation'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          vacation:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/UserVacation'
+        400:
+          $ref: '#/components/responses/BadRequest'
   /account/fts:
     post:
       summary: Changes FTS status
@@ -425,7 +528,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            $ref: '#/components/schemas/User'
   /account/marriage:
     post:
       summary: Changes marriage mate
@@ -454,7 +564,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            $ref: '#/components/schemas/User'
   /account/driver:
     post:
       summary: Changes driver status
@@ -479,7 +596,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            $ref: '#/components/schemas/User'
 
   /teams/jointeam:
     post:
@@ -511,15 +635,23 @@ paths:
             application/json:
               schema:
                 allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
                   - properties:
-                      team:
-                        $ref: '#/components/schemas/Team'
-                      teams:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Team'
-                      user:
-                        $ref: '#/components/schemas/User'
+                      data:
+                        type: object    
+                        properties:
+                          team:
+                            $ref: '#/components/schemas/Team'
+                          teams:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Team'
+                          user:
+                            $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /teams/leaveteam:
     post:
       summary: Remove user from team
@@ -542,11 +674,20 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  teams:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Team'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          teams:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /teams/{id}/resetcode:
     get:
       summary: Change a team's unique code
@@ -564,7 +705,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          team:
+                            $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /teams/{code}/findteam:
     get:
       summary: Find a team by code
@@ -583,13 +735,17 @@ paths:
             application/json:
               schema:
                 allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
                   - properties:
-                      message:
-                        type: string
-                      team:
-                        $ref: '#/components/schemas/Team'
-                      user:
-                        $ref: '#/components/schemas/User'
+                      data:
+                        type: object    
+                        properties:
+                          team:
+                            $ref: '#/components/schemas/Team'
+                          user:
+                            $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
   /teams/{id}/users:
     get:
       summary: Return all team members
@@ -608,26 +764,329 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/User'
-                - properties:
-                    shifts_30days:
-                      type: integer
-                    shifts_14days:
-                      type: integer
-                    shifts_7days:
-                      type: integer
-                    team_role:
-                      type: string
-                      example: 'publisher'
-                    marriage_mate:
-                      $ref: '#/components/schemas/User'
-                    shifts:
-                      type: array
-                      description: All user's shifts
-                      items:
-                        $ref: '#/components/schemas/Shift'
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          users:
+                            type: array
+                            items:            
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    shifts_30days:
+                                      type: integer
+                                    shifts_14days:
+                                      type: integer
+                                    shifts_7days:
+                                      type: integer
+                                    team_role:
+                                      type: string
+                                      example: 'publisher'
+                                    marriage_mate:
+                                      $ref: '#/components/schemas/User'
+                                    shifts:
+                                      type: array
+                                      description: All user's shifts
+                                      items:
+                                        $ref: '#/components/schemas/Shift'
+        400:
+          $ref: '#/components/responses/BadRequest'
+  /teams/settings/update:
+    post:
+      summary: Update a team setting
+      tags:
+        - team
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: setting
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: value
+          in: query
+          required: true
+          schema:
+            oneOf:
+              - type: integer
+              - type: string
+              - type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          team:
+                            $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /teams/default/update:
+    post:
+      summary: Set the user's default team
+      tags:
+        - team
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          affected_rows:
+                            type: integer
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /teams/{id}/notificationsettings:
+    get:
+      summary: Returns team notification settings
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Team ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          team:
+                            $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+    post:
+      summary: Updates team notification settings
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Team ID
+          schema:
+            type: integer
+        - name: reset 
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: channel_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: access_hash
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          team:
+                            $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /teams/{id}/grouplink:
+    get:
+      summary: Gets team Telegram group link
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Team ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          channel_id:
+                            type: string
+                          link:
+                            type: string                            
+        400:
+          $ref: '#/components/responses/BadRequest'
+    post:
+      summary: Updates team Telegram group link
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Team ID
+          schema:
+            type: integer
+        - name: group_link
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          team:
+                            $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /teams/{id}/availability:
+    get:
+      summary: Gets availability for all team members
+      tags:
+        - team
+      x-roles: ["elder","team_admin"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Team ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          users:
+                            type: array
+                            items:            
+                              allOf:
+                                - $ref: '#/components/schemas/User'
+                                - properties:
+                                    user_availabilities:
+                                      type: array
+                                      items:
+                                        $ref: '#/components/schemas/UserAvailability'
+                                    user_vacations:
+                                      type: array
+                                      items:
+                                        $ref: '#/components/schemas/UserVacation'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+
+
+
 
 components:
+  responses:
+    BadRequest:
+      description: 400 Bad request (something wrong with URL or parameters)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: 401 Unauthenticated (not logged in)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    AccessDenied:
+      description: 403 Access denied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: 404 The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    ValidationFailed:
+      description: 422 Validation failed (something wrong with parameters)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    ServerError:
+      description: 500 General server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
   schemas:
     NotificationSettings:
       type: object
@@ -665,13 +1124,13 @@ components:
           type: array
           items:
             type: string
-          example: 'publisher'
+          example: ['publisher']
           description: Each user team has team id as key and contains the user's role as string
         global:
           type: array
           items:
             type: string
-          example: 'translator'
+          example: ['translator']
     Language:
       type: object
       properties:
@@ -962,6 +1421,32 @@ components:
         updated_at:
           type: string
           format: date-time
+    ResponseError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        code:
+          type: integer
+        locale:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+    ResponseSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        code:
+          type: integer
+        locale:
+          type: string
+        message:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http

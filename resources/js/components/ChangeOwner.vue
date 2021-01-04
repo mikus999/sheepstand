@@ -94,7 +94,7 @@ export default {
             }
           })
           .then(response => {
-            this.$store.commit('auth/SET_TEAM', response.data)
+            this.$store.commit('auth/SET_TEAM', response.data.data.team)
             this.showSnackbar(this.$t('teams.success_change_owner'), 'success')
             this.$emit('close')
           })

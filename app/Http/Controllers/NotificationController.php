@@ -9,6 +9,7 @@ use App\Models\NotificationSetting;
 use DB;
 use Helper;
 use Auth;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class NotificationController extends Controller
 {
@@ -23,32 +24,35 @@ class NotificationController extends Controller
     {
       $user = Auth::user();
       $team = $user->teams()->find($id);
-      $settings = $team->notificationsettings;
 
-      if ($team) {
-        if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
-          if ($request->reset) {
-            $affectedRows = NotificationSetting::where('team_id', '=', $team->id)->delete();
+      if (!$team) return RB::error(400);
+
+      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+        $settings = $team->notificationsettings;
+
+        if ($request->reset) {
+          $affectedRows = NotificationSetting::where('team_id', '=', $team->id)->delete();
+        } else {
+          if (empty($settings)) {
+            $notification = NotificationSetting::create([
+              'team_id' => $team->id,
+              'telegram_channel_id' => $request->channel_id,
+              'telegram_access_hash' => $request->access_hash,
+            ]);
           } else {
-            if (empty($settings)) {
-              $notification = NotificationSetting::create([
-                'team_id' => $team->id,
-                'telegram_channel_id' => $request->channel_id,
-                'telegram_access_hash' => $request->access_hash,
-              ]);
-            } else {
-              $settings->telegram_channel_id = $request->channel_id;
-              $settings->telegram_access_hash = $request->access_hash;
-              $settings->save();
-            }
+            $settings->telegram_channel_id = $request->channel_id;
+            $settings->telegram_access_hash = $request->access_hash;
+            $settings->save();
           }
 
+          $team = $user->teams()->find($id);
+          return RB::success(['team' => $team]);
         }
+
+      } else {
+        return RB::error(403); // Access denied
       }
 
-      $team = $user->teams()->find($id);
-
-      return response()->json($team);
     }
 
 
@@ -63,12 +67,10 @@ class NotificationController extends Controller
 
       $team = Team::find($teamid);
       $user = Auth::user();
-      $error = false;
-      $settings = [];
+
+      if (!$team) return RB::error(400);
 
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
-        $settings = $team->notificationsettings;
-
         if (empty($settings)) {
           $notification = NotificationSetting::create([
             'team_id' => $team->id,
@@ -77,30 +79,15 @@ class NotificationController extends Controller
           ]);
 
           $team = Team::find($teamid);
-          $settings = $team->notificationsettings;
         }
 
+        return RB::success(['team' => $team]);
+
       } else {
-        $error = true;
-        $message = 'Access Denied';
+        return RB::error(403); // Access denied
       }
 
-
-    if ($error) {
-      $data = [
-        'error' => $error,
-        'message' => $message
-      ];
-    } else {
-      $data = [
-        'error' => $error,
-        'settings' => $settings,
-      ];
     }
-
-    return response()->json($data);
-  }
-
 
 
 
@@ -114,20 +101,24 @@ class NotificationController extends Controller
     {
       $user = Auth::user();
       $team = $user->teams()->find($id);
-      $settings = $team->notificationsettings;
 
-      if ($team) {
-        if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
-          if (!empty($settings)) {
-            $settings->telegram_group_link = $request->group_link;
-            $settings->save();
-          };
-        }
+      if (!$team) return RB::error(400);
+
+      if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+        $settings = $team->notificationsettings;
+
+        if (!empty($settings)) {
+          $settings->telegram_group_link = $request->group_link;
+          $settings->save();
+        };
+
+        $team = $user->teams()->find($id);
+        return RB::success(['team' => $team]);
+
+      } else {
+        return RB::error(403); // Access denied
       }
 
-      $team = $user->teams()->find($id);
-
-      return response()->json($team);
     }
 
 
@@ -144,15 +135,15 @@ class NotificationController extends Controller
     {
       $user = Auth::user();
       $team = $user->teams()->find($id);
-      $settings = $team->notificationsettings;
       $channel_id = '';
       $link = '';
 
-      if ($team) {
-        if ($settings) {
-          $channel_id = $settings->telegram_channel_id;
-          $link = $settings->telegram_group_link;
-        };
+      if (!$team) return RB::error(400);
+
+      $settings = $team->notificationsettings;
+      if ($settings) {
+        $channel_id = $settings->telegram_channel_id;
+        $link = $settings->telegram_group_link;
       }
 
       $data = [
@@ -160,7 +151,6 @@ class NotificationController extends Controller
         'link' => $link
       ];
 
-      return response()->json($data);
-
+      return RB::success($data);
     }
 }

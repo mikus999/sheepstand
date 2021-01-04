@@ -81,7 +81,7 @@
                 <v-row>
                   <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.contact_name') }}</label>
                   <label class="col-md-7 col-form-label-plain text-md-left">
-                    {{ teamcontact.name }}
+                    {{ teamContact.name }}
                   </label>
                 </v-row>
 
@@ -89,7 +89,7 @@
                   <v-row>
                     <label class="col-md-5 col-form-label text-md-right">{{ $t('teams.contact_email') }}</label>
                     <label class="col-md-7 col-form-label-plain text-md-left">
-                      {{ teamcontact.email }}
+                      {{ teamContact.email }}
                     </label>
                   </v-row>
                   -->
@@ -208,7 +208,7 @@ export default {
       teamNameErrorMsg: '',
       teamFound: false,
       teamTemp: [],
-      teamcontact: [],
+      teamContact: [],
       stepperCurr: 1,
       stepperMax: 4,
       isNewTeam: false,
@@ -240,18 +240,17 @@ export default {
       if (this.teamid !== '') {
         await axios.get('/api/teams/' + this.teamid + '/findteam')
           .then(response => {
-            if (response.data.message === 'NOT_FOUND') {
-              this.teamNotFound = true
-              this.teamNotFoundMsg = this.$t('teams.team_not_found')
-              this.teamFound = false
-            } else {
-              this.teamNotFound = false
-              this.teamNotFoundMsg = ''
-              this.teamFound = true
-              this.teamTemp = response.data.team
-              this.teamcontact = response.data.user
-              this.stepperCurr = 2
-            }
+            this.teamNotFound = false
+            this.teamNotFoundMsg = ''
+            this.teamFound = true
+            this.teamTemp = response.data.data.team
+            this.teamContact = response.data.data.user
+            this.stepperCurr = 2
+          })
+          .catch(error => {
+            this.teamNotFound = true
+            this.teamNotFoundMsg = this.$t('teams.team_not_found')
+            this.teamFound = false
           })
       }
     },
@@ -262,7 +261,7 @@ export default {
       axios.post('/api/teams/jointeam', formData)
         .then(response => {
           this.getTeams()
-          this.setTeam(response.data.team, 'self')     
+          this.setTeam(response.data.data.team, 'self')     
 
           this.stepperCurr = 4
           this.isNewTeam = false
@@ -297,7 +296,7 @@ export default {
       this.teamNameErrorMsg = ''
       this.teamFound = false
       this.teamTemp = []
-      this.teamcontact = []
+      this.teamContact = []
       this.teamid = ''
       this.stepperCurr = 1
       this.isNewTeam = false

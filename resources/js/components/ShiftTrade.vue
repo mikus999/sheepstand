@@ -149,7 +149,7 @@ export default {
     async getTeamUsers() {
       await axios.get('/api/teams/' + this.shift.schedule.team_id + '/users/')
         .then(response => {
-          this.teamUsers = response.data.filter(u => 
+          this.teamUsers = response.data.data.users.filter(u => 
             u.id != this.user.id &&
             u.shifts.length > 0 &&
             u.shifts.filter(s => s.pivot.status == 2).length > 0

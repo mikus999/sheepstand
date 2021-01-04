@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
 use Helper;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class UserController extends Controller
 {
@@ -19,14 +20,21 @@ class UserController extends Controller
     public function current(Request $request)
     {
         $user = Auth::user();
-        $roles = Helper::getUserRoles($user);
 
-        $user->roles = $roles;
-        $user->user_availabilities = $user->user_availabilities()->get();
-        $user->user_vacations = $user->user_vacations()->get();
-        $user->marriage_mate = $user->marriage_mate()->first();
+        if ($user) {
+          $roles = Helper::getUserRoles($user);
 
-        return response()->json($user);
+          $user->roles = $roles;
+          $user->user_availabilities = $user->user_availabilities()->get();
+          $user->user_vacations = $user->user_vacations()->get();
+          $user->marriage_mate = $user->marriage_mate()->first();
+  
+          return RB::success(['user' => $user]);
+
+        } else {
+          return RB::error(401);
+        }
+
     }
 
 
@@ -50,9 +58,12 @@ class UserController extends Controller
           $userRoles = $targetUser->getRoles();
           $siteUsers[$key]['site_roles'] = $userRoles;
         };
+
+        return RB::success(['users' => $siteUsers]);
+      } else {
+        return RB::error(403); // Access denied
       }
 
-      return response()->json($siteUsers);
     }
 
 
@@ -70,13 +81,12 @@ class UserController extends Controller
 
       if ($user->hasRole('super_admin', null)) {
         $siteUsers = User::whereRoleIs($role)->with('languages')->get();
+        return RB::success(['users' => $siteUsers]);
+
+      } else {
+        return RB::error(403); // Access denied
       }
 
-      $data = [
-        'users' => $siteUsers
-      ];
-      
-      return response()->json($data);
     }
 
 }

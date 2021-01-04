@@ -226,7 +226,7 @@ export default {
 
       await axios.get(url)
         .then(response => {
-          this.userData = response.data
+          this.userData = response.data.data.users
         })
     },
 
@@ -278,12 +278,11 @@ export default {
           }
         })
         .then(response => {
-          if (!response.data.error) {
             this.getUserData()
             this.showSnackbar(this.$t('teams.success_add_user'), 'success')
-          } else {
-            this.showSnackbar(this.$t(response.data.message, 'error'))
-          }
+        })
+        .catch(error => {
+          this.showSnackbar(this.$t('general.error_alert_text'), 'error')
         })
 
       this.newUserCode = ''

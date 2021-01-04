@@ -11,6 +11,7 @@ use App\Models\NotificationSetting;
 use DB;
 use Helper;
 use Auth;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class TeamController extends Controller
 {
@@ -187,45 +188,31 @@ class TeamController extends Controller
         $selfadd = true;
       }
 
+      if (!$targetUser) return RB::error(400);
+      if (!$team) return RB::error(400);
+
 
       // Check if the user is adding himself to a team.
       // If not, only Team Admins and Super Admins can add/remove other users to/from a team
       if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
 
-        // If the target user was found
-        if ($targetUser) {
-          if ($team) {
-            $targetUser->teams()->detach($team); // First detach if already exists
-            $targetUser->teams()->attach($team);
-            $targetUser->attachRole('publisher', $team);
-            $message = 'USER ADDED TO TEAM';
-          } else {
-            $error = true;
-            $message = 'TEAM NOT FOUND';
-          }
-        } else {
-          $error = true;
-          $message = 'USER NOT FOUND';
-        }
-      } else {
-        $error = true;
-        $message = 'Access Denied';
-      }
+        $targetUser->teams()->detach($team); // First detach if already exists
+        $targetUser->teams()->attach($team);
+        $targetUser->attachRole('publisher', $team);
 
 
-      if ($error) {
-        $data = [
-          'error' => $error,
-          'message' => $message
-        ];
-      } else {
         $data = [
           'team' => $team,
           'teams' => $targetUser->teams,
           'user' => $targetUser
         ];
+
+        return RB::success($data);
+
+      } else {
+        return RB::error(403); // Access denied
       }
-      return response()->json($data);
+
     }
 
 
@@ -252,6 +239,9 @@ class TeamController extends Controller
       }
 
 
+      if (!$targetUser) return RB::error(400);
+      if (!$team) return RB::error(400); // Bad Request; team not found
+
       // Only Team Admins and Super Admins can add/remove users from a team
       if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
         $targetUser->teams()->detach($teamid);
@@ -261,12 +251,14 @@ class TeamController extends Controller
           ->whereIn('shift_id', $team->shifts->pluck('id'))
           ->where('user_id', $userid)
           ->delete();
+
+        return RB::success(['teams' => $targetUser->teams]);
+
+      } else {
+        return RB::error(403); // Access denied
       }
 
-      $data = [
-          'teams' => $targetUser->teams
-      ];
-      return response()->json($data);
+
     }
 
 
@@ -283,13 +275,18 @@ class TeamController extends Controller
       $user = Auth::user();
       $team = Team::find($id);
 
+      if (!$team) return RB::error(400); // Bad Request; team not found
+
+
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
         $teamcode = Helper::getUniqueCode(6, 'team_code');
         $team->code = $teamcode;
         $team->save();
-      }
 
-      return response()->json($team);
+        return RB::success(['team' => $team]);
+      } else {
+        return RB::error(403); // Access denied
+      }
     }
 
 
@@ -304,19 +301,16 @@ class TeamController extends Controller
       $user = [];
 
       if ($team) {
-        // Find team contact
-        $user = User::find($team->user_id);
-        $message = 'SUCCESS';
+        $data = [
+          'team' => $team,
+          'user' => User::find($team->user_id)// Find team contact
+        ];
+        return RB::success($data);
+
       } else {
-        $message = 'NOT_FOUND';
+        return RB::error(400); // Bad Request; team not found
       }
 
-      $data = [
-          'message' => $message,
-          'team' => $team,
-          'user' => $user
-      ];
-      return response()->json($data);
     }
 
 
@@ -340,10 +334,13 @@ class TeamController extends Controller
           $userRoles = $targetUser->getRoles($team);
           $teamUsers[$key]['team_role'] = count($userRoles) > 0 ? $userRoles[0] : '';
         };
-    
+
+        return RB::success(['users' => $teamUsers]);
+
+      } else {
+        return RB::error(400); // Bad request
       }
       
-      return response()->json($teamUsers);
     }
 
 
@@ -363,12 +360,19 @@ class TeamController extends Controller
       $user = Auth::user();
       $team = Team::with('notificationsettings')->find($teamid);
 
-      if ($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null)) {
+      if (!$team) return RB::error(400); // Bad Request; team not found
+
+      if ($user->hasRole(['team_admin'], $team) || $user->hasRole('super_admin', null)) {
         $team->$setting = $value;
         $team->save();
+
+        return RB::success(['team' => $team]);
+        
+      } else {
+        return RB::error(403); // Access denied
       }
 
-      return response()->json($team);
+
     }
 
 
@@ -382,12 +386,12 @@ class TeamController extends Controller
     {
       $user = Auth::user();
       $userid = $user->id;
-      $teamid = $request->teamid;
+      $teamid = $request->team_id;
 
-      // Set 'default' for all team locations to 'false'
+      // Set 'default' for all teams to 'false'
       $affected = DB::table('team_user')->where('user_id', '=', $userid)->update(['default_team' => false]);
 
-      // Set the selected location 'default' to 'true'
+      // Set the selected team 'default' to 'true'
       $affected = DB::table('team_user')
                     ->where([
                       ['user_id', '=', $userid],
@@ -395,7 +399,6 @@ class TeamController extends Controller
                     ])
                     ->update(['default_team' => true]);
 
-
-      return response()->json($affected);
+      return RB::success(['affected_rows' => $affected]);
     }
 }

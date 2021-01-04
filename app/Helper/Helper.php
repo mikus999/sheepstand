@@ -25,7 +25,7 @@ class Helper
       $roles['global'] = $roles_global;
 
 
-      return $roles;
+      return collect($roles);
     }
 
 

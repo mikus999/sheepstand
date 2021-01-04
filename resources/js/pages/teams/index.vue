@@ -197,7 +197,6 @@ export default {
 
   created() {
     this.selectedTab = 'tab-' + this.$route.params.tab
-    console.log(this.$route.params)
     this.refreshTeam()
     this.getLanguages()
 
@@ -253,7 +252,7 @@ export default {
     async resetCode() {
       await axios.get('/api/teams/' + this.team.id + '/resetcode')
         .then(response => {
-          this.teamData = response.data
+          this.teamData = response.data.data.team
         })
     },
 
@@ -278,7 +277,7 @@ export default {
           }
         })
         .then(response => {
-          this.teamData = response.data
+          this.teamData = response.data.data.team
           this.refreshStore()
         })
     },

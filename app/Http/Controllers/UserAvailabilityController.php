@@ -10,6 +10,7 @@ use App\Models\UserAvailability;
 use App\Models\UserVacation;
 use Auth;
 use DB;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class UserAvailabilityController extends Controller
 {
@@ -28,19 +29,23 @@ class UserAvailabilityController extends Controller
     //$helper = new Helper;
     Helper::addDefaultAvailability($targetUser, $default);
 
-    return response()->json($targetUser->user_availabilities);
+    return RB::success(['availability' => $targetUser->user_availabilities]);
   }
 
 
   public function getAllAvailability($teamid)
   {
+    $user = Auth::user();
     $team = Team::find($teamid);
     
-    $data = [
-      'users' => $team->user_availability()->get()
-    ];
+    if (!$team) return RB::error(400);
 
-    return response()->json($data);
+    if (($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null))) {
+      return RB::success(['users' => $team->user_availability()->get()]);
+    } else {
+      return RB::error(403); // Access denied
+    }
+
 
   }
 
@@ -72,14 +77,14 @@ class UserAvailabilityController extends Controller
 
     UserAvailability::upsert($data, ['user_id', 'day_of_week', 'start_time', 'end_time'], ['available']);
 
-    return response()->json($targetUser->user_availabilities);
+    return RB::success(['availability' => $targetUser->user_availabilities]);
   }
 
 
   public function getAvailability()
   {
     $user = Auth::user();
-    return response()->json($user->user_availabilities);
+    return RB::success(['availability' => $user->user_availabilities]);
   }
 
 
@@ -87,7 +92,7 @@ class UserAvailabilityController extends Controller
   public function getVacation()
   {
     $user = Auth::user();
-    return response()->json($user->user_vacations);
+    return RB::success(['vacation' => $user->user_vacations]);
   }
 
 
@@ -102,7 +107,7 @@ class UserAvailabilityController extends Controller
       'note' => $request->note
     ]);
 
-    return response()->json($user->user_vacations);
+    return RB::success(['vacation' => $user->user_vacations]);
   }
 
 
@@ -113,8 +118,10 @@ class UserAvailabilityController extends Controller
 
     if ($found) {
       UserVacation::destroy($id);
+      return RB::success(['vacation' => $user->user_vacations]);
+    } else {
+      return RB::error(400);
     }
 
-    return response()->json($user->user_vacations);
   }
 }

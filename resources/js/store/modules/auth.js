@@ -95,10 +95,9 @@ export const actions = {
     return new Promise((resolve, reject) => {
       axios.get('/api/user')
       .then(response => {
-        const { data } = response
+        const data = response.data.data.user
         commit(types.FETCH_USER_SUCCESS, { user: data })
 
-        
         /**
          *  If the user is already a member of at least one team... 
          *    Check if one of his teams is marked as default. If so, call 'setTeam'
@@ -135,7 +134,7 @@ export const actions = {
     return new Promise((resolve, reject) => {
       axios.get('/api/roles')
       .then(response => {
-        commit(types.FETCH_SITEROLES, { siteRoles: response.data })
+        commit(types.FETCH_SITEROLES, { siteRoles: response.data.data.roles })
 
         resolve()
       })
@@ -162,7 +161,7 @@ export const actions = {
         method: 'post',      
         url: '/api/teams/default/update',
         data: {
-          teamid: team.id
+          team_id: team.id
         }
       })
       .then(response => {

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Team;
 use Auth;
 use Helper;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class SecurityController extends Controller
 {
@@ -23,7 +24,7 @@ class SecurityController extends Controller
     {
         $roles = Role::with('permissions')->get();
 
-        return response()->json($roles);
+        return RB::success(['roles' => $roles]);
 
     }
 
@@ -39,11 +40,8 @@ class SecurityController extends Controller
 
         $roles = Helper::getUserRoles($user);
 
-        $data = [
-          'roles' => $roles
-        ];
+        return RB::success(['roles' => $roles]);
 
-        return response()->json($data);
     }
 
 
@@ -78,16 +76,13 @@ class SecurityController extends Controller
           }
 
           $roles = Helper::getUserRoles($user);
-          $data = [
-            'roles' => $roles
-          ];
 
+          return RB::success(['roles' => $roles]);
 
         } else {
-            $data = 'Role not found';
+          return RB::error(400);
         }
 
-        return response()->json($data);
     }
 
 

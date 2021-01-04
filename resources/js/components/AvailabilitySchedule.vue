@@ -121,7 +121,7 @@ export default {
     async getAvailability () {
       await axios.get('/api/account/availability')
         .then(response => {
-          this.availability = response.data
+          this.availability = response.data.data.availability
         })
     },
 
@@ -155,7 +155,7 @@ export default {
         }
       })
       .then(response => {
-        this.availability = response.data
+        this.availability = response.data.data.availability
         this.changed = []
         this.showSnackbar(this.$t('general.info_updated'), 'success')
         this.refreshStore()

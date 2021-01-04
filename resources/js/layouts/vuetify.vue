@@ -70,7 +70,7 @@ export default {
           url: '/api/roles'
         })
         .then(response => {
-          sessionStorage.setItem('roles', JSON.stringify(response.data))
+          sessionStorage.setItem('roles', JSON.stringify(response.data.data.roles))
         })
       }
     },

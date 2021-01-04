@@ -266,7 +266,7 @@ export default {
     async getTeamUsers() {
       await axios.get('/api/teams/' + this.team.id + '/users/')
         .then(response => {
-          this.teamUsers = response.data.filter(u => 
+          this.teamUsers = response.data.data.users.filter(u => 
             u.id != this.user.id
           )
         })
@@ -381,7 +381,6 @@ export default {
           .then(response => {
             this.showSnackbar(this.$t('teams.success_leave_team'), 'success')
             this.getTeams()
-            this.setTeam(response.data.team, 'home')   
           })
       }
     },

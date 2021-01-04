@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
 use Helper;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
+
 class ProfileController extends Controller
 {
     /**
@@ -24,7 +26,9 @@ class ProfileController extends Controller
             'email' => 'required|email|unique:users,email,'.$user->id,
         ]);
 
-        return tap($user)->update($request->only('name', 'email'));
+        $data = tap($user)->update($request->only('name', 'email'));
+
+        return RB::success(['user' => $data]);
     }
 
 
@@ -43,7 +47,7 @@ class ProfileController extends Controller
       $targetUser->fts_status = $request->status;
       $targetUser->save();
 
-      return response()->json($targetUser);
+      return RB::success(['user' => $targetUser]);
 
     }
 
@@ -74,13 +78,12 @@ class ProfileController extends Controller
             $oldMate->save();
           }
         }
-        
+
+        return RB::success(['user' => $mate1User]);
+
       } else {
-        $mate1User = $user;
+        return RB::error(403); // Access denied
       }
-
-
-      return response()->json($mate1User);
 
     }
   
@@ -98,7 +101,7 @@ class ProfileController extends Controller
       $targetUser->driver = $request->status;
       $targetUser->save();
 
-      return response()->json($targetUser);
+      return RB::success(['user' => $targetUser]);
 
     }
 

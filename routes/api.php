@@ -44,13 +44,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('teams/{id}/resetcode', 'TeamController@changeTeamCode');
     Route::get('teams/{code}/findteam', 'TeamController@findTeamByCode');
     Route::get('teams/{id}/users/', 'TeamController@getTeamUsers');
-    Route::post('teams/settings/update', 'TeamController@updateSetting'); // TODO OpenAPI
-    Route::post('teams/default/update', 'TeamController@setDefault'); // TODO OpenAPI
-    Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings'); // TODO OpenAPI
-    Route::post('teams/{id}/notificationsettings', 'NotificationController@updateTelegram'); // TODO OpenAPI
-    Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink'); // TODO OpenAPI
-    Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink'); // TODO OpenAPI
-    Route::get('teams/{id}/availability', 'UserAvailabilityController@getAllAvailability'); // TODO OpenAPI
+    Route::post('teams/settings/update', 'TeamController@updateSetting');
+    Route::post('teams/default/update', 'TeamController@setDefault');
+    Route::get('teams/{id}/notificationsettings', 'NotificationController@notificationSettings');
+    Route::post('teams/{id}/notificationsettings', 'NotificationController@updateTelegram');
+    Route::post('teams/{id}/grouplink', 'NotificationController@updateTelegramGroupLink');
+    Route::get('teams/{id}/grouplink', 'NotificationController@getTelegramGroupLink');
+    Route::get('teams/{id}/availability', 'UserAvailabilityController@getAllAvailability');
 
     // SHIFT routes
     Route::post('schedules/joinshift', 'ShiftController@addUserToShift'); // TODO OpenAPI
