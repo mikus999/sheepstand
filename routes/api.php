@@ -59,10 +59,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('schedules/shiftuserstatus', 'ShiftController@changeUserShiftStatus');
     Route::get('schedules/{id}/approveall/{status}', 'ShiftController@approveAllRequests');
     Route::get('schedules/shifts/{id}/users', 'ShiftController@getShiftUsers');
-    Route::get('schedules/trades', 'ShiftController@getTradeRequests'); // TODO OpenAPI
-    Route::post('schedules/trades', 'ShiftController@makeTrade'); // TODO OpenAPI
-    Route::get('user/shifts', 'ShiftController@userAllShifts'); // TODO OpenAPI
-    Route::post('user/shifts', 'ShiftController@userTeamShifts'); // TODO OpenAPI
+    Route::get('schedules/trades', 'ShiftController@getTradeRequests');
+    Route::post('schedules/trades', 'ShiftController@makeTrade'); //
+    Route::get('user/shifts', 'ShiftController@userAllShifts');
+    Route::post('user/shifts', 'ShiftController@userTeamShifts');
 
 
     // SCHEDULE routes
@@ -94,7 +94,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('messages/banners', 'MessageController@getActiveBanners'); // TODO OpenAPI
 
 
-    // TASKS routs
+    // TASKS routes
     Route::get('tasks/scheduled', 'TaskController@scheduledTasks'); // TODO OpenAPI
 
 

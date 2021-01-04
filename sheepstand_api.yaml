@@ -1205,7 +1205,7 @@ paths:
       summary: Get scheduling statistics for a team
       tags:
         - scheduling
-        - teams
+        - team
       description: |
         __Roles__
         ___
@@ -1677,7 +1677,6 @@ paths:
                                           - properties:
                                               marriage_mate:
                                                 $ref: '#/components/schemas/User'
-
     post:
       summary: Make a trade
       tags:
@@ -1690,6 +1689,7 @@ paths:
         - name: user_id
           in: query
           required: true
+          description: User to trade with
           schema:
             type: integer
         - name: shift_id
@@ -1699,7 +1699,7 @@ paths:
             type: integer
         - name: team_id
           in: query
-          required: false
+          required: true
           schema:
             type: integer
       responses:
@@ -1736,7 +1736,104 @@ paths:
                                           - properties:
                                               marriage_mate:
                                                 $ref: '#/components/schemas/User'
+                          usershifts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /user/shifts:
+    get:
+      summary: Get all user's shifts
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * self
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          shifts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+    post:
+      summary: Get a user's shifts
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: User to trade with
+          schema:
+            type: integer
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          shifts:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Shift'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/AccessDenied'
 
+
+
+
+          
 
 components:
   responses:

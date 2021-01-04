@@ -419,26 +419,31 @@ class ShiftController extends Controller
      */
     public function makeTrade(Request $request)
     {
-        $data = ['message' => 'Team Not Found'];
-        $user = Auth::user();
-        $targetUser = User::find($request->user_id);
-        $shift = Shift::find($request->shift_id);
-        $team = $user->teams->find($request->team_id);
+      $data = ['message' => 'Team Not Found'];
+      $user = Auth::user();
+      $targetUser = User::find($request->user_id);
+      $shift = Shift::find($request->shift_id);
+      $team = $user->teams->find($request->team_id);
 
+      if (!$targetUser) return RB::error(400); // target user not found
+      if (!$shift) return RB::error(400); // shift not found
 
-        if ($team) {
-            $targetUser->shifts()->detach($shift->id);
-            $user->shifts()->detach($shift->id);
-            $user->shifts()->attach($shift->id);
-            $user->shifts()->updateExistingPivot($shift->id, ['status' => 2]);
+      if ($team) {
+        $targetUser->shifts()->detach($shift->id);
+        $user->shifts()->detach($shift->id);
+        $user->shifts()->attach($shift->id);
+        $user->shifts()->updateExistingPivot($shift->id, ['status' => 2]);
 
-            $data = [
-              'trades' => $this->teamTrades(),
-              'usershifts' => $this->userShifts($user)
-            ];
-        }
+        $data = [
+          'trades' => $this->teamTrades(),
+          'usershifts' => $this->userShifts($user)
+        ];
 
-        return response()->json($data);
+        return RB::success($data);
+
+      } else {
+        return RB::error(403); // access denied
+      }
     }
 
 
@@ -518,35 +523,42 @@ class ShiftController extends Controller
     public function userAllShifts()
     {
         $user = Auth::user();
-        $shifts = $this->userShifts($user);
-        return response()->json($shifts);
+        return RB::success(['shifts' => $this->userShifts($user)]);
     }
 
 
     /**
      * 
-     * Show user's shifts for ALL TEAMS
-     *  - ROLE: authenticated user
+     * Show user's shifts
      * 
      *  POST -> /user/shifts
      * 
      */
     public function userTeamShifts(Request $request)
     {
+      $user = Auth::user();
       $date = date_create(now())->modify('-1 days');
-      $user = User::find($request->user_id);
-      $shifts = $user->shifts()
-                      ->with(['schedule', 'location'])
-                      ->whereHas('schedule', function($q) use($request) {
-                        $q->where('team_id', '=', $request->team_id);
-                      })
-                      ->withPivot('status')
-                      ->where('time_start','>',$date)
-                      ->wherePivot('status','=',2)
-                      ->orderBy('time_start')
-                      ->get();
+      $targetUser = User::find($request->user_id);
+      $team = $user->teams->find($request->team_id);
 
-      return response()->json($shifts);
+      if (!$user) return RB::error(400); // user not found
+
+      if ($team) {
+        $shifts = $targetUser->shifts()
+                        ->whereHas('schedule', function($q) use($request) {
+                          $q->where('team_id', '=', $request->team_id);
+                        })
+                        ->withPivot('status')
+                        ->where('time_start','>',$date)
+                        ->wherePivot('status','=',2)
+                        ->orderBy('time_start')
+                        ->get();
+
+        return RB::success(['shifts' => $shifts]);
+
+      } else {
+        return RB::error(403); // access denied
+      }
     }
 
 

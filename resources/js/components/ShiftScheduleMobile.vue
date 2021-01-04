@@ -184,7 +184,7 @@ export default {
     async getUserShifts () {
       await axios.get('/api/user/shifts')
         .then(response => {
-          this.user_shifts = response.data
+          this.user_shifts = response.data.data.shifts
           this.getSchedData()
         })
     },

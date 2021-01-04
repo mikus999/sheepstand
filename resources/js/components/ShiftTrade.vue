@@ -169,7 +169,7 @@ export default {
           }
         })
         .then(response => {
-          this.userShifts = response.data
+          this.userShifts = response.data.data.shifts
         })
       }
     },
