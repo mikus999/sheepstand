@@ -262,7 +262,7 @@ export default {
 
       await axios.get(url)
         .then(response => {
-          this.schedData = response.data
+          this.schedData = response.data.data.schedules
           this.pageLoad = false
         })
     },

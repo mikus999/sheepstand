@@ -233,7 +233,7 @@ class ShiftController extends Controller
               return RB::error(403); // access denied
             }
         } else {
-          return RB::error(400); // schedule not found
+          return RB::error(404); // schedule not found
         }
 
     }
@@ -279,7 +279,7 @@ class ShiftController extends Controller
               return RB::error(403); // access denied
             }
         } else {
-          return RB::error(400); // schedule not found
+          return RB::error(404); // schedule not found
         }
 
     }
@@ -327,7 +327,7 @@ class ShiftController extends Controller
             }
 
         } else {
-          return RB::error(400); // schedule not found
+          return RB::error(404); // schedule not found
         }
 
     }
@@ -362,7 +362,7 @@ class ShiftController extends Controller
             return RB::error(403); // access denied
           }
         } else {
-          return RB::error(400); // schedule not found
+          return RB::error(404); // schedule not found
         }
     }
 
@@ -391,7 +391,7 @@ class ShiftController extends Controller
         }
 
       } else {
-        return RB::error(400); // shift not found
+        return RB::error(404); // shift not found
         }
     }
 
@@ -425,8 +425,8 @@ class ShiftController extends Controller
       $shift = Shift::find($request->shift_id);
       $team = $user->teams->find($request->team_id);
 
-      if (!$targetUser) return RB::error(400); // target user not found
-      if (!$shift) return RB::error(400); // shift not found
+      if (!$targetUser) return RB::error(404); // target user not found
+      if (!$shift) return RB::error(404); // shift not found
 
       if ($team) {
         $targetUser->shifts()->detach($shift->id);
@@ -541,7 +541,7 @@ class ShiftController extends Controller
       $targetUser = User::find($request->user_id);
       $team = $user->teams->find($request->team_id);
 
-      if (!$user) return RB::error(400); // user not found
+      if (!$user) return RB::error(404); // user not found
 
       if ($team) {
         $shifts = $targetUser->shifts()

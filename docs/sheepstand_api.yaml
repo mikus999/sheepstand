@@ -164,8 +164,8 @@ paths:
                         properties: # List all returned objects/data here
                           roles:
                             $ref: '#/components/schemas/CombinedRoles'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
   /users:
     get:
       summary: Show all users (superadmin only)
@@ -558,8 +558,8 @@ paths:
                             type: array
                             items:
                               $ref: '#/components/schemas/UserVacation'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
   /account/fts:
     post:
       summary: Changes FTS status
@@ -603,8 +603,8 @@ paths:
                         properties: # List all returned objects/data here
                           user:
                             $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /account/marriage:
@@ -649,8 +649,8 @@ paths:
                         properties: # List all returned objects/data here
                           user:
                             $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /account/driver:
@@ -696,8 +696,8 @@ paths:
                         properties: # List all returned objects/data here
                           user:
                             $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
 
@@ -750,8 +750,8 @@ paths:
                               $ref: '#/components/schemas/Team'
                           user:
                             $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/leaveteam:
@@ -792,8 +792,8 @@ paths:
                             type: array
                             items:
                               $ref: '#/components/schemas/Team'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/{id}/resetcode:
@@ -826,8 +826,8 @@ paths:
                         properties:
                           team:
                             $ref: '#/components/schemas/Team'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/{code}/findteam:
@@ -861,8 +861,8 @@ paths:
                             $ref: '#/components/schemas/Team'
                           user:
                             $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/users:
     get:
       summary: Return all team members
@@ -912,8 +912,8 @@ paths:
                                       description: All user's shifts
                                       items:
                                         $ref: '#/components/schemas/Shift'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
   /teams/settings/update:
     post:
       summary: Update a team setting
@@ -957,8 +957,8 @@ paths:
                         properties:
                           team:
                             $ref: '#/components/schemas/Team'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/default/update:
@@ -990,8 +990,8 @@ paths:
                         properties:
                           affected_rows:
                             type: integer
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/{id}/notificationsettings:
@@ -1025,8 +1025,8 @@ paths:
                         properties: # List all returned objects/data here
                           team:
                             $ref: '#/components/schemas/Team'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
     post:
@@ -1074,8 +1074,8 @@ paths:
                         properties: # List all returned objects/data here
                           team:
                             $ref: '#/components/schemas/Team'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/{id}/grouplink:
@@ -1111,8 +1111,8 @@ paths:
                             type: string
                           link:
                             type: string                            
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Updates team Telegram group link
       tags:
@@ -1148,8 +1148,8 @@ paths:
                         properties: # List all returned objects/data here
                           team:
                             $ref: '#/components/schemas/Team'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/{id}/availability:
@@ -1196,8 +1196,8 @@ paths:
                                       type: array
                                       items:
                                         $ref: '#/components/schemas/UserVacation'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /teams/{id}/stats:
@@ -1254,12 +1254,12 @@ paths:
         * team_admin
       parameters:
         - name: teamid
-          in: query
+          in: path
           required: true
           schema:
             type: integer
         - name: locid
-          in: query
+          in: path
           required: true
           schema:
             type: integer
@@ -1277,8 +1277,8 @@ paths:
                         properties: # List all returned objects/data here
                           location:
                             $ref: '#/components/schemas/Location'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
 
@@ -1383,8 +1383,8 @@ paths:
                                       description: All user's shifts
                                       items:
                                         $ref: '#/components/schemas/Shift'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /schedules/leaveshift:
@@ -1484,8 +1484,8 @@ paths:
                                       items:
                                         $ref: '#/components/schemas/Shift'
 
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /schedules/shiftuserstatus:
@@ -1580,8 +1580,8 @@ paths:
                                           - properties:
                                               marriage_mate:
                                                 $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /schedules/{id}/approveall/{status}:
@@ -1628,8 +1628,8 @@ paths:
                                       type: array
                                       items:
                                         $ref: '#/components/schemas/Shift'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /schedules/shifts/{id}/users:
@@ -1667,8 +1667,8 @@ paths:
                                 - properties:
                                     marriage_mate:
                                       $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /schedules/trades:
@@ -1787,8 +1787,8 @@ paths:
                                           - properties:
                                               marriage_mate:
                                                 $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
   /user/shifts:
@@ -1862,20 +1862,86 @@ paths:
                             type: array
                             items:
                               $ref: '#/components/schemas/Shift'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
-
-
-
-
+  /schedule/{teamid}:
+    get:
+      summary: Get a schedule
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          schedules:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Schedule'
+        404:
+          $ref: '#/components/responses/NotFound'
+  /schedules/show/{id}:
+    get:
+      summary: Get a schedule
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          schedule:
+                            allOf:
+                              - $ref: '#/components/schemas/Schedule'
+                              - properties:
+                                  shifts:
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/Shift'
+        404:
+          $ref: '#/components/responses/NotFound'
 
 
 components:
   responses:
     BadRequest:
-      description: 400 Bad request (something wrong with URL or parameters)
+      description: 404 Bad request (something wrong with URL or parameters)
       content:
         application/json:
           schema:

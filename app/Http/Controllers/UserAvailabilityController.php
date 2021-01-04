@@ -40,7 +40,7 @@ class UserAvailabilityController extends Controller
     $user = Auth::user();
     $team = Team::find($teamid);
     
-    if (!$team) return RB::error(400);
+    if (!$team) return RB::error(404);
 
     if (($user->hasRole(['elder','team_admin'], $team) || $user->hasRole('super_admin', null))) {
       return RB::success(['users' => $team->user_availability()->get()]);
@@ -124,7 +124,7 @@ class UserAvailabilityController extends Controller
       UserVacation::destroy($id);
       return RB::success(['vacation' => $user->user_vacations]);
     } else {
-      return RB::error(400);
+      return RB::error(404);
     }
 
   }

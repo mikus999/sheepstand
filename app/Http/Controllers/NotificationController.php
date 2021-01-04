@@ -25,7 +25,7 @@ class NotificationController extends Controller
       $user = Auth::user();
       $team = $user->teams()->find($id);
 
-      if (!$team) return RB::error(400);
+      if (!$team) return RB::error(404);
 
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
         $settings = $team->notificationsettings;
@@ -68,7 +68,7 @@ class NotificationController extends Controller
       $team = Team::find($teamid);
       $user = Auth::user();
 
-      if (!$team) return RB::error(400);
+      if (!$team) return RB::error(404);
 
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
         if (empty($settings)) {
@@ -102,7 +102,7 @@ class NotificationController extends Controller
       $user = Auth::user();
       $team = $user->teams()->find($id);
 
-      if (!$team) return RB::error(400);
+      if (!$team) return RB::error(404);
 
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
         $settings = $team->notificationsettings;
@@ -138,7 +138,7 @@ class NotificationController extends Controller
       $channel_id = '';
       $link = '';
 
-      if (!$team) return RB::error(400);
+      if (!$team) return RB::error(404);
 
       $settings = $team->notificationsettings;
       if ($settings) {

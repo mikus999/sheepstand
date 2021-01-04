@@ -188,8 +188,8 @@ class TeamController extends Controller
         $selfadd = true;
       }
 
-      if (!$targetUser) return RB::error(400);
-      if (!$team) return RB::error(400);
+      if (!$targetUser) return RB::error(404);
+      if (!$team) return RB::error(404);
 
 
       // Check if the user is adding himself to a team.
@@ -239,8 +239,8 @@ class TeamController extends Controller
       }
 
 
-      if (!$targetUser) return RB::error(400);
-      if (!$team) return RB::error(400); // Bad Request; team not found
+      if (!$targetUser) return RB::error(404);
+      if (!$team) return RB::error(404); // Bad Request; team not found
 
       // Only Team Admins and Super Admins can add/remove users from a team
       if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
@@ -275,7 +275,7 @@ class TeamController extends Controller
       $user = Auth::user();
       $team = Team::find($id);
 
-      if (!$team) return RB::error(400); // Bad Request; team not found
+      if (!$team) return RB::error(404); // Bad Request; team not found
 
 
       if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
@@ -308,7 +308,7 @@ class TeamController extends Controller
         return RB::success($data);
 
       } else {
-        return RB::error(400); // Bad Request; team not found
+        return RB::error(404); // Bad Request; team not found
       }
 
     }
@@ -338,7 +338,7 @@ class TeamController extends Controller
         return RB::success(['users' => $teamUsers]);
 
       } else {
-        return RB::error(400); // Bad request
+        return RB::error(404); // Bad request
       }
       
     }
@@ -360,7 +360,7 @@ class TeamController extends Controller
       $user = Auth::user();
       $team = Team::with('notificationsettings')->find($teamid);
 
-      if (!$team) return RB::error(400); // Bad Request; team not found
+      if (!$team) return RB::error(404); // Bad Request; team not found
 
       if ($user->hasRole(['team_admin'], $team) || $user->hasRole('super_admin', null)) {
         $team->$setting = $value;

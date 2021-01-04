@@ -253,7 +253,7 @@ export default {
     async getSchedData () {
       await axios.get('/api/schedules/' + this.team.id)
         .then(response => {
-          this.schedules = response.data
+          this.schedules = response.data.data.schedules
 
           // Filter schedules to only show those with status of 1 (ASSIGNMENTS) or 2 (FINAL)
           this.schedules = this.schedules.filter(sched => ["1","2"].indexOf(sched.status) > -1)

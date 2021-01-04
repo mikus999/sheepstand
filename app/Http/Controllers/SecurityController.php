@@ -80,7 +80,7 @@ class SecurityController extends Controller
           return RB::success(['roles' => $roles]);
 
         } else {
-          return RB::error(400);
+          return RB::error(404);
         }
 
     }

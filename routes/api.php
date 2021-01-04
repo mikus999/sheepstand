@@ -66,8 +66,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     // SCHEDULE routes
-    Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']); // TODO OpenAPI
-    Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']); // TODO OpenAPI
+    Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);
+    Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']);
     Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts'); // TODO OpenAPI
     Route::post('schedules/{id}/status', 'ScheduleController@updateStatus'); // TODO OpenAPI
     Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates'); // TODO OpenAPI
@@ -76,7 +76,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('schedules/{id}/templates/make', 'ScheduleController@saveAsTemplate'); // TODO OpenAPI
 
     // LOCATION routes
-    Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault'); // TODO OpenAPI
+    Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');
 
     // TRANSLATION routes
     Route::post('translation/update', 'TranslationController@updateString'); // TODO OpenAPI

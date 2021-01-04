@@ -266,8 +266,8 @@ export default {
 
       await axios.get('/api/schedules/show/' + this.id)
         .then(response => {
-          this.storeSchedule(response.data)
-          this.storeShifts(response.data.shifts)
+          this.storeSchedule(response.data.data.schedule)
+          this.storeShifts(response.data.data.schedule.shifts)
           this.date = this.$dayjs(response.data.date_start).format("YYYY-MM-DD")
 
           this.pageLoad_progress = 10

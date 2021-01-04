@@ -10,6 +10,7 @@ use App\Models\Team;
 use Auth;
 use DB;
 use Carbon\Carbon;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class ScheduleController extends Controller
 {
@@ -17,13 +18,20 @@ class ScheduleController extends Controller
 
     public function index($teamid)
     {
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
+
+      if ($team) {
         $schedules = Schedule::withCount('shifts')
                         ->where('team_id','=',$teamid)
                         ->where('status','!=',9)
                         ->orderBy('date_start', 'asc')
                         ->get();
 
-        return response()->json($schedules);
+        return RB::success(['schedules' => $schedules]);
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 
@@ -53,8 +61,15 @@ class ScheduleController extends Controller
 
     public function show($id)
     {
-        $schedule = Schedule::with('shifts')->find($id);
-        return response()->json($schedule);
+      $user = Auth::user();
+      $schedule = Schedule::with('shifts')->find($id);
+
+      if ($schedule && $user->teams->find($schedule->team_id)) {
+        return RB::success(['schedule' => $schedule]);
+      } else {
+        return RB::error(404); // schedule not found
+      }
+
     }
 
 
@@ -115,7 +130,7 @@ class ScheduleController extends Controller
                         ->orderBy('date_start', 'asc')
                         ->get();
 
-        return response()->json($schedules);
+        return RB::success(['schedules' => $schedules]);
     }
 
 
@@ -125,6 +140,8 @@ class ScheduleController extends Controller
         $user = Auth::user();
         $teamid = $request->team_id;
         $team = Team::find($teamid);
+
+        if (!$team) return RB::error(404); // team not found
 
         if (($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
           
@@ -136,13 +153,11 @@ class ScheduleController extends Controller
             'template_name' => $request->template_name,
           ]);
 
-
-          $data = [
-            'schedule' => $schedule,
-          ];
+          return RB::success(['schedule' => $schedule]);
+        } else {
+          return RB::error(403); // access denied
         }
 
-        return response()->json($data);
     }
 
 
@@ -183,7 +198,7 @@ class ScheduleController extends Controller
           }
         }
         
-        return response()->json($schedule);
+        return RB::success(['schedule' => $schedule]);
     }
 
 
@@ -225,6 +240,6 @@ class ScheduleController extends Controller
           }
         }
         
-        return response()->json($schedule);
+        return RB::success(['schedule' => $schedule]);
     }
 }

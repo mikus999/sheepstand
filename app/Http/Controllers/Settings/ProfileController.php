@@ -41,7 +41,7 @@ class ProfileController extends Controller
       $team = $user->teams->find($request->team_id);
       $targetUser = $user;
 
-      if (!$team) return RB::error(400); // team not found
+      if (!$team) return RB::error(404); // team not found
 
       if ($request->user_id) {
         if (($team && $user->hasRole('team_admin', $team)) || $user->hasRole('super_admin', null)) {
@@ -65,7 +65,7 @@ class ProfileController extends Controller
       $user = Auth::user();
       $team = $user->teams->find($request->team_id);
 
-      if (!$team) return RB::error(400); // team not found
+      if (!$team) return RB::error(404); // team not found
 
       if (($team && $user->hasRole('team_admin', $team)) || $request->mate1_id == $user->id ||
           $user->hasRole('super_admin', null)) {     
@@ -105,7 +105,7 @@ class ProfileController extends Controller
       $team = $user->teams->find($request->team_id);
       $targetUser = $user;
       
-      if (!$team) return RB::error(400); // team not found
+      if (!$team) return RB::error(404); // team not found
 
       if ($request->user_id) {
         if (($team && $user->hasRole('team_admin', $team)) || $user->hasRole('super_admin', null)) {

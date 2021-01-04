@@ -109,7 +109,7 @@ class LocationController extends Controller
             return RB::success(['location' => $location]);
 
           } else {
-            return RB::error(400); // location not found
+            return RB::error(404); // location not found
           }
 
         } else {
@@ -117,7 +117,7 @@ class LocationController extends Controller
         }
 
       } else {
-        return RB::error(400); // team not found
+        return RB::error(404); // team not found
       }
 
     }
