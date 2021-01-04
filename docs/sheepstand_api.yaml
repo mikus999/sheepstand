@@ -2128,6 +2128,8 @@ components:
           format: date-time
         template_name:
           type: string
+        shifts_count:
+          type: integer
         created_at:
           type: string
           format: date-time

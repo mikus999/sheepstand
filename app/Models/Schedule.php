@@ -15,6 +15,7 @@ class Schedule extends Model
     ];
 
     protected $with = ['team'];
+    protected $withCount = ['shifts'];
 
     public function user()
     {
@@ -31,6 +32,7 @@ class Schedule extends Model
         return $this->hasMany('App\Models\Shift')
                     ->with('location','users');
     }
+
 
 
 }

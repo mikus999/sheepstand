@@ -22,8 +22,7 @@ class ScheduleController extends Controller
       $team = $user->teams->find($teamid);
 
       if ($team) {
-        $schedules = Schedule::withCount('shifts')
-                        ->where('team_id','=',$teamid)
+        $schedules = Schedule::where('team_id','=',$teamid)
                         ->where('status','!=',9)
                         ->orderBy('date_start', 'asc')
                         ->get();
