@@ -68,39 +68,38 @@ Route::group(['middleware' => 'auth:api'], function () {
     // SCHEDULE routes
     Route::get('schedules/{teamid}', ['as' => 'schedules.index', 'uses' => 'ScheduleController@index']);
     Route::get('schedules/show/{id}', ['as' => 'schedules.show', 'uses' => 'ScheduleController@show']);
-    Route::get('schedules/{id}/counts/{date}/{dayOfWeek}', 'ScheduleController@getShiftCounts'); // TODO OpenAPI
-    Route::post('schedules/{id}/status', 'ScheduleController@updateStatus'); // TODO OpenAPI
-    Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates'); // TODO OpenAPI
-    Route::post('schedules/templates', 'ScheduleController@newTemplate'); // TODO OpenAPI
-    Route::post('schedules/templates/{id}/copy', 'ScheduleController@makeFromTemplate'); // TODO OpenAPI
-    Route::post('schedules/{id}/templates/make', 'ScheduleController@saveAsTemplate'); // TODO OpenAPI
+    Route::post('schedules/{id}/status', 'ScheduleController@updateStatus');
+    Route::get('schedules/templates/{teamid}', 'ScheduleController@getTemplates');
+    Route::post('schedules/templates', 'ScheduleController@newTemplate');
+    Route::post('schedules/templates/{id}/copy', 'ScheduleController@makeFromTemplate');
+    Route::post('schedules/{id}/templates/make', 'ScheduleController@saveAsTemplate'); //
 
     // LOCATION routes
     Route::post('teams/{teamid}/locations/{locid}/makedefault', 'LocationController@setDefault');
 
     // TRANSLATION routes
-    Route::post('translation/update', 'TranslationController@updateString'); // TODO OpenAPI
-    Route::get('translation/strings/{lang}', 'TranslationController@getStrings'); // TODO OpenAPI
-    Route::get('translation/permissions', 'TranslationController@getUserLanguages'); // TODO OpenAPI
-    Route::post('translation/permissions', 'TranslationController@setUserLanguages'); // TODO OpenAPI
-    Route::post('translation/languages/edit', 'TranslationController@setSiteLanguage'); // TODO OpenAPI
+    Route::post('translation/update', 'TranslationController@updateString');
+    Route::get('translation/strings/{lang}', 'TranslationController@getStrings');
+    Route::get('translation/permissions', 'TranslationController@getUserLanguages');
+    Route::post('translation/permissions', 'TranslationController@setUserLanguages');
+    Route::post('translation/languages/edit', 'TranslationController@setSiteLanguage');
 
 
     // MESSAGE routes
-    Route::get('messages/{id}/markread', 'MessageController@markAsRead'); // TODO OpenAPI
-    Route::get('messages/{id}/markunread', 'MessageController@markAsUnread'); // TODO OpenAPI
-    Route::get('messages/{id}/hide', 'MessageController@hideMessage'); // TODO OpenAPI
-    Route::get('messages/count', 'MessageController@getMessageCount'); // TODO OpenAPI
-    Route::get('messages/banners', 'MessageController@getActiveBanners'); // TODO OpenAPI
+    Route::get('messages/{id}/markread', 'MessageController@markAsRead');
+    Route::get('messages/{id}/markunread', 'MessageController@markAsUnread');
+    Route::get('messages/{id}/hide', 'MessageController@hideMessage');
+    Route::get('messages/count', 'MessageController@getMessageCount');
+    Route::get('messages/banners', 'MessageController@getActiveBanners');
 
 
     // TASKS routes
-    Route::get('tasks/scheduled', 'TaskController@scheduledTasks'); // TODO OpenAPI
+    Route::get('tasks/scheduled', 'TaskController@scheduledTasks');
 
 
     // API routes (must be listed after all other routes are declared)
-    Route::apiResource('teams', 'TeamController'); // TODO OpenAPI
-    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]); // TODO OpenAPI
+    Route::apiResource('teams', 'TeamController');
+    Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);
     Route::apiResource('schedules.shifts', 'ShiftController'); // TODO OpenAPI
     Route::apiResource('teams.locations', 'LocationController'); // TODO OpenAPI
     Route::apiResource('messages', 'MessageController'); // TODO OpenAPI

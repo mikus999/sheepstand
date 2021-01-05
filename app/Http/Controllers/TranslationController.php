@@ -7,11 +7,16 @@ use App\Models\User;
 use App\Models\Language;
 use Auth;
 use DB;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class TranslationController extends Controller
 {
     public function updateString(Request $request)
     {
+      $user = Auth::user();
+      
+      if ($user->hasRole('translator', null) || $user->hasRole('super_admin', null)) {
+        
         // REQUEST object should include:
         //  'section' -> top level of json array (optional if key is not nested)
         //  'key' -> nested translation key (optional. if ommited the entire section will be replaced)
@@ -64,7 +69,9 @@ class TranslationController extends Controller
                     };
                 }
             };
-        };
+        } else {
+          return RB::error(400); // Bad request, missing strings
+        }
 
 
         // Write File
@@ -75,7 +82,11 @@ class TranslationController extends Controller
 
         $newJsonString = json_decode($newJsonString);
 
-        return response()->json($newJsonString);
+        return RB::success(['strings' => $newJsonString]);
+
+      } else {
+        return RB::error(403); // access denied
+      }
     }
 
 
@@ -92,7 +103,7 @@ class TranslationController extends Controller
           $jsonString = null;
         }
 
-        return response()->json($jsonString);
+        return RB::success(['strings' => $jsonString]);
     }
 
 
@@ -112,22 +123,35 @@ class TranslationController extends Controller
     // GET
     public function getUserLanguages(Request $request)
     {
-        $user = Auth::user();
-
-        return response()->json($user->languages);
+      $user = Auth::user();
+      if ($user->hasRole('translator', null)) {
+        return RB::success(['languages' => $user->languages]);
+      } else {
+        return RB::error(403); // access denied
+      }
     }
 
 
     public function setUserLanguages(Request $request)
     {
+      $user = Auth::user();
       $targetUser = User::find($request->user_id);
       $languages = $request->languages;
 
-      $targetUser->languages()->detach();
+      if (!$targetUser) return RB::error(404); // target user not found
 
-      foreach ($languages as $lang) {
-        $language = Language::find($lang);
-        $targetUser->languages()->attach($language);
+      if ($user->hasRole('super_admin', null)) {
+        $targetUser->languages()->detach();
+
+        foreach ($languages as $lang) {
+          $language = Language::find($lang);
+          $targetUser->languages()->attach($language);
+        }
+
+        return RB::success(['languages' => $targetUser->languages]);
+
+      } else {
+        return RB::error(403); // access denied
       }
     }
 
@@ -136,20 +160,21 @@ class TranslationController extends Controller
       $user = Auth::user();
       $language = $request->language;
       $changetype = $request->changetype;
-      $site_lang = 0;
+      $site_lang = $changetype == 'add' ? 1 : 0;
 
-      if ($changetype == 'add') {
-        $site_lang = 1;
-      }
-
+      
       if ($user->hasRole('super_admin', null)) {
         $lang = Language::where('code','=',$language)->first();
+        if (!$lang) return RB::error(404); // language not found
+
         $lang->site_language = $site_lang;
         $lang->save();
+
+        return RB::success(['languages' => Language::all()]);
+
+      } else {
+        return RB::error(403); // access denied
       }
-
-      return response()->json(Language::all());
-
     }
 
 }

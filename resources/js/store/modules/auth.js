@@ -149,7 +149,7 @@ export const actions = {
         url: '/api/teams/' + state.team.id
       })
       .then(response => {
-        commit(types.SET_TEAM, response.data)
+        commit(types.SET_TEAM, response.data.data.team)
       })
     }
   },

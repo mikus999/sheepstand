@@ -141,7 +141,7 @@ export default {
         url: '/api/translation/permissions',
       })
       .then(response => {
-        this.languages = response.data
+        this.languages = response.data.data.languages
         this.languages = this.languages.filter(lang => lang.code != 'en')
       })
     },
@@ -189,9 +189,9 @@ export default {
       })
       .then(response => {
         if (isSource) {
-          this.langSource = response.data
+          this.langSource = response.data.data.strings
         } else {
-          this.langTarget = response.data
+          this.langTarget = response.data.data.strings
         }
         this.getCategories()
       })
@@ -307,7 +307,7 @@ export default {
         }
       })
       .then(response => {
-        this.langTarget = response.data
+        this.langTarget = response.data.data.strings
       })
 
     },

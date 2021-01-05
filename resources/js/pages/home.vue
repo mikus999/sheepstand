@@ -51,7 +51,7 @@ export default {
     async getBanners() {
       await axios.get('/api/messages/banners')
       .then(response => {
-        this.banners = response.data
+        this.banners = response.data.data.banners
       })
     }
   },

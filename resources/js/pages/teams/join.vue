@@ -275,17 +275,15 @@ export default {
       formData.append('display_name', this.team_name)
       axios.post('/api/teams/', formData)
         .then(response => {
-          if (response.data.message === 'ERROR') {
-            this.teamNameError = true
-            this.teamNotFoundMsg = this.$t('teams.error_creating_team')
-          } else {
             this.refreshStore()
-
-            this.setTeam(response.data.team, 'self')
+            this.setTeam(response.data.data.team, 'self')
 
             this.stepperCurr = 4
             this.isNewTeam = true
-          }
+        })
+        .catch(error => {
+          this.teamNameError = true
+          this.teamNotFoundMsg = this.$t('teams.error_creating_team')
         })
     },
 

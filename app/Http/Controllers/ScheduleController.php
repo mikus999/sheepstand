@@ -38,22 +38,27 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
+        $team = $user->teams->find($request->team_id);
 
-        $schedule = Schedule::create([
-            'team_id' => $request->team_id,
-            'user_id' => $user->id,
-            'status' => 0,
-            'date_start' => date($request->date_start), // YYYY-MM-DD
-        ]);
+        if ($team) {
+          if ($user->hasRole('team_admin', $team)) {     
+            $schedule = Schedule::create([
+                'team_id' => $request->team_id,
+                'user_id' => $user->id,
+                'status' => 0,
+                'date_start' => date($request->date_start), // YYYY-MM-DD
+            ]);
 
+            return RB::success(['schedule' => $schedule]);
 
-        $data = [
-            'schedule' => $schedule,
-            'status' => (bool) $schedule,
-            'message' => $schedule ? 'Schedule Created!' : 'Error Creating Schedule',
-        ];
+          } else {
+            return RB::error(403); // access denied
+          }
 
-        return response()->json($data);
+        } else {
+          return RB::error(404); // team not found
+        }
+
     }
 
 
@@ -75,23 +80,47 @@ class ScheduleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $schedule = Schedule::with('shifts')->find($id);
-        $schedule->status = $request->status;
-        $schedule->date_start = date($request->date_start); // YYYY-MM-DD
-        $schedule->save();
+      $user = Auth::user();
+      $schedule = Schedule::with('shifts')->find($id);
 
-        return response()->json($schedule);
+      if ($schedule) {
+        $team = $user->teams->find($schedule->team_id);
+
+        if ($team && $user->hasRole('team_admin', $team)) {     
+          $schedule = Schedule::with('shifts')->find($id);
+          $schedule->status = $request->status;
+          $schedule->date_start = date($request->date_start); // YYYY-MM-DD
+          $schedule->save();
+          
+          return RB::success(['schedule' => $schedule]);
+
+        } else {
+          return RB::error(403); // access denied
+        }
+      } else {
+        return RB::error(404); // schedule not found
+      }
     }
 
 
 
     public function destroy($id)
     {
-      Schedule::destroy($id);
-      $data = [
-          'message' => 'Location Deleted!',
-      ];
-      return response()->json($data);
+      $user = Auth::user();
+      $schedule = $user->schedules->find($id);
+
+      if ($schedule) {
+        $team = $user->teams->find($schedule->team_id);
+
+        if ($team && $user->hasRole('team_admin', $team)) {     
+          Schedule::destroy($id);          
+          return RB::success();
+        } else {
+          return RB::error(403); // access denied
+        }
+      } else {
+        return RB::error(404); // schedule not found
+      }
     }
 
 
@@ -113,39 +142,57 @@ class ScheduleController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $schedule = Schedule::with('shifts')->find($id);
-        $schedule->status = $request->status;
-        $schedule->save();
+      $schedule = Schedule::with('shifts')->find($id);
+      $team = $schedule->team;
 
-        return response()->json($schedule);
+      if ($schedule && $user->teams->find($schedule->team_id)) {
+        if ($user->hasRole('team_admin', $team)) {     
+          $schedule->status = $request->status;
+          $schedule->save();
+
+          return RB::success(['schedule' => $schedule]);
+          
+        } else {
+          return RB::error(403); // access denied
+        }
+      } else {
+        return RB::error(404); // schedule not found
+      }
     }
 
 
     public function getTemplates($teamid)
     {
-        $schedules = Schedule::withCount('shifts')
-                        ->where('team_id','=',$teamid)
-                        ->where('status','=',9)
-                        ->orderBy('date_start', 'asc')
-                        ->get();
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
+
+      if (!$team) return RB::error(404); // team not found
+
+      if ($user->hasRole('team_admin', $team)) {     
+        $schedules = Schedule::where('team_id','=',$teamid)
+                      ->where('status','=',9)
+                      ->orderBy('date_start', 'asc')
+                      ->get();
 
         return RB::success(['schedules' => $schedules]);
+
+      } else {
+        return RB::error(403); // access denied
+      }
     }
 
 
     public function newTemplate(Request $request)
     {
-        $data = [];
         $user = Auth::user();
-        $teamid = $request->team_id;
-        $team = Team::find($teamid);
+        $team = Team::find($request->team_id);
 
         if (!$team) return RB::error(404); // team not found
 
-        if (($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
+        if ($user->hasRole('team_admin', $team)) {
           
           $schedule = Schedule::create([
-            'team_id' => $teamid,
+            'team_id' => $team->id,
             'user_id' => $user->id,
             'status' => 9,
             'date_start' => $this->template_date, // YYYY-MM-DD
@@ -153,6 +200,7 @@ class ScheduleController extends Controller
           ]);
 
           return RB::success(['schedule' => $schedule]);
+
         } else {
           return RB::error(403); // access denied
         }
@@ -170,8 +218,9 @@ class ScheduleController extends Controller
         $schedule_date = Carbon::createFromDate($request->date_start);
         $diff = $template_date->diffInDays($schedule_date); // Difference in days between template Monday (2001-01-01) and new schedule Monday
 
+        if (!$template || !$team) return RB::error(404); // template or team not found
 
-        if (($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
+        if ($user->hasRole('team_admin', $team)) {
 
           $schedule = Schedule::create([
             'team_id' => $template->team_id,
@@ -195,9 +244,13 @@ class ScheduleController extends Controller
               'mandatory' => $shift->mandatory
             ]);
           }
+
+          return RB::success(['schedule' => $schedule]);
+
+        } else {
+          return RB::error(403); // access denied
         }
         
-        return RB::success(['schedule' => $schedule]);
     }
 
 
@@ -212,7 +265,10 @@ class ScheduleController extends Controller
         $diff = $template_date->diffInDays($schedule_date); // Difference in days between template Monday (2001-01-01) and new schedule Monday
 
 
-        if (($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
+        if (!$schedule || !$team) return RB::error(404); // schedule or team not found
+
+
+        if ($user->hasRole('team_admin', $team)) {
 
           $template = Schedule::create([
             'team_id' => $team->id,
@@ -237,8 +293,12 @@ class ScheduleController extends Controller
               'mandatory' => $shift->mandatory
             ]);
           }
+
+          return RB::success(['schedule' => $schedule]);
+
+        } else {
+          return RB::error(403); // access denied
         }
         
-        return RB::success(['schedule' => $schedule]);
     }
 }

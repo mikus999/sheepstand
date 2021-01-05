@@ -40,7 +40,7 @@ export const actions = {
       axios.get('/api/tasks/scheduled')
       .then(response => {
         // Commit message counts for inbox
-        commit(types.SET_MESSAGE_COUNT, response.data.message_count)
+        commit(types.SET_MESSAGE_COUNT, response.data.data.message_count)
 
         resolve()
       })

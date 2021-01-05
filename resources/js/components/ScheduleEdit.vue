@@ -497,7 +497,7 @@ export default {
           }
         })
         .then(response => {
-          this.storeSchedule(response.data)
+          this.storeSchedule(response.data.data.schedule)
         })
     },
 

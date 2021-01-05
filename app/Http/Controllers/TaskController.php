@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Traits\MessageTrait;
 use Illuminate\Http\Request;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class TaskController extends Controller
 {
@@ -11,10 +12,6 @@ class TaskController extends Controller
 
   public function scheduledTasks()
   {
-    $data = [
-      'message_count' => $this->getCount()
-    ];
-
-    return response()->json($data);
+    return RB::success(['message_count' => $this->getCount()]);
   }
 }

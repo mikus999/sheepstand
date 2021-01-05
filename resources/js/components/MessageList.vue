@@ -188,8 +188,8 @@ export default {
         })
         .then(response => {
           this.showSnackbar(this.$t('messages.success_delete_message'), 'success')
-          this.received = response.data.received
-          this.sent = response.data.sent
+          this.received = response.data.data.received
+          this.sent = response.data.data.sent
           this.getMessageCounts()
         })
       }
@@ -201,8 +201,8 @@ export default {
         url: '/api/messages/' + message_id + '/markread',
       })
       .then(response => {    
-        this.received = response.data.received
-        this.sent = response.data.sent
+        this.received = response.data.data.received
+        this.sent = response.data.data.sent
         this.getMessageCounts()
       })
     },
@@ -213,8 +213,8 @@ export default {
         url: '/api/messages/' + message_id + '/markunread',
       })
       .then(response => {    
-        this.received = response.data.received
-        this.sent = response.data.sent
+        this.received = response.data.data.received
+        this.sent = response.data.data.sent
         this.getMessageCounts()
       })
     },

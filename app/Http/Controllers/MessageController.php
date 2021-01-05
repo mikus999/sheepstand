@@ -9,6 +9,7 @@ use App\Models\Team;
 use DB;
 use Helper;
 use Auth;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 
 class MessageController extends Controller
@@ -78,28 +79,7 @@ class MessageController extends Controller
       return response()->json($data);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  Integer  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Integer  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -145,6 +125,8 @@ class MessageController extends Controller
     public function markAsRead($id)
     {
       $user = Auth::user();
+      
+      if (!Message::find($id)) return RB::error(404); // message not found
 
       DB::table('message_user')->updateOrInsert(
         ['user_id' => $user->id, 'message_id' => $id],
@@ -156,13 +138,15 @@ class MessageController extends Controller
         'sent' => $this->getSentMessages()
       ];
 
-      return response()->json($data);
+      return RB::success($data);
     }
 
 
     public function markAsUnread($id)
     {
       $user = Auth::user();
+
+      if (!Message::find($id)) return RB::error(404); // message not found
 
       DB::table('message_user')->updateOrInsert(
         ['user_id' => $user->id, 'message_id' => $id],
@@ -174,7 +158,7 @@ class MessageController extends Controller
         'sent' => $this->getSentMessages()
       ];
 
-      return response()->json($data);
+      return RB::success($data);
     }
 
 
@@ -183,6 +167,8 @@ class MessageController extends Controller
     public function hideMessage($id)
     {
       $user = Auth::user();
+
+      if (!Message::find($id)) return RB::error(404); // message not found
 
       DB::table('message_user')->updateOrInsert(
         ['user_id' => $user->id, 'message_id' => $id],
@@ -194,21 +180,19 @@ class MessageController extends Controller
         'sent' => $this->getSentMessages()
       ];
 
-      return response()->json($data);
+      return RB::success($data);
     }
 
 
 
     public function getMessageCount()
     {
-      $data = $this->getCount();
-      return response()->json($data);
+      return RB::success($this->getCount());
     }
 
 
     public function getActiveBanners()
     {
-      $data = $this->getBanners();
-      return response()->json($data);
+      return RB::success(['banners' => $this->getBanners()]);
     }
 }

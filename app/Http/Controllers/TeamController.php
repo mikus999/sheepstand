@@ -24,11 +24,7 @@ class TeamController extends Controller
     public function index()
     {
       $user = Auth::user();
-
-      $data = [
-          'teams' => $user->teams()->with('notificationsettings')->get()
-      ];
-      return response()->json($data);
+      return RB::success(['teams' => $user->teams()->with('notificationsettings')->get()]);
     }
 
 
@@ -44,6 +40,8 @@ class TeamController extends Controller
       $userid = $user->id;
       $teamcode = Helper::getUniqueCode(6, 'team_code');
       $teamUUID = Helper::getUniqueCode(12, 'team_name');
+
+      if ($request->display_name == null) return RB::error(400); // Bad request, team name is null
 
       $newteam = Team::create([
           'name' => $teamUUID,
@@ -73,14 +71,8 @@ class TeamController extends Controller
       $user->attachRole('team_admin', $newteam);
 
 
-      $data = [
-          'team' => $newteam,
-          'status' => (bool) $newteam,
-          'teamcode' => $teamcode,
-          'message' => $newteam ? 'Team Created!' : 'ERROR',
-      ];
+      return RB::success(['team' => $newteam]);
 
-      return response()->json($data);
     }
 
 
@@ -92,9 +84,14 @@ class TeamController extends Controller
      */
     public function show($id)
     {
-        $user = Auth::user();
-        $team = $user->teams()->with('notificationsettings')->find($id);
-        return response()->json($team);
+      $user = Auth::user();
+      $team = $user->teams()->with('notificationsettings')->find($id);
+      
+      if ($team) {
+        return RB::success(['team' => $team]);
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 
@@ -118,10 +115,16 @@ class TeamController extends Controller
           }
           $team->user_id = $request->user_id;
           $team->save();
+          
+          return RB::success(['team' => $team]);
+
+        } else {
+          return RB::error(403); // access denied
         }
+      } else {
+        return RB::error(404); // team not found
       }
 
-      return response()->json($team);
     }
 
 
@@ -135,20 +138,18 @@ class TeamController extends Controller
     {
         $user = Auth::user();
         $team = $user->teams->find($id);
-        $message = 'Access Denied';
 
         if ($team) {
           if ($user->hasRole('team_admin', $team)) {
             Team::destroy($id);
-            $message = 'Team Deleted';
+            return RB::success();
+          } else {
+            return RB::error(403); // access denied
           }
+
+        } else {
+          return RB::error(404); // team not found
         }
-
-        $data = [
-          'message' => $message,
-        ];
-
-        return response()->json($data);
 
     }
 
