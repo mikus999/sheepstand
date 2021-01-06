@@ -13,10 +13,9 @@ mix
   .disableNotifications()
 
 if (mix.inProduction()) {
-  mix
+  mix.versionHash()
     // .extract() // Disabled until resolved: https://github.com/JeffreyWay/laravel-mix/issues/1889
     // .version() // Use `laravel-mix-versionhash` for the generating correct Laravel Mix manifest file.
-    .versionHash()
 } else {
   mix.sourceMaps()
 
@@ -24,6 +23,7 @@ if (mix.inProduction()) {
     //mix.bundleAnalyzer(); // uncomment to view analyzer window
   }
 }
+//mix.bundleAnalyzer(); // uncomment to view analyzer window
 
 mix.webpackConfig({
   plugins: [
