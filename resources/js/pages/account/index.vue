@@ -174,7 +174,7 @@
 import axios from 'axios'
 import helper from '../../mixins/helper'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import AvailabilitySchedule from '~/components/AvailabilitySchedule.vue'
 import VacationSchedule from '~/components/VacationSchedule.vue'
 

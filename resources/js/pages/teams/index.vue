@@ -125,7 +125,7 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import UserTable from '~/components/UserTable.vue'
 import Locations from '~/components/Locations.vue'
 import NotificationInfo from '~/components/NotificationInfo.vue'

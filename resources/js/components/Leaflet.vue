@@ -40,16 +40,16 @@
       </v-toolbar>
 
 
-      <l-map 
+      <LMap
         ref="map" 
         :center="center" 
         :zoom="zoom"
         :style="'width: ' + width + '; height: ' + height" 
         @ready="onMapReady()">
         
-        <l-tile-layer :url="url" :attribution="attribution" />
+        <LTileLayer :url="url" :attribution="attribution" />
 
-      </l-map>
+      </LMap>
 
 
       <v-toolbar v-if="!readonly" dense dark bottom>
@@ -86,12 +86,12 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import 'leaflet/dist/leaflet.css'
-import L, { latLng } from 'leaflet'
-import { LMap, LTileLayer, LControl, LMarker } from 'vue2-leaflet'
+import L from 'leaflet'
+import { LMap, LTileLayer } from 'vue2-leaflet'
 import drawControl from 'leaflet-draw'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -106,9 +106,7 @@ export default {
   mixins: [helper],
   components: {
     LMap,
-    LTileLayer,
-    LControl,
-    LMarker
+    LTileLayer
   },
   props: {
     location: {
@@ -138,7 +136,7 @@ export default {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       edited: null,
-      center: latLng(1, 1),
+      center: L.latLng(1, 1),
       zoom: 5,
       shapeOptions: {
         fillColor: this.getFill,
@@ -212,7 +210,7 @@ export default {
     
     getMyPosition() {
       navigator.geolocation.getCurrentPosition(position => {
-       this.center = latLng(position.coords.latitude, position.coords.longitude)
+       this.center = L.latLng(position.coords.latitude, position.coords.longitude)
       }, null, this.locatorOptions)
     },
 

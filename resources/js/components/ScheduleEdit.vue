@@ -216,7 +216,7 @@ import { helper, scheduling } from '~/mixins/helper'
 import ShiftEditCard from '~/components/ShiftEditCard.vue'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
 import Leaflet from '~/components/Leaflet.vue'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   mixins: [helper, scheduling],

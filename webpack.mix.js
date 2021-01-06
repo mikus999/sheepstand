@@ -2,13 +2,13 @@ const path = require('path')
 const fs = require('fs-extra')
 const mix = require('laravel-mix')
 require('dotenv').config();
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
+//const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 require('laravel-mix-versionhash')
-// require('vuetifyjs-mix-extension')
+require('vuetifyjs-mix-extension')
 require('laravel-mix-bundle-analyzer');
 
 mix
-  .js('resources/js/app.js', 'public/dist/js')
+  .js('resources/js/app.js', 'public/dist/js').vuetify('vuetify-loader')
   .sass('resources/sass/app.scss', 'public/dist/css')
   .disableNotifications()
 
@@ -21,14 +21,14 @@ if (mix.inProduction()) {
   mix.sourceMaps()
 
   if (mix.isWatching()) {
-    //mix.bundleAnalyzer(); // uncomment to view analyzer window
+    mix.bundleAnalyzer(); // uncomment to view analyzer window
   }
 }
 
 mix.webpackConfig({
   plugins: [
     // new BundleAnalyzerPlugin()
-    new VuetifyLoaderPlugin()
+    //new VuetifyLoaderPlugin()
   ],
   resolve: {
     extensions: ['.js', '.json', '.vue'],

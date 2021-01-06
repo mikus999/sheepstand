@@ -119,7 +119,7 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 import { required } from 'vuelidate/lib/validators'
 import Leaflet from '~/components/Leaflet.vue'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: "Locations",
