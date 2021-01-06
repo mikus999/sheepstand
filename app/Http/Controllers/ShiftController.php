@@ -39,19 +39,19 @@ class ShiftController extends Controller
      */
     public function index($scheduleid)
     {
-        $user = Auth::user();
-        $shifts = [];
+      $user = Auth::user();
+      $schedule = $user->schedules->find($scheduleid);
 
-        $schedule = $user->schedules->find($scheduleid);
+      if ($schedule) {
+        $shifts = $schedule->shifts()->with('users')
+                    ->orderBy('shifts.location_id')
+                    ->orderBy('shifts.time_start')
+                    ->get();
+        return RB::success(['shifts' => $shifts]);
 
-        if ($schedule) {
-            $shifts = $schedule->shifts()->with('schedule', 'location', 'users')
-                        ->orderBy('shifts.location_id')
-                        ->orderBy('shifts.time_start')
-                        ->get();
-        }
-
-        return response()->json($shifts);
+      } else {
+        return RB::error(404); // schedule not found
+      }
     }
 
 
@@ -64,34 +64,38 @@ class ShiftController extends Controller
      */
     public function store($scheduleid, Request $request)
     {
-        $data = ['message' => 'Access Denied'];
-        $user = Auth::user();
-        $schedule = $user->schedules->find($scheduleid);
+      $user = Auth::user();
+      $schedule = $user->schedules->find($scheduleid);
 
-        if ($schedule) {
-            $team = $user->teams->find($schedule->team_id);
+      if ($schedule) {
+        $team = $user->teams->find($schedule->team_id);
 
-            if ($user->hasRole('team_admin', $team)) {
-                $shift = Shift::create([
-                    'schedule_id' => $scheduleid,
-                    'location_id' => $request->location_id,
-                    'time_start' => $request->time_start,
-                    'time_end' => $request->time_end,
-                    'min_participants' => $request->min_participants,
-                    'max_participants' => $request->max_participants,
-                    'mandatory' => $request->mandatory
-                ]);
+        if ($user->hasRole('team_admin', $team)) {
+          $shift = Shift::create([
+            'schedule_id' => $scheduleid,
+            'location_id' => $request->location_id,
+            'time_start' => $request->time_start,
+            'time_end' => $request->time_end,
+            'min_participants' => $request->min_participants,
+            'max_participants' => $request->max_participants,
+            'mandatory' => $request->mandatory
+          ]);
 
-                $data = [
-                    'shift' => $shift,
-                    'schedule' => Schedule::with('shifts')->find($scheduleid),
-                    'status' => (bool) $shift,
-                    'message' => $shift ? 'Shift Created!' : 'Error Creating Shift',
-                ];
-            }
+          $data = [
+            'shift' => $shift,
+            'schedule' => Schedule::with('shifts')->find($scheduleid),
+          ];
+
+          return RB::success($data);
+
+        } else {
+          return RB::error(403); // Access denied
         }
 
-        return response()->json($data);
+      } else {
+        return RB::error(404); // schedule not found
+      }
+
     }
 
 
@@ -104,15 +108,15 @@ class ShiftController extends Controller
      */
     public function show($scheduleid, $shiftid)
     {
-        $user = Auth::user();
-        $schedule = $user->schedules->find($scheduleid);
-        $shift = null;
+      $user = Auth::user();
+      $schedule = $user->schedules->find($scheduleid);
 
-        if ($schedule) {
-            $shift = Shift::find($shiftid);
-        }
-
-        return response()->json($shift);
+      if ($schedule) {
+        $shift = $schedule->shifts->find($shiftid);
+        return RB::success(['shift' => $shift]);
+      } else {
+        return RB::error(404); // shift not found
+      }
     }
 
 
@@ -127,30 +131,38 @@ class ShiftController extends Controller
     {
         $user = Auth::user();
         $schedule = $user->schedules->find($scheduleid);
-        $shift = null;
 
         if ($schedule) {
-            $team = $user->teams->find($schedule->team_id);
+          $team = $user->teams->find($schedule->team_id);
 
-            if ($user->hasRole('team_admin', $team)) {
-                $shift = Shift::find($shiftid);
-                $shift->location_id = $request->location_id;
-                $shift->time_start = $request->time_start;
-                $shift->time_end = $request->time_end;
-                $shift->min_participants = $request->min_participants;
-                $shift->max_participants = $request->max_participants;
-                $shift->mandatory = $request->mandatory;
-                $shift->save();
-            }
+          if ($user->hasRole('team_admin', $team)) {
+            $shift = $schedule->shifts->find($shiftid);
+            if (!$shift) return RB::error(404); // shift not found
+
+            $shift->location_id = $request->location_id;
+            $shift->time_start = $request->time_start;
+            $shift->time_end = $request->time_end;
+            $shift->min_participants = $request->min_participants;
+            $shift->max_participants = $request->max_participants;
+            $shift->mandatory = $request->mandatory;
+            $shift->save();
+
 
             $data = [
-                'shift' => $shift,
-                'schedule' => Schedule::with('shifts')->find($scheduleid),
+              'shift' => $shift,
+              'schedule' => Schedule::with('shifts')->find($scheduleid),
             ];
+
+            return RB::success($data);
+
+          } else {
+            return RB::error(403); // access denied
+          }
+
+        } else {
+          return RB::error(404); // schedule not found
         }
 
-
-        return response()->json($data);
     }
 
 
@@ -162,24 +174,25 @@ class ShiftController extends Controller
      */
     public function destroy($scheduleid, $shiftid)
     {
-        $data = ['message' => 'Access Denied'];
-        $user = Auth::user();
-        $schedule = $user->schedules->find($scheduleid);
+      $user = Auth::user();
+      $schedule = $user->schedules->find($scheduleid);
 
-        if ($schedule) {
-            $team = $user->teams->find($schedule->team_id);
+      if ($schedule) {
+        $team = $user->teams->find($schedule->team_id);
 
-            if ($user->hasRole('team_admin', $team)) {        
-                Shift::destroy($shiftid);
-            }
+        if ($user->hasRole('team_admin', $team)) {    
+          if (!Shift::find($shiftid)) return RB::error(404); //shift not found    
 
-            $data = [
-                'schedule' => Schedule::with('shifts')->find($scheduleid),
-            ];
+          Shift::destroy($shiftid);
+
+          return RB::success(['schedule' => Schedule::with('shifts')->find($scheduleid)]);
+
+        } else {
+          return RB::error(403); // access denied
         }
-
-
-        return response()->json($data);
+      } else {
+        return RB::error(404); // schedule not found
+      }
     }
 
 

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class LoginController extends Controller
 {
@@ -60,11 +61,13 @@ class LoginController extends Controller
         $token = (string) $this->guard()->getToken();
         $expiration = $this->guard()->getPayload()->get('exp');
 
-        return response()->json([
+        $data = [
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $expiration - time(),
-        ]);
+            'expires_in' => $expiration - time()
+        ];
+
+        return RB::success($data);
     }
 
     /**
@@ -82,9 +85,8 @@ class LoginController extends Controller
             throw VerifyEmailException::forUser($user);
         }
 
-        throw ValidationException::withMessages([
-            $this->username() => [trans('auth.failed')],
-        ]);
+        return RB::error(401.1);
+
     }
 
     /**
@@ -96,6 +98,6 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $this->guard()->logout();
-        return response(200);
+        return RB::success();
     }
 }

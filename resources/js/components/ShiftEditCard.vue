@@ -248,7 +248,7 @@ export default {
 
       await axios.get('/api/schedules/' + this.schedule.id + '/shifts/' + id)
         .then(response => {
-          newShiftData = response.data
+          newShiftData = response.data.data.shift
 
           // This will make the new shift immediately follow the source shift
           if (makeSubsequent) {
@@ -269,7 +269,7 @@ export default {
             }
           })
           .then(response => {
-            this.storeSchedule(response.data.schedule)
+            this.storeSchedule(response.data.data.schedule)
             this.$emit('update')
           })
         })
@@ -280,7 +280,7 @@ export default {
         await axios.delete('/api/schedules/' + this.schedule.id + '/shifts/' + id)
           .then(response => {
             this.showSnackbar(this.$t('schedules.success_delete_shift'), 'success')
-            this.storeSchedule(response.data.schedule)
+            this.storeSchedule(response.data.data.schedule)
             this.$emit('update')
           })
 

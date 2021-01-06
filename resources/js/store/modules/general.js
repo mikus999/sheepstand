@@ -33,17 +33,19 @@ export const actions = {
   },
 
 
-  scheduledTasks ({ commit }) {
+  scheduledTasks ({ commit, rootState }) {
     return new Promise((resolve, reject) => {
-
-      // Get scheduled tasks
-      axios.get('/api/tasks/scheduled')
-      .then(response => {
-        // Commit message counts for inbox
-        commit(types.SET_MESSAGE_COUNT, response.data.data.message_count)
-
+      if (rootState.auth.user) {
+        // Get scheduled tasks
+        axios.get('/api/tasks/scheduled')
+        .then(response => {
+          // Commit message counts for inbox
+          commit(types.SET_MESSAGE_COUNT, response.data.data.message_count)
+          resolve()
+        })
+      } else {
         resolve()
-      })
+      }
     })
   },
 

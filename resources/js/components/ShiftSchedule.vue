@@ -174,8 +174,8 @@ export default {
     async getShiftData () {
       await axios.get('/api/schedules/' + this.schedule.id + '/shifts')
         .then(response => {
-          this.storeShifts(response.data)
-          this.storeShiftsAvailable(this.filterShiftsAvailability(response.data, this.user))
+          this.storeShifts(response.data.data.shifts)
+          this.storeShiftsAvailable(this.filterShiftsAvailability(response.data.data.shifts, this.user))
           this.checkConflictsAllUserShifts()
 
           for (var n = 1; n <= 7; n++) {

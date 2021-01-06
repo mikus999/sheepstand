@@ -275,7 +275,7 @@ export default {
     async getLocations () {
       await axios.get('/api/teams/' + this.team.id + '/locations')
         .then(response => {
-          this.locations = response.data
+          this.locations = response.data.data.locations
 
           if (!this.edit) {
             this.shift.location_id = this.locations[0].id
@@ -334,7 +334,7 @@ export default {
         }
       })
       .then(response => {
-        this.storeSchedule(response.data.schedule)
+        this.storeSchedule(response.data.data.schedule)
         this.$emit('update')
         this.close()  
       })

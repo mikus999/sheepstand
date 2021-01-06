@@ -212,7 +212,7 @@ export default {
     async getData () {
       await axios.get('/api/teams/' + this.team.id + '/locations/')
         .then(response => {
-          this.locationData = response.data
+          this.locationData = response.data.data.locations
         })
     },
 

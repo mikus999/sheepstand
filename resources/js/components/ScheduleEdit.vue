@@ -533,7 +533,7 @@ export default {
 
       await axios.get('/api/schedules/' + this.schedule.id + '/shifts/' + shiftID)
         .then(response => {
-          newShiftData = response.data
+          newShiftData = response.data.data.shift
 
           var tempStart = this.$dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_start)).format('YYYY-MM-DD HH:mm:ss')
           var tempEnd = this.$dayjs(newShiftDate + ' ' + this.$options.filters.formatTime(newShiftData.time_end)).format('YYYY-MM-DD HH:mm:ss')
@@ -559,7 +559,7 @@ export default {
         }
       })
       .then(response => {
-        this.storeSchedule(response.data.schedule)
+        this.storeSchedule(response.data.data.schedule)
         this.parseSchedule()
       })
     },

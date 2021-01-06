@@ -30,6 +30,7 @@ return [
 	'map'               => [
     400 => 'api.bad_request',
     401 => 'api.not_authorized',
+    401.1 => 'api.login_failed',
     403 => 'api.access_denied',
     404 => 'api.not_found',
     422 => 'api.validation_failed',

@@ -38,14 +38,65 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  token:
-                    type: string
-                  token_type:
-                    type: string
-                    example: Bearer
-                  expires_in:
-                    type: integer
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          token:
+                            type: string
+                          token_type:
+                            type: string
+                            example: Bearer
+                          expires_in:
+                            type: integer
+        401:
+          $ref: '#/components/responses/AuthenticationFailed'
+  /register:
+    post:
+      tags:
+        - auth
+        - public
+      security: []
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password_confirmation
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          user:
+                            $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/AuthenticationFailed'
 
   /user:
     get:
@@ -1393,11 +1444,232 @@ paths:
                                 type: integer
         403:
           $ref: '#/components/responses/AccessDenied'
+
+
+
+  /teams/{team_id}/locations:
+    get:
+      summary: Display all locations for a team
+      tags:
+        - team
+        - location
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          locations:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Location'
+        404:
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create a new location
+      tags:
+        - team
+        - location
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: color_code
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: map
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: default
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          location:
+                            $ref: '#/components/schemas/Location'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+  /teams/{team_id}/locations/{location_id}:
+    get:
+      summary: Display a location
+      tags:
+        - team
+        - location
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          location:
+                            $ref: '#/components/schemas/Location'
+        404:
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update a location
+      tags:
+        - team
+        - location
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: color_code
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: map
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: default
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          location:
+                            $ref: '#/components/schemas/Location'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete a location
+      tags:
+        - team
+        - location
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
   /teams/{teamid}/locations/{locid}/makedefault:
     post:
       summary: Change default location for team
       tags:
         - team
+        - location
       description: |
         __Roles__
         ___
@@ -1431,6 +1703,278 @@ paths:
           $ref: '#/components/responses/NotFound'
         403:
           $ref: '#/components/responses/AccessDenied'
+
+  /schedules/{schedule_id}/shifts:
+    get:
+      summary: Display all shifts for a schedule
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: schedule_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shifts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: '#/components/schemas/Shift'
+                                - properties:
+                                    users:
+                                      type: array
+                                      items:
+                                        allOf:
+                                          - $ref: '#/components/schemas/User'
+                                          - properties:
+                                              marriage_mate:
+                                                $ref: '#/components/schemas/User'
+        404:
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create a new shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: schedule_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: location_id
+          in: query
+          required: true
+          schema:
+            type: integer         
+        - name: time_start
+          in: query
+          required: true
+          schema:
+            type: string   
+            format: date-time   
+        - name: time_end
+          in: query
+          required: true
+          schema:
+            type: string 
+            format: date-time    
+        - name: min_participants
+          in: query
+          required: true
+          schema:
+            type: integer      
+        - name: max_participants
+          in: query
+          required: true
+          schema:
+            type: integer      
+        - name: mandatory
+          in: query
+          required: true
+          schema:
+            type: boolean   
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shift:
+                            $ref: '#/components/schemas/Shift'
+                          schedule:
+                            allOf:
+                              - $ref: '#/components/schemas/Schedule'
+                              - properties:
+                                  shifts:
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/Shift'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+  /schedules/{schedule_id}/shifts/{shift_id}:
+    get:
+      summary: Display a shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_member
+      parameters:
+        - name: schedule_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shift:
+                            $ref: '#/components/schemas/Shift'
+        404:
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update a shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: schedule_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: location_id
+          in: query
+          required: true
+          schema:
+            type: integer         
+        - name: time_start
+          in: query
+          required: true
+          schema:
+            type: string   
+            format: date-time   
+        - name: time_end
+          in: query
+          required: true
+          schema:
+            type: string 
+            format: date-time    
+        - name: min_participants
+          in: query
+          required: true
+          schema:
+            type: integer      
+        - name: max_participants
+          in: query
+          required: true
+          schema:
+            type: integer      
+        - name: mandatory
+          in: query
+          required: true
+          schema:
+            type: boolean    
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          shift:
+                            $ref: '#/components/schemas/Shift'
+                          schedule:
+                            allOf:
+                              - $ref: '#/components/schemas/Schedule'
+                              - properties:
+                                  shifts:
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/Shift'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete a shift
+      tags:
+        - scheduling
+      description: |
+        __Roles__
+        ___
+        * team_admin
+      parameters:
+        - name: schedule_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shift_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties:
+                          schedule:
+                            allOf:
+                              - $ref: '#/components/schemas/Schedule'
+                              - properties:
+                                  shifts:
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/Shift'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
 
   /schedules/joinshift:
     post:
@@ -2597,6 +3141,161 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'   
 
+  /messages:
+    get:
+      summary: Get all messages for user
+      tags:
+        - message
+      description: |
+        __Roles__
+        ___
+        * self
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          received:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Message'
+                          sent:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Message'
+    post:
+      summary: Create new message
+      tags:
+        - message
+      description: |
+        __Roles__
+        ___
+        * self
+      parameters:
+        - name: sender_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: sender_type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: recipient_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: recipient_type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: message_subject
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: message_body
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: named_route
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: color
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: icon
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: show_banner
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - name: expires_on
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          received:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Message'
+                          sent:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Message'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+  /messages/{id}:
+    delete:
+      summary: Delete a message
+      tags:
+        - message
+      description: |
+        __Roles__
+        ___
+        * self
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseSuccess'
+                  - properties:
+                      data:
+                        type: object    
+                        properties: # List all returned objects/data here
+                          received:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Message'
+                          sent:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Message'
+        404:
+          $ref: '#/components/responses/NotFound'  
+        403:
+          $ref: '#/components/responses/AccessDenied'
   /messages/{id}/markread:
     get:
       summary: Mark message as read
@@ -2795,6 +3494,12 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: 401 Unauthenticated (not logged in)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    AuthenticationFailed:
+      description: 401.1 Authentication Failed
       content:
         application/json:
           schema:

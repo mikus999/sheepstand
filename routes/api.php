@@ -100,15 +100,15 @@ Route::group(['middleware' => 'auth:api'], function () {
     // API routes (must be listed after all other routes are declared)
     Route::apiResource('teams', 'TeamController');
     Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);
-    Route::apiResource('schedules.shifts', 'ShiftController'); // TODO OpenAPI
-    Route::apiResource('teams.locations', 'LocationController'); // TODO OpenAPI
-    Route::apiResource('messages', 'MessageController'); // TODO OpenAPI
+    Route::apiResource('schedules.shifts', 'ShiftController');
+    Route::apiResource('teams.locations', 'LocationController');
+    Route::apiResource('messages', 'MessageController');
 
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
     Route::post('login', 'Auth\LoginController@login');
-    Route::post('register', 'Auth\RegisterController@register'); // TODO OpenAPI
+    Route::post('register', 'Auth\RegisterController@register');
 
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'); // TODO OpenAPI
     Route::post('password/reset', 'Auth\ResetPasswordController@reset'); // TODO OpenAPI

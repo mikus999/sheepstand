@@ -21,7 +21,7 @@ if (mix.inProduction()) {
   mix.sourceMaps()
 
   if (mix.isWatching()) {
-    mix.bundleAnalyzer();
+    //mix.bundleAnalyzer(); // uncomment to view analyzer window
   }
 }
 

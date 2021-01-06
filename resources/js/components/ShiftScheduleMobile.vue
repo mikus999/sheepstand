@@ -274,9 +274,9 @@ export default {
     async getShiftData (schedule) {
       await axios.get('/api/schedules/' + schedule.id + '/shifts')
         .then(response => {
-          Array.prototype.push.apply(this.shifts, response.data)
+          Array.prototype.push.apply(this.shifts, response.data.data.shifts)
 
-          response.data.forEach((shift) => {
+          response.data.data.shifts.forEach((shift) => {
             this.availableDates.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
             this.selectedDates.push(this.$dayjs(shift.time_start).format('YYYY-MM-DD'))
             this.filterShifts()

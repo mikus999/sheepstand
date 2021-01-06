@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Helper;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class RegisterController extends Controller
 {
@@ -36,10 +37,10 @@ class RegisterController extends Controller
         if ($user instanceof MustVerifyEmail) {
             $user->sendEmailVerificationNotification();
 
-            return response()->json(['status' => trans('verification.sent')]);
+            return RB::success(['status' => trans('verification.sent')]);
         }
 
-        return response()->json($user);
+        return RB::success(['user' => $user]);
     }
 
     /**

@@ -23,14 +23,12 @@ class MessageController extends Controller
      */
     public function index()
     {
-
       $data = [
         'received' => $this->getMessages(),
         'sent' => $this->getSentMessages()
       ];
 
-      return response()->json($data);
-
+      return RB::success($data);
     }
 
 
@@ -42,14 +40,12 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-      $data = ['message' => 'Access Denied'];
       $user = Auth::user();
       $access_allowed = false;
 
       if ($request->sender_type == 'App\Models\Team') {
         $team = Team::find($request->sender_id);
         $access_allowed = $user->hasRole('team_admin', $team);
-        
       } else if ($request->sender_type == 'App\Models\User') {
         $access_allowed = $user->id == $request->sender_id;
       }
@@ -74,9 +70,13 @@ class MessageController extends Controller
           'received' => $this->getMessages(),
           'sent' => $this->getSentMessages()
         ];
+
+        return RB::success($data);
+
+      } else {
+        return RB::error(403); // access denied
       }
 
-      return response()->json($data);
     }
 
 
@@ -89,35 +89,36 @@ class MessageController extends Controller
      */
     public function destroy($id)
     {
-      $data = ['message' => 'Access Denied'];
-      $access_allowed = false;
       $user = Auth::user();
       $message = Message::find($id);
+      $access_allowed = $user->hasRole('super_admin', null);
 
-      if ($message->sender_type == 'App\Models\Team') {
-        // If this is a team message check rights
-        $team = Team::find($message->sender_id);
+      if ($message) {
+        if (!$access_allowed) {
+          if ($message->sender_type == 'App\Models\Team') {
+            $team = Team::find($message->sender_id);
+            $access_allowed = $user->hasRole('team_admin', $team);
+          } else if ($message->sender_type == 'App\Models\User') {
+            $access_allowed = $message->sender_id == $user->id;
+          }
+        }
 
-        if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
-          $access_allowed = true;
+        if ($access_allowed) {
+          Message::destroy($id);
+
+          $data = [
+            'received' => $this->getMessages(),
+            'sent' => $this->getSentMessages()
+          ];
+
+          return RB::success($data);
+
+        } else {
+          return RB::error(403); // access denied
         }
       } else {
-        // If this is a global/system message check rights
-        if ($user->hasRole('super_admin', null)) {
-          $access_allowed = true;
-        }
+        return RB::error(404); // message not found
       }
-
-      if ($access_allowed) {
-        Message::destroy($id);
-
-        $data = [
-          'received' => $this->getMessages(),
-          'sent' => $this->getSentMessages()
-        ];
-      }
-
-      return response()->json($data);
 
     }
 

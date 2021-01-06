@@ -80,11 +80,13 @@ class OAuthController extends Controller
             $token = $this->guard()->login($user)
         );
 
-        return response()->json([
+        $data = [
           'token' => $token,
           'token_type' => 'bearer',
           'expires_in' => $this->guard()->getPayload()->get('exp') - time(),
-        ]);
+        ];
+
+        return RB::success($data);
 
     }
 

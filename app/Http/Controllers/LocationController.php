@@ -27,9 +27,14 @@ class LocationController extends Controller
 
     public function index($teamid)
     {
-      $locations = Team::find($teamid)->locations;
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
 
-      return response()->json($locations);
+      if ($team) {
+        return RB::success(['locations' => $team->locations]);
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 
@@ -37,29 +42,45 @@ class LocationController extends Controller
 
     public function store($teamid, Request $request)
     {
-        $location = Location::create([
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
+
+      if ($team) {
+
+        if ($user->hasRole('team_admin', $team)) {
+          $location = Location::create([
             'team_id' => $teamid,
             'name' => $request->name,
             'color_code' => $request->color_code,
             'map' => $request->map,
             'default' => $request->default
-        ]);
+          ]);
 
-        $data = [
-            'data' => $location,
-            'status' => (bool) $location,
-            'message' => $location ? 'Location Created!' : 'Error Creating Location',
-        ];
+          return RB::success(['location' => $location]);
 
-        return response()->json($data);
+        } else {
+          return RB::error(403); // Access denied
+        }
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 
 
     public function show($teamid, $locid)
     {
-        $location = Location::find($locid);
-        return response()->json($location);
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
+
+      if ($team) {
+        $location = $team->locations->find($locid);
+        if (!$location) return RB::error(404); // location not found
+
+        return RB::success(['location' => $location]);
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 
@@ -67,24 +88,50 @@ class LocationController extends Controller
 
     public function update($teamid, Request $request, $locid)
     {
-        $location = Location::find($locid);
-        $location->name = $request->name;
-        $location->color_code = $request->color_code;
-        $location->map = $request->map;
-        $location->save();
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
 
-        return response()->json($location);
+      if ($team) {
+        if ($user->hasRole('team_admin', $team)) {
+          $location = $team->locations->find($locid);
+          if (!$location) return RB::error(404); // location not found
+
+          $location->name = $request->name;
+          $location->color_code = $request->color_code;
+          $location->map = $request->map;
+          $location->save();
+
+          return RB::success(['location' => $location]);
+
+        } else {
+          return RB::error(403); // Access denied
+        }
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 
 
     public function destroy($teamid, $locid)
     {
-      Location::destroy($locid);
-      $data = [
-          'message' => 'Location Deleted!',
-      ];
-      return response()->json($data);
+      $user = Auth::user();
+      $team = $user->teams->find($teamid);
+
+      if ($team) {
+        if ($user->hasRole('team_admin', $team)) {
+          $location = $team->locations->find($locid);
+          if (!$location) return RB::error(404); // location not found
+
+          Location::destroy($locid);
+          return RB::success();
+
+        } else {
+          return RB::error(403); // Access denied
+        }
+      } else {
+        return RB::error(404); // team not found
+      }
     }
 
 

@@ -109,10 +109,10 @@ export default {
             }
           })
           .then(response => {
-            if (response.data.token) {
+            if (response.data.data.token) {
               // Save the token.
               this.$store.dispatch('auth/saveToken', {
-                token: response.data.token,
+                token: response.data.data.token,
                 remember: this.remember
               })
 
