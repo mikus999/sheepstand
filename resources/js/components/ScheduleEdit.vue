@@ -216,7 +216,7 @@ import { helper, scheduling } from '~/mixins/helper'
 import ShiftEditCard from '~/components/ShiftEditCard.vue'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
 import Leaflet from '~/components/Leaflet.vue'
-
+import { cloneDeep } from 'lodash'
 
 export default {
   mixins: [helper, scheduling],
@@ -388,7 +388,7 @@ export default {
   methods: {
     async initialize () {
       this.parseSchedule()
-      this.shift = this.lodash.cloneDeep(this.shiftDefaults)
+      this.shift = cloneDeep(this.shiftDefaults)
     },
 
 
@@ -520,7 +520,7 @@ export default {
 
 
     closeShiftDialog () {
-      this.shift = this.lodash.cloneDeep(this.shiftDefaults)
+      this.shift = cloneDeep(this.shiftDefaults)
       this.dialog = false
     },
 

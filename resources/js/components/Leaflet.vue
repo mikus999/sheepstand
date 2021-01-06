@@ -91,7 +91,7 @@ import { LMap, LTileLayer, LControl, LMarker } from 'vue2-leaflet'
 import drawControl from 'leaflet-draw'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen'
-
+import { cloneDeep } from 'lodash'
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -389,7 +389,7 @@ export default {
     },
 
     async saveToDB () {
-      var tempData = this.lodash.cloneDeep(this.location)
+      var tempData = cloneDeep(this.location)
       var aMethod = 'patch'
       var aUrl = '/api/teams/' + this.team.id + '/locations/' + tempData.id
 

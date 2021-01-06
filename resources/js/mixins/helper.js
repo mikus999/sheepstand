@@ -1,6 +1,5 @@
 import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
-import { result } from 'lodash'
 
 
 export const helper = {

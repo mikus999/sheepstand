@@ -119,6 +119,7 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 import { required } from 'vuelidate/lib/validators'
 import Leaflet from '~/components/Leaflet.vue'
+import { cloneDeep } from 'lodash'
 
 export default {
   name: "Locations",
@@ -234,10 +235,10 @@ export default {
 
     showDialog (data, edit) {
       if (!edit) {
-        this.tempData = this.lodash.cloneDeep(this.defaultData)
+        this.tempData = cloneDeep(this.defaultData)
         this.tempData.team_id = this.team.id
       } else {
-        this.tempData = this.lodash.cloneDeep(data)
+        this.tempData = cloneDeep(data)
       }
 
       this.isEdit = edit

@@ -5,7 +5,7 @@ require('dotenv').config();
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 require('laravel-mix-versionhash')
 // require('vuetifyjs-mix-extension')
-// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+require('laravel-mix-bundle-analyzer');
 
 mix
   .js('resources/js/app.js', 'public/dist/js')
@@ -19,6 +19,10 @@ if (mix.inProduction()) {
     .versionHash()
 } else {
   mix.sourceMaps()
+
+  if (mix.isWatching()) {
+    mix.bundleAnalyzer();
+  }
 }
 
 mix.webpackConfig({

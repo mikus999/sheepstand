@@ -4,9 +4,7 @@ import store from '~/store'
 import router from '~/router'
 import i18n from '~/plugins/i18n'
 import vuetify from '~/plugins/vuetify'
-import VueLodash from 'vue-lodash'
 import Vuelidate from 'vuelidate'
-import lodash from 'lodash'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
@@ -15,10 +13,9 @@ import weekday from 'dayjs/plugin/weekday'
 import isBetween from 'dayjs/plugin/isBetween'
 import '~/plugins'
 import '~/components'
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import VueClipboard from 'vue-clipboard2'
-
+import '@mdi/font/css/materialdesignicons.css'
+import 'typeface-roboto'
 
 
 // VueClipboard
@@ -27,11 +24,7 @@ Vue.use(VueClipboard)
 // Vuelidate: for form validation
 Vue.use(Vuelidate)
 
-// VueLodash: for array manipulation
-Vue.use(VueLodash, { lodash: lodash })
 
-// Date/Time Picker
-Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 
 Vue.config.productionTip = false

@@ -18,7 +18,6 @@
 <script>
 import axios from 'axios'
 import helper from '~/mixins/helper'
-import ShiftStatistics from '~/components/ShiftStatistics.vue'
 import TradeRequests from '~/components/TradeRequests.vue'
 import MyShifts from '~/components/MyShifts.vue'
 import NotificationJoin from '~/components/NotificationJoin.vue'
@@ -30,7 +29,6 @@ export default {
   layout: 'vuetify',
   mixins: [helper],
   components: {
-    ShiftStatistics,
     TradeRequests,
     MyShifts,
     NotificationJoin,

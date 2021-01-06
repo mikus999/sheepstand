@@ -125,6 +125,7 @@
 import axios from 'axios'
 import helper from '~/mixins/helper'
 import mtproto from '~/mixins/telegram'
+import { debounce } from 'lodash'
 import UserTable from '~/components/UserTable.vue'
 import Locations from '~/components/Locations.vue'
 import NotificationInfo from '~/components/NotificationInfo.vue'
@@ -216,7 +217,7 @@ export default {
     },
 
 
-    updateTeam: _.debounce(async function (e) {
+    updateTeam: debounce(async function (e) {
       this.validation[e.target.name].success = true
       setTimeout(() => this.validation[e.target.name].success = false, 3000)
 

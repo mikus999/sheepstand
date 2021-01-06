@@ -174,6 +174,7 @@
 import axios from 'axios'
 import helper from '../../mixins/helper'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
+import { debounce } from 'lodash'
 import AvailabilitySchedule from '~/components/AvailabilitySchedule.vue'
 import VacationSchedule from '~/components/VacationSchedule.vue'
 
@@ -272,7 +273,7 @@ export default {
         })
     },
 
-    updateUser: _.debounce(async function(e) {
+    updateUser: debounce(async function(e) {
       this.validation[e.target.name].success = true
       setTimeout(() => this.validation[e.target.name].success = false, 3000)
 
