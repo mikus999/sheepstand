@@ -2,7 +2,7 @@
   <v-card width="100%">
     <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon left>mdi-account-multiple</v-icon>
+        <v-icon left>{{ mdiAccountMultiple }}</v-icon>
         Translators
       </v-toolbar-title>
 
@@ -14,7 +14,7 @@
         class="mb-2" 
         @click="showSiteLanguageOverly()"
       >
-        <v-icon small :left="$vuetify.breakpoint.smAndUp">mdi-translate</v-icon>
+        <v-icon small :left="$vuetify.breakpoint.smAndUp">{{ mdiTranslate }}</v-icon>
         <span v-if="$vuetify.breakpoint.smAndUp">Site Languages</span>
       </v-btn>
     </v-toolbar>
@@ -26,7 +26,7 @@
 
       <template v-slot:item.actions="{ item }">
         <v-btn icon @click="showLanguageOverly(item)">
-          <v-icon>mdi-account-edit</v-icon>
+          <v-icon>{{ mdiAccountEdit }}</v-icon>
         </v-btn>
       </template>
     </v-data-table>

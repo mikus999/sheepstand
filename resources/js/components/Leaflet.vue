@@ -12,13 +12,13 @@
 
         <v-item-group class="v-btn-toggle" right>
           <v-btn @click="saveShapes()" :input-value="isChanged" active-class="save-btn">
-            <v-icon>mdi-content-save</v-icon>
+            <v-icon>{{ mdiContentSave }}</v-icon>
           </v-btn>
           <v-btn @click="revertChanges()">
-            <v-icon>mdi-undo</v-icon>
+            <v-icon>{{ mdiUndo }}</v-icon>
           </v-btn>
           <v-btn @click="$emit('close')">
-            <v-icon>mdi-close</v-icon>
+            <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
         </v-item-group>
       </v-toolbar>
@@ -34,7 +34,7 @@
 
         <v-item-group class="v-btn-toggle" right>
           <v-btn @click="$emit('close')">
-            <v-icon>mdi-close</v-icon>
+            <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
         </v-item-group>
       </v-toolbar>
@@ -55,16 +55,16 @@
       <v-toolbar v-if="!readonly" dense dark bottom>
         <v-item-group class="v-btn-toggle">
           <v-btn @click="changeDrawingMode('marker')" :input-value="isActiveButton('marker')">
-            <v-icon>mdi-map-marker</v-icon>
+            <v-icon>{{ mdiMap }}-marker</v-icon>
           </v-btn>
           <v-btn @click="changeDrawingMode('rectangle')" :input-value="isActiveButton('rectangle')">
-            <v-icon>mdi-vector-rectangle</v-icon>
+            <v-icon>{{ mdiVectorRectangle }}</v-icon>
           </v-btn>
           <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
-            <v-icon>mdi-vector-polygon</v-icon>
+            <v-icon>{{ mdiVectorPolygon }}</v-icon>
           </v-btn>
           <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
-            <v-icon>mdi-vector-circle</v-icon>
+            <v-icon>{{ mdiVectorCircle }}</v-icon>
           </v-btn>
         </v-item-group>
 
@@ -72,7 +72,7 @@
 
         <v-item-group class="v-btn-toggle" right>
           <v-btn @click="deleteSelection()">
-            <v-icon>mdi-delete</v-icon>
+            <v-icon>{{ mdiDelete }}</v-icon>
           </v-btn>
         </v-item-group>
 

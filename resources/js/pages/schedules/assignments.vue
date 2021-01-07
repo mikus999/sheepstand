@@ -5,7 +5,7 @@
         <v-row>
           <v-col xs=1 sm=4 class="text-left" >
             <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-              <v-icon left>mdi-arrow-left</v-icon>
+              <v-icon left>{{ mdiArrowLeft }}</v-icon>
               <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
             </v-btn>
           </v-col>
@@ -17,7 +17,7 @@
           <v-col xs=1 sm=4 class="text-right">
             <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="">
               <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.approvals') }}</span>
-              <v-icon right>mdi-arrow-right</v-icon>
+              <v-icon right>{{ mdiArrowRight }}</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -82,7 +82,7 @@
 
                 <v-chip-group column>
                   <v-btn icon @click="openParticipantDialog(item)" class="mr-2">
-                    <v-icon>mdi-account-multiple-plus</v-icon>
+                    <v-icon>{{ mdiAccountMultiplePlus }}</v-icon>
                   </v-btn>
                   
                   <v-chip small label 
@@ -96,7 +96,7 @@
                       v-if="checkShiftConflicts(item, getUserShifts(shift_user.id), true, false).length > 0"
                     >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-icon small left v-bind="attrs" v-on="on">mdi-alert</v-icon>
+                        <v-icon small left v-bind="attrs" v-on="on">{{ mdiAlert }}</v-icon>
                       </template>
                       <span>{{ getConflictMessage(checkShiftConflicts(item, getUserShifts(shift_user.id), true, false)) }}</span>
                     </v-tooltip>

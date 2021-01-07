@@ -4,7 +4,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title v-if="showTitle || $vuetify.breakpoint.xs">
-            <v-icon left>mdi-map-marker-multiple</v-icon>
+            <v-icon left>{{ mdiMap }}-marker-multiple</v-icon>
             {{ $t('teams.cart_locations') }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
             <v-icon 
               :left="$vuetify.breakpoint.smAndUp"
               :small="$vuetify.breakpoint.smAndUp"
-            >mdi-map-marker-plus</v-icon>
+            >{{ mdiMap }}-marker-plus</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">
               {{ $t('teams.create_new_location') }}
             </span>
@@ -102,7 +102,7 @@
         </v-btn>
 
         <v-btn icon @click="deleteLoc(item)">
-          <v-icon>mdi-delete</v-icon>
+          <v-icon>{{ mdiDelete }}</v-icon>
         </v-btn>
       </template>
     </v-data-table>

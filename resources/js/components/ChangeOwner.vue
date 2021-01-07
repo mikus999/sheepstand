@@ -1,7 +1,7 @@
 <template>
   <v-card hover :width="width">
     <v-card-title class="justify-center text-h6">
-      <v-icon class="mr-3">mdi-shield-account</v-icon>
+      <v-icon class="mr-3">{{mdiShieldAccount}}</v-icon>
       {{ $t('teams.change_owner') }}
     </v-card-title>
 

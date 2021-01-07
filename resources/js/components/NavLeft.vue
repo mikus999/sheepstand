@@ -23,7 +23,7 @@
 
       <v-list-item router :to="{ name: 'schedules.shifts' }" class="text-decoration-none" active-class="menu-selected-item" v-if="user && hasTeam">
         <v-list-item-icon>
-          <v-icon>mdi-calendar-multiselect</v-icon>
+          <v-icon>{{ mdiCalendarMultiselect }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.shifts') }}</v-list-item-title>
@@ -32,7 +32,7 @@
 
       <v-list-item router :to="{ name: 'teams.join' }" class="text-decoration-none" active-class="menu-selected-item" v-else>
         <v-list-item-icon>
-          <v-icon>mdi-account-multiple-plus</v-icon>
+          <v-icon>{{ mdiAccountMultiplePlus }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('teams.join_team') }}</v-list-item-title>
@@ -56,7 +56,7 @@
 
       <v-list-item router :to="{ name: 'account.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-account-tie</v-icon>
+          <v-icon>{{ mdiAccountTie }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.account') }}</v-list-item-title>
@@ -71,7 +71,7 @@
 
       <v-list-item class="text-decoration-none" v-if="user && hasTeam">
         <v-list-item-icon>
-          <v-icon>mdi-account-group</v-icon>
+          <v-icon>{{ mdiAccountGroup }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <TeamSelector v-if="user && hasTeam" />
@@ -80,7 +80,7 @@
       
       <v-list-item class="text-decoration-none">
         <v-list-item-icon>
-          <v-icon>mdi-translate</v-icon>
+          <v-icon>{{ mdiTranslate }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <LocaleSelector />

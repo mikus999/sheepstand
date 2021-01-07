@@ -55,7 +55,7 @@
         color="secondary" 
         @click.stop="joinLeaveShift('leave')"
       >
-        <v-icon>mdi-account-minus</v-icon>
+        <v-icon>{{ mdiAccountMinus }}</v-icon>
       </v-btn>
     </div>
 
@@ -70,7 +70,7 @@
         color="secondary" 
         @click.stop="joinLeaveShift('leave')"
       >
-        <v-icon>mdi-account-minus</v-icon>
+        <v-icon>{{ mdiAccountMinus }}</v-icon>
       </v-btn>
 
       <v-btn 
@@ -81,7 +81,7 @@
         color="primary" 
         @click.stop="tradeOverlay = true"
       >
-        <v-icon :color="tableActions ? 'secondary' : ''">mdi-account-switch</v-icon>
+        <v-icon :color="tableActions ? 'secondary' : ''">{{ mdiAccountSwitch }}</v-icon>
       </v-btn>
     </div>
 
@@ -110,7 +110,7 @@
         color="secondary" 
         @click.stop="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
       >
-        <v-icon color="primary">mdi-account-switch</v-icon>
+        <v-icon color="primary">{{ mdiAccountSwitch }}</v-icon>
       </v-btn>
     </div>
 

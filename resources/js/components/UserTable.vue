@@ -6,7 +6,7 @@
     </v-card-title>
 
     <v-card-title v-else-if="$vuetify.breakpoint.xs">
-      <v-icon left>mdi-account-multiple</v-icon>
+      <v-icon left>{{ mdiAccountMultiple }}</v-icon>
       {{ $t('teams.members')}}
     </v-card-title>
 
@@ -81,7 +81,7 @@
         </span>
 
         <a @click="showChangeOwnerOverlay(item)" class="text-no-decoration" v-else>
-          <v-icon small>mdi-shield-account</v-icon>
+          <v-icon small>{{ mdiShieldAccount }}</v-icon>
           {{ $t('teams.owner') }}
         </a>
       </template>
@@ -93,7 +93,7 @@
 
       <template v-slot:item.actions="{ item }">   
         <v-btn icon @click="showFTSOverlay(item)">
-          <v-icon>mdi-account-cog</v-icon>
+          <v-icon>{{ mdiAccountCog }}</v-icon>
         </v-btn>
 
         <v-btn icon @click="showRolesOverlay(item)" v-if="!teamUsers">
@@ -101,7 +101,7 @@
         </v-btn>
 
         <v-btn icon @click="removeUser(item)" v-if="teamUsers && team && (team.user_id != item.id)">
-          <v-icon>mdi-account-minus</v-icon>
+          <v-icon>{{ mdiAccountMinus }}</v-icon>
         </v-btn>
       </template>
 

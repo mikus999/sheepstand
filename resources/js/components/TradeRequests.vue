@@ -2,7 +2,7 @@
   <v-card width="100%">
     <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon left>mdi-account-switch</v-icon>
+        <v-icon left>{{ mdiAccountSwitch }}</v-icon>
         {{ $t('shifts.trade_requests') }}
       </v-toolbar-title>
             

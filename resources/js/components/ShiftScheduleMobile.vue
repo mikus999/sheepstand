@@ -2,7 +2,7 @@
   <v-card width="100%" flat>
     <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon left>mdi-calendar-multiselect</v-icon>
+        <v-icon left>{{ mdiCalendarMultiselect }}</v-icon>
         {{ $t('schedules.available_shifts') }}
       </v-toolbar-title>
     </v-toolbar>

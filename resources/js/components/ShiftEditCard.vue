@@ -115,7 +115,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>mdi-delete</v-icon>
+                  <v-icon small>{{ mdiDelete }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('general.delete') }}</span>

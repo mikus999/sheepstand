@@ -1,7 +1,7 @@
 <template>
   <v-card hover :width="width">
     <v-card-title class="justify-center text-h6">
-      <v-icon class="mr-3">mdi-translate</v-icon>
+      <v-icon class="mr-3">{{ mdiTranslate }}</v-icon>
       Site Languages
     </v-card-title>
 

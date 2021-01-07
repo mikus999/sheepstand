@@ -69,7 +69,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
             <v-btn icon @click="deleteSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>mdi-delete</v-icon>
+              <v-icon>{{ mdiDelete }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.delete') }}</span>
@@ -99,7 +99,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
             <v-btn icon @click="deleteSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>mdi-delete</v-icon>
+              <v-icon>{{ mdiDelete }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.delete') }}</span>

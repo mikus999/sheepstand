@@ -57,7 +57,7 @@
                 small
                 @click="deleteVacation(item.id)"
               >
-                <v-icon small>mdi-delete</v-icon>
+                <v-icon small>{{ mdiDelete }}</v-icon>
               </v-btn>
             </template>
           </v-data-table>

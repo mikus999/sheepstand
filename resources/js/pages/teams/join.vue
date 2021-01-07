@@ -2,7 +2,7 @@
 <v-container fluid>
   <v-card class="mx-auto" max-width="600" outlined>
     <v-card-title>
-      <v-icon left>mdi-account-multiple-plus</v-icon>
+      <v-icon left>{{ mdiAccountMultiplePlus }}</v-icon>
       {{ $t('teams.join_existing_team') }}
     </v-card-title>
 

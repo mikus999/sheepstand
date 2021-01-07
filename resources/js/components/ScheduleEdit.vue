@@ -9,7 +9,7 @@
       <v-row>
         <v-col xs=1 sm=4 class="text-left" >
           <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-            <v-icon left>mdi-arrow-left</v-icon>
+            <v-icon left>{{ mdiArrowLeft }}</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
           </v-btn>
         </v-col>

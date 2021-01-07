@@ -1,8 +1,10 @@
 import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
+import mdi from '~/mixins/mdi'
 
 
 export const helper = {
+  mixins: [mdi],
   computed: {
     ...mapGetters({
       user: 'auth/user',

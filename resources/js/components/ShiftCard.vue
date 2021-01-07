@@ -21,7 +21,7 @@
       <v-system-bar :color="$vuetify.theme.dark ? '#1c1c1c' : '#ffffff'">
         <MarqueeText v-if="hasConflicts">
             <span v-for="(conflict, index) in conflicts" :key="index" class="warning-text">
-              <v-icon color="red" class="ml-6">mdi-alert</v-icon>
+              <v-icon color="red" class="ml-6">{{ mdiAlert }}</v-icon>
               {{ getConflictMessage(conflict) }}
             </span>
         </MarqueeText>
@@ -40,7 +40,7 @@
 
       <div v-for="n in returnZero(shift.max_participants - filterShiftUsers(shift.users).length)" :key="n" class="ma-2" disabled>
         <div class="ml-n2 dashed-border rounded list-participants" width="100%">
-          <v-icon small class="ml-1 mr-2" color="grey">mdi-account-outline</v-icon>
+          <v-icon small class="ml-1 mr-2" color="grey">{{ mdiAccountOutline }}</v-icon>
           <span>{{ $t('general.available') }}</span>
         </div>
       </div>

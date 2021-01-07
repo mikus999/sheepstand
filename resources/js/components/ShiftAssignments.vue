@@ -10,7 +10,7 @@
 
       <span class="mr-2 text-overline">(<v-icon small class="mr-1">mdi-keyboard</v-icon>ESC)</span>
       <v-btn icon dark @click="$emit('close')">
-        <v-icon>mdi-close</v-icon>
+        <v-icon>{{ mdiClose }}</v-icon>
       </v-btn>
     </v-toolbar>
 

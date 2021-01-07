@@ -3,7 +3,7 @@
     <v-row>
       <v-card width="100%" :flat="$vuetify.breakpoint.xs">
         <v-card-title>
-          <v-icon left>mdi-account-group</v-icon>
+          <v-icon left>{{ mdiAccountGroup }}</v-icon>
           {{ $t('teams.team_settings')}}
         </v-card-title>
 
@@ -23,11 +23,11 @@
           </v-tab>
           <v-tab href="#tab-locations">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('menu.locations') }}</span>
-            <v-icon>mdi-map-marker-multiple</v-icon>
+            <v-icon>{{ mdiMap }}-marker-multiple</v-icon>
           </v-tab>
           <v-tab href="#tab-members">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('teams.members') }}</span>
-            <v-icon>mdi-account-multiple</v-icon>
+            <v-icon>{{ mdiAccountMultiple }}</v-icon>
           </v-tab>
 
 

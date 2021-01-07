@@ -3,7 +3,7 @@
     <v-row>
       <v-card width="100%" :flat="$vuetify.breakpoint.xs">
         <v-card-title>
-          <v-icon left>mdi-account-tie</v-icon>
+          <v-icon left>{{ mdiAccountTie }}</v-icon>
           {{ $t('account.account_settings')}}
         </v-card-title>
 

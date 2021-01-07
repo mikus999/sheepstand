@@ -1,7 +1,7 @@
 <template>
   <v-card width="100%" :loading="pageLoad">
     <v-card-title>
-      <v-icon left>mdi-calendar-multiselect</v-icon>
+      <v-icon left>{{ mdiCalendarMultiselect }}</v-icon>
       {{ $t('schedules.available_shifts') }}
     </v-card-title>
 

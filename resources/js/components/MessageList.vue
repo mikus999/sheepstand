@@ -65,7 +65,7 @@
                   </v-btn>
 
                   <v-btn icon @click.stop="deleteOrHide(message.id)">
-                    <v-icon>mdi-delete</v-icon>
+                    <v-icon>{{ mdiDelete }}</v-icon>
                   </v-btn>
                 </div>
               </v-list-item-action>
