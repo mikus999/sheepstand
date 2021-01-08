@@ -248,7 +248,7 @@ export const helper = {
     },
 
     getFTSStatus(status) {
-      ftsStatus: [
+      const ftsStatus = [
         {
           value: 0,
           text: '---'
