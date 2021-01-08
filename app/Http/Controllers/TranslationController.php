@@ -82,7 +82,7 @@ class TranslationController extends Controller
 
         $newJsonString = json_decode($newJsonString);
 
-        return RB::success(['strings' => $newJsonString]);
+        return response()->json($newJsonString);
 
       } else {
         return RB::error(403); // access denied
@@ -103,7 +103,7 @@ class TranslationController extends Controller
           $jsonString = null;
         }
 
-        return RB::success(['strings' => $jsonString]);
+        return response()->json($jsonString);
     }
 
 

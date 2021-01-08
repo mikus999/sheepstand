@@ -116,7 +116,7 @@ export default {
         }
       },
       saveFab: {
-        icon: icons.mdiContentSave,
+        icon: null,
         color: 'primary',
         showTime: true,
         autoSave: true,
@@ -130,6 +130,7 @@ export default {
   },
 
   created () {
+    this.saveFab.icon = this.icons.mdiContentSave
     this.getLanguages()
     this.getStrings(this.langSourceLocale, true)
   },
@@ -189,9 +190,9 @@ export default {
       })
       .then(response => {
         if (isSource) {
-          this.langSource = response.data.data.strings
+          this.langSource = response.data
         } else {
-          this.langTarget = response.data.data.strings
+          this.langTarget = response.data
         }
         this.getCategories()
       })
@@ -307,7 +308,7 @@ export default {
         }
       })
       .then(response => {
-        this.langTarget = response.data.data.strings
+        this.langTarget = response.data
       })
 
     },
@@ -325,7 +326,7 @@ export default {
 
     toggleFab(isSave, withTimer) {
       this.saveFab.color = isSave ? 'primary' : 'green'
-      this.saveFab.icon = isSave ? icons.mdiContentSave : icons.mdiCheckBold
+      this.saveFab.icon = isSave ? this.icons.mdiContentSave : this.icons.mdiCheckBold
       this.saveFab.showTime = withTimer
     }
   },
