@@ -1,13 +1,14 @@
 @php
 @endphp
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="csrf-token" content="{{csrf_token()}}">
 
   <title>SheepStand</title>
+  <meta name="title" constent="SheepStand">
   <meta name="description" content="Public Witnessing scheduler for congregations, special metropolitan witnessing programs, and service groups.">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">

@@ -48,6 +48,13 @@ export default {
 
   },
 
+  watch: {
+    '$route' (to, from) {
+      const siteTitle = process.env.NODE_ENV === 'production' ? 'SheepStand' : 'SheepStand Dev'
+      document.title = to.meta.title ? (siteTitle + ': ' + to.meta.title) : siteTitle
+    }
+  },
+
   created () {
     // Set the dayjs locale here. Must be after the vuex store AND dayjs locales are loaded completely
     this.$dayjs.locale(this.$store.getters['lang/locale'])

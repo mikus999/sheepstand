@@ -34,12 +34,6 @@ export default {
     apiInterval: null
   }),
 
-  metaInfo () {
-    return {
-      title: 'SheepStand',
-    }
-  },
-
   mounted () {
     this.$loading = this.$refs.loading
 

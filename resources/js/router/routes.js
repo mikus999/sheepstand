@@ -10,8 +10,8 @@ export default [
   { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: [], auth: true } },
 
   // AUTH routes
-  { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { roles: [], auth: false } },
-  { path: '/register', name: 'register', component: page('auth/register.vue'), meta: { roles: [], auth: false } },
+  { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { title: 'Login', roles: [], auth: false } },
+  { path: '/register', name: 'register', component: page('auth/register.vue'), meta: { title: 'Register', roles: [], auth: false } },
   { path: '/password/reset', name: 'password.request', component: page('auth/password/email.vue'), meta: { roles: [], auth: false } },
   { path: '/password/reset/:token', name: 'password.reset', component: page('auth/password/reset.vue'), meta: { roles: [], auth: false }, props: true },
   { path: '/email/verify/:id', name: 'verification.verify', component: page('auth/verification/verify.vue'), meta: { roles: [], auth: false }, props: true },
