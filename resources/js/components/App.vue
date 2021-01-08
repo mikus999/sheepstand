@@ -64,7 +64,7 @@ export default {
       // Runs scheduled tasks once per minute
       this.apiInterval = window.setInterval(() => {
         this.$store.dispatch('general/scheduledTasks')
-      }, 5000)
+      }, 60000)
     }
 
   }
