@@ -12,7 +12,7 @@
       <v-expansion-panel>
         <v-expansion-panel-header>
           <div>
-            <v-icon left>mdi-tune</v-icon>
+            <v-icon left>{{ mdiTune }}</v-icon>
             {{ $t('general.filters') }}
           </div>
         </v-expansion-panel-header>

@@ -1,7 +1,7 @@
 <template>
 <v-card class="mx-auto" max-width="600" outlined>
   <v-card-title>
-    <v-icon left>mdi-telegram</v-icon>
+    <v-icon left>{{ mdiTelegram }}</v-icon>
     {{ $t('notifications.notification_setup') }}
   </v-card-title>
 
@@ -78,7 +78,7 @@
                   class="mx-auto" />
 
                   <p class="my-4">
-                    <a @click="resendCode" class="primary--text"><v-icon small class="mr-1 primary--text">mdi-refresh</v-icon>{{$t('notifications.resend_login_code')}}</a>
+                    <a @click="resendCode" class="primary--text"><v-icon small class="mr-1 primary--text">{{ mdiRefresh }}</v-icon>{{$t('notifications.resend_login_code')}}</a>
                   </p>
               </div>
 
@@ -101,7 +101,7 @@
               </p>
 
               <div class="my-16 text-center">
-                <v-text-field v-model="password" id="txtPassword" class="ma-3" :label="$t('notifications.2fa_password')" outlined :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"></v-text-field>
+                <v-text-field v-model="password" id="txtPassword" class="ma-3" :label="$t('notifications.2fa_password')" outlined :append-icon="showPwd ? mdiEye : mdiEyeOff" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"></v-text-field>
               </div>
 
               <p class="text-muted mb-8 mt-n12 red--text" v-if="error_msg">

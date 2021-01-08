@@ -24,21 +24,20 @@
 
 
 
-                  <CodeInput 
-                    @change="codeChange"
-                    :fields="6" 
-                    :fieldWidth="$vuetify.breakpoint.xsOnly ? 35 : 58" 
-                    :fieldHeight="$vuetify.breakpoint.xsOnly ? 33 : 54" 
-                    class="mx-auto" />
+                <CodeInput 
+                  @change="codeChange"
+                  :fields="6" 
+                  :fieldWidth="$vuetify.breakpoint.xsOnly ? 35 : 58" 
+                  :fieldHeight="$vuetify.breakpoint.xsOnly ? 33 : 54" 
+                  class="mx-auto" />
 
-                  <div v-if="teamNotFound" class="mt-4">
-                    <span class="red--text font-weight-bold">{{ teamNotFoundMsg}}</span>
-                  </div>
+                <div v-if="teamNotFound" class="mt-4">
+                  <span class="red--text font-weight-bold">{{ teamNotFoundMsg}}</span>
+                </div>
 
-                  <v-btn color="primary" class="my-8" @click.prevent="findTeam">
-                    {{ $t('teams.find_team') }}
-                  </v-btn>
-                </p>
+                <v-btn color="primary" class="my-8" @click.prevent="findTeam">
+                  {{ $t('teams.find_team') }}
+                </v-btn>
               </v-col>
             </v-row>
 
@@ -133,7 +132,7 @@
             <v-row>
               <v-col cols=12 class="mt-5 text-center">
                 <h1 class="ma-3">
-                  <v-icon size="30" color="success">mdi-check-circle-outline</v-icon>
+                  <v-icon size="30" color="success">{{ mdiCheckCircleOutline }}</v-icon>
                   {{ this.$t('teams.welcome_to_team') }}
                 </h1>
 

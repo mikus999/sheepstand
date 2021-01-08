@@ -10,7 +10,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
-            <v-icon left>{{ templates ? 'mdi-calendar-star' : 'mdi-calendar-week' }}</v-icon>
+            <v-icon left>{{ templates ? mdiCalendarStar : mdiCalendarWeek }}</v-icon>
             {{ templates ? $t('schedules.templates') : $t('schedules.weekly_schedules') }}
           </v-toolbar-title>
 
@@ -24,7 +24,7 @@
             <v-icon 
               :left="$vuetify.breakpoint.smAndUp"
               :small="$vuetify.breakpoint.smAndUp"
-            >mdi-calendar-plus</v-icon>
+            >{{ mdiCalendarPlus }}</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">
               {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
             </span>
@@ -60,7 +60,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>mdi-calendar-edit</v-icon>
+              <v-icon>{{ mdiCalendarEdit }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
@@ -81,7 +81,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>mdi-calendar-edit</v-icon>
+              <v-icon>{{ mdiCalendarEdit }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
@@ -90,7 +90,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
             <v-btn icon @click="convertToSchedule(item)" v-bind="attrs" v-on="on">
-              <v-icon>mdi-calendar-plus</v-icon>
+              <v-icon>{{ mdiCalendarPlus }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('schedules.make_new_schedule') }}</span>
@@ -135,7 +135,7 @@
               <v-text-field 
                 v-model="newSchedDate" 
                 :label="$t('schedules.choose_start_date')" 
-                prepend-icon="mdi-calendar-week-begin" 
+                :prepend-icon="mdiCalendarWeekBegin" 
                 readonly
                 v-bind="attrs" 
                 v-on="on"
@@ -179,7 +179,7 @@
           <v-text-field 
             v-model="newTemplateName" 
             :label="$t('schedules.template_name')" 
-            prepend-icon="mdi-form-textbox"
+            :prepend-icon="mdiFormTextbox"
           ></v-text-field>
         </v-card-text>
 
@@ -269,7 +269,7 @@ export default {
 
 
     getDayIcon(status) {
-      return (status ? 'mdi-check-bold' : 'mdi-close-thick')
+      return (status ? mdiCheckBold : mdiCloseThick)
     },
 
     getDayColor(status) {

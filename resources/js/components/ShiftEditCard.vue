@@ -27,7 +27,7 @@
         <v-row dense>
           <v-col cols=3 class="pa-1 text-center">
             <v-icon color="white">
-              {{ shift.mandatory ? 'mdi-heart' : 'mdi-heart-outline' }}
+              {{ shift.mandatory ? mdiHeart : mdiHeartOutline }}
             </v-icon>
           </v-col>
 
@@ -56,7 +56,7 @@
               </span>
             </v-col>
             <v-col cols=1 class="pa-0">
-              <v-icon small v-if="user.driver">mdi-car</v-icon>
+              <v-icon small v-if="user.driver">{{ mdiCar }}</v-icon>
             </v-col>
           </v-row>
         </div>
@@ -83,7 +83,7 @@
                   :disabled="!assignmentsLoaded"
                   :loading="!assignmentsLoaded"
                 >
-                  <v-icon small>mdi-account-multiple }}</v-icon>
+                  <v-icon small>{{mdiAccountMultiple }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('shifts.participants') }}</span>
@@ -99,7 +99,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>mdi-pencil</v-icon>
+                  <v-icon small>{{ mdiPencil }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('schedules.new_shift') }}</span>
@@ -131,7 +131,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>mdi-clipboard-arrow-down</v-icon>
+                  <v-icon small>{{ mdiClipboardArrowDown }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('shifts.make_next_shift') }}</span>
@@ -147,7 +147,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>mdi-content-duplicate</v-icon>
+                  <v-icon small>{{ mdiContentDuplicate }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('general.duplicate') }}</span>
@@ -237,7 +237,7 @@ export default {
     },
 
     assignmentsLoaded() {
-      return this.team_availability.length > 0
+      return this.team_availability ? this.team_availability.length > 0 : false
     }
   },
 

@@ -43,7 +43,7 @@
                     @click="approveAllRequests(0)"
                     v-if="hasPendingAssignments"
                   >
-                    <v-icon small left>mdi-thumb-up</v-icon>
+                    <v-icon small left>{{ mdiThumbUp }}</v-icon>
                     <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_assignments') }}</span>
                   </v-btn>
 
@@ -53,7 +53,7 @@
                     @click="approveAllRequests(1)"
                     v-if="hasPendingRequests"
                   >
-                    <v-icon small left>mdi-thumb-up</v-icon>
+                    <v-icon small left>{{ mdiThumbUp }}</v-icon>
                     <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_requests') }}</span>
                   </v-btn>
                 </v-toolbar>
@@ -111,7 +111,7 @@
                       @click.stop="updateStatus(shift_user, item, 2)"
                       class="ml-2"
                     >
-                      mdi-thumb-up
+                      {{mdiThumbUp }}
                     </v-icon>
 
                     <v-icon 
@@ -122,7 +122,7 @@
                       @click.stop="removeShiftUser(shift_user, item)"
                       class="ml-3"
                     >
-                      mdi-close-circle
+                      {{ mdiCloseCircle }}
                     </v-icon>
 
                     <v-icon 
@@ -133,7 +133,7 @@
                       @click.stop="updateStatus(shift_user, item, 3)"
                       class="ml-3"
                     >
-                      mdi-thumb-down
+                      {{mdiThumbDown}}
                     </v-icon>
                   </v-chip>
                 </v-chip-group>

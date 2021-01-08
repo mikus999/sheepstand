@@ -1,7 +1,7 @@
 <template>
   <v-card outlined class="ma-6">
     <v-card-title>
-      <v-icon left>mdi-telegram</v-icon>
+      <v-icon left>{{ mdiTelegram }}</v-icon>
       {{ $t('notifications.notifications')}}
     </v-card-title>
 
@@ -9,8 +9,8 @@
       <div>
         <p>
           <span>{{ $t('general.status') }}: </span>
-          <v-icon v-if="notificationsEnabled" small color="success">mdi-checkbox-marked-circle</v-icon>
-          <v-icon v-else small color="red">mdi-close-circle</v-icon>
+          <v-icon v-if="notificationsEnabled" small color="success">{{ mdiCheckboxMarkedCircle }}</v-icon>
+          <v-icon v-else small color="red">{{ mdiCloseCircle }}</v-icon>
           <span class="font-weight-bold">{{ notificationsEnabled ? $t('general.enabled') : $t('general.disabled') }}</span>
         </p>
       </div>
@@ -23,7 +23,7 @@
           <span>{{ $t('notifications.invite_link')}}: </span>
           <span class="font-weight-bold">{{ chatInfo.invite_link }}</span>
           <v-btn @click="copyText(chatInfo.invite_link)" icon>
-            <v-icon small>mdi-content-copy</v-icon>
+            <v-icon small>{{ mdiContentCopy }}</v-icon>
           </v-btn>
         </p>
         <v-btn text block color="secondary" class="my-2" @click="disableNot()">{{ $t('notifications.disable_notifications') }}</v-btn>

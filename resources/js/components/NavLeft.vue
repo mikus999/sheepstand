@@ -14,7 +14,7 @@
 
       <v-list-item router :to="{ name: 'home' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-view-dashboard</v-icon>
+          <v-icon>{{ mdiViewDashboard }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.dashboard') }}</v-list-item-title>
@@ -43,7 +43,7 @@
       <v-list-item router :to="{ name: 'account.inbox' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
           <v-badge :content="message_count.unread" color="red" overlap :value="message_count.unread">
-            <v-icon>mdi-message</v-icon>
+            <v-icon>{{ mdiMessage }}</v-icon>
           </v-badge>
 
         </v-list-item-icon>
@@ -93,7 +93,7 @@
 
       <v-list-item router :to="{ name: 'schedules.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-calendar-clock</v-icon>
+          <v-icon>{{ mdiCalendarClock }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.scheduling') }}</v-list-item-title>
@@ -102,7 +102,7 @@
 
       <v-list-item router :to="{ name: 'teams.index', params: { tab: 'general' } }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-cog</v-icon>
+          <v-icon>{{ mdiCog }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.team_settings') }}</v-list-item-title>
@@ -111,7 +111,7 @@
 
       <v-list-item router :to="{ name: 'teams.messages' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-message-cog</v-icon>
+          <v-icon>{{ mdiMessageCog }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.messages') }}</v-list-item-title>
@@ -125,7 +125,7 @@
 
       <v-list-item v-if="$is('translator')" router :to="{ name: 'translation.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-google-translate</v-icon>
+          <v-icon>{{ mdiGoogleTranslate }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.translation') }}</v-list-item-title>
@@ -134,7 +134,7 @@
 
       <v-list-item v-if="$is('super_admin')" router :to="{ name: 'admin.index' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-icon>mdi-tools</v-icon>
+          <v-icon>{{ mdiTools }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ $t('menu.site_admin') }}</v-list-item-title>
@@ -151,7 +151,7 @@
       <!-- LOGOUT BUTTON -->
       <div :class="'pa-1 ' + ($vuetify.breakpoint.xs ? 'mb-16' : '')">
         <v-btn block @click.prevent="logout" v-if="!$vuetify.breakpoint.mobile && user">
-          <v-icon>mdi-logout-variant</v-icon>
+          <v-icon>{{ mdiLogoutVariant }}</v-icon>
           <span class="ml-3">{{ $t('auth.logout') }}</span>
         </v-btn>
       </div>

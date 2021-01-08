@@ -2,7 +2,7 @@
   <v-card width="100%" :flat="flat">
     <v-toolbar flat>
       <v-toolbar-title v-if="showTitle">
-        <v-icon left>mdi-message</v-icon>
+        <v-icon left>{{ mdiMessage }}</v-icon>
         {{ $t('messages.inbox')}}
       </v-toolbar-title>
 
@@ -27,8 +27,8 @@
           <template v-for="(message, index) in filteredMessages">
             <v-list-item :key="message.id">
               <v-list-item-avatar>
-                <v-icon v-if="isExpired(message.expires_on)">mdi-email-off</v-icon>
-                <v-icon v-else>{{ isUnread(message) ? 'mdi-email' : 'mdi-email-open' }}</v-icon>
+                <v-icon v-if="isExpired(message.expires_on)">{{ mdiEmailOff }}</v-icon>
+                <v-icon v-else>{{ isUnread(message) ? mdiEmail : mdiEmail-open }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content 
@@ -53,15 +53,15 @@
 
                 <div class="my-auto">
                   <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" @click.stop class="mb-n2">
-                    <v-icon>mdi-link</v-icon>
+                    <v-icon>{{ mdiLink }}</v-icon>
                   </v-btn>
 
                   <v-btn icon v-if="!isUnread(message) && !editor" @click.stop="markAsUnread(message.id)">
-                    <v-icon>mdi-email-mark-as-unread</v-icon>
+                    <v-icon>{{ mdiEmailMarkAsUnread }}</v-icon>
                   </v-btn>
                   
                   <v-btn icon v-else-if="isUnread(message) && !editor" @click.stop="markAsRead(message.id)">
-                    <v-icon>mdi-email-open</v-icon>
+                    <v-icon>{{ mdiEmailOpen }}</v-icon>
                   </v-btn>
 
                   <v-btn icon @click.stop="deleteOrHide(message.id)">

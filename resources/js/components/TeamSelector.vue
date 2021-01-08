@@ -4,7 +4,7 @@
     <template v-slot:activator="{ on, attrs }">
       <div width="100%" v-bind="attrs" v-on="on" class="ma-0 pt-1">
         <span class="menu-label d-inline-block text-truncate" style="max-width: 150px;">{{ team != null ? team.display_name : ''}}</span>
-        <v-icon class="float-right">mdi-menu-down</v-icon>
+        <v-icon class="float-right">{{ mdiMenuDown }}</v-icon>
       </div>
     </template>
 

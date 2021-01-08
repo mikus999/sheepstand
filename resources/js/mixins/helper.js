@@ -1,10 +1,8 @@
 import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
-import mdi from '~/mixins/mdi'
 
 
 export const helper = {
-  mixins: [mdi],
   computed: {
     ...mapGetters({
       user: 'auth/user',
@@ -78,37 +76,37 @@ export const helper = {
           value: 0,
           text: this.$t('shifts.status_0'), 
           color: 'deep-orange',
-          icon: 'mdi-account-question'
+          icon: this.mdiAccountQuestion
         },
         { 
           value: 1,
           text: this.$t('shifts.status_1'), 
           color: 'grey',
-          icon: 'mdi-account-clock'
+          icon: this.mdiAccountClock
         },
         { 
           value: 2,
           text: this.$t('shifts.status_2'), 
           color: 'green',
-          icon: 'mdi-account-check'
+          icon: this.mdiAccountCheck
         },
         { 
           value: 3,
           text: this.$t('shifts.status_3'), 
           color: 'grey',
-          icon: 'mdi-account-cancel'
+          icon: this.mdiAccountCancel
         },
         { 
           value: 4,
           text: this.$t('shifts.status_4'), 
           color: 'blue',
-          icon: 'mdi-account-switch'
+          icon: this.mdiAccountSwitch
         },
         { 
           value: 5,
           text: this.$t('shifts.status_4'), 
           color: 'blue',
-          icon: 'mdi-account-switch'
+          icon: this.mdiAccountSwitch
         }
       ],
 
@@ -284,22 +282,22 @@ export const helper = {
           
       if (macosPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'macOS'
-        osDetails.icon = 'mdi-apple'
+        osDetails.icon = this.mdiApple
       } else if (iosPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'iOS'
-        osDetails.icon = 'mdi-apple'
+        osDetails.icon = this.mdiApple
       } else if (windowsPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'Windows'
-        osDetails.icon = 'mdi-windows'
+        osDetails.icon = this.mdiMicrosoftWindows
       } else if (/Android/.test(userAgent)) {
         osDetails.name = 'Android'
-        osDetails.icon = 'mdi-android'
+        osDetails.icon = this.mdiAndroid
       } else if (!os && /Linux/.test(platform)) {
         osDetails.name = 'Linux'
-        osDetails.icon = 'mdi-linux'
+        osDetails.icon = this.mdiLinux
       } else {
         osDetails.name = 'Unknown'
-        osDetails.icon = 'mdi-help-circle'
+        osDetails.icon = this.mdiHelpCircle
       }
 
       return osDetails;

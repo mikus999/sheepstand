@@ -1,7 +1,7 @@
 <template>
   <v-card width="100%" :flat="$vuetify.breakpoint.xs">
     <v-card-title class="text-h6">
-      <v-icon class="mr-3">mdi-palm-tree</v-icon>
+      <v-icon class="mr-3">{{ mdiPalmTree }}</v-icon>
       {{ $t('account.vacation_schedule') }}
     </v-card-title>
 

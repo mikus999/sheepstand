@@ -15,15 +15,15 @@
         >
           <v-tab href="#tab-general">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
-            <v-icon>mdi-information</v-icon>
+            <v-icon>{{ mdiInformation }}</v-icon>
           </v-tab>
           <v-tab href="#tab-preferences">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
-            <v-icon>mdi-cog</v-icon>
+            <v-icon>{{ mdiCog }}</v-icon>
           </v-tab>
           <v-tab href="#tab-locations">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('menu.locations') }}</span>
-            <v-icon>{{ mdiMap }}-marker-multiple</v-icon>
+            <v-icon>{{ mdiMapMarkerMultiple }}</v-icon>
           </v-tab>
           <v-tab href="#tab-members">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('teams.members') }}</span>
@@ -39,13 +39,13 @@
                 <v-col cols=12 sm=6 class="px-6">
                   <v-text-field v-model="teamData.display_name" name="display_name" :label="$t('teams.team_name')" @input.native="updateTeam($event)" :success="validation.display_name.success">
                     <template v-slot:append v-if="validation.display_name.success">
-                      <v-icon color="green">mdi-check-circle</v-icon>
+                      <v-icon color="green">{{ mdiCheckCircle }}</v-icon>
                     </template>
                   </v-text-field>
 
                   <v-text-field name="code" :label="$t('teams.team_code')" :value="teamData.code" readonly>
                     <template v-slot:append>
-                      <v-icon @click="resetCode" color="error">mdi-lock-reset</v-icon>
+                      <v-icon @click="resetCode" color="error">{{ mdiLockReset }}</v-icon>
                     </template>
                   </v-text-field>
 
@@ -88,9 +88,9 @@
                       <div class="mt-8 mb-8" v-for="num in settings.shifts.numbers" :key="num.index">
                         <v-input class="ml-5">
                           <v-chip color="primary" class="mr-3">
-                            <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>mdi-minus</v-icon>
+                            <v-icon @click="teamData[num.column]-=num.step; changeSetting(num.column, 'num')" small left>{{ mdiMinus }}</v-icon>
                             <span class="pa-1">{{ formatHoursMinutes(teamData[num.column]) }}</span>
-                            <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>mdi-plus</v-icon>
+                            <v-icon @click="teamData[num.column]+=num.step; changeSetting(num.column, 'num')" small right>{{ mdiPlus }}</v-icon>
                           </v-chip>
                           <v-label class="float-right">{{ num.text }}</v-label>
                         </v-input>

@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-icon left>mdi-message-plus</v-icon>
+      <v-icon left>{{ mdiMessagePlus }}</v-icon>
       {{ $t('messages.create_new_message')}}
     </v-card-title>
 
@@ -64,7 +64,7 @@
           <v-text-field
             v-model="expires_on"
             :label="$t('messages.display_until') + ' (' + $t('general.optional') + ')'"
-            prepend-icon="mdi-calendar"
+            :prepend-icon="mdiCalendar"
             readonly
             v-bind="attrs"
             v-on="on"
@@ -110,7 +110,7 @@
               >
 
                 <template v-slot:prepend>
-                  <v-icon :color="color_code">mdi-square-rounded</v-icon>
+                  <v-icon :color="color_code">{{ mdiSquareRounded }}</v-icon>
                 </template>
 
               </v-text-field>
@@ -176,7 +176,7 @@
               </div>
 
               <template v-slot:append v-if="named_route != null && named_route != ''">
-                <v-icon style="color: inherit !important;">mdi-open-in-new</v-icon>
+                <v-icon style="color: inherit !important;">{{ mdiOpenInNew }}</v-icon>
               </template>
 
             </v-alert>
@@ -219,7 +219,7 @@ export default {
       named_route: null,
       custom_color: true,
       color_code: '#7E7E7E',
-      icon: 'mdi-alert',
+      icon: this.mdiAlert,
       show_inbox: true,
       send_telegram: false,
       show_banner: false,
@@ -231,27 +231,29 @@ export default {
         'error',
         'warning'
       ],
-      icons: [
-        'mdi-information',
-        'mdi-alert',
-        'mdi-account',
-        'mdi-account-group',
-        'mdi-account-convert',
-        'mdi-message',
-        'mdi-cog',
-        'mdi-map-search',
-        'mdi-map-marker',
-        'mdi-clock',
-        'mdi-calendar',
-        'mdi-pin',
-        'mdi-briefcase',
-        'mdi-paperclip',
-        'mdi-weather-pouring',
-        'mdi-weather-snowy-heavy',
-        'mdi-weather-windy',
-        'mdi-lightbulb',
-        'mdi-shield-alert'
-      ],
+      icons: {
+        mdiInformation,
+        mdiAlert,
+        /*
+        mdiAccount,
+        mdiAccountGroup,
+        mdiAccountConvert,
+        mdiMessage,
+        mdiCog,
+        mdiMapSearch,
+        mdiMapMarker,
+        mdiClock,
+        mdiCalendar,
+        mdiPin,
+        mdiBriefcase,
+        mdiPaperclip,
+        mdiWeatherPouring,
+        mdiWeatherSnowyHeavy,
+        mdiWeatherWindy,
+        mdiLightbulb,
+        mdiShieldAlert
+        */
+      },
       swatches: [
         ['#FF1744', '#B71C1C'], // reds
         ['#FF9800', '#EF6C00'], // oranges

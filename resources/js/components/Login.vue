@@ -4,7 +4,7 @@
     <v-card-text>
       <v-form>
         <v-text-field v-model="email" name="email" :label="$t('general.email')" :error-messages="emailErrors" @blur="$v.email.$touch()"></v-text-field>
-        <v-text-field v-model="password" password="password" :label="$t('auth.password')" :error-messages="passwordErrors" @blur="$v.password.$touch()" :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"></v-text-field>
+        <v-text-field v-model="password" password="password" :label="$t('auth.password')" :error-messages="passwordErrors" @blur="$v.password.$touch()" :append-icon="showPwd ? mdiEye : mdiEyeOff" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"></v-text-field>
 
 
         <v-row>

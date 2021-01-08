@@ -55,7 +55,7 @@
 
               <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click="makeTrade(trade)" class="me-2"
                 :disabled="trade.id === user.id" :outlined="trade.id === user.id">
-                <v-icon left small>mdi-swap-horizontal-bold</v-icon>
+                <v-icon left small>{{ mdiSwapHorizontalBold }}</v-icon>
                 {{ trade.name }}
               </v-chip>
 
@@ -92,7 +92,7 @@
       <template v-slot:item.tradewith="{ item }">
         <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click.stop="makeTrade(trade)" class="me-2"
            :disabled="trade.id === user.id" :outlined="trade.id === user.id">
-           <v-icon left small>mdi-swap-horizontal-bold</v-icon>
+           <v-icon left small>{{ mdiSwapHorizontalBold }}</v-icon>
            {{ trade.name }}
         </v-chip>
       </template>

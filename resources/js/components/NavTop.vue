@@ -12,7 +12,7 @@
     <v-spacer />
 
     <v-btn dark icon @click.prevent="logout" v-if="user">
-      <v-icon>mdi-logout-variant</v-icon>
+      <v-icon>{{ mdiLogoutVariant }}</v-icon>
     </v-btn>
 
   </v-app-bar>

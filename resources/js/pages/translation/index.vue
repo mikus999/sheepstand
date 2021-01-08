@@ -3,7 +3,7 @@
     <v-card width="100%">
       <v-card-title>
       <div>
-        <v-icon left>mdi-google-translate</v-icon>
+        <v-icon left>{{ mdiGoogleTranslate }}</v-icon>
         {{ $t('translation.management_system') }}
       </div>
       <div class="ml-auto">
@@ -116,7 +116,7 @@ export default {
         }
       },
       saveFab: {
-        icon: 'mdi-content-save',
+        icon: mdiContentSave,
         color: 'primary',
         showTime: true,
         autoSave: true,
@@ -325,7 +325,7 @@ export default {
 
     toggleFab(isSave, withTimer) {
       this.saveFab.color = isSave ? 'primary' : 'green'
-      this.saveFab.icon = isSave ? 'mdi-content-save' : 'mdi-check-bold'
+      this.saveFab.icon = isSave ? mdiContentSave : mdiCheckBold
       this.saveFab.showTime = withTimer
     }
   },

@@ -27,7 +27,7 @@
 
     <v-card-actions>
       <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" class="mb-n2">
-        <v-icon>mdi-link</v-icon>
+        <v-icon>{{ mdiLink }}</v-icon>
       </v-btn>
 
       <v-spacer></v-spacer>

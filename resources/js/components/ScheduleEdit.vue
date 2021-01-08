@@ -1,7 +1,7 @@
 <template>
   <v-card width="100%">
     <v-card-title>
-      <v-icon left>{{ isTemplate ? 'mdi-calendar-star' : 'mdi-calendar-week' }}</v-icon>
+      <v-icon left>{{ isTemplate ? mdiCalendarStar : mdiCalendarWeek }}</v-icon>
       {{ isTemplate ? $t('schedules.templates') : $t('schedules.weekly_schedules') }}
     </v-card-title>
 
@@ -78,7 +78,7 @@
             @click="approveAllRequests(0)"
             v-if="hasPendingAssignments"
           >
-            <v-icon small left>mdi-thumb-up</v-icon>
+            <v-icon small left>{{ mdiThumbUp }}</v-icon>
             <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_assignments') }}</span>
           </v-btn>
 
@@ -89,7 +89,7 @@
             @click="approveAllRequests(1)"
             v-if="hasPendingRequests"
           >
-            <v-icon small left>mdi-thumb-up</v-icon>
+            <v-icon small left>{{ mdiThumbUp }}</v-icon>
             <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_requests') }}</span>
           </v-btn>
         </v-col>
@@ -119,14 +119,14 @@
                   <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
                   <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
                     <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">mdi-plus-box</v-icon>
+                      <v-icon large class="pa-4">{{ mdiPlusBox }}</v-icon>
                     </v-card-text>
                   </v-card>
 
                   <!-- Show placeholder card if there are now shifts for this day -->
                   <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
                     <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">mdi-select-place</v-icon>
+                      <v-icon large class="pa-4">{{ mdiSelectPlace }}</v-icon>
                     </v-card-text>
                   </v-card>
 
@@ -191,7 +191,7 @@
           <v-text-field 
             v-model="newTemplateName" 
             :label="$t('schedules.template_name')" 
-            prepend-icon="mdi-form-textbox"
+            :prepend-icon="mdiFormTextbox"
           ></v-text-field>
         </v-card-text>
 

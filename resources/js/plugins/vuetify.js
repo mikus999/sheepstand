@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import 'vuetify/dist/vuetify.min.css'
 import colors from 'vuetify/lib/util/colors'
-import '@mdi/font/css/materialdesignicons.css' // remove after converting icons to mdi/js
+//import '@mdi/font/css/materialdesignicons.css' // remove after converting icons to mdi/js
 
 Vue.use(Vuetify)
 

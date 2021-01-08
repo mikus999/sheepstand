@@ -108,7 +108,7 @@ export default {
 
       await axios.get('/api/teams/' + this.team.id + '/availability/')
         .then(response => {
-          this.team_availability = response.data.users
+          this.team_availability = response.data.data.users
           this.pageLoad.progress = 60
         })
     },

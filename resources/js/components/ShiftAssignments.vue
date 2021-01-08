@@ -8,7 +8,7 @@
 
       <v-spacer />
 
-      <span class="mr-2 text-overline">(<v-icon small class="mr-1">mdi-keyboard</v-icon>ESC)</span>
+      <span class="mr-2 text-overline">(<v-icon small class="mr-1">{{ mdiKeyboard }}</v-icon>ESC)</span>
       <v-btn icon dark @click="$emit('close')">
         <v-icon>{{ mdiClose }}</v-icon>
       </v-btn>
@@ -40,7 +40,7 @@
           <v-text-field
             v-model="userSearch"
             :label="$t('general.search')"
-            prepend-inner-icon="mdi-magnify"
+            :prepend-inner-icon="mdiMagnify"
             single-line
             hide-details
           ></v-text-field>
@@ -50,7 +50,7 @@
       <template v-slot:item.marriage_mate="{ item }">
         <div v-if="item.marriage_mate">
           <v-btn icon v-if="!isShiftMember(item.marriage_mate.id) && isAvailable(item.marriage_mate.id)" @click="addShiftUser(item.marriage_mate, true)">
-            <v-icon>mdi-plus-box</v-icon>
+            <v-icon>{{ mdiPlusBox }}</v-icon>
           </v-btn>
 
           <v-avatar v-else-if="userShiftStatus(item.marriage_mate.id) > -1" size="35">
@@ -60,7 +60,7 @@
           </v-avatar>
 
           <v-avatar v-else size="35">
-            <v-icon>mdi-cancel</v-icon>
+            <v-icon>{{ mdiCancel }}</v-icon>
           </v-avatar>
 
           {{ item.marriage_mate.name }}
@@ -68,16 +68,16 @@
       </template>
 
       <template v-slot:item.driver="{ item }">
-        <v-icon v-if="item.driver">mdi-car</v-icon>
+        <v-icon v-if="item.driver">{{ mdiCar }}</v-icon>
       </template> 
 
       <template v-slot:item.action="{ item }">
         <v-btn v-if="!isShiftMember(item.id)" icon @click="addShiftUser(item)">
-          <v-icon>mdi-plus-box</v-icon>
+          <v-icon>{{ mdiPlusBox }}</v-icon>
         </v-btn>
 
         <v-btn v-else icon @click="removeShiftUser(item)" :color="shiftStatus[userShiftStatus(item.id)].color">
-          <v-icon>mdi-minus-box</v-icon>
+          <v-icon>{{ mdiMinusBox }}</v-icon>
         </v-btn>
       </template>
 

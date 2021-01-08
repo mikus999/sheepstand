@@ -4,6 +4,7 @@ import store from '~/store'
 import router from '~/router'
 import i18n from '~/plugins/i18n'
 import vuetify from '~/plugins/vuetify'
+import mdi from '~/mixins/mdi'
 import Vuelidate from 'vuelidate'
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
@@ -17,6 +18,7 @@ import VueClipboard from 'vue-clipboard2'
 import 'typeface-roboto'
 
 
+
 // VueClipboard
 Vue.use(VueClipboard)
 
@@ -24,6 +26,7 @@ Vue.use(VueClipboard)
 Vue.use(Vuelidate)
 
 
+Vue.mixin(mdi)
 
 
 Vue.config.productionTip = false

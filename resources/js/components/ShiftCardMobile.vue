@@ -18,7 +18,7 @@
 
       <template v-slot:actions>
         <span v-if="hasConflicts">
-          <v-icon color="red">mdi-account-alert</v-icon>
+          <v-icon color="red">{{ mdiAccountAlert }}</v-icon>
         </span>
 
         <span v-else-if="isShiftMember">
@@ -34,10 +34,10 @@
         </span>
 
         <span v-else>
-          <v-icon>mdi-lock</v-icon>
+          <v-icon>{{ mdiLock }}</v-icon>
         </span>
 
-        <span><v-icon>mdi-chevron-down</v-icon></span>
+        <span><v-icon>{{ mdiChevronDown }}</v-icon></span>
       </template>
 
     </v-expansion-panel-header>

@@ -4,7 +4,7 @@
       <v-toolbar v-if="!readonly" dense dark>
         <v-item-group class="v-btn-toggle">
           <v-btn @click="updateMapType()">
-            <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
+            <v-icon>{{ mapType === 'roadmap' ? mdiSatellite : mdiMap }}</v-icon>
           </v-btn>
         </v-item-group>
 
@@ -26,7 +26,7 @@
       <v-toolbar v-else dense dark>
         <v-item-group class="v-btn-toggle">
           <v-btn @click="updateMapType()">
-            <v-icon>{{ mapType === 'roadmap' ? 'mdi-satellite' : 'mdi-map' }}</v-icon>
+            <v-icon>{{ mapType === 'roadmap' ? mdiSatellite : mdiMap }}</v-icon>
           </v-btn>
         </v-item-group>
 

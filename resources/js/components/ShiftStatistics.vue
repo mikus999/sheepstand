@@ -2,7 +2,7 @@
   <v-card>
       <v-toolbar flat>
         <v-toolbar-title>
-          <v-icon left>mdi-gauge</v-icon>
+          <v-icon left>{{ mdiGauge }}</v-icon>
           {{ $t('general.statistics') }}
         </v-toolbar-title>
       </v-toolbar>
