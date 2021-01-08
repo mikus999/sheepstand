@@ -1,7 +1,7 @@
 <template>
   <v-card width="100%" :flat="$vuetify.breakpoint.xs">
     <v-card-title class="text-h6">
-      <v-icon class="mr-3">{{mdiCalendarMultiselect}}</v-icon>
+      <v-icon class="mr-3">{{icons.mdiCalendarMultiselect}}</v-icon>
       {{ $t('account.availability') }}
     </v-card-title>
 
@@ -39,7 +39,7 @@
               :class="'avail_square ' + (h.available ? 'avail_square_on' : 'avail_square_off')"
               @click="changeAvailability(h)"
             >
-              <v-icon>{{ h.available ? mdiCheckCircleOutline : mdiCancel }}</v-icon>
+              <v-icon>{{ h.available ? icons.mdiCheckCircleOutline : icons.mdiCancel }}</v-icon>
             </div>
           </div>
         </v-col>
@@ -77,7 +77,7 @@
             class="my-2"
             :color="h.available ? 'green' : '#AEAEAE'"
           >
-            <v-icon class="mr-auto" small>{{ h.available ? mdiCheckCircleOutline : mdiCancel }}</v-icon>
+            <v-icon class="mr-auto" small>{{ h.available ? icons.mdiCheckCircleOutline : icons.mdiCancel }}</v-icon>
             <span class="mx-auto">{{ timeSlot(index + 1) }}</span>
           </v-btn>
         </v-tab-item>

@@ -4,7 +4,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title v-if="showTitle || $vuetify.breakpoint.xs">
-            <v-icon left>{{ mdiMap }}-marker-multiple</v-icon>
+            <v-icon left>{{ icons.mdiMap }}-marker-multiple</v-icon>
             {{ $t('teams.cart_locations') }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
             <v-icon 
               :left="$vuetify.breakpoint.smAndUp"
               :small="$vuetify.breakpoint.smAndUp"
-            >{{ mdiMap }}-marker-plus</v-icon>
+            >{{ icons.mdiMap }}-marker-plus</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">
               {{ $t('teams.create_new_location') }}
             </span>
@@ -32,14 +32,14 @@
 
               <v-card-text>
                 <v-container>
-                  <v-text-field v-model="tempData.name" :prepend-icon="mdiFormTextbox" :label="$t('teams.location_name')" 
+                  <v-text-field v-model="tempData.name" :prepend-icon="icons.mdiFormTextbox" :label="$t('teams.location_name')" 
                     :error-messages="nameErrors" @blur="$v.tempData.name.$touch()" />
 
                   <v-menu v-model="menu" top nudge-bottom="105" nudge-left="16" :open-on-click="true" :close-on-content-click="false">
                     <template v-slot:activator="{ on }">
-                      <v-text-field v-model="tempData.color_code" :label="$t('teams.location_color_optional')" v-on="on" :prepend-icon="mdiPalette" hide-details >
+                      <v-text-field v-model="tempData.color_code" :label="$t('teams.location_color_optional')" v-on="on" :prepend-icon="icons.mdiPalette" hide-details >
                           <template v-slot:prepend-inner>
-                            <v-icon :color="tempData.color_code">{{ mdiSquareRounded }}</v-icon>
+                            <v-icon :color="tempData.color_code">{{ icons.mdiSquareRounded }}</v-icon>
                           </template>
                         </v-text-field>
                     </template>
@@ -63,7 +63,7 @@
                     </v-card>
                   </v-menu>
                   
-                  <!--<v-file-input v-model="tempData.map" show-size :label="$t('teams.location_map_optional')" :prepend-icon="mdiMap"></v-file-input>-->
+                  <!--<v-file-input v-model="tempData.map" show-size :label="$t('teams.location_map_optional')" :prepend-icon="icons.mdiMap"></v-file-input>-->
                     
                   <!-- DEFAULT CHECKBOX -->
               
@@ -92,17 +92,17 @@
       </template>
 
       <template v-slot:item.default="{ item }">
-        <v-icon v-if="item.default" color="green">{{ mdiCheckCircle }}</v-icon>
-        <v-icon v-else @click.prevent="updateDefault(item.id)">{{ mdiCircleOutline }}</v-icon>
+        <v-icon v-if="item.default" color="green">{{ icons.mdiCheckCircle }}</v-icon>
+        <v-icon v-else @click.prevent="updateDefault(item.id)">{{ icons.mdiCircleOutline }}</v-icon>
       </template>
 
       <template v-slot:item.actions="{ item }">
         <v-btn icon @click="showDialog(item, true)">
-          <v-icon>{{ mdiPencil }}</v-icon>
+          <v-icon>{{ icons.mdiPencil }}</v-icon>
         </v-btn>
 
         <v-btn icon @click="deleteLoc(item)">
-          <v-icon>{{ mdiDelete }}</v-icon>
+          <v-icon>{{ icons.mdiDelete }}</v-icon>
         </v-btn>
       </template>
     </v-data-table>

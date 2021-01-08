@@ -2,7 +2,7 @@
 <v-container fluid>
   <v-card class="mx-auto" max-width="600" outlined>
     <v-card-title>
-      <v-icon left>{{ mdiAccountMultiplePlus }}</v-icon>
+      <v-icon left>{{ icons.mdiAccountMultiplePlus }}</v-icon>
       {{ $t('teams.join_existing_team') }}
     </v-card-title>
 
@@ -132,7 +132,7 @@
             <v-row>
               <v-col cols=12 class="mt-5 text-center">
                 <h1 class="ma-3">
-                  <v-icon size="30" color="success">{{ mdiCheckCircleOutline }}</v-icon>
+                  <v-icon size="30" color="success">{{ icons.mdiCheckCircleOutline }}</v-icon>
                   {{ this.$t('teams.welcome_to_team') }}
                 </h1>
 

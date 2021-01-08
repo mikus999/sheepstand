@@ -4,7 +4,7 @@
       <v-toolbar v-if="!readonly" dense dark>
         <v-item-group class="v-btn-toggle">
           <v-btn @click="updateMapType()">
-            <v-icon>{{ mapType === 'roadmap' ? mdiSatellite : mdiMap }}</v-icon>
+            <v-icon>{{ mapType === 'roadmap' ? icons.mdiSatellite : icons.mdiMap }}</v-icon>
           </v-btn>
         </v-item-group>
 
@@ -12,13 +12,13 @@
 
         <v-item-group class="v-btn-toggle" right>
           <v-btn @click="saveShapes()" :input-value="isChanged" active-class="save-btn">
-            <v-icon>{{ mdiContentSave }}</v-icon>
+            <v-icon>{{ icons.mdiContentSave }}</v-icon>
           </v-btn>
           <v-btn @click="revertChanges()">
-            <v-icon>{{ mdiUndo }}</v-icon>
+            <v-icon>{{ icons.mdiUndo }}</v-icon>
           </v-btn>
           <v-btn @click="$emit('close')">
-            <v-icon>{{ mdiClose }}</v-icon>
+            <v-icon>{{ icons.mdiClose }}</v-icon>
           </v-btn>
         </v-item-group>
       </v-toolbar>
@@ -26,7 +26,7 @@
       <v-toolbar v-else dense dark>
         <v-item-group class="v-btn-toggle">
           <v-btn @click="updateMapType()">
-            <v-icon>{{ mapType === 'roadmap' ? mdiSatellite : mdiMap }}</v-icon>
+            <v-icon>{{ mapType === 'roadmap' ? icons.mdiSatellite : icons.mdiMap }}</v-icon>
           </v-btn>
         </v-item-group>
 
@@ -34,7 +34,7 @@
 
         <v-item-group class="v-btn-toggle" right>
           <v-btn @click="$emit('close')">
-            <v-icon>{{ mdiClose }}</v-icon>
+            <v-icon>{{ icons.mdiClose }}</v-icon>
           </v-btn>
         </v-item-group>
       </v-toolbar>
@@ -55,16 +55,16 @@
       <v-toolbar v-if="!readonly" dense dark bottom>
         <v-item-group class="v-btn-toggle">
           <v-btn @click="changeDrawingMode('marker')" :input-value="isActiveButton('marker')">
-            <v-icon>{{ mdiMap }}-marker</v-icon>
+            <v-icon>{{ icons.mdiMap }}-marker</v-icon>
           </v-btn>
           <v-btn @click="changeDrawingMode('rectangle')" :input-value="isActiveButton('rectangle')">
-            <v-icon>{{ mdiVectorRectangle }}</v-icon>
+            <v-icon>{{ icons.mdiVectorRectangle }}</v-icon>
           </v-btn>
           <v-btn @click="changeDrawingMode('polygon')" :input-value="isActiveButton('polygon')">
-            <v-icon>{{ mdiVectorPolygon }}</v-icon>
+            <v-icon>{{ icons.mdiVectorPolygon }}</v-icon>
           </v-btn>
           <v-btn @click="changeDrawingMode('circle')" :input-value="isActiveButton('circle')">
-            <v-icon>{{ mdiVectorCircle }}</v-icon>
+            <v-icon>{{ icons.mdiVectorCircle }}</v-icon>
           </v-btn>
         </v-item-group>
 
@@ -72,7 +72,7 @@
 
         <v-item-group class="v-btn-toggle" right>
           <v-btn @click="deleteSelection()">
-            <v-icon>{{ mdiDelete }}</v-icon>
+            <v-icon>{{ icons.mdiDelete }}</v-icon>
           </v-btn>
         </v-item-group>
 

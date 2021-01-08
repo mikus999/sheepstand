@@ -2,7 +2,7 @@
   <v-card width="100%" flat>
     <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon left>{{ mdiCalendarMultiselect }}</v-icon>
+        <v-icon left>{{ icons.mdiCalendarMultiselect }}</v-icon>
         {{ $t('schedules.available_shifts') }}
       </v-toolbar-title>
     </v-toolbar>
@@ -12,7 +12,7 @@
       <v-expansion-panel>
         <v-expansion-panel-header>
           <div>
-            <v-icon left>{{ mdiTune }}</v-icon>
+            <v-icon left>{{ icons.mdiTune }}</v-icon>
             {{ $t('general.filters') }}
           </div>
         </v-expansion-panel-header>

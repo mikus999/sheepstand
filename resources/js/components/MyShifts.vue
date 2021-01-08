@@ -2,7 +2,7 @@
   <v-card width="100%">
     <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon left>{{ mdiCalendarAccount }}</v-icon>
+        <v-icon left>{{ icons.mdiCalendarAccount }}</v-icon>
         {{ $t('shifts.my_shifts') }}
       </v-toolbar-title>
 
@@ -13,7 +13,7 @@
         v-if="$vuetify.breakpoint.smAndUp"
         :to="{ name: 'schedules.shifts' }"
       >
-        <v-icon left small>{{ mdiCalendar }}</v-icon>
+        <v-icon left small>{{ icons.mdiCalendar }}</v-icon>
         {{ $t('shifts.see_more') }}
       </v-btn>
       

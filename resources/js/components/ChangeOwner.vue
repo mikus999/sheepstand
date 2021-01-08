@@ -1,7 +1,7 @@
 <template>
   <v-card hover :width="width">
     <v-card-title class="justify-center text-h6">
-      <v-icon class="mr-3">{{mdiShieldAccount}}</v-icon>
+      <v-icon class="mr-3">{{icons.mdiShieldAccount}}</v-icon>
       {{ $t('teams.change_owner') }}
     </v-card-title>
 
@@ -20,6 +20,7 @@
           :key="admin.id" 
           :value="admin.id"
           :label="admin.name"
+          :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"
           >
         </v-radio>
       </v-radio-group>

@@ -21,7 +21,7 @@
       <v-system-bar :color="$vuetify.theme.dark ? '#1c1c1c' : '#ffffff'">
         <MarqueeText v-if="hasConflicts">
             <span v-for="(conflict, index) in conflicts" :key="index" class="warning-text">
-              <v-icon color="red" class="ml-6">{{ mdiAlert }}</v-icon>
+              <v-icon color="red" class="ml-6">{{ icons.mdiAlert }}</v-icon>
               {{ getConflictMessage(conflict) }}
             </span>
         </MarqueeText>
@@ -29,18 +29,18 @@
         <div v-else class="text-overline">{{ $t('shifts.participants') }}</div>
       </v-system-bar>
 
-      <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-        <v-icon small class="ml-n1 mr-2" :color="shiftStatus[user.pivot.status].color">
-          {{ shiftStatus[user.pivot.status].icon }}
+      <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2 list-participants" :title="getShiftStatus(user.pivot.status).text" disabled>
+        <v-icon small class="ml-n1 mr-2" :color="getShiftStatus(user.pivot.status).color">
+          {{ getShiftStatus(user.pivot.status).icon }}
         </v-icon>
-        <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+        <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
           {{ user.name }}
         </span>
       </div>
 
       <div v-for="n in returnZero(shift.max_participants - filterShiftUsers(shift.users).length)" :key="n" class="ma-2" disabled>
         <div class="ml-n2 dashed-border rounded list-participants" width="100%">
-          <v-icon small class="ml-1 mr-2" color="grey">{{ mdiAccountOutline }}</v-icon>
+          <v-icon small class="ml-1 mr-2" color="grey">{{ icons.mdiAccountOutline }}</v-icon>
           <span>{{ $t('general.available') }}</span>
         </div>
       </div>

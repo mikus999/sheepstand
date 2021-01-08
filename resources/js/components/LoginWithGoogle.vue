@@ -1,6 +1,6 @@
 <template>
 <v-btn v-if="googleAuth" class="my-3" color="#ffffff" @click="login" block>
-  <!--<v-icon small>{{ mdiGoogle }}</v-icon>-->
+  <!--<v-icon small>{{ icons.mdiGoogle }}</v-icon>-->
   <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="25" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
     <path style="fill:#FBBB00;" d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256
           c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456

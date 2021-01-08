@@ -3,22 +3,22 @@
     <v-row>
       <v-card width="100%" :flat="$vuetify.breakpoint.xs">
         <v-card-title>
-          <v-icon left>{{ mdiAccountTie }}</v-icon>
+          <v-icon left>{{ icons.mdiAccountTie }}</v-icon>
           {{ $t('account.account_settings')}}
         </v-card-title>
 
         <v-tabs v-model="tab" icons-and-text grow class="tab-links">
           <v-tab href="#tab-general">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.general') }}</span>
-            <v-icon>{{ mdiInformation }}</v-icon>
+            <v-icon>{{ icons.mdiInformation }}</v-icon>
           </v-tab>
           <v-tab href="#tab-settings">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.settings') }}</span>
-            <v-icon>{{ mdiCog }}</v-icon>
+            <v-icon>{{ icons.mdiCog }}</v-icon>
           </v-tab>
           <v-tab href="#tab-security">
             <span v-show="$vuetify.breakpoint.smAndUp">{{ $t('general.security') }}</span>
-            <v-icon>{{ mdiSecurity }}</v-icon>
+            <v-icon>{{ icons.mdiSecurity }}</v-icon>
           </v-tab>
 
 
@@ -31,13 +31,13 @@
                   <v-text-field v-model="userData.name" name="name" :label="$t('general.name')" @input.native="updateUser($event)" 
                       :success="validation.name.success">
                     <template v-slot:append v-if="validation.name.success">
-                      <v-icon color="green">{{ mdiCheckCircle }}</v-icon>
+                      <v-icon color="green">{{ icons.mdiCheckCircle }}</v-icon>
                     </template>
                   </v-text-field>
                   <v-text-field v-model="userData.email" name="email" :label="$t('general.email')" @input.native="updateUser($event)" 
                       :success="validation.email.success">
                     <template v-slot:append v-if="validation.email.success">
-                      <v-icon color="green">{{ mdiCheckCircle }}</v-icon>
+                      <v-icon color="green">{{ icons.mdiCheckCircle }}</v-icon>
                     </template>
                   </v-text-field>
 
@@ -149,12 +149,12 @@
               <v-col md=8 offset-md=2>
                 <v-text-field v-model="password1" name="password1" :label="$t('auth.new_password')" 
                   :error-messages="passwordErrors" @blur="$v.password1.$touch()"
-                  :append-icon="showPwd ? mdiEye : mdiEyeOff" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
+                  :append-icon="showPwd ? icons.mdiEye : icons.mdiEyeOff" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
                   ></v-text-field>
 
                 <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')" 
                   :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
-                  :append-icon="showPwd2 ? mdiEye : mdiEyeOff" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
+                  :append-icon="showPwd2 ? icons.mdiEye : icons.mdiEyeOff" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
                   ></v-text-field>
                 
                 <v-btn type="submit" @click.prevent="updatePassword" color="primary">

@@ -3,7 +3,7 @@
     <v-icon 
       :large="!tableActions"
     >
-      {{mdiLock }}
+      {{icons.mdiLock }}
     </v-icon>
   </div>
 
@@ -17,7 +17,7 @@
         color="primary" 
         @click.stop="joinLeaveShift('join')"
       >
-        <v-icon>{{ mdiAccountPlus }}</v-icon>
+        <v-icon>{{ icons.mdiAccountPlus }}</v-icon>
       </v-btn>
     </div>
 
@@ -31,7 +31,7 @@
         color="secondary"
         @click.stop="updateStatus($t('shifts.confirm_accept'), 2)" 
       >
-        <v-icon color="green" :small="tableActions">{{ mdiThumbUp }}</v-icon>
+        <v-icon color="green" :small="tableActions">{{ icons.mdiThumbUp }}</v-icon>
       </v-btn>
 
       <v-btn 
@@ -41,7 +41,7 @@
         color="secondary"
         @click.stop="updateStatus($t('shifts.confirm_reject'), 3)" 
       >
-        <v-icon color="red" :small="tableActions">{{ mdiThumbDown }}</v-icon>
+        <v-icon color="red" :small="tableActions">{{ icons.mdiThumbDown }}</v-icon>
       </v-btn>
     </div>
 
@@ -55,7 +55,7 @@
         color="secondary" 
         @click.stop="joinLeaveShift('leave')"
       >
-        <v-icon>{{ mdiAccountMinus }}</v-icon>
+        <v-icon>{{ icons.mdiAccountMinus }}</v-icon>
       </v-btn>
     </div>
 
@@ -70,7 +70,7 @@
         color="secondary" 
         @click.stop="joinLeaveShift('leave')"
       >
-        <v-icon>{{ mdiAccountMinus }}</v-icon>
+        <v-icon>{{ icons.mdiAccountMinus }}</v-icon>
       </v-btn>
 
       <v-btn 
@@ -81,7 +81,7 @@
         color="primary" 
         @click.stop="tradeOverlay = true"
       >
-        <v-icon :color="tableActions ? 'secondary' : ''">{{ mdiAccountSwitch }}</v-icon>
+        <v-icon :color="tableActions ? 'secondary' : ''">{{ icons.mdiAccountSwitch }}</v-icon>
       </v-btn>
     </div>
 
@@ -95,7 +95,7 @@
         color="primary" 
         @click.stop="joinLeaveShift('join')"
       >
-        <v-icon>{{ mdiAccountPlus }}</v-icon>
+        <v-icon>{{ icons.mdiAccountPlus }}</v-icon>
       </v-btn>
     </div>
 
@@ -110,7 +110,7 @@
         color="secondary" 
         @click.stop="updateStatus($t('shifts.confirm_trade_cancel'), 2)"
       >
-        <v-icon color="primary">{{ mdiAccountSwitch }}</v-icon>
+        <v-icon color="primary">{{ icons.mdiAccountSwitch }}</v-icon>
       </v-btn>
     </div>
 

@@ -17,7 +17,7 @@
               outlined 
               dense
               hide-details
-              :prepend-icon="mdiMapMarker"
+              :prepend-icon="icons.mdiMapMarker"
               :label="$t('shifts.location')"
             />
           </v-col>
@@ -42,7 +42,7 @@
                 <v-text-field 
                   v-model="shift_date" 
                   :label="$t('shifts.date')" 
-                  :prepend-icon="mdiCalendar" 
+                  :prepend-icon="icons.mdiCalendar" 
                   readonly
                   v-bind="attrs" 
                   v-on="on"
@@ -73,7 +73,7 @@
               item-value="date" 
               item-text="date" 
               :label="$t('shifts.day')"
-              :prepend-icon="mdiCalendar"
+              :prepend-icon="icons.mdiCalendar"
               hide-details
             >
               <template v-slot:selection="{ item }">
@@ -106,7 +106,7 @@
                   :label="$t('shifts.time_start')"
                   v-bind="attrs" 
                   v-on="on" 
-                  :prepend-icon="mdiClock"
+                  :prepend-icon="icons.mdiClock"
                 >
                 </v-text-field>
               </template>
@@ -159,7 +159,7 @@
               max="8" 
               ticks="always" 
               tick-size="4" 
-              :prepend-icon="mdiAccountTie"
+              :prepend-icon="icons.mdiAccountTie"
               persistent-hint
               :hint="$t('shifts.number_of_participants')"
             />
@@ -174,7 +174,7 @@
               :label="$t('shifts.mandatory')"
               :hint="$t('shifts.mandatory_explanation')"
               persistent-hint
-              :prepend-icon="mdiHeart"
+              :prepend-icon="icons.mdiHeart"
             />
           </v-col>
         </v-row>        

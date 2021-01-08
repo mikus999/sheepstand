@@ -10,7 +10,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>
-            <v-icon left>{{ templates ? mdiCalendarStar : mdiCalendarWeek }}</v-icon>
+            <v-icon left>{{ templates ? icons.mdiCalendarStar : icons.mdiCalendarWeek }}</v-icon>
             {{ templates ? $t('schedules.templates') : $t('schedules.weekly_schedules') }}
           </v-toolbar-title>
 
@@ -24,7 +24,7 @@
             <v-icon 
               :left="$vuetify.breakpoint.smAndUp"
               :small="$vuetify.breakpoint.smAndUp"
-            >{{ mdiCalendarPlus }}</v-icon>
+            >{{ icons.mdiCalendarPlus }}</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">
               {{ templates ? $t('schedules.new_template') : $t('schedules.create_new_schedule') }}
             </span>
@@ -60,7 +60,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>{{ mdiCalendarEdit }}</v-icon>
+              <v-icon>{{ icons.mdiCalendarEdit }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
@@ -69,7 +69,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
             <v-btn icon @click="deleteSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>{{ mdiDelete }}</v-icon>
+              <v-icon>{{ icons.mdiDelete }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.delete') }}</span>
@@ -81,7 +81,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon @click="editSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>{{ mdiCalendarEdit }}</v-icon>
+              <v-icon>{{ icons.mdiCalendarEdit }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.edit') }}</span>
@@ -90,7 +90,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
             <v-btn icon @click="convertToSchedule(item)" v-bind="attrs" v-on="on">
-              <v-icon>{{ mdiCalendarPlus }}</v-icon>
+              <v-icon>{{ icons.mdiCalendarPlus }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('schedules.make_new_schedule') }}</span>
@@ -99,7 +99,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">        
             <v-btn icon @click="deleteSched(item)" v-bind="attrs" v-on="on">
-              <v-icon>{{ mdiDelete }}</v-icon>
+              <v-icon>{{ icons.mdiDelete }}</v-icon>
             </v-btn>
           </template>
           <span>{{ $t('general.delete') }}</span>
@@ -135,7 +135,7 @@
               <v-text-field 
                 v-model="newSchedDate" 
                 :label="$t('schedules.choose_start_date')" 
-                :prepend-icon="mdiCalendarWeekBegin" 
+                :prepend-icon="icons.mdiCalendarWeekBegin" 
                 readonly
                 v-bind="attrs" 
                 v-on="on"
@@ -179,7 +179,7 @@
           <v-text-field 
             v-model="newTemplateName" 
             :label="$t('schedules.template_name')" 
-            :prepend-icon="mdiFormTextbox"
+            :prepend-icon="icons.mdiFormTextbox"
           ></v-text-field>
         </v-card-text>
 
@@ -269,7 +269,7 @@ export default {
 
 
     getDayIcon(status) {
-      return (status ? mdiCheckBold : mdiCloseThick)
+      return (status ? icons.mdiCheckBold : icons.mdiCloseThick)
     },
 
     getDayColor(status) {
@@ -282,15 +282,15 @@ export default {
 
     getStatusColor(item) {
       var textColor = "black--text"
-      if (this.scheduleStatus[item.status] != undefined) {
-        textColor = this.scheduleStatus[item.status].color + '--text'
+      if (this.getScheduleStatus(item.status) != undefined) {
+        textColor = this.getScheduleStatus(item.status).color + '--text'
       }
       return textColor
     },
 
     getStatusText(item) {
       var textString = null
-      textString = this.scheduleStatus[item.status].text
+      textString = this.getScheduleStatus(item.status).text
       return textString
     },
 

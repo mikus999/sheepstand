@@ -27,7 +27,7 @@
         <v-row dense>
           <v-col cols=3 class="pa-1 text-center">
             <v-icon color="white">
-              {{ shift.mandatory ? mdiHeart : mdiHeartOutline }}
+              {{ shift.mandatory ? icons.mdiHeart : icons.mdiHeartOutline }}
             </v-icon>
           </v-col>
 
@@ -46,17 +46,17 @@
 
       <v-card-text v-if="!isTemplate" class="text-left list-participants ma-2 pa-0">
         <div v-if="hasParticipants">
-          <v-row v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="shiftStatus[user.pivot.status].text">
+          <v-row v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="getShiftStatus(user.pivot.status).text">
             <v-col cols=9 class="ml-3 pa-0">
-              <v-icon small class="mr-2" :color="shiftStatus[user.pivot.status].color">
-                {{ shiftStatus[user.pivot.status].icon }}
+              <v-icon small class="mr-2" :color="getShiftStatus(user.pivot.status).color">
+                {{ getShiftStatus(user.pivot.status).icon }}
               </v-icon>
-              <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+              <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
                 {{ user.name }}
               </span>
             </v-col>
             <v-col cols=1 class="pa-0">
-              <v-icon small v-if="user.driver">{{ mdiCar }}</v-icon>
+              <v-icon small v-if="user.driver">{{ icons.mdiCar }}</v-icon>
             </v-col>
           </v-row>
         </div>
@@ -83,7 +83,7 @@
                   :disabled="!assignmentsLoaded"
                   :loading="!assignmentsLoaded"
                 >
-                  <v-icon small>{{mdiAccountMultiple }}</v-icon>
+                  <v-icon small>{{icons.mdiAccountMultiple }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('shifts.participants') }}</span>
@@ -99,7 +99,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>{{ mdiPencil }}</v-icon>
+                  <v-icon small>{{ icons.mdiPencil }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('schedules.new_shift') }}</span>
@@ -115,7 +115,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>{{ mdiDelete }}</v-icon>
+                  <v-icon small>{{ icons.mdiDelete }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('general.delete') }}</span>
@@ -131,7 +131,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>{{ mdiClipboardArrowDown }}</v-icon>
+                  <v-icon small>{{ icons.mdiClipboardArrowDown }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('shifts.make_next_shift') }}</span>
@@ -147,7 +147,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon small>{{ mdiContentDuplicate }}</v-icon>
+                  <v-icon small>{{ icons.mdiContentDuplicate }}</v-icon>
                 </v-btn>
               </template>
               <span>{{ $t('general.duplicate') }}</span>

@@ -9,12 +9,12 @@
 
           <v-text-field v-model="password" name="password" :label="$t('auth.password')"
             :error-messages="passwordErrors" @blur="$v.password.$touch()"
-            :append-icon="showPwd ? mdiEye : mdiEyeOff" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
+            :append-icon="showPwd ? icons.mdiEye : icons.mdiEyeOff" :type="showPwd ? 'text' : 'password'" @click:append="showPwd = !showPwd"
             ></v-text-field>
 
           <v-text-field v-model="password2" name="password2" :label="$t('auth.confirm_password')"
             :error-messages="passwordErrors2" @blur="$v.password2.$touch()" @input="$v.password2.$touch()"
-            :append-icon="showPwd2 ? mdiEye : mdiEyeOff" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
+            :append-icon="showPwd2 ? icons.mdiEye : icons.mdiEyeOff" :type="showPwd2 ? 'text' : 'password'" @click:append="showPwd2 = !showPwd2"
             ></v-text-field>
 
 

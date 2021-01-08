@@ -8,9 +8,9 @@
 
       <v-spacer />
 
-      <span class="mr-2 text-overline">(<v-icon small class="mr-1">{{ mdiKeyboard }}</v-icon>ESC)</span>
+      <span class="mr-2 text-overline">(<v-icon small class="mr-1">{{ icons.mdiKeyboard }}</v-icon>ESC)</span>
       <v-btn icon dark @click="$emit('close')">
-        <v-icon>{{ mdiClose }}</v-icon>
+        <v-icon>{{ icons.mdiClose }}</v-icon>
       </v-btn>
     </v-toolbar>
 
@@ -40,7 +40,7 @@
           <v-text-field
             v-model="userSearch"
             :label="$t('general.search')"
-            :prepend-inner-icon="mdiMagnify"
+            :prepend-inner-icon="icons.mdiMagnify"
             single-line
             hide-details
           ></v-text-field>
@@ -50,17 +50,17 @@
       <template v-slot:item.marriage_mate="{ item }">
         <div v-if="item.marriage_mate">
           <v-btn icon v-if="!isShiftMember(item.marriage_mate.id) && isAvailable(item.marriage_mate.id)" @click="addShiftUser(item.marriage_mate, true)">
-            <v-icon>{{ mdiPlusBox }}</v-icon>
+            <v-icon small>{{ icons.mdiPlusBox }}</v-icon>
           </v-btn>
 
-          <v-avatar v-else-if="userShiftStatus(item.marriage_mate.id) > -1" size="35">
-            <v-icon :color="shiftStatus[userShiftStatus(item.marriage_mate.id)].color">
-              {{ shiftStatus[userShiftStatus(item.marriage_mate.id)].icon }}
+          <v-avatar v-else-if="userShiftStatus(item.marriage_mate.id) > -1" size="20">
+            <v-icon small :color="getShiftStatus(userShiftStatus(item.marriage_mate.id)).color">
+              {{ getShiftStatus(userShiftStatus(item.marriage_mate.id)).icon }}
             </v-icon>
           </v-avatar>
 
-          <v-avatar v-else size="35">
-            <v-icon>{{ mdiCancel }}</v-icon>
+          <v-avatar v-else size="20">
+            <v-icon small>{{ icons.mdiCancel }}</v-icon>
           </v-avatar>
 
           {{ item.marriage_mate.name }}
@@ -68,16 +68,16 @@
       </template>
 
       <template v-slot:item.driver="{ item }">
-        <v-icon v-if="item.driver">{{ mdiCar }}</v-icon>
+        <v-icon small v-if="item.driver">{{ icons.mdiCar }}</v-icon>
       </template> 
 
       <template v-slot:item.action="{ item }">
         <v-btn v-if="!isShiftMember(item.id)" icon @click="addShiftUser(item)">
-          <v-icon>{{ mdiPlusBox }}</v-icon>
+          <v-icon small>{{ icons.mdiPlusBox }}</v-icon>
         </v-btn>
 
-        <v-btn v-else icon @click="removeShiftUser(item)" :color="shiftStatus[userShiftStatus(item.id)].color">
-          <v-icon>{{ mdiMinusBox }}</v-icon>
+        <v-btn v-else icon @click="removeShiftUser(item)" :color="getShiftStatus(userShiftStatus(item.id)).color">
+          <v-icon small>{{ icons.mdiMinusBox }}</v-icon>
         </v-btn>
       </template>
 
@@ -86,16 +86,16 @@
         <v-chip v-if="isShiftMember(item.id) || userShiftStatus(item.id) == 3" 
           label 
           small 
-          :color="shiftStatus[userShiftStatus(item.id)].color"
+          :color="getShiftStatus(userShiftStatus(item.id)).color"
         >
-          {{ shiftStatus[userShiftStatus(item.id)].text }}
+          {{ getShiftStatus(userShiftStatus(item.id)).text }}
         </v-chip>
 
       </template>
 
 
       <template v-slot:item.fts_status="{ item }">
-        {{ ftsStatus[item.fts_status].text }}
+        {{ getFTSStatus(item.fts_status).text }}
       </template>
 
 

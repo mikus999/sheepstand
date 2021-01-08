@@ -4,7 +4,7 @@
     <template v-slot:activator="{ on, attrs }">
       <div width="100%" v-bind="attrs" v-on="on" class="ma-0 pt-1">
         <span class="menu-label d-inline-block text-truncate" style="max-width: 150px;">{{ team != null ? team.display_name : ''}}</span>
-        <v-icon class="float-right">{{ mdiMenuDown }}</v-icon>
+        <v-icon class="float-right">{{ icons.mdiMenuDown }}</v-icon>
       </div>
     </template>
 
@@ -20,7 +20,7 @@
           <v-list-item-title>{{ $t('menu.join_another_team') }}</v-list-item-title>
         </v-list-item-content>
         <v-list-item-icon>
-          <v-icon>{{ mdiAccountMultiplePlus }}</v-icon>
+          <v-icon>{{ icons.mdiAccountMultiplePlus }}</v-icon>
         </v-list-item-icon>
       </v-list-item>
     </v-list>

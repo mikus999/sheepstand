@@ -4,7 +4,7 @@
     <template v-slot:activator="{ on, attrs }">
       <div width="100%" v-bind="attrs" v-on="on">
         <span class="menu-label d-inline-block text-truncate mb-n1" style="max-width: 150px;">{{ languageName }}</span>
-        <v-icon class="float-right">{{mdiMenuDown}}</v-icon>
+        <v-icon class="float-right">{{icons.mdiMenuDown}}</v-icon>
       </div>
     </template>
 
@@ -20,7 +20,7 @@
   <v-menu v-else offset-y bottom left>
     <template v-slot:activator="{ on, attrs }">
       <v-btn dark icon v-bind="attrs" v-on="on">
-        <v-icon>{{ mdiTranslate }}</v-icon>
+        <v-icon>{{ icons.mdiTranslate }}</v-icon>
       </v-btn>
     </template>
 

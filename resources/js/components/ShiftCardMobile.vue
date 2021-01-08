@@ -18,12 +18,12 @@
 
       <template v-slot:actions>
         <span v-if="hasConflicts">
-          <v-icon color="red">{{ mdiAccountAlert }}</v-icon>
+          <v-icon color="red">{{ icons.mdiAccountAlert }}</v-icon>
         </span>
 
         <span v-else-if="isShiftMember">
-          <v-icon :color="getShiftStatus(shift, user).color">
-            {{ getShiftStatus(shift, user).icon }}
+          <v-icon :color="getShiftStatusLookup(shift, user).color">
+            {{ getShiftStatusLookup(shift, user).icon }}
           </v-icon>
         </span>
 
@@ -34,10 +34,10 @@
         </span>
 
         <span v-else>
-          <v-icon>{{ mdiLock }}</v-icon>
+          <v-icon>{{ icons.mdiLock }}</v-icon>
         </span>
 
-        <span><v-icon>{{ mdiChevronDown }}</v-icon></span>
+        <span><v-icon>{{ icons.mdiChevronDown }}</v-icon></span>
       </template>
 
     </v-expansion-panel-header>
@@ -46,7 +46,7 @@
       <v-system-bar :color="$vuetify.theme.dark ? '#1c1c1c' : '#ffffff'">
         <MarqueeText v-if="hasConflicts">
             <span v-for="(conflict, index) in conflicts" :key="index" class="warning-text">
-              <v-icon color="red" class="ml-6">{{ mdiAlert }}</v-icon>
+              <v-icon color="red" class="ml-6">{{ icons.mdiAlert }}</v-icon>
               {{ getConflictMessage(conflict) }}
             </span>
         </MarqueeText>
@@ -60,11 +60,11 @@
       <div class="text-overline">{{ $t('shifts.participants') }}</div>
 
       <div v-if="filterShiftUsers(shift.users).length > 0">
-        <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2 list-participants" :title="shiftStatus[user.pivot.status].text" disabled>
-          <v-icon small class="ml-n2 mr-2" :color="shiftStatus[user.pivot.status].color">
-            {{ shiftStatus[user.pivot.status].icon }}
+        <div v-for="user in filterShiftUsers(shift.users)" :key="user.id" class="ma-2 list-participants" :title="getShiftStatus(user.pivot.status).text" disabled>
+          <v-icon small class="ml-n2 mr-2" :color="getShiftStatus(user.pivot.status).color">
+            {{ getShiftStatus(user.pivot.status).icon }}
           </v-icon>
-          <span :class="(shiftStatus[user.pivot.status].color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+          <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
             {{ user.name }}
           </span>
         </div>
@@ -73,7 +73,7 @@
       <div v-if="shift.schedule.status == 1">
         <div v-for="n in getNumberOpenSpots" :key="n" class="ma-2" disabled>
           <div class="ml-n2 dashed-border rounded list-participants" width="100%">
-            <v-icon small class="ml-1 mr-2" color="grey">{{ mdiAccountOutline }}</v-icon>
+            <v-icon small class="ml-1 mr-2" color="grey">{{ icons.mdiAccountOutline }}</v-icon>
             <span>{{ $t('general.available') }}</span>
           </div>
         </div>

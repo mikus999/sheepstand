@@ -2,7 +2,7 @@
   <v-card width="100%" :flat="flat">
     <v-toolbar flat>
       <v-toolbar-title v-if="showTitle">
-        <v-icon left>{{ mdiMessage }}</v-icon>
+        <v-icon left>{{ icons.mdiMessage }}</v-icon>
         {{ $t('messages.inbox')}}
       </v-toolbar-title>
 
@@ -26,9 +26,9 @@
           <v-divider />
           <template v-for="(message, index) in filteredMessages">
             <v-list-item :key="message.id">
-              <v-list-item-avatar>
-                <v-icon v-if="isExpired(message.expires_on)">{{ mdiEmailOff }}</v-icon>
-                <v-icon v-else>{{ isUnread(message) ? mdiEmail : mdiEmail-open }}</v-icon>
+              <v-list-item-avatar size="25">
+                <v-icon v-if="isExpired(message.expires_on)">{{ icons.mdiEmailOff }}</v-icon>
+                <v-icon v-else>{{ isUnread(message) ? icons.mdiEmail : icons.mdiEmailOpen }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content 
@@ -53,19 +53,19 @@
 
                 <div class="my-auto">
                   <v-btn icon v-if="message.named_route" :to="{ name: message.named_route }" @click.stop class="mb-n2">
-                    <v-icon>{{ mdiLink }}</v-icon>
+                    <v-icon>{{ icons.mdiLink }}</v-icon>
                   </v-btn>
 
                   <v-btn icon v-if="!isUnread(message) && !editor" @click.stop="markAsUnread(message.id)">
-                    <v-icon>{{ mdiEmailMarkAsUnread }}</v-icon>
+                    <v-icon>{{ icons.mdiEmailMarkAsUnread }}</v-icon>
                   </v-btn>
                   
                   <v-btn icon v-else-if="isUnread(message) && !editor" @click.stop="markAsRead(message.id)">
-                    <v-icon>{{ mdiEmailOpen }}</v-icon>
+                    <v-icon>{{ icons.mdiEmailOpen }}</v-icon>
                   </v-btn>
 
                   <v-btn icon @click.stop="deleteOrHide(message.id)">
-                    <v-icon>{{ mdiDelete }}</v-icon>
+                    <v-icon>{{ icons.mdiDelete }}</v-icon>
                   </v-btn>
                 </div>
               </v-list-item-action>
@@ -162,12 +162,12 @@ export default {
         url: '/api/messages',
       })
       .then(response => {
-        this.received = response.data.received.filter(message => 
+        this.received = response.data.data.received.filter(message => 
                           message.sender_type != 'App\\Models\\User' ||
                           (message.sender_type == 'App\\Models\\User' && 
                           message.sender_id != this.user.id))
 
-        this.sent = response.data.sent
+        this.sent = response.data.data.sent
       })
     },
 

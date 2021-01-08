@@ -2,7 +2,7 @@
   <v-card width="100%">
     <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon left>{{ mdiAccountSwitch }}</v-icon>
+        <v-icon left>{{ icons.mdiAccountSwitch }}</v-icon>
         {{ $t('shifts.trade_requests') }}
       </v-toolbar-title>
             
@@ -55,7 +55,7 @@
 
               <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click="makeTrade(trade)" class="me-2"
                 :disabled="trade.id === user.id" :outlined="trade.id === user.id">
-                <v-icon left small>{{ mdiSwapHorizontalBold }}</v-icon>
+                <v-icon left small>{{ icons.mdiSwapHorizontalBold }}</v-icon>
                 {{ trade.name }}
               </v-chip>
 
@@ -92,7 +92,7 @@
       <template v-slot:item.tradewith="{ item }">
         <v-chip v-for="trade in item.trades" :key="trade.id" color="blue" label small @click.stop="makeTrade(trade)" class="me-2"
            :disabled="trade.id === user.id" :outlined="trade.id === user.id">
-           <v-icon left small>{{ mdiSwapHorizontalBold }}</v-icon>
+           <v-icon left small>{{ icons.mdiSwapHorizontalBold }}</v-icon>
            {{ trade.name }}
         </v-chip>
       </template>

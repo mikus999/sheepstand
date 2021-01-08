@@ -3,7 +3,7 @@
     <v-card width="100%">
       <v-card-title>
       <div>
-        <v-icon left>{{ mdiGoogleTranslate }}</v-icon>
+        <v-icon left>{{ icons.mdiGoogleTranslate }}</v-icon>
         {{ $t('translation.management_system') }}
       </div>
       <div class="ml-auto">
@@ -21,7 +21,8 @@
         <v-col cols=12 sm=6>
           <span>{{ $t('translation.target_language')}}</span>
           <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
-            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code" class="font-weight-bold"></v-radio>
+            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code" class="font-weight-bold"
+               :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
@@ -116,7 +117,7 @@ export default {
         }
       },
       saveFab: {
-        icon: mdiContentSave,
+        icon: icons.mdiContentSave,
         color: 'primary',
         showTime: true,
         autoSave: true,
@@ -325,7 +326,7 @@ export default {
 
     toggleFab(isSave, withTimer) {
       this.saveFab.color = isSave ? 'primary' : 'green'
-      this.saveFab.icon = isSave ? mdiContentSave : mdiCheckBold
+      this.saveFab.icon = isSave ? icons.mdiContentSave : icons.mdiCheckBold
       this.saveFab.showTime = withTimer
     }
   },

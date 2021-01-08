@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-icon left>{{ mdiMessagePlus }}</v-icon>
+      <v-icon left>{{ icons.mdiMessagePlus }}</v-icon>
       {{ $t('messages.create_new_message')}}
     </v-card-title>
 
@@ -12,10 +12,11 @@
           <v-radio-group
             v-model="sender_type"
             :label="$t('messages.sent_from')"
-            column>
-            <v-radio :label="user.name" value="User"></v-radio>
-            <v-radio :label="team.display_name" value="Team"></v-radio>
-            <v-radio label="Site Administrators" value="Site" v-if="$is('super_admin')"></v-radio>
+            column
+            >
+            <v-radio :label="user.name" value="User" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"></v-radio>
+            <v-radio :label="team.display_name" value="Team" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"></v-radio>
+            <v-radio label="Site Administrators" value="Site" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" v-if="$is('super_admin')"></v-radio>
           </v-radio-group>
         </v-col>
         <v-col cols=12 sm=6>
@@ -23,8 +24,8 @@
             v-model="recipient_type"
             :label="$t('messages.sent_to')"
             column>
-            <v-radio :label="$t('messages.to_all_team_members')" value="Team" v-if="sender_type != 'Site'"></v-radio>
-            <v-radio label="All Users" value="Site" v-if="$is('super_admin') && sender_type == 'Site'"></v-radio>
+            <v-radio :label="$t('messages.to_all_team_members')" value="Team" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" v-if="sender_type != 'Site'"></v-radio>
+            <v-radio label="All Users" value="Site" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" v-if="$is('super_admin') && sender_type == 'Site'"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
@@ -64,7 +65,7 @@
           <v-text-field
             v-model="expires_on"
             :label="$t('messages.display_until') + ' (' + $t('general.optional') + ')'"
-            :prepend-icon="mdiCalendar"
+            :prepend-icon="icons.mdiCalendar"
             readonly
             v-bind="attrs"
             v-on="on"
@@ -110,7 +111,7 @@
               >
 
                 <template v-slot:prepend>
-                  <v-icon :color="color_code">{{ mdiSquareRounded }}</v-icon>
+                  <v-icon :color="color_code">{{ icons.mdiSquareRounded }}</v-icon>
                 </template>
 
               </v-text-field>
@@ -135,27 +136,21 @@
             </v-card>
           </v-menu>
 
-          <v-select
-            v-model="icon"
-            :items="icons"
-            label="Icon"
-            :prepend-icon="icon"
-            class="my-12"
-          >
 
-            <template v-slot:item="{ item }">
-                <v-list-item-avatar>
-                  <v-icon>{{ item }}</v-icon>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ item }}
-                  </v-list-item-title>
-                </v-list-item-content>
-            </template>
-
-          </v-select>
+          <div class="mt-16">
+            <v-col class="pa-0">{{ $t('general.icon')}}</v-col>
+            <v-col class="pa-0">
+              <v-icon 
+                v-for="i in bannerIcons" 
+                :key="i" 
+                @click="icon = i"
+                :color="icon == i ? 'primary' : ''"
+                class="mr-2 mb-2"
+              >
+                {{ i }}
+              </v-icon>
+            </v-col>
+          </div>
 
 
           <div class="mt-16">
@@ -176,7 +171,7 @@
               </div>
 
               <template v-slot:append v-if="named_route != null && named_route != ''">
-                <v-icon style="color: inherit !important;">{{ mdiOpenInNew }}</v-icon>
+                <v-icon style="color: inherit !important;">{{ icons.mdiOpenInNew }}</v-icon>
               </template>
 
             </v-alert>
@@ -219,7 +214,7 @@ export default {
       named_route: null,
       custom_color: true,
       color_code: '#7E7E7E',
-      icon: this.mdiAlert,
+      icon: null,
       show_inbox: true,
       send_telegram: false,
       show_banner: false,
@@ -231,29 +226,6 @@ export default {
         'error',
         'warning'
       ],
-      icons: {
-        mdiInformation,
-        mdiAlert,
-        /*
-        mdiAccount,
-        mdiAccountGroup,
-        mdiAccountConvert,
-        mdiMessage,
-        mdiCog,
-        mdiMapSearch,
-        mdiMapMarker,
-        mdiClock,
-        mdiCalendar,
-        mdiPin,
-        mdiBriefcase,
-        mdiPaperclip,
-        mdiWeatherPouring,
-        mdiWeatherSnowyHeavy,
-        mdiWeatherWindy,
-        mdiLightbulb,
-        mdiShieldAlert
-        */
-      },
       swatches: [
         ['#FF1744', '#B71C1C'], // reds
         ['#FF9800', '#EF6C00'], // oranges
@@ -266,7 +238,7 @@ export default {
   },
 
   created () {
-
+    this.icon = this.icons.mdiInformation
     this.getRoutes()
   },
 

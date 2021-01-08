@@ -1,7 +1,7 @@
 <template>
   <v-card outlined :width="width" elevation="2" min-width="300">
     <v-card-title>
-      <v-icon left>{{ mdiAccountSwitch }}</v-icon>
+      <v-icon left>{{ icons.mdiAccountSwitch }}</v-icon>
       {{ $t('shifts.status_2a') }}
     </v-card-title>
 
@@ -18,7 +18,7 @@
                   color="primary"
                   @click="updateStatus(true)"
                 >
-                  <v-icon left>{{ mdiAccountGroup }}</v-icon>
+                  <v-icon left>{{ icons.mdiAccountGroup }}</v-icon>
                   <span>{{ $t('shifts.trade_offer_all') }}</span>
                 </v-btn>
 
@@ -36,7 +36,7 @@
                   block
                   @click="stepper = 2"
                 >
-                  <v-icon left>{{ mdiAccount }}</v-icon>
+                  <v-icon left>{{ icons.mdiAccount }}</v-icon>
                   <span>{{ $t('shifts.trade_choose_person') }}</span>
                 </v-btn>
               </v-col>

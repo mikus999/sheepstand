@@ -1,12 +1,12 @@
 <template>
   <v-card width="100%">
     <v-card-title v-if="!teamUsers">
-      <v-icon left>{{ mdiSecurity }}</v-icon>
+      <v-icon left>{{ icons.mdiSecurity }}</v-icon>
       Site Security
     </v-card-title>
 
     <v-card-title v-else-if="$vuetify.breakpoint.xs">
-      <v-icon left>{{ mdiAccountMultiple }}</v-icon>
+      <v-icon left>{{ icons.mdiAccountMultiple }}</v-icon>
       {{ $t('teams.members')}}
     </v-card-title>
 
@@ -22,7 +22,7 @@
           <v-text-field
             v-model="userSearch"
             :label="$t('general.search')"
-            :prepend-inner-icon="mdiMagnify"
+            :prepend-inner-icon="icons.mdiMagnify"
             single-line
             hide-details
           ></v-text-field>
@@ -33,7 +33,7 @@
             @click="dialog = true"
             v-if="teamUsers"
             >
-            <v-icon small :left="$vuetify.breakpoint.smAndUp">{{ mdiAccountPlus }}</v-icon>
+            <v-icon small :left="$vuetify.breakpoint.smAndUp">{{ icons.mdiAccountPlus }}</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('teams.add_user') }}</span>
           </v-btn>
 
@@ -68,11 +68,11 @@
       </template>
 
       <template v-slot:item.fts_status="{ item }">
-        {{ ftsStatus[item.fts_status].text }}
+        {{ getFTSStatus(item.fts_status).text }}
       </template>
 
       <template v-slot:item.driver="{ item }">
-        <v-icon v-if="item.driver">{{ mdiCar }}</v-icon>
+        <v-icon v-if="item.driver">{{ icons.mdiCar }}</v-icon>
       </template>      
 
       <template v-slot:item.team_role="{ item }">
@@ -81,7 +81,7 @@
         </span>
 
         <a @click="showChangeOwnerOverlay(item)" class="text-no-decoration" v-else>
-          <v-icon small>{{ mdiShieldAccount }}</v-icon>
+          <v-icon small>{{ icons.mdiShieldAccount }}</v-icon>
           {{ $t('teams.owner') }}
         </a>
       </template>
@@ -93,15 +93,15 @@
 
       <template v-slot:item.actions="{ item }">   
         <v-btn icon @click="showFTSOverlay(item)">
-          <v-icon>{{ mdiAccountCog }}</v-icon>
+          <v-icon>{{ icons.mdiAccountCog }}</v-icon>
         </v-btn>
 
         <v-btn icon @click="showRolesOverlay(item)" v-if="!teamUsers">
-          <v-icon>{{ mdiShieldEdit }}</v-icon>
+          <v-icon>{{ icons.mdiShieldEdit }}</v-icon>
         </v-btn>
 
         <v-btn icon @click="removeUser(item)" v-if="teamUsers && team && (team.user_id != item.id)">
-          <v-icon>{{ mdiAccountMinus }}</v-icon>
+          <v-icon>{{ icons.mdiAccountMinus }}</v-icon>
         </v-btn>
       </template>
 

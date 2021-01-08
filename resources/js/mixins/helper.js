@@ -2,6 +2,7 @@ import { mapGetters, mapState } from 'vuex'
 import axios from 'axios'
 
 
+
 export const helper = {
   computed: {
     ...mapGetters({
@@ -33,110 +34,6 @@ export const helper = {
 
   data () {
     return {
-      scheduleStatus: [
-        { 
-          // Shift planning
-          value: 0,
-          text: this.$t('schedules.status_0'), 
-          text_user: this.$t('schedules.status_closed'),
-          color: 'deep-orange'
-        },
-        { 
-          // Assignments
-          value: 1,
-          text: this.$t('schedules.status_1'), 
-          text_user: this.$t('schedules.status_open'),
-          color: 'blue'
-        },
-        { 
-          // Finalized
-          value: 2,
-          text: this.$t('schedules.status_2'), 
-          text_user: this.$t('schedules.status_closed'),
-          color: 'green'
-        },
-        { 
-          // Archived
-          value: 3,
-          text: this.$t('schedules.status_3'), 
-          text_user: this.$t('schedules.status_closed'),
-          color: 'red'
-        },
-        { 
-          // Unknown
-          value: 4,
-          text: this.$t('schedules.status_4'), 
-          text_user: this.$t('schedules.status_closed'),
-          color: 'grey'
-        }
-      ],
-
-      shiftStatus: [
-        { 
-          value: 0,
-          text: this.$t('shifts.status_0'), 
-          color: 'deep-orange',
-          icon: this.mdiAccountQuestion
-        },
-        { 
-          value: 1,
-          text: this.$t('shifts.status_1'), 
-          color: 'grey',
-          icon: this.mdiAccountClock
-        },
-        { 
-          value: 2,
-          text: this.$t('shifts.status_2'), 
-          color: 'green',
-          icon: this.mdiAccountCheck
-        },
-        { 
-          value: 3,
-          text: this.$t('shifts.status_3'), 
-          color: 'grey',
-          icon: this.mdiAccountCancel
-        },
-        { 
-          value: 4,
-          text: this.$t('shifts.status_4'), 
-          color: 'blue',
-          icon: this.mdiAccountSwitch
-        },
-        { 
-          value: 5,
-          text: this.$t('shifts.status_4'), 
-          color: 'blue',
-          icon: this.mdiAccountSwitch
-        }
-      ],
-
-      ftsStatus: [
-        {
-          value: 0,
-          text: '---'
-        },
-        {
-          value: 1,
-          text: this.$t('account.fts_pioneer')
-        },
-        {
-          value: 2,
-          text: this.$t('account.fts_sfts')
-        },
-        {
-          value: 3,
-          text: this.$t('account.fts_co')
-        },                        
-        {
-          value: 4,
-          text: this.$t('account.fts_bethelite')
-        },        
-        {
-          value: 5,
-          text: this.$t('account.fts_construction')
-        }
-      ],
-
       templateStartDate: '2001-01-01', // MONDAY, JANUARY 1, 2001
     }
   },
@@ -150,27 +47,6 @@ export const helper = {
       }
     },
 
-
-    getShiftStatus(shift, user) {
-      var result = {
-        status: null,
-        text: '',
-        color: '',
-        icon: ''
-      }
-
-      var shiftUser = shift.users.filter(u => u.id == user.id)
-      if (shiftUser.length > 0) {
-        result = {
-          status: shiftUser[0].pivot.status,
-          text: this.shiftStatus[shiftUser[0].pivot.status].text,
-          color: this.shiftStatus[shiftUser[0].pivot.status].color,
-          icon: this.shiftStatus[shiftUser[0].pivot.status].icon
-        }
-      }
-
-      return result
-    },
 
 
     formatHoursMinutes (minutes) {
@@ -266,6 +142,143 @@ export const helper = {
       this.$store.dispatch('general/setTheme', theme)
     },
 
+
+    getShiftStatus(status) {
+      const shiftStatus = [
+        { 
+          value: 0,
+          text: this.$t('shifts.status_0'), 
+          color: 'deep-orange',
+          icon: this.icons.mdiAccountQuestion
+        },
+        { 
+          value: 1,
+          text: this.$t('shifts.status_1'), 
+          color: 'grey',
+          icon: this.icons.mdiAccountClock
+        },
+        { 
+          value: 2,
+          text: this.$t('shifts.status_2'), 
+          color: 'green',
+          icon: this.icons.mdiAccountCheck
+        },
+        { 
+          value: 3,
+          text: this.$t('shifts.status_3'), 
+          color: 'grey',
+          icon: this.icons.mdiAccountCancel
+        },
+        { 
+          value: 4,
+          text: this.$t('shifts.status_4'), 
+          color: 'blue',
+          icon: this.icons.mdiAccountSwitch
+        },
+        { 
+          value: 5,
+          text: this.$t('shifts.status_4'), 
+          color: 'blue',
+          icon: this.icons.mdiAccountSwitch
+        }
+      ]
+
+      return shiftStatus[status]
+    },
+
+
+
+    getShiftStatusLookup(shift, user) {
+      var result = {
+        status: null,
+        text: '',
+        color: '',
+        icon: ''
+      }
+
+      var shiftUser = shift.users.filter(u => u.id == user.id)
+      if (shiftUser.length > 0) {
+        result = this.getShiftStatus(shiftUser[0].pivot.status)
+      }
+
+      return result
+    },
+
+
+    getScheduleStatus(status) {
+      const scheduleStatus = [
+        { 
+          // Shift planning
+          value: 0,
+          text: this.$t('schedules.status_0'), 
+          text_user: this.$t('schedules.status_closed'),
+          color: 'deep-orange'
+        },
+        { 
+          // Assignments
+          value: 1,
+          text: this.$t('schedules.status_1'), 
+          text_user: this.$t('schedules.status_open'),
+          color: 'blue'
+        },
+        { 
+          // Finalized
+          value: 2,
+          text: this.$t('schedules.status_2'), 
+          text_user: this.$t('schedules.status_closed'),
+          color: 'green'
+        },
+        { 
+          // Archived
+          value: 3,
+          text: this.$t('schedules.status_3'), 
+          text_user: this.$t('schedules.status_closed'),
+          color: 'red'
+        },
+        { 
+          // Unknown
+          value: 4,
+          text: this.$t('schedules.status_4'), 
+          text_user: this.$t('schedules.status_closed'),
+          color: 'grey'
+        }
+      ]
+
+      return scheduleStatus[status]
+    },
+
+    getFTSStatus(status) {
+      ftsStatus: [
+        {
+          value: 0,
+          text: '---'
+        },
+        {
+          value: 1,
+          text: this.$t('account.fts_pioneer')
+        },
+        {
+          value: 2,
+          text: this.$t('account.fts_sfts')
+        },
+        {
+          value: 3,
+          text: this.$t('account.fts_co')
+        },                        
+        {
+          value: 4,
+          text: this.$t('account.fts_bethelite')
+        },        
+        {
+          value: 5,
+          text: this.$t('account.fts_construction')
+        }
+      ]
+
+      return ftsStatus[status]
+    },
+
+    
     getOS () {
       const userAgent = window.navigator.userAgent
       const platform = window.navigator.platform
@@ -282,22 +295,22 @@ export const helper = {
           
       if (macosPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'macOS'
-        osDetails.icon = this.mdiApple
+        osDetails.icon = this.icons.mdiApple
       } else if (iosPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'iOS'
-        osDetails.icon = this.mdiApple
+        osDetails.icon = this.icons.mdiApple
       } else if (windowsPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'Windows'
-        osDetails.icon = this.mdiMicrosoftWindows
+        osDetails.icon = this.icons.mdiMicrosoftWindows
       } else if (/Android/.test(userAgent)) {
         osDetails.name = 'Android'
-        osDetails.icon = this.mdiAndroid
+        osDetails.icon = this.icons.mdiAndroid
       } else if (!os && /Linux/.test(platform)) {
         osDetails.name = 'Linux'
-        osDetails.icon = this.mdiLinux
+        osDetails.icon = this.icons.mdiLinux
       } else {
         osDetails.name = 'Unknown'
-        osDetails.icon = this.mdiHelpCircle
+        osDetails.icon = this.icons.mdiHelpCircle
       }
 
       return osDetails;

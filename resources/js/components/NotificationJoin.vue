@@ -1,7 +1,7 @@
 <template>
 <v-card class="mx-auto" :max-width="width" outlined>
   <v-card-title>
-    <v-icon left>{{ mdiTelegram }}</v-icon>
+    <v-icon left>{{ icons.mdiTelegram }}</v-icon>
     Enable Notifications
   </v-card-title>
 

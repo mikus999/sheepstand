@@ -1,7 +1,7 @@
 <template>
   <v-card width="100%" :flat="$vuetify.breakpoint.xs">
     <v-card-title class="text-h6">
-      <v-icon class="mr-3">{{ mdiPalmTree }}</v-icon>
+      <v-icon class="mr-3">{{ icons.mdiPalmTree }}</v-icon>
       {{ $t('account.vacation_schedule') }}
     </v-card-title>
 
@@ -57,7 +57,7 @@
                 small
                 @click="deleteVacation(item.id)"
               >
-                <v-icon small>{{ mdiDelete }}</v-icon>
+                <v-icon small>{{ icons.mdiDelete }}</v-icon>
               </v-btn>
             </template>
           </v-data-table>

@@ -5,7 +5,7 @@
         <v-row>
           <v-col xs=1 sm=4 class="text-left" >
             <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-              <v-icon left>{{ mdiArrowLeft }}</v-icon>
+              <v-icon left>{{ icons.mdiArrowLeft }}</v-icon>
               <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
             </v-btn>
           </v-col>
@@ -17,7 +17,7 @@
           <v-col xs=1 sm=4 class="text-right">
             <v-btn text :x-large="$vuetify.breakpoint.smAndUp" @click="">
               <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('schedules.approvals') }}</span>
-              <v-icon right>{{ mdiArrowRight }}</v-icon>
+              <v-icon right>{{ icons.mdiArrowRight }}</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -43,7 +43,7 @@
                     @click="approveAllRequests(0)"
                     v-if="hasPendingAssignments"
                   >
-                    <v-icon small left>{{ mdiThumbUp }}</v-icon>
+                    <v-icon small left>{{ icons.mdiThumbUp }}</v-icon>
                     <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_assignments') }}</span>
                   </v-btn>
 
@@ -53,7 +53,7 @@
                     @click="approveAllRequests(1)"
                     v-if="hasPendingRequests"
                   >
-                    <v-icon small left>{{ mdiThumbUp }}</v-icon>
+                    <v-icon small left>{{ icons.mdiThumbUp }}</v-icon>
                     <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_requests') }}</span>
                   </v-btn>
                 </v-toolbar>
@@ -82,13 +82,13 @@
 
                 <v-chip-group column>
                   <v-btn icon @click="openParticipantDialog(item)" class="mr-2">
-                    <v-icon>{{ mdiAccountMultiplePlus }}</v-icon>
+                    <v-icon>{{ icons.mdiAccountMultiplePlus }}</v-icon>
                   </v-btn>
                   
                   <v-chip small label 
                     v-for="shift_user in filterShiftUsers(item.users)"
                     :key="shift_user.id"
-                    :color="shift_user.pivot.status !== undefined ? shiftStatus[shift_user.pivot.status].color : ''"
+                    :color="shift_user.pivot.status !== undefined ? getShiftStatus(shift_user.pivot.status).color : ''"
                   >
                     <v-tooltip
                       bottom
@@ -96,7 +96,7 @@
                       v-if="checkShiftConflicts(item, getUserShifts(shift_user.id), true, false).length > 0"
                     >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-icon small left v-bind="attrs" v-on="on">{{ mdiAlert }}</v-icon>
+                        <v-icon small left v-bind="attrs" v-on="on">{{ icons.mdiAlert }}</v-icon>
                       </template>
                       <span>{{ getConflictMessage(checkShiftConflicts(item, getUserShifts(shift_user.id), true, false)) }}</span>
                     </v-tooltip>
@@ -111,7 +111,7 @@
                       @click.stop="updateStatus(shift_user, item, 2)"
                       class="ml-2"
                     >
-                      {{mdiThumbUp }}
+                      {{icons.mdiThumbUp }}
                     </v-icon>
 
                     <v-icon 
@@ -122,7 +122,7 @@
                       @click.stop="removeShiftUser(shift_user, item)"
                       class="ml-3"
                     >
-                      {{ mdiCloseCircle }}
+                      {{ icons.mdiCloseCircle }}
                     </v-icon>
 
                     <v-icon 
@@ -133,7 +133,7 @@
                       @click.stop="updateStatus(shift_user, item, 3)"
                       class="ml-3"
                     >
-                      {{mdiThumbDown}}
+                      {{icons.mdiThumbDown}}
                     </v-icon>
                   </v-chip>
                 </v-chip-group>

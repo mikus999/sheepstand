@@ -1,7 +1,7 @@
 <template>
   <v-card width="100%">
     <v-card-title>
-      <v-icon left>{{ isTemplate ? mdiCalendarStar : mdiCalendarWeek }}</v-icon>
+      <v-icon left>{{ isTemplate ? icons.mdiCalendarStar : icons.mdiCalendarWeek }}</v-icon>
       {{ isTemplate ? $t('schedules.templates') : $t('schedules.weekly_schedules') }}
     </v-card-title>
 
@@ -9,7 +9,7 @@
       <v-row>
         <v-col xs=1 sm=4 class="text-left" >
           <v-btn text class="mr-auto" :x-large="$vuetify.breakpoint.smAndUp" @click="$router.go(-1)">
-            <v-icon left>{{ mdiArrowLeft }}</v-icon>
+            <v-icon left>{{ icons.mdiArrowLeft }}</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">{{ $t('general.go_back')}}</span>
           </v-btn>
         </v-col>
@@ -65,8 +65,8 @@
         <v-col cols=12 :sm="!isTemplate ? '3' : '12'">
           <v-subheader class="pa-0">{{ $t('general.sort_by') }}</v-subheader>
           <v-radio-group v-model="sort_options" class="my-0" @change="parseSchedule()">
-            <v-radio :label="$t('shifts.shift_time')" value="time_start" />
-            <v-radio :label="$t('shifts.location')" value="location" />
+            <v-radio :label="$t('shifts.shift_time')" value="time_start" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"/>
+            <v-radio :label="$t('shifts.location')" value="location" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" />
           </v-radio-group>
         </v-col>
 
@@ -78,7 +78,7 @@
             @click="approveAllRequests(0)"
             v-if="hasPendingAssignments"
           >
-            <v-icon small left>{{ mdiThumbUp }}</v-icon>
+            <v-icon small left>{{ icons.mdiThumbUp }}</v-icon>
             <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_assignments') }}</span>
           </v-btn>
 
@@ -89,7 +89,7 @@
             @click="approveAllRequests(1)"
             v-if="hasPendingRequests"
           >
-            <v-icon small left>{{ mdiThumbUp }}</v-icon>
+            <v-icon small left>{{ icons.mdiThumbUp }}</v-icon>
             <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_requests') }}</span>
           </v-btn>
         </v-col>
@@ -119,14 +119,14 @@
                   <!-- Show the 'Add New Shift' placeholder at the top of each day -->            
                   <v-card slot="header" class="mt-5 text-center" key="footer" @click.stop="showShiftDialog(day)">
                     <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">{{ mdiPlusBox }}</v-icon>
+                      <v-icon large class="pa-4">{{ icons.mdiPlusBox }}</v-icon>
                     </v-card-text>
                   </v-card>
 
                   <!-- Show placeholder card if there are now shifts for this day -->
                   <v-card slot="footer" v-if="day.list.length === 0" class="no-shift d-flex align-center mt-5" :key="day.id">
                     <v-card-text class="text-center pa-0">
-                      <v-icon large class="pa-4">{{ mdiSelectPlace }}</v-icon>
+                      <v-icon large class="pa-4">{{ icons.mdiSelectPlace }}</v-icon>
                     </v-card-text>
                   </v-card>
 
@@ -191,7 +191,7 @@
           <v-text-field 
             v-model="newTemplateName" 
             :label="$t('schedules.template_name')" 
-            :prepend-icon="mdiFormTextbox"
+            :prepend-icon="icons.mdiFormTextbox"
           ></v-text-field>
         </v-card-text>
 
@@ -452,8 +452,8 @@ export default {
 
     getStatusColor() {
       var textColor = "black--text"
-      if (this.scheduleStatus[this.schedule.status] != undefined) {
-        textColor = this.scheduleStatus[this.schedule.status].color + '--text'
+      if (this.getScheduleStatus(this.schedule.status) != undefined) {
+        textColor = this.getScheduleStatus(this.schedule.status).color + '--text'
       }
       return textColor
     },
@@ -461,7 +461,7 @@ export default {
     getStatusText() {
       var textString = null
       if (!this.isTemplate) {
-        textString = this.scheduleStatus[this.schedule.status].text
+        textString = this.getScheduleStatus(this.schedule.status).text
       } else {
         textString = this.schedule.template_name
       }
@@ -614,13 +614,16 @@ export default {
       if (await this.$root.$confirm(confirm_msg, null, 'error')) {
         await axios({
           method: 'get',      
-          url: '/api/schedules/' + this.schedule.id + '/approveall' + status,
+          url: '/api/schedules/' + this.schedule.id + '/approveall/' + status,
         })
         .then(response => {
           this.storeSchedule(response.data.data.schedule)
           this.storeShifts(response.data.data.schedule.shifts)
           this.showSnackbar(this.$t('general.info_updated'), 'success')
           this.parseSchedule()
+        })
+        .catch(error => {
+          console.log(error)
         })
       }
     },

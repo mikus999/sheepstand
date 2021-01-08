@@ -1,32 +1,32 @@
 <template>
   <v-card width="100%" :loading="pageLoad">
     <v-card-title>
-      <v-icon left>{{ mdiCalendarMultiselect }}</v-icon>
+      <v-icon left>{{ icons.mdiCalendarMultiselect }}</v-icon>
       {{ $t('schedules.available_shifts') }}
     </v-card-title>
 
 
     <v-toolbar flat extended height="80">
       <v-select outlined :value="schedule" :items="schedules" item-value="id" item-text="date_start" return-object
-        @change="changeSchedule" :prepend-icon="mdiCalendarWeekBegin" :label="$t('schedules.week_of')" class="mt-10">
+        @change="changeSchedule" :prepend-icon="icons.mdiCalendarWeekBegin" :label="$t('schedules.week_of')" class="mt-10">
 
         <template v-slot:selection="{ item }">
           <div v-if="item">
-            <v-icon :color="item.status == 1 ? 'primary' : 'grey'">{{ item.status == 1 ? mdiLockOpenVariant : mdiLock }}</v-icon>
+            <v-icon :color="item.status == 1 ? 'primary' : 'grey'">{{ item.status == 1 ? icons.mdiLockOpenVariant : icons.mdiLock }}</v-icon>
             {{ item.date_start | formatDate }} - {{ $dayjs(item.date_start).add(7, 'd') | formatDate }}
           </div>
         </template>
 
         <template v-slot:item="{ item }">
           <div v-if="item">
-            <v-icon :color="item.status == 1 ? 'primary' : 'grey'">{{ item.status == 1 ? mdiLockOpenVariant : mdiLock }}</v-icon>
+            <v-icon :color="item.status == 1 ? 'primary' : 'grey'">{{ item.status == 1 ? icons.mdiLockOpenVariant : icons.mdiLock }}</v-icon>
             {{ item.date_start | formatDate }} - {{ $dayjs(item.date_start).add(7, 'd') | formatDate }}
           </div>
         </template>
       </v-select>
 
       <template v-slot:extension>
-        <v-icon class="mr-2">{{ mdiTune }}</v-icon>
+        <v-icon class="mr-2">{{ icons.mdiTune }}</v-icon>
 
         <v-switch 
           v-model="filter_shifts" 
