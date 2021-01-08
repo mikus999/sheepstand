@@ -1,4 +1,3 @@
-
 import {
   mdiAccount,
   mdiAccountAlert,
@@ -78,6 +77,7 @@ import {
   mdiMapMarkerMultiple,
   mdiMapMarkerPlus,
   mdiMapSearch,
+  mdiMenu,
   mdiMenuDown,
   mdiMessage,
   mdiMessageCog,
@@ -119,6 +119,7 @@ import {
   mdiWeatherSnowyHeavy,
   mdiWeatherWindy,
 } from '@mdi/js'
+
 
 export const mdi = {
   data () {
@@ -202,6 +203,7 @@ export const mdi = {
         mdiMapMarkerMultiple,
         mdiMapMarkerPlus,
         mdiMapSearch,
+        mdiMenu,
         mdiMenuDown,
         mdiMessage,
         mdiMessageCog,

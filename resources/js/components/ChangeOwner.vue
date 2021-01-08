@@ -20,7 +20,6 @@
           :key="admin.id" 
           :value="admin.id"
           :label="admin.name"
-          :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"
           >
         </v-radio>
       </v-radio-group>

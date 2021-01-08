@@ -14,9 +14,9 @@
             :label="$t('messages.sent_from')"
             column
             >
-            <v-radio :label="user.name" value="User" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"></v-radio>
-            <v-radio :label="team.display_name" value="Team" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"></v-radio>
-            <v-radio label="Site Administrators" value="Site" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" v-if="$is('super_admin')"></v-radio>
+            <v-radio :label="user.name" value="User"></v-radio>
+            <v-radio :label="team.display_name" value="Team"></v-radio>
+            <v-radio label="Site Administrators" value="Site" v-if="$is('super_admin')"></v-radio>
           </v-radio-group>
         </v-col>
         <v-col cols=12 sm=6>
@@ -24,8 +24,8 @@
             v-model="recipient_type"
             :label="$t('messages.sent_to')"
             column>
-            <v-radio :label="$t('messages.to_all_team_members')" value="Team" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" v-if="sender_type != 'Site'"></v-radio>
-            <v-radio label="All Users" value="Site" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" v-if="$is('super_admin') && sender_type == 'Site'"></v-radio>
+            <v-radio :label="$t('messages.to_all_team_members')" value="Team" v-if="sender_type != 'Site'"></v-radio>
+            <v-radio label="All Users" value="Site" v-if="$is('super_admin') && sender_type == 'Site'"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>

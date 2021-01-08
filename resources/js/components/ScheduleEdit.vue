@@ -65,8 +65,8 @@
         <v-col cols=12 :sm="!isTemplate ? '3' : '12'">
           <v-subheader class="pa-0">{{ $t('general.sort_by') }}</v-subheader>
           <v-radio-group v-model="sort_options" class="my-0" @change="parseSchedule()">
-            <v-radio :label="$t('shifts.shift_time')" value="time_start" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"/>
-            <v-radio :label="$t('shifts.location')" value="location" :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked" />
+            <v-radio :label="$t('shifts.shift_time')" value="time_start" />
+            <v-radio :label="$t('shifts.location')" value="location" />
           </v-radio-group>
         </v-col>
 

@@ -21,8 +21,7 @@
         <v-col cols=12 sm=6>
           <span>{{ $t('translation.target_language')}}</span>
           <v-radio-group v-model="langTargetLocale" @change="getMessages" row>
-            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code" class="font-weight-bold"
-               :off-icon="icons.mdiRadioboxBlank" :on-icon="icons.mdiRadioboxMarked"></v-radio>
+            <v-radio v-for="lang in languages" :key="lang.id" :label="lang.name" :value="lang.code" class="font-weight-bold"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
