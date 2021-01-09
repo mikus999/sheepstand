@@ -57,7 +57,11 @@ export default {
 
   data() {
     return {
-      chatInfo: [],
+      chatInfo: {
+        title: null,
+        description: null,
+        invite_link: null
+      },
       chatError: false,
     }
   },
@@ -67,16 +71,17 @@ export default {
   },
 
   methods: {
-    getNotificationInfo() {
+    async getNotificationInfo() {
 
       if (this.notificationsEnabled) {
         // Initialize the mtproto object
-        this.mtInitialize().then(result => {
-          const chat_id = '-100' + this.team.notificationsettings.telegram_channel_id
-          const url = this.bot_api_base + 'getChat?chat_id=' + chat_id
+        this.mtInitialize()
+          .then(result => {
+            const chat_id = '-100' + this.team.notificationsettings.telegram_channel_id
+            const url = this.bot_api_base + 'getChat?chat_id=' + chat_id
 
-          // Execute bot api calls
-          axios.get(url)
+            // Execute bot api calls
+            axios.get(url)
             .then(response => {
               this.chatInfo = response.data.result
               this.chatError = false

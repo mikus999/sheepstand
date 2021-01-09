@@ -55,7 +55,7 @@
               </p>
 
               <v-btn text @click="cancelSetup">{{ $t('general.cancel') }}</v-btn>
-              <v-btn color="primary" @click="sendCode()">{{ $t('general.continue') }}</v-btn>
+              <v-btn color="primary" :loading="is_processing" @click="sendCode()">{{ $t('general.continue') }}</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -87,7 +87,7 @@
               </p>
 
               <v-btn text @click="cancelSetup">{{ $t('general.cancel') }}</v-btn>
-              <v-btn color="primary" @click="signIn()">{{ $t('general.continue') }}</v-btn>
+              <v-btn color="primary" :loading="is_processing" @click="signIn()">{{ $t('general.continue') }}</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -109,7 +109,7 @@
               </p>
 
               <v-btn text @click="cancelSetup">{{ $t('general.cancel') }}</v-btn>
-              <v-btn color="primary" @click="check2FA(password)">{{ $t('general.continue') }}</v-btn>
+              <v-btn color="primary" :loading="is_processing" @click="check2FA(password)">{{ $t('general.continue') }}</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -132,7 +132,7 @@
               </p>
 
               <v-btn text @click="cancelSetup">{{ $t('general.cancel') }}</v-btn>
-              <v-btn color="primary" @click="createSuperGroup()">{{ $t('general.continue') }}</v-btn>
+              <v-btn color="primary" :loading="is_processing" @click="createSuperGroup()">{{ $t('general.continue') }}</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -183,7 +183,7 @@ export default {
 
   created() {
     if (this.notificationsEnabled) {
-      this.$router.push({ name: 'teams.index', params: { tab: 'general' } })
+      this.$router.push({ name: 'teams.index', params: { tab: 'general' } }) // TODO inform user that notifications are already enabled, must disable first
     }
 
     this.mtInitialize()
@@ -203,7 +203,7 @@ export default {
     },
 
     close() {
-      this.$router.go(-1)
+      this.$router.push({ name: 'home'})
     }
   }
 }

@@ -20,6 +20,7 @@ export const mtproto = {
       group_desc: null,
       stepper: 1,
       error_msg: null,
+      is_processing: false,
     }
   },
 
@@ -85,6 +86,7 @@ export const mtproto = {
     },
 
     sendCode() {
+      this.is_processing = true
       this.call('auth.logOut')
       this.call('auth.sendCode', {
         phone_number: this.phone_num,
@@ -98,6 +100,8 @@ export const mtproto = {
       .catch(error => {
         this.error_msg = error.error_message
       })
+
+      this.is_processing = false
     },
 
     //resend login code by another medium (ie. SMS)
@@ -112,6 +116,8 @@ export const mtproto = {
     },
 
     signIn() {
+      this.is_processing = true
+
       this.call('auth.signIn', {
         phone_code: this.login_code,
         phone_number: this.phone_num,
@@ -133,6 +139,8 @@ export const mtproto = {
   
         return Promise.reject(error);
       })
+
+      this.is_processing = false
     },
 
     signOut () {
@@ -159,6 +167,8 @@ export const mtproto = {
     },
 
     async check2FA(password) {
+      this.is_processing = true
+
       this.call('account.getPassword').then(async result => {
         const { srp_id, current_algo, srp_B } = result;
         const { g, p, salt1, salt2, } = current_algo;
@@ -196,10 +206,14 @@ export const mtproto = {
 
 
       })
+
+      this.is_processing = false
     },
 
 
     createSuperGroup () {
+      this.is_processing = true
+
       this.call('channels.createChannel', {
         broadcast: false,
         megagroup: true,
@@ -220,6 +234,7 @@ export const mtproto = {
         this.error_msg = error.error_message
       })
       
+      this.is_processing = false
     },
 
     deleteSuperGroup () {
@@ -350,7 +365,7 @@ export const mtproto = {
         })
         .then(response => {
           this.showSnackbar(this.$t('notifications.success_disable_notifications'), 'success')
-          this.$store.commit('auth/SET_TEAM', response.data.data.team)
+          this.refreshTeam()
         })
       }
     },
@@ -376,7 +391,7 @@ export const mtproto = {
           }
         })
         .then(result => {
-          this.$store.commit('auth/SET_TEAM', result.data.data.team)
+          this.refreshTeam()
         })
 
       })
