@@ -25,7 +25,10 @@ export const helper = {
 
     notificationsEnabled () {
       var result = false
-      if (this.team.notificationsettings != null && this.team.notificationsettings.telegram_channel_id != null) {
+      if (this.team.notificationsettings != null && 
+          this.team.notificationsettings.telegram_channel_id != null &&
+          this.team.notificationsettings.telegram_channel_id != ''
+      ) {
         result = true
       }
       return result

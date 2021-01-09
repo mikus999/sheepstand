@@ -68,6 +68,7 @@ export default {
 
   methods: {
     getNotificationInfo() {
+
       if (this.notificationsEnabled) {
         // Initialize the mtproto object
         this.mtInitialize().then(result => {
