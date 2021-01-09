@@ -219,7 +219,6 @@ export default {
   methods: {
     async nextStep(n, msg) {
       var isNextStep = true
-      console.log(msg)
 
       if (msg !== undefined) {
         isNextStep = await this.$root.$confirm(msg, null, 'primary')
@@ -267,23 +266,29 @@ export default {
         })
     },
 
-    createTeam() {
+    async createTeam() {
       this.hasError = false
+      var newTeam = null
 
       const formData = new FormData()
       formData.append('display_name', this.team_name)
-      axios.post('/api/teams/', formData)
+      await axios.post('/api/teams/', formData)
         .then(response => {
             this.refreshStore()
-            this.setTeam(response.data.data.team, 'self')
-
-            this.stepperCurr = 4
-            this.isNewTeam = true
+            newTeam = response.data.data.team
         })
         .catch(error => {
           this.teamNameError = true
           this.teamNotFoundMsg = this.$t('teams.error_creating_team')
         })
+      
+      if (newTeam != null) {
+        console.log(newTeam)
+        this.setTeam(newTeam, 'self')
+
+        this.stepperCurr = 4
+        this.isNewTeam = true
+      }
     },
 
     clearForm() {
