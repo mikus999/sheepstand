@@ -253,37 +253,51 @@ export default {
       }
     },
 
-    joinTeam() {
-      const formData = new FormData()
-      formData.append('team_id', this.teamid)
-      axios.post('/api/teams/jointeam', formData)
-        .then(response => {
-          this.getTeams()
-          this.setTeam(response.data.data.team, 'self')     
+    async joinTeam() {
+      var newTeam = null
 
-          this.stepperCurr = 4
-          this.isNewTeam = false
-        })
+      await axios({
+        method: 'post',      
+        url: '/api/teams/jointeam',
+        data: {
+          team_id: this.teamid
+        }
+      })
+      .then(response => {
+        this.getTeams()
+        newTeam = response.data.data.team
+      })
+
+
+      if (newTeam != null) {
+        this.setTeam(newTeam, 'self')
+
+        this.stepperCurr = 4
+        this.isNewTeam = false
+      }
     },
 
     async createTeam() {
       this.hasError = false
       var newTeam = null
 
-      const formData = new FormData()
-      formData.append('display_name', this.team_name)
-      await axios.post('/api/teams/', formData)
-        .then(response => {
-            this.refreshStore()
-            newTeam = response.data.data.team
-        })
-        .catch(error => {
-          this.teamNameError = true
-          this.teamNotFoundMsg = this.$t('teams.error_creating_team')
-        })
+      await axios({
+        method: 'post',      
+        url: '/api/teams/',
+        data: {
+          display_name: this.team_name
+        }
+      })
+      .then(response => {
+          this.refreshStore()
+          newTeam = response.data.data.team
+      })
+      .catch(error => {
+        this.teamNameError = true
+        this.teamNotFoundMsg = this.$t('teams.error_creating_team')
+      })
       
       if (newTeam != null) {
-        console.log(newTeam)
         this.setTeam(newTeam, 'self')
 
         this.stepperCurr = 4
