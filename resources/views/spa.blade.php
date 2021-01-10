@@ -26,8 +26,14 @@
 <body>
   <div id="app"></div>
 
-
   {{-- Load the application scripts --}}
   <script src="{{ mix('dist/js/app.js') }}"></script>
+
+  <style>
+    html, body {
+      height: 100%;
+    }
+  </style>
 </body>
 </html>
+

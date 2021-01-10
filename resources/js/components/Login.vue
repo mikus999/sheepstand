@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="500" outlined>
+  <v-card class="mx-auto" max-width="500" outlined elevation="5">
     <v-card-title>{{ $t('auth.login') }}</v-card-title>
     <v-card-text>
       <v-form>
