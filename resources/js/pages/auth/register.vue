@@ -53,7 +53,7 @@ import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 import helper from '~/mixins/helper'
 
 export default {
-  layout: 'vuetify',
+  layout: 'sidebar',
   middleware: 'guest',
   mixins: [helper],
 
@@ -156,10 +156,10 @@ export default {
             remember: this.remember
           })
 
-          // Redirect home when store is initiated
+          // Redirect to dashboard when store is initiated
           this.$store.dispatch('general/init').then(() => {
             this.$router.push({
-              name: 'home'
+              name: 'dashboard'
             })
           })
 

@@ -180,7 +180,7 @@ import VacationSchedule from '~/components/VacationSchedule.vue'
 
 export default {
   middleware: 'auth',
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
 
   components: {

@@ -32,7 +32,7 @@
 import Form from 'vform'
 
 export default {
-  layout: 'vuetify',
+  layout: 'sidebar',
   middleware: 'guest',
 
   metaInfo () {

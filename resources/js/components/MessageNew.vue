@@ -197,7 +197,7 @@ import mtproto from '~/mixins/telegram'
 export default {
   name: 'MessageNew',
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper, mtproto],
   components: {
     

@@ -132,7 +132,7 @@ import Leaflet from '~/components/Leaflet.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper, scheduling],
   components: {
     ShiftCardMobile,

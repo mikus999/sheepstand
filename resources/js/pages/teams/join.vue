@@ -164,7 +164,7 @@
                       {{ $t('notifications.feature_explanation_user')}}
                     </p>
 
-                    <v-btn text id="cancel" router :to="{ name: 'home' }">
+                    <v-btn text id="cancel" router :to="{ name: 'dashboard' }">
                       {{ $t('general.later') }}
                     </v-btn>
                     <v-btn color="primary" router :to="{ name: 'notifications.join' }">
@@ -190,7 +190,7 @@ import CodeInput from "vue-verification-code-input"
 
 export default {
   middleware: 'auth',
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
 
   components: {

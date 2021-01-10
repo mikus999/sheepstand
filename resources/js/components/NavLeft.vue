@@ -12,7 +12,7 @@
     <v-list v-if="user" dense>
       <v-divider class="ma-1" v-show="!isMobile"/>
 
-      <v-list-item router :to="{ name: 'home' }" class="text-decoration-none" active-class="menu-selected-item">
+      <v-list-item router :to="{ name: 'dashboard' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
           <v-icon>{{ icons.mdiViewDashboard }}</v-icon>
         </v-list-item-icon>

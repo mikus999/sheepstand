@@ -99,7 +99,7 @@ import MessageView from '~/components/MessageView.vue'
 export default {
   name: 'MessageList',
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: {
     MessageView

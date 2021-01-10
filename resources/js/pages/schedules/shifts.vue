@@ -15,7 +15,7 @@ import ShiftScheduleMobile from '~/components/ShiftScheduleMobile.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: {
     ShiftSchedule,

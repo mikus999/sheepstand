@@ -12,7 +12,7 @@ import MessageList from '~/components/MessageList.vue'
 
 export default {
   middleware: ['auth'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: {
     MessageList

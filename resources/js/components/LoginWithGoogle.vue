@@ -61,10 +61,10 @@ export default {
         token: e.data.token
       })
 
-      // Redirect home when store is initiated
+      // Redirect to dashboard when store is initiated
       this.$store.dispatch('general/init').then(() => {
         this.$router.push({
-          name: 'home'
+          name: 'dashboard'
         })
       })
 

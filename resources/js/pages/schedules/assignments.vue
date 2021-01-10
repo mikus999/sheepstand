@@ -171,7 +171,7 @@ import ShiftAssignments from '~/components/ShiftAssignments.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper, scheduling],
   props: {
     id: {

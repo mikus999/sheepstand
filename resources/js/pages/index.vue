@@ -8,7 +8,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  layout: 'vuetify',
+  layout: 'sidebar',
 
 
   data: () => ({

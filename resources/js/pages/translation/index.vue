@@ -91,7 +91,7 @@ import helper from '~/mixins/helper'
 
 export default {
   middleware: 'auth',
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
 
   components: {

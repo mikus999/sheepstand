@@ -30,7 +30,7 @@ export default {
 
   data: () => ({
     layout: null,
-    defaultLayout: 'vuetify',
+    defaultlayout: 'sidebar',
     apiInterval: null
   }),
 

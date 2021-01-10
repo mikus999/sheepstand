@@ -86,7 +86,7 @@ import ShiftCard from '~/components/ShiftCard.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper, scheduling],
   components: {
     ShiftCard

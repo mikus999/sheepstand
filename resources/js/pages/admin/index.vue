@@ -19,7 +19,7 @@ import UserTable from '~/components/UserTable'
 
 export default {
   middleware: ['auth'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: { 
     TranslatorManagement,

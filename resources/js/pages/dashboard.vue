@@ -26,7 +26,7 @@ import MessageBanner from '~/components/MessageBanner.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: {
     TradeRequests,

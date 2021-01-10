@@ -17,7 +17,7 @@ import Schedules from '~/components/Schedules.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
 
   components: {

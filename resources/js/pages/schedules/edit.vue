@@ -25,7 +25,7 @@ import ScheduleEdit from '~/components/ScheduleEdit.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper, scheduling],
   props: {
     id: {

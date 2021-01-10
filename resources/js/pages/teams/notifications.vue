@@ -12,7 +12,7 @@ import NotificationSetup from '~/components/NotificationSetup.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: {
     NotificationSetup

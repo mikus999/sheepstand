@@ -20,7 +20,7 @@ import MessageList from '~/components/MessageList.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper],
   components: {
     MessageNew,

@@ -8,7 +8,7 @@
 import Login from '~/components/Login'
 
 export default {
-  layout: 'vuetify',
+  layout: 'sidebar',
   middleware: 'guest',
   components: {
     Login

@@ -7,6 +7,6 @@
 <script>
 export default {
   name: 'AccessDenied',
-  layout: 'vuetify'
+  layout: 'sidebar'
 }
 </script>

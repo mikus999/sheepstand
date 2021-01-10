@@ -1,6 +1,6 @@
 <template>
 <v-bottom-navigation dark grow fixed class="light-blue darken-4 white--text" app>
-  <v-btn router :to="{ name: 'home' }" class="text-decoration-none">
+  <v-btn router :to="{ name: 'dashboard' }" class="text-decoration-none">
     <span>{{ $t('menu.dashboard') }}</span>
     <v-icon>{{ icons.mdiViewDashboard }}</v-icon>
   </v-btn>

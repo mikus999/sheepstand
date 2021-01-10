@@ -6,8 +6,8 @@ function page (path) {
 }
 
 export default [
-  { path: '/', name: 'default', component: page('home.vue'), meta: { roles: [], auth: false } },
-  { path: '/home', name: 'home', component: page('home.vue'), meta: { roles: [], auth: true } },
+  { path: '/', name: 'default', component: page('index.vue'), meta: { roles: [], auth: false } },
+  { path: '/dashboard', name: 'dashboard', component: page('dashboard.vue'), meta: { roles: [], auth: true } },
 
   // AUTH routes
   { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { title: 'Login', roles: [], auth: false } },

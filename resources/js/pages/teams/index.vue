@@ -132,7 +132,7 @@ import NotificationInfo from '~/components/NotificationInfo.vue'
 
 export default {
   middleware: ['auth', 'teams'],
-  layout: 'vuetify',
+  layout: 'sidebar',
   mixins: [helper, mtproto],
   components: { 
     UserTable,
@@ -244,7 +244,7 @@ export default {
                 name: 'teams.join'
               })
             } else {
-              this.setTeam(this.teams[0].id, 'home')
+              this.setTeam(this.teams[0].id, 'dashboard')
             }
           })
       }

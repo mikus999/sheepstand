@@ -203,7 +203,7 @@ export default {
     },
 
     close() {
-      this.$router.push({ name: 'home'})
+      this.$router.push({ name: 'dashboard'})
     }
   }
 }

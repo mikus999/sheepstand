@@ -7,6 +7,6 @@
 <script>
 export default {
   name: 'NotFound',
-  layout: 'vuetify'
+  layout: 'sidebar'
 }
 </script>
