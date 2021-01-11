@@ -59,6 +59,7 @@
       "max_char": "Maximum characters: {char}"
   },
   "menu": {
+      "home": "Home",
       "dashboard": "Dashboard",
       "team": "Team",
       "translation": "Translation",
@@ -86,7 +87,18 @@
       "site_description2": "Register for an account or learn more below",
       "flexible": "Flexible",
       "flexible_desc1": "We designed SheepStand for teams of all sizes. So whether you are organizing a special metropolitan witnessing project with hundreds of publishers, or just a service group, SheepStand can fit your needs.",
-      "flexible_desc2": "Whether you want to assign all shifts without publisher input, or let publishers choose their own shifts, we got you covered."
+      "flexible_desc2": "Whether you want to assign all shifts without publisher input, or let publishers choose their own shifts, we've got you covered.",
+      "flexible_feature1": "Adjustable schedule settings",
+      "flexible_feature2": "Ability to join multiple teams",
+      "flexible_feature3": "Save weekly templates",
+      "flexible_feature4": "Automatic shift assignments",
+      "user_friendly": "User-friendly",
+      "uf_desc1": "We carefully designed SheepStand to be easy-to-use and mobile-friendly. This allows the site to be used whether you're at home or in the field.",
+      "uf_desc2": "We are continuing to translate the site into additional languages. In the meantime, descriptive icons are used so that most features are understandable to everyone.",
+      "uf_feature1": "Mobile-friendly",
+      "uf_feature2": "Multiple languages",
+      "uf_feature3": "Color-coded locations",
+      "uf_feature4": "Weekly availability & time away"
   },
   "auth": {
       "token_expired_alert_title": "Session Expired!",
