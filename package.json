@@ -103,8 +103,5 @@
     "vuetify-loader": "^1.4.3",
     "vuetifyjs-mix-extension": "0.0.11",
     "webpack-bundle-analyzer": "^3.8.0"
-  },
-  "optionalDependencies": {
-    "fsevents": "^2.1.3"
   }
 }
