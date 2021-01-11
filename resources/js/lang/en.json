@@ -79,6 +79,15 @@
       "account_settings": "Account Settings",
       "dark_theme": "Dark Theme"
   },
+  "public": {
+      "tagline1": "Taking the hassle out of organizing public witnessing",
+      "tagline2": "Public Witnessing Assistant",
+      "site_description1": "Whether your team is large or small, organizing a group of publishers for public witnessing can be challenging. So we designed SheepStand to help. Using a modern, flexible, user-friendly approach, SheepStand can help you spend less time creating schedules, and more time in the ministry.",
+      "site_description2": "Register for an account or learn more below",
+      "flexible": "Flexible",
+      "flexible_desc1": "We designed SheepStand for teams of all sizes. So whether you are organizing a special metropolitan witnessing project with hundreds of publishers, or just a service group, SheepStand can fit your needs.",
+      "flexible_desc2": "Whether you want to assign all shifts without publisher input, or let publishers choose their own shifts, we got you covered."
+  },
   "auth": {
       "token_expired_alert_title": "Session Expired!",
       "token_expired_alert_text": "Please log in again to continue.",

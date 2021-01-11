@@ -1,16 +1,7 @@
 <template>
-  <v-navigation-drawer v-model="drawer" class="light-blue darken-4 white--text" dark app>
-    <v-list flat class="mb-0 pb-0" v-show="!isMobile">
-      <v-list-item>
-        <Logo width="35" height="35" class="mb-1 mr-2"/>
+  <v-navigation-drawer v-model="drawer" clipped class="light-blue darken-4 white--text" dark app>
 
-        <span class="head sheep">SHEEP<span class="head stand">STAND</span></span>
-        
-      </v-list-item>
-    </v-list>
-
-    <v-list v-if="user" dense>
-      <v-divider class="ma-1" v-show="!isMobile"/>
+    <v-list v-if="user" class="pt-lg-0" dense>
 
       <v-list-item router :to="{ name: 'dashboard' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>

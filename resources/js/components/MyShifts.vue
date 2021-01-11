@@ -34,7 +34,7 @@
       :hide-default-header="$vuetify.breakpoint.xs" 
       width="100%"
       @click:row="showShiftOverlay"
-      v-if="$vuetify.breakpoint.smAndUp"
+      v-if="!showMobile && $vuetify.breakpoint.smAndUp"
     >
     
       <template v-slot:item.team_name="{ item }">
@@ -113,7 +113,12 @@ import ShiftCardMobile from '~/components/ShiftCardMobile.vue'
 export default {
   name: 'MyShifts',
   mixins: [helper, messages, scheduling, mtproto],
-  props: {},
+  props: {
+    showMobile: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     ShiftCard,
     Leaflet,

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <Login />
+    <Login max-width="500" />
   </v-container>
 </template>
 

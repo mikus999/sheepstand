@@ -1,6 +1,6 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
-    <NavTop v-if="$vuetify.breakpoint.mobile" @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
+    <NavTop @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
     <NavLeft ref="drawer" />
     <Snackbar></Snackbar>
     <ConfirmBox ref="confirm"></ConfirmBox>

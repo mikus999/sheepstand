@@ -1,4 +1,4 @@
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 
@@ -117,7 +117,7 @@ export const helper = {
       localStorage.removeItem('vuex');
 
       // Redirect to login.
-      this.$router.push({ name: 'login' })
+      this.$router.push({ name: 'default' })
     },
 
     hasPermission (search) {

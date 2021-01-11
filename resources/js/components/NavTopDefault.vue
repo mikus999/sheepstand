@@ -1,5 +1,6 @@
 <template>
-  <v-app-bar dark fixed dense flat class="grey darken-4 white--text" app>
+  <v-app-bar dark fixed dense flat :class="user ? 'light-blue darken-4 white--text' : 'grey darken-4 white--text'" app>
+    <v-spacer v-if="isMobile" />
 
     <v-toolbar-title class="mb-0 pa-0">
       <Logo width="30" height="30" class="mb-n2 mr-1"/>
@@ -26,6 +27,20 @@ export default {
   components: {
     LocaleSelector,
     Logo
+  },
+
+
+
+  computed: {
+
+    mini () {
+      return this.$vuetify.breakpoint.mdAndDown;
+    },
+
+    isMobile () {
+      return this.$vuetify.breakpoint.mobile
+    },
+
   },
 }
 </script>

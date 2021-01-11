@@ -1,8 +1,8 @@
 <template>
-  <v-app-bar dark fixed dense flat class="light-blue darken-4 white--text" app>
-    <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')"></v-app-bar-nav-icon>
+  <v-app-bar dark fixed dense flat clipped-left class="light-blue darken-4 white--text" app>
+    <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')" v-if="isMobile"></v-app-bar-nav-icon>
 
-    <v-spacer />
+    <v-spacer v-if="isMobile" />
 
     <v-toolbar-title class="mb-0 pa-0">
       <Logo width="30" height="30" class="mb-n2 mr-1"/>
@@ -31,6 +31,19 @@ export default {
     TeamSelector,
     LocaleSelector,
     Logo
+  },
+
+
+  computed: {
+
+    mini () {
+      return this.$vuetify.breakpoint.mdAndDown;
+    },
+
+    isMobile () {
+      return this.$vuetify.breakpoint.mobile
+    },
+
   },
 }
 </script>

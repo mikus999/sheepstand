@@ -15,7 +15,7 @@ import isBetween from 'dayjs/plugin/isBetween'
 import '~/plugins'
 import '~/components'
 import VueClipboard from 'vue-clipboard2'
-import 'typeface-roboto'
+//import 'typeface-roboto'
 
 
 
