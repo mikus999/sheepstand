@@ -63,7 +63,7 @@
       <h1 class="text-h5 mt-8 mb-4">Cookies</h1>
       <div>
         <p>Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit our websites, we may collect information from you automatically through cookies or similar technology.</p>
-        <p>For further information, visit <a href="https://Callaboutcookies.org" target="_blank">allaboutcookies.org</a>.</p>
+        <p>For further information, visit <a href="https://allaboutcookies.org" target="_blank">allaboutcookies.org</a>.</p>
       </div>
 
       <h1 class="text-h5 mt-8 mb-4">How do we use cookies?</h1>
