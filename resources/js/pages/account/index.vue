@@ -55,7 +55,7 @@
 
                   <v-select 
                     v-model="userData.fts_status" 
-                    :items="ftsStatus"
+                    :items="getFTSStatus()"
                     item-text="text"
                     item-value="value"
                     @change="updateStatusField('fts')"

@@ -1,5 +1,5 @@
 <template>
-  <v-card width="100%">
+  <v-card width="100%" :min-height="minHeight">
     <v-toolbar flat>
       <v-toolbar-title>
         <v-icon left>{{ icons.mdiCalendarAccount }}</v-icon>
@@ -117,6 +117,12 @@ export default {
     showMobile: {
       type: Boolean,
       default: false
+    },
+    minHeight: {
+      type: [Number, String]
+    },
+    maxResults: {
+      type: [Number, String]
     }
   },
   components: {
@@ -156,11 +162,17 @@ export default {
     },
 
     filteredShifts() {
+      var arrTemp = []
+
       if (this.allTeams) {
-          return this.user_shifts
+          arrTemp = this.user_shifts
       } else {
-          return this.user_shifts.filter(shift => shift.schedule.team_id === this.team.id)
+          arrTemp = this.user_shifts.filter(shift => shift.schedule.team_id === this.team.id)
       }
+
+      arrTemp = this.maxResults ? arrTemp.slice(0, this.maxResults) : arrTemp
+
+      return arrTemp
     }
   },
 

@@ -9,6 +9,9 @@ export default [
   { path: '/', name: 'default', component: page('index.vue'), meta: { roles: [], auth: false } },
   { path: '/dashboard', name: 'dashboard', component: page('dashboard.vue'), meta: { roles: [], auth: true } },
 
+  // PUBLIC routes
+  { path: '/privacy', name: 'privacy', component: page('public/privacy.vue'), meta: { roles: [], auth: false } },
+
   // AUTH routes
   { path: '/login', name: 'login', component: page('auth/login.vue'), meta: { title: 'Login', roles: [], auth: false } },
   { path: '/register', name: 'register', component: page('auth/register.vue'), meta: { title: 'Register', roles: [], auth: false } },

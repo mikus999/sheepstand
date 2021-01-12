@@ -142,6 +142,7 @@ class ScheduleController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
+      $user = Auth::user();
       $schedule = Schedule::with('shifts')->find($id);
       $team = $schedule->team;
 

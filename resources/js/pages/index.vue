@@ -18,30 +18,30 @@
       <v-col cols=12 md=5 :class="'pa-8' + ($vuetify.breakpoint.mdAndUp ? ' cell-full-height grey lighten-1' : '')">
         <div :class="'d-flex flex-column' + ($vuetify.breakpoint.mdAndUp ? ' components-right' : '')">
           <Login v-if="!user" />
-          <MyShifts v-else show-mobile />
+          <MyShifts v-else show-mobile :min-height="$vuetify.breakpoint.xs ? 0 : 550" max-results="5" />
         </div>
       </v-col>
 
     </v-row>
 
-    <v-row>
+    <v-row class="mt-12">
       <v-col cols=12 md=6>
         <div class="row-title">
           <div class="d-flex flex-column align-center">
-            <span class="text-h3 text-sm-h2 nunito">{{ $t('public.flexible') }}</span>
+            <span class="text-h4 text-sm-h3 nunito">{{ $t('public.flexible') }}</span>
           </div>
         </div>
 
         <div class="row-description">
           <div class="d-flex flex-column px-4 px-sm-16 align-center">
-            <span class="text-h6 text-sm-h5 nunito">
+            <span class="text-body-1 text-sm-h6 nunito">
               {{ $t('public.flexible_desc1')}} 
               {{ $t('public.flexible_desc2')}}
             </span>
           </div>
           <div class="d-flex flex-column px-4 px-sm-16 py-8 align-center">
-            <div class="text-h6 text-sm-h5 nunito">
-              <p><v-icon class="list-icon">{{ icons.mdiCalendarMultiselect }}</v-icon>{{ $t('public.flexible_feature1') }}</p>
+            <div class="text-body-1 text-sm-h6 nunito">
+              <p><v-icon class="list-icon">{{ icons.mdiTune }}</v-icon>{{ $t('public.flexible_feature1') }}</p>
               <p><v-icon class="list-icon">{{ icons.mdiAccountGroup }}</v-icon>{{ $t('public.flexible_feature2') }}</p>
               <p><v-icon class="list-icon">{{ icons.mdiCalendarStar }}</v-icon>{{ $t('public.flexible_feature3') }}</p>
               <p><v-icon class="list-icon">{{ icons.mdiListStatus }}</v-icon>{{ $t('public.flexible_feature4') }}</p>
@@ -53,24 +53,24 @@
       <v-col cols=12 md=6>
         <div class="row-title">
           <div class="d-flex flex-column align-center">
-            <span class="text-h3 text-sm-h2 nunito">{{ $t('public.user_friendly') }}</span>
+            <span class="text-h4 text-sm-h3 nunito">{{ $t('public.user_friendly') }}</span>
           </div>
         </div>
 
         <div class="row-description">
           <div class="d-flex flex-column px-4 px-sm-16 align-center">
-            <span class="text-h6 text-sm-h5 nunito">
+            <span class="text-body-1 text-sm-h6 nunito">
               {{ $t('public.uf_desc1')}} 
               {{ $t('public.uf_desc2')}}
             </span>
           </div>
           
           <div class="d-flex flex-column px-4 px-sm-16 py-8 align-center">
-            <div class="text-h6 text-sm-h5 nunito">
+            <div class="text-body-1 text-sm-h6 nunito">
               <p><v-icon class="list-icon">{{ icons.mdiTabletCellphone }}</v-icon>{{ $t('public.uf_feature1') }}</p>
               <p><v-icon class="list-icon">{{ icons.mdiTranslate }}</v-icon>{{ $t('public.uf_feature2') }}</p>
               <p><v-icon class="list-icon">{{ icons.mdiMapMarkerMultiple }}</v-icon>{{ $t('public.uf_feature3') }}</p>
-              <p><v-icon class="list-icon">{{ icons.mdiPalmTree }}</v-icon>{{ $t('public.uf_feature4') }}</p>
+              <p><v-icon class="list-icon">{{ icons.mdiCalendarMultiselect }}</v-icon>{{ $t('public.uf_feature4') }}</p>
             </div>
           </div>
         </div>

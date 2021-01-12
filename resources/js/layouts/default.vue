@@ -5,7 +5,7 @@
     <!-- Sizes your content based upon application components -->
     <v-main>
       <!-- Provides the application the proper gutter -->
-      <v-container fluid class="pa-0 fill-height">
+      <v-container fluid class="pa-0">
         <!-- If using vue-router -->
         <RouterTransition>
           <router-view />
@@ -16,8 +16,8 @@
     <v-footer class="justify-center" height="80px">
       <v-spacer />
 
-      <span class="mx-6">Privacy Policy</span>
-      <span class="mx-6">&copy {{ $dayjs().year() }} SheepStand</span>
+      <router-link :to="{ name: 'privacy' }" class="text-caption text-decoration-none mx-6">{{ $t('general.privacy_policy')}}</router-link>
+      <span class="text-caption mx-6">&copy {{ $dayjs().year() }} SheepStand</span>
     </v-footer>
   </v-app>
 </template>

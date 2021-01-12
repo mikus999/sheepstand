@@ -2,7 +2,7 @@
   <v-app-bar dark fixed dense flat clipped-left class="light-blue darken-4 white--text" app>
     <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')" v-if="!hideSidebar"></v-app-bar-nav-icon>
 
-    <v-btn icon :to="{ name: 'dashboard' }" v-if="hideSidebar">
+    <v-btn icon small :to="{ name: 'dashboard' }" v-if="hideSidebar">
       <v-icon>{{ icons.mdiViewDashboard}}</v-icon>
     </v-btn>
 
@@ -21,16 +21,28 @@
     </v-btn>
     -->
 
-    <v-menu open-on-hover offset-y transition="slide-x-transition" bottom right>
+    <v-menu 
+      offset-y 
+      transition="scroll-y-transition" 
+      bottom 
+      right 
+      :close-on-content-click="true"
+      :close-on-click="true"
+    >
       <template v-slot:activator="{ on, attrs }">
         <v-avatar v-if="user" size="30" color="white" v-bind="attrs" v-on="on">
           <v-img :src="user.photo_url" v-if="user.photo_url" />
           <v-icon v-else>{{ icons.mdiAccount }}</v-icon>
         </v-avatar>
+
+        <v-btn icon small v-else v-bind="attrs" v-on="on">
+          <v-icon>{{ icons.mdiDotsVertical}}</v-icon>
+        </v-btn>
       </template>
 
       <ProfileCard />
     </v-menu>
+
   </v-app-bar>
 </template>
 

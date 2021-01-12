@@ -278,7 +278,11 @@ export const helper = {
         }
       ]
 
-      return ftsStatus[status]
+      if (status == null) {
+        return ftsStatus
+      } else {
+        return ftsStatus[status]
+      }
     },
 
     
