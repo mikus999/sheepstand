@@ -32,7 +32,7 @@
 import Form from 'vform'
 
 export default {
-  layout: 'sidebar',
+  layout: 'default',
   middleware: 'guest',
 
   metaInfo () {

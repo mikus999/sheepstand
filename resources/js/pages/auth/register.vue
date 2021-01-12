@@ -53,7 +53,7 @@ import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 import helper from '~/mixins/helper'
 
 export default {
-  layout: 'sidebar',
+  layout: 'default',
   middleware: 'guest',
   mixins: [helper],
 

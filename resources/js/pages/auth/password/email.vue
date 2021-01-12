@@ -29,7 +29,7 @@ import helper from '~/mixins/helper'
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
-  layout: 'sidebar',
+  layout: 'default',
   middleware: 'guest',
   mixins: [helper],
 

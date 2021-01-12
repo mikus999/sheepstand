@@ -31,7 +31,7 @@ import axios from 'axios'
 const qs = (params) => Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
 
 export default {
-  layout: 'sidebar',
+  layout: 'default',
   middleware: 'guest',
 
   metaInfo () {

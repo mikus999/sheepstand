@@ -65,9 +65,8 @@
 
 
 
-
+    <!--
     <v-list dense>
-
       <v-list-item class="text-decoration-none" v-if="user && hasTeam">
         <v-list-item-icon>
           <v-icon>{{ icons.mdiAccountGroup }}</v-icon>
@@ -86,6 +85,7 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    -->
 
     <v-list v-if="user && hasTeam && $can(['view_schedules','manage_schedules'])" dense>
       <v-subheader>{{ $t('menu.team_admin')}}</v-subheader>

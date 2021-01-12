@@ -1,6 +1,6 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
-    <NavTopDefault />
+    <NavTop hide-sidebar />
 
     <!-- Sizes your content based upon application components -->
     <v-main>
@@ -13,8 +13,11 @@
       </v-container>
     </v-main>
 
-    <v-footer app>
-    <!-- -->
+    <v-footer class="justify-center" height="80px">
+      <v-spacer />
+
+      <span class="mx-6">Privacy Policy</span>
+      <span class="mx-6">&copy {{ $dayjs().year() }} SheepStand</span>
     </v-footer>
   </v-app>
 </template>
@@ -22,12 +25,12 @@
 
 <script>
 import { mapGetters, mapState  } from 'vuex'
-import NavTopDefault from '../components/NavTopDefault.vue'
+import NavTop from '../components/NavTop.vue'
 import RouterTransition from '../components/RouterTransition.vue'
 
 export default {
   components: {
-    NavTopDefault,
+    NavTop,
     RouterTransition
   },
 

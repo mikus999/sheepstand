@@ -8,7 +8,7 @@
 import Login from '~/components/Login'
 
 export default {
-  layout: 'sidebar',
+  layout: 'default',
   middleware: 'guest',
   components: {
     Login

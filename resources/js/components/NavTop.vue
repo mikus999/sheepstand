@@ -1,8 +1,12 @@
 <template>
   <v-app-bar dark fixed dense flat clipped-left class="light-blue darken-4 white--text" app>
-    <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')" v-if="isMobile"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click.stop="$emit('toggle-drawer')" v-if="!hideSidebar"></v-app-bar-nav-icon>
 
-    <v-spacer v-if="isMobile" />
+    <v-btn icon :to="{ name: 'dashboard' }" v-if="hideSidebar">
+      <v-icon>{{ icons.mdiViewDashboard}}</v-icon>
+    </v-btn>
+
+    <v-spacer />
 
     <v-toolbar-title class="mb-0 pa-0">
       <Logo width="30" height="30" class="mb-n2 mr-1"/>
@@ -11,10 +15,22 @@
 
     <v-spacer />
 
+    <!--
     <v-btn dark icon @click.prevent="logout" v-if="user">
       <v-icon>{{ icons.mdiLogoutVariant }}</v-icon>
     </v-btn>
+    -->
 
+    <v-menu open-on-hover offset-y transition="slide-x-transition" bottom right>
+      <template v-slot:activator="{ on, attrs }">
+        <v-avatar v-if="user" size="30" color="white" v-bind="attrs" v-on="on">
+          <v-img :src="user.photo_url" v-if="user.photo_url" />
+          <v-icon v-else>{{ icons.mdiAccount }}</v-icon>
+        </v-avatar>
+      </template>
+
+      <ProfileCard />
+    </v-menu>
   </v-app-bar>
 </template>
 
@@ -23,14 +39,21 @@ import helper from '../mixins/helper'
 import TeamSelector from './TeamSelector'
 import LocaleSelector from './LocaleSelector'
 import Logo from './Logo'
+import ProfileCard from './ProfileCard'
 
 export default {
   mixins: [helper],
-  
+  props: {
+    hideSidebar: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     TeamSelector,
     LocaleSelector,
-    Logo
+    Logo,
+    ProfileCard
   },
 
 
