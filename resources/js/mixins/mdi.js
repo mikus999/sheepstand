@@ -21,6 +21,7 @@ import {
   mdiApple,
   mdiArrowLeft,
   mdiArrowRight,
+  mdiBackburger,
   mdiBriefcase,
   mdiCalendar,
   mdiCalendarAccount,
@@ -109,6 +110,7 @@ import {
   mdiSwapHorizontalBold,
   mdiTabletCellphone,
   mdiTelegram,
+  mdiThemeLightDark,
   mdiThumbDown,
   mdiThumbUp,
   mdiTools,
@@ -119,9 +121,11 @@ import {
   mdiVectorPolygon,
   mdiVectorRectangle,
   mdiViewDashboard,
+  mdiWeatherNight,
   mdiWeatherPouring,
   mdiWeatherSnowyHeavy,
   mdiWeatherWindy,
+  mdiWhiteBalanceSunny
 } from '@mdi/js'
 
 
@@ -151,6 +155,7 @@ export const mdi = {
         mdiApple,
         mdiArrowLeft,
         mdiArrowRight,
+        mdiBackburger,
         mdiBriefcase,
         mdiCalendar,
         mdiCalendarAccount,
@@ -239,6 +244,7 @@ export const mdi = {
         mdiSwapHorizontalBold,
         mdiTabletCellphone,
         mdiTelegram,
+        mdiThemeLightDark,
         mdiThumbDown,
         mdiThumbUp,
         mdiTools,
@@ -249,9 +255,11 @@ export const mdi = {
         mdiVectorPolygon,
         mdiVectorRectangle,
         mdiViewDashboard,
+        mdiWeatherNight,
         mdiWeatherPouring,
         mdiWeatherSnowyHeavy,
         mdiWeatherWindy,
+        mdiWhiteBalanceSunny
       },
       bannerIcons: {
         mdiInformation,

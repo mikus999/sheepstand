@@ -17,7 +17,7 @@
         {{ $t('shifts.see_more') }}
       </v-btn>
       
-      <template v-slot:extension>
+      <template v-slot:extension v-if="!hideTeamsSwitch">
         <v-switch v-model="allTeams" hide-details class="mx-4">
           <template v-slot:label>
             <span class="switch-label">{{ $t('shifts.show_all_teams') }}</span>
@@ -123,6 +123,10 @@ export default {
     },
     maxResults: {
       type: [Number, String]
+    },
+    hideTeamsSwitch: {
+      type: Boolean,
+      default: false
     }
   },
   components: {

@@ -29,13 +29,13 @@
     </v-card-text>
 
     <v-card-actions>
-        <v-row>
-          <v-col cols=12 sm=6 class="text-center">
+        <v-row dense>
+          <v-col cols=12 sm=6 class="text-center text-caption">
             <router-link :to="{ name: 'register' }" style="text-decoration: none;">
               {{ $t('auth.register') }}
             </router-link>
           </v-col>
-          <v-col cols=12 sm=6 class="text-center">
+          <v-col cols=12 sm=6 class="text-center text-caption">
             <router-link :to="{ name: 'password.request' }" style="text-decoration: none;">
               {{ $t('auth.forgot_password') }}
             </router-link>

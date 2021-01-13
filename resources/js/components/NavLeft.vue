@@ -141,28 +141,10 @@
       </v-list-item>
     </v-list>
 
-
-    <template v-slot:append>
-      <div class="pa-1">
-        <v-switch v-model="$vuetify.theme.dark" hide-details color="black"></v-switch>
-      </div>
-
-      <!-- LOGOUT BUTTON -->
-      <div :class="'pa-1 ' + ($vuetify.breakpoint.xs ? 'mb-16' : '')">
-        <v-btn block @click.prevent="logout" v-if="!$vuetify.breakpoint.mobile && user">
-          <v-icon>{{ icons.mdiLogoutVariant }}</v-icon>
-          <span class="ml-3">{{ $t('auth.logout') }}</span>
-        </v-btn>
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { loadMessages } from '~/plugins/i18n'
 import helper from '../mixins/helper'
 import TeamSelector from './TeamSelector'
 import LocaleSelector from './LocaleSelector'
@@ -179,8 +161,8 @@ export default {
 
   data () {
     return {
+      isTranslator: true,
       drawer: !this.$vuetify.breakpoint.mobile,
-      isTranslator: true
     }
   },
 
@@ -196,9 +178,13 @@ export default {
 
   },
 
-  toggleDarkMode () {
-    this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+  methods: {
+    toggleDarkMode () {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+    },
+
   }
+
 }
 </script>
 

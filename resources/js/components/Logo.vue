@@ -1,5 +1,5 @@
 <template>
-<svg version="1.1" fill="#ffffff" :width="width" :height="height"  xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 800 800">
+<svg version="1.1" :fill="fill" :width="width" :height="height"  xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 800 800">
 <path d="M131.17,264.35c2.58-36.92,33.33-66.08,70.93-66.08c7.49,0,14.75,1.14,21.52,3.32c-2.77-7.62-4.26-15.82-4.26-24.35
 		c0-39.29,31.84-71.12,71.12-71.12c16.99,0,32.58,5.96,44.82,15.92c11.03-24.97,36-42.35,65.04-42.35c29.04,0,54,17.38,65.07,42.35
 		c12.21-9.96,27.83-15.92,44.82-15.92c39.29,0,71.13,31.84,71.13,71.12c0,8.53-1.53,16.73-4.3,24.35c6.8-2.18,14.03-3.32,21.55-3.32
@@ -40,6 +40,10 @@ export default {
     },
     height: {
       default: 25
+    },
+    fill: {
+      type: String,
+      default: '#ffffff'
     }
   }
 }

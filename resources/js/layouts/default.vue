@@ -13,11 +13,12 @@
       </v-container>
     </v-main>
 
-    <v-footer class="justify-center" height="80px">
+    <v-footer class="justify-center grey lighten-1" padless height="60px">
       <v-spacer />
 
       <router-link :to="{ name: 'privacy' }" class="text-caption text-decoration-none mx-6">{{ $t('general.privacy_policy')}}</router-link>
       <span class="text-caption mx-6">&copy {{ $dayjs().year() }} SheepStand</span>
+
     </v-footer>
   </v-app>
 </template>

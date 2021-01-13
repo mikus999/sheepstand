@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0 ma-0" fill-height>
+  <v-container fluid class="pt-0 mt-0" fill-height>
     <v-row :class="($vuetify.breakpoint.mdAndUp ? 'full-height' : '')" justify="center" align="center">
 
       <v-col cols=12 md=7 class="pa-8 pa-lg-16 bg-crowd" v-if="$vuetify.breakpoint.mdAndUp">
@@ -9,16 +9,18 @@
         </div>
       </v-col>
 
+      <!--
       <v-col cols=12 class="d-flex tagline-mobile text-h6 text-sm-h4" v-else>
         <div class="nunito align-center">
           {{ $t('public.tagline2') }}
         </div>
       </v-col>
-
+      -->
+      
       <v-col cols=12 md=5 :class="'pa-8' + ($vuetify.breakpoint.mdAndUp ? ' cell-full-height grey lighten-1' : '')">
         <div :class="'d-flex flex-column' + ($vuetify.breakpoint.mdAndUp ? ' components-right' : '')">
           <Login v-if="!user" />
-          <MyShifts v-else show-mobile :min-height="$vuetify.breakpoint.xs ? 0 : 550" max-results="5" />
+          <MyShifts v-else show-mobile hide-teams-switch :min-height="$vuetify.breakpoint.xs ? 0 : 500" max-results="5" />
         </div>
       </v-col>
 

@@ -79,7 +79,7 @@ export default {
     async getUserData() {
       await axios.get('/api/users/translator')
         .then(response => {
-          this.translators = response.data.users
+          this.translators = response.data.data.users
         })
     },
 

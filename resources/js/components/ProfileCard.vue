@@ -1,7 +1,7 @@
 <template>
   <v-card width="300">
     <v-card-title class="justify-center my-4" v-if="user">
-      <v-avatar size="70" color="white">
+      <v-avatar size="60" color="white">
         <v-img :src="user.photo_url" v-if="user.photo_url" />
         <v-icon v-else>{{ icons.mdiAccount }}</v-icon>
       </v-avatar>
@@ -14,6 +14,10 @@
       <v-btn rounded outlined small :to="{ name: 'account.index' }" active-class="" class="mt-4">
         {{ $t('general.manage_account')}}
       </v-btn>
+    </v-card-subtitle>
+
+    <v-card-subtitle class="text-center mb2" v-else>
+      <h1 class="text-h6">{{ $t('account.preferences') }}</h1>
     </v-card-subtitle>
 
     <v-card-text>
@@ -29,6 +33,7 @@
             <TeamSelector v-if="user && hasTeam" />
           </v-list-item-content>
         </v-list-item>
+
         <v-list-item class="text-decoration-none">
           <v-list-item-icon>
             <v-icon>{{ icons.mdiTranslate }}</v-icon>
@@ -37,7 +42,24 @@
             <LocaleSelector />
           </v-list-item-content>
         </v-list-item>
+        
+        <v-list-item class="text-decoration-none">
+          <v-list-item-icon>
+            <v-icon>{{ icons.mdiThemeLightDark }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content class="pr-2">
+            <v-btn small :color="!$vuetify.theme.dark ? 'primary' : ''" @click.stop="changeTheme('light')">
+              <v-icon>{{ icons.mdiWhiteBalanceSunny}}</v-icon>
+            </v-btn>
+          </v-list-item-content>
+          <v-list-item-content class="pl-2">  
+            <v-btn small :color="$vuetify.theme.dark ? 'primary' : ''" @click.stop="changeTheme('dark')">
+              <v-icon>{{ icons.mdiWeatherNight}}</v-icon>
+            </v-btn>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
+
 
       <v-divider />
 
@@ -65,12 +87,14 @@
 import helper from '../mixins/helper'
 import TeamSelector from './TeamSelector'
 import LocaleSelector from './LocaleSelector'
+import Logo from './Logo'
 
 export default {
   mixins: [helper],
   components: {
     LocaleSelector,
-    TeamSelector
+    TeamSelector,
+    Logo
   }
 
 }

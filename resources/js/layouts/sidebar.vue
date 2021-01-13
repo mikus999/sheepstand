@@ -1,7 +1,7 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
-    <NavTop @toggle-drawer="$refs.drawer.drawer = !$refs.drawer.drawer" />
-    <NavLeft ref="drawer" />
+    <NavTop @toggle-drawer="toggleDrawer" :drawer="drawer" />
+    <NavLeft ref="navLeft" />
     <Snackbar></Snackbar>
     <ConfirmBox ref="confirm"></ConfirmBox>
     <NavBottom v-if="$vuetify.breakpoint.mobile && user"/>
@@ -44,15 +44,19 @@ export default {
       user: 'auth/user',
       theme: 'general/theme'
     }),
+  },
 
-
+  data() {
+    return {
+      drawer: false
+    }
   },
 
   watch: {
     '$route' (to, from) {
       const siteTitle = process.env.NODE_ENV === 'production' ? 'SheepStand' : 'SheepStand Dev'
       document.title = to.meta.title ? (siteTitle + ': ' + to.meta.title) : siteTitle
-    }
+    },
   },
 
   created () {
@@ -67,6 +71,7 @@ export default {
 
   mounted () {
     this.$root.$confirm = this.$refs.confirm.open
+    this.drawer = this.$refs.navLeft.drawer
   },
 
   methods: {
@@ -82,6 +87,10 @@ export default {
       }
     },
 
+    toggleDrawer() {
+      this.$refs.navLeft.drawer = !this.$refs.navLeft.drawer
+      this.drawer = this.$refs.navLeft.drawer
+    }
   }
 }
 </script>
