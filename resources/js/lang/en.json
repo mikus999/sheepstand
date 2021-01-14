@@ -280,6 +280,7 @@
       "change_shift": "Change Shift",
       "confirm_delete_shift": "Are you sure you want to delete this shift?",
       "success_delete_shift": "Shift was deleted successfully",
+      "requests": "Requests",
       "assignments": "Assignments",
       "approvals": "Approvals",
       "approve_all_requests": "Approve Requests",

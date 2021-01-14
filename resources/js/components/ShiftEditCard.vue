@@ -15,7 +15,7 @@
             </v-btn>
           </v-col>
           <v-col cols=9 class="pa-0 shift-subtitle">
-            <div class="text-h6 shift-title">{{ shift.location.name }}</div>
+            <div class="text-h5 shift-title">{{ shift.location.name }}</div>
             <div v-if="!isTemplate">{{ $dayjs(shift.time_start).format('ddd, L') }}</div>
             <div>{{ shift.time_start | formatTime }} - {{ shift.time_end | formatTime }}</div>
           </v-col>
@@ -102,7 +102,7 @@
                   <v-icon small>{{ icons.mdiPencil }}</v-icon>
                 </v-btn>
               </template>
-              <span>{{ $t('schedules.new_shift') }}</span>
+              <span>{{ $t('general.edit') }}</span>
             </v-tooltip>
           </v-col>
           <v-col>
@@ -329,7 +329,8 @@ export default {
 
 .shift-title
 {
-  font-size: 1.1rem !important;
+  font-size: 1.0rem !important;
+  font-weight: bold;
 }
 
 .shift-subtitle

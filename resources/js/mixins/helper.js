@@ -296,28 +296,35 @@ export const helper = {
       var link = null
       var osDetails = { 
         name: null, 
-        icon: null
+        icon: null,
+        mobile: false
       }
 
           
       if (macosPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'macOS'
         osDetails.icon = this.icons.mdiApple
+        osDetails.mobile = false
       } else if (iosPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'iOS'
         osDetails.icon = this.icons.mdiApple
+        osDetails.mobile = true
       } else if (windowsPlatforms.indexOf(platform) !== -1) {
         osDetails.name = 'Windows'
         osDetails.icon = this.icons.mdiMicrosoftWindows
+        osDetails.mobile = false
       } else if (/Android/.test(userAgent)) {
         osDetails.name = 'Android'
         osDetails.icon = this.icons.mdiAndroid
+        osDetails.mobile = true
       } else if (!os && /Linux/.test(platform)) {
         osDetails.name = 'Linux'
         osDetails.icon = this.icons.mdiLinux
+        osDetails.mobile = false
       } else {
         osDetails.name = 'Unknown'
         osDetails.icon = this.icons.mdiHelpCircle
+        osDetails.mobile = false
       }
 
       return osDetails;

@@ -211,7 +211,8 @@ export default {
 
   .shift-title
   {
-    font-size: 1.1rem !important;
+    font-size: 1.0rem !important;
+    font-weight: bold;
   }
 
   .shift-subtitle

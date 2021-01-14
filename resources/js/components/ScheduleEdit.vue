@@ -79,7 +79,7 @@
             v-if="hasPendingAssignments"
           >
             <v-icon small left>{{ icons.mdiThumbUp }}</v-icon>
-            <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_assignments') }}</span>
+            <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.assignments') }}</span>
           </v-btn>
 
           <v-btn
@@ -90,7 +90,7 @@
             v-if="hasPendingRequests"
           >
             <v-icon small left>{{ icons.mdiThumbUp }}</v-icon>
-            <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.approve_all_requests') }}</span>
+            <span>{{ $vuetify.breakpoint.xs ? $t('general.all') : $t('schedules.requests') }}</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -103,7 +103,7 @@
               <h6 v-if="!isTemplate">{{ day.date | formatDate }}</h6>
 
               <draggable class="list-group" tag="transition-group" v-model="day.list" v-bind="dragOptions" 
-                @end="moveShift" draggable=".shift" :id="day.id" handle=".handle">
+                @end="moveShift" draggable=".shift" :id="day.id" handle=".handle" :disabled="isMobile">
 
                   <ShiftEditCard 
                     v-for="shift in day.list" 
@@ -249,6 +249,7 @@ export default {
       tickLabels: [],
       shift: [],
       locShift: [],
+      osDetails: {},
       sw_status_visible: false,
       sw_status_closed: false,
       sw_status_archive: false,
@@ -306,6 +307,10 @@ export default {
         spaceBetween: 10,
         freeMode: false,
         allowTouchMove: true,
+        mousewheel: {
+          forceToAxis: true,
+          invert: true,
+        },
         keyboard: {
           enabled: true,
         },
@@ -314,12 +319,14 @@ export default {
           prevEl: '.swiper-button-prev'
         },
         breakpoints: {
-          640: {
-            slidesPerView: 2,
+          600: {
+            slidesPerView: 'auto',
             spaceBetween: 20,
-            allowTouchMove: false,
+            allowTouchMove: this.isMobile,
+            freeMode: true,
           },
-          768: {
+          /*
+          850: {
             slidesPerView: 3,
             spaceBetween: 30,
             allowTouchMove: false,
@@ -334,6 +341,7 @@ export default {
             spaceBetween: 40,
             allowTouchMove: false,
           }
+          */
         }
       },
 
@@ -351,7 +359,6 @@ export default {
       return {
         animation: 200,
         group: "description",
-        disabled: this.$vuetify.breakpoint.xs,
         ghostClass: "ghost"
       }
     },
@@ -364,6 +371,11 @@ export default {
 
     isTemplate () {
       return this.schedule.status == 9
+    },
+
+    isMobile() {
+      var osDetails = this.getOS()
+      return osDetails.mobile
     },
 
     mapWidth() {
@@ -644,6 +656,10 @@ export default {
 
   .swiper-container {
     width: 92%;
+  }
+
+  .swiper-slide {
+    width: 220px;
   }
 
   .no-shift {
