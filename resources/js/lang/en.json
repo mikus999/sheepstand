@@ -58,7 +58,8 @@
       "expired": "Expired",
       "max_char": "Maximum characters: {char}",
       "privacy_policy": "Privacy Policy",
-      "manage_account": "Manage your Account"
+      "manage_account": "Manage your Account",
+      "menu": "Menu"
   },
   "menu": {
       "home": "Home",

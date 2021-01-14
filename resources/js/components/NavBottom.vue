@@ -17,10 +17,16 @@
     </v-badge>
   </v-btn>
 
+  <v-btn @click.stop="$emit('toggle-drawer')" class="text-decoration-none">
+    <span>{{ $t('general.menu') }}</span>
+    <v-icon>{{ icons.mdiMenu }}</v-icon>
+  </v-btn>
+  <!--
   <v-btn router :to="{ name: 'account.index' }" class="text-decoration-none">
     <span>{{ $t('menu.account') }}</span>
     <v-icon>{{ icons.mdiAccountTie }}</v-icon>
   </v-btn>
+  -->
 </v-bottom-navigation>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <v-app-bar dark fixed dense flat clipped-left class="light-blue darken-4 white--text" app>
 
-    <v-app-bar-nav-icon small @click.stop="$emit('toggle-drawer')" class="ml-sm-2" v-if="!hideSidebar">
+    <v-app-bar-nav-icon small @click.stop="$emit('toggle-drawer')" class="ml-sm-2" v-if="!hideSidebar && $vuetify.breakpoint.mdAndUp">
       <template v-slot:default>
         <v-icon v-if="!isMobile && drawer">{{ icons.mdiBackburger}}</v-icon>
         <v-icon v-else>{{ icons.mdiMenu}}</v-icon>
@@ -93,7 +93,7 @@ export default {
     },
 
     isMobile () {
-      return this.$vuetify.breakpoint.mobile
+      return this.$vuetify.breakpoint.smAndDown
     },
 
   },

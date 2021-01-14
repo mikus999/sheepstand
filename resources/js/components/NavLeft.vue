@@ -1,5 +1,14 @@
 <template>
-  <v-navigation-drawer v-model="drawer" clipped class="light-blue darken-4 white--text" dark app>
+  <v-navigation-drawer 
+    v-model="drawer" 
+    clipped 
+    class="light-blue darken-4 white--text" 
+    width="200"
+    mobile-breakpoint="960" 
+    bottom 
+    dark 
+    app
+  >
 
     <v-list v-if="user" class="pt-lg-0" dense>
       <v-list-item router :to="{ name: 'default' }" class="text-decoration-none" exact>
@@ -162,7 +171,7 @@ export default {
   data () {
     return {
       isTranslator: true,
-      drawer: !this.$vuetify.breakpoint.mobile,
+      drawer: !this.$vuetify.breakpoint.smAndDown,
     }
   },
 
@@ -173,7 +182,7 @@ export default {
     },
 
     isMobile () {
-      return this.$vuetify.breakpoint.mobile
+      return this.$vuetify.breakpoint.smAndDown
     },
 
   },

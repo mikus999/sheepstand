@@ -4,7 +4,7 @@
     <NavLeft ref="navLeft" />
     <Snackbar></Snackbar>
     <ConfirmBox ref="confirm"></ConfirmBox>
-    <NavBottom v-if="$vuetify.breakpoint.mobile && user"/>
+    <NavBottom @toggle-drawer="toggleDrawer" v-if="$vuetify.breakpoint.smAndDown && user"/>
 
     <!-- Sizes your content based upon application components -->
     <v-main>
@@ -17,9 +17,6 @@
       </v-container>
     </v-main>
 
-    <v-footer app>
-    <!-- -->
-    </v-footer>
   </v-app>
 </template>
 
