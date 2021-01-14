@@ -322,7 +322,7 @@ export default {
           600: {
             slidesPerView: 'auto',
             spaceBetween: 20,
-            allowTouchMove: this.isMobile,
+            //allowTouchMove: this.isMobile,
             freeMode: true,
           },
           /*
@@ -395,6 +395,11 @@ export default {
 
   created () {
     this.initialize()
+  },
+
+  mounted () {
+    var mySwiper = document.querySelector('.swiper-container').swiper
+    mySwiper.allowTouchMove = this.isMobile
   },
 
   methods: {
