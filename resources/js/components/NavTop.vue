@@ -26,11 +26,11 @@
     </v-btn>
     -->
 
-    <v-btn icon small :to="{ name: 'dashboard' }" v-if="hideSidebar">
+    <v-btn icon small :to="{ name: 'dashboard' }" exact v-if="hideSidebar">
       <v-icon>{{ icons.mdiViewDashboard}}</v-icon>
     </v-btn>
 
-    <v-btn icon small :to="{ name: 'default' }" v-else>
+    <v-btn icon small :to="{ name: 'default' }" exact v-else>
       <v-icon>{{ icons.mdiHome}}</v-icon>
     </v-btn>
 
