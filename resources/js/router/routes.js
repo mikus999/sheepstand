@@ -1,5 +1,3 @@
-// Components
-import NotificationJoin from '~/components/NotificationJoin.vue'
 
 function page (path) {
   return () => import(/* webpackChunkName: '' */ `~/pages/${path}`).then(m => m.default || m)
@@ -23,12 +21,12 @@ export default [
   // ACCOUNT routes
   { path: '/account/inbox', name: 'account.inbox', component: page('account/inbox.vue'), meta: { roles: [], auth: true } },
   { path: '/account/settings', name: 'account.index', component: page('account/index.vue'), meta: { roles: [], auth: true } },
+  { path: '/account/notifications', name: 'notifications.join', component: page('account/notifications.vue'), meta: { roles: [], auth: true } },
 
   // TEAM routes
   { path: '/team/join', name: 'teams.join', component: page('teams/join.vue'), meta: { roles: [], auth: true } },
   { path: '/team/settings/:tab', name: 'teams.index', component: page('teams/index.vue'), meta: { roles: ['elder','team_admin'], auth: true, props: true, params: { tab: 'general' } } },
   { path: '/team/notifications', name: 'notifications.setup', component: page('teams/notifications.vue'), meta: { roles: ['team_admin'], auth: true } },
-  { path: '/team/notifications/join', name: 'notifications.join', component: NotificationJoin, meta: { roles: [], auth: true } },
   { path: '/team/messages', name: 'teams.messages', component: page('teams/messages.vue'), meta: { roles: ['team_admin'], auth: true } },
 
 

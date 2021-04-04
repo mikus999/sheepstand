@@ -274,6 +274,7 @@ export const mdi = {
         mdiClock,
         mdiCalendar,
         mdiPin,
+        mdiTelegram,
         mdiBriefcase,
         mdiPaperclip,
         mdiWeatherPouring,

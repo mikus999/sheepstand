@@ -349,8 +349,34 @@ export const mtproto = {
       .then(response => {
         this.$store.commit('auth/SET_TEAM', response.data.data.team)
         this.setGroupLink(group.id)
+        this.messageGroupAvailable()
       })
       
+    },
+
+    async messageGroupAvailable() {
+      await axios({
+        method: 'POST',      
+        url: '/api/messages',
+        data: {
+          sender_id: this.team.id,
+          sender_type: 'App\\Models\\Team',
+          recipient_id: this.team.id,
+          recipient_type: 'App\\Models\\Team',
+          message_subject: this.$t('system_messages_subject.notifications_group'),
+          message_body: this.$t('system_messages_body.notifications_group'),
+          dismissable: true,
+          outlined: false,
+          show_banner: true,
+          expires_on: null,
+          color: '#1976D2',
+          icon: this.icons.mdiTelegram,
+          named_route: 'notifications.join'
+        }
+
+        // TODO Need to store message id for deletion if group is removed
+      })
+
     },
 
     async disableNotifications() {
@@ -364,6 +390,8 @@ export const mtproto = {
           }
         })
         .then(response => {
+          // TODO Need to delete the message that notifications are available
+
           this.showSnackbar(this.$t('notifications.success_disable_notifications'), 'success')
           this.refreshTeam()
         })

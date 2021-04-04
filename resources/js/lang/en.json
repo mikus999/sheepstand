@@ -424,13 +424,15 @@
   "system_messages_subject": {
       "trade_request": "Trade Request",
       "new_schedule_available": "New Schedule Available",
-      "system_maintenance": "System Maintenance"
+      "system_maintenance": "System Maintenance",
+      "notifications_group": "A Telegram group is available for your team"
   },
   "system_messages_body": {
       "new_schedule_available": "A new schedule is available. Click here to view.",
       "new_trade_offer_team": "Someone on your team has offered their shift. Check the @:shifts.trade_requests section of the @:menu.dashboard .",
       "user_trade_offer": "Hey! I would like to trade shifts with you. Here's my offer:",
       "trade_completed": "Shift accepted by: ",
-      "system_maintenance": "Due to necessary system maintenance, SheepStand.com will be unavailable during the following times"
+      "system_maintenance": "Due to necessary system maintenance, SheepStand.com will be unavailable during the following times",
+      "notifications_group": "Notifications have been enabled for your team and a Telegram group has been created. Click here to find out how to join the group and sign up for notifications."
   }
 }

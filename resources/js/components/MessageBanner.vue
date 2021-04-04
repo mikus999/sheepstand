@@ -10,7 +10,7 @@
     dismissible
     @input="markAsRead"
   >
-    {{ message.message_subject }}
+    <router-link :to="{name: named_route}" class="text-decoration-none">{{ message.message_subject }}</router-link>
   </v-alert>
 </template>
 
@@ -26,6 +26,13 @@ export default {
     message: {
       type: [Array, Object]
     }
+  },
+
+  
+  computed: {
+    named_route() {
+      return this.message.named_route ? this.message.named_route : 'account.inbox'
+    },
   },
 
   methods: {
