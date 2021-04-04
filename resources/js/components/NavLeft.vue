@@ -50,7 +50,7 @@
 
       <v-list-item router :to="{ name: 'account.inbox' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
-          <v-badge :content="message_count.unread" color="red" overlap :value="message_count.unread">
+          <v-badge :content="unreadCount" color="red" overlap :value="unreadCount">
             <v-icon>{{ icons.mdiMessage }}</v-icon>
           </v-badge>
 
@@ -185,6 +185,9 @@ export default {
       return this.$vuetify.breakpoint.smAndDown
     },
 
+    unreadCount () {
+      return this.message_count ? this.message_count.unread : 0
+    }
   },
 
   methods: {
