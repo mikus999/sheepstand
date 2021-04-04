@@ -11,6 +11,7 @@
   >
 
     <v-list v-if="user" class="pt-lg-0" dense>
+      <!--
       <v-list-item router :to="{ name: 'default' }" class="text-decoration-none" exact>
         <v-list-item-icon>
           <v-icon>{{ icons.mdiHome }}</v-icon>
@@ -19,7 +20,7 @@
           <v-list-item-title>{{ $t('menu.home') }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-
+      -->
       <v-list-item router :to="{ name: 'dashboard' }" class="text-decoration-none" active-class="menu-selected-item">
         <v-list-item-icon>
           <v-icon>{{ icons.mdiViewDashboard }}</v-icon>

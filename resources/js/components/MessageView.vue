@@ -15,7 +15,7 @@
       </div>
 
       <div class="mt-2">
-        <span class="black--text font-weight-bold">{{ message.message_subject }}</span>
+        <span class="font-weight-bold">{{ message.message_subject }}</span>
       </div>
     </v-card-subtitle>
 
