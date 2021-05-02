@@ -59,7 +59,8 @@
       "max_char": "Maximum characters: {char}",
       "privacy_policy": "Privacy Policy",
       "manage_account": "Manage your Account",
-      "menu": "Menu"
+      "menu": "Menu",
+      "auto": "Auto"
   },
   "menu": {
       "home": "Home",
@@ -292,7 +293,8 @@
       "loading_availability": "Loading Availability Data...",
       "loading_users": "Loading User Data",
       "loading_calculations": "Calculating Shift Availability...",
-      "loading_complete": "Loading Complete."
+      "loading_complete": "Loading Complete.",
+      "auto_assign": "Automatically Assign"
   },
   "shifts": {
       "status_0": "Pending User Approval",

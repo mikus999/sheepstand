@@ -15,6 +15,9 @@ class Shift extends Model
       'max_participants',
       'mandatory'
     ];
+    
+      // TODO Show number of available users for each shift time (check weekly availability)
+
 
     protected $with = ['schedule','location'];
 

@@ -101,7 +101,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function user_vacations()
     {
       $oldestDate = Carbon::now()->sub(1, 'month');
-      return $this->hasMany('App\Models\UserVacation')
+      return $this->hasMany(UserVacation::class)
                   ->where('date_start','>=',$oldestDate);
     }
 

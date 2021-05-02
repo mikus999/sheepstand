@@ -97,6 +97,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('tasks/scheduled', 'TaskController@scheduledTasks');
 
 
+    // ASSIGNMENT routes
+    Route::post('assignments/auto', 'AssignmentController@shiftAutoAssign'); // TODO OpenAPI
+
+
     // API routes (must be listed after all other routes are declared)
     Route::apiResource('teams', 'TeamController');
     Route::apiResource('schedules', 'ScheduleController', ['except' => ['index','show']]);

@@ -72,6 +72,16 @@
 
         <v-col cols=12 sm=3>
           <v-btn
+            color="green"
+            block
+            class="my-2"
+            @click="runAutoAssign()"
+          >
+            <v-icon small left>{{ icons.mdiRotateOrbit }}</v-icon>
+            <span>{{ $vuetify.breakpoint.xs ? $t('general.auto') : $t('schedules.auto_assign') }}</span>
+          </v-btn>
+
+          <v-btn
             color="deep-orange"
             block
             class="my-2"
@@ -644,6 +654,27 @@ export default {
         })
       }
     },
+
+    async runAutoAssign() {
+      await axios({
+        method: 'post',      
+        url: '/api/assignments/auto',
+        data: {
+          team_id: this.team.id,
+          schedule_id: this.schedule.id,
+          reset: 1
+        }
+      })
+      .then(response => {
+        this.storeSchedule(response.data.data.schedule)
+        this.storeShifts(response.data.data.schedule.shifts)
+        this.showSnackbar(this.$t('general.info_updated'), 'success')
+        this.parseSchedule()
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    }
   },
 
 }
