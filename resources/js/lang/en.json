@@ -30,6 +30,8 @@
       "later": "Later",
       "min": "min",
       "max": "max",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
       "autosave": "Autosave",
       "available": "Available",
       "statistics": "Statistics",
@@ -295,7 +297,10 @@
       "loading_users": "Loading User Data",
       "loading_calculations": "Calculating Shift Availability...",
       "loading_complete": "Loading Complete.",
-      "auto_assign": "Automatically Assign"
+      "auto_assign": "Auto Assignment",
+      "aa_start_process": "Start Process",
+      "aa_min_or_max": "Assign minimum or maximum number of participants per shift?",
+      "aa_reset": "Clear all shift assignments before beginning?"
   },
   "shifts": {
       "status_0": "Pending User Approval",

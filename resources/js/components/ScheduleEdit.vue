@@ -70,12 +70,12 @@
           </v-radio-group>
         </v-col>
 
-        <v-col cols=12 sm=3>
+        <v-col cols=12 sm=3 v-if="!isTemplate">
           <v-btn
             color="green"
             block
             class="my-2"
-            @click="runAutoAssign()"
+            @click="showAutoAssign()"
           >
             <v-icon small left>{{ icons.mdiRotateOrbit }}</v-icon>
             <span>{{ $vuetify.breakpoint.xs ? $t('general.auto') : $t('schedules.auto_assign') }}</span>
@@ -187,6 +187,10 @@
           v-on:close="locationOverlay = false" v-on:click.native.stop/>
     </v-overlay>
 
+    <v-dialog :value="autoAssignOverlay" width="500px">
+      <AutoAssign :schedule="schedule" v-on:update="closeAutoAssign(); parseSchedule()" v-on:close="closeAutoAssign()" />
+    </v-dialog>
+
 
     <!-- NEW TEMPLATE DIALOG -->
     <v-dialog v-model="dialog2" max-width="500px">
@@ -225,6 +229,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import { helper, scheduling } from '~/mixins/helper'
 import ShiftEditCard from '~/components/ShiftEditCard.vue'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
+import AutoAssign from '~/components/AutoAssign.vue'
 import Leaflet from '~/components/Leaflet.vue'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -236,7 +241,8 @@ export default {
     SwiperSlide,
     ShiftEditCard,
     ShiftNewCard,
-    Leaflet
+    Leaflet,
+    AutoAssign
   },
   props: {
     team_availability: {
@@ -248,6 +254,7 @@ export default {
     return {
       shiftOverlay: false,
       locationOverlay: false,
+      autoAssignOverlay: false,
       dialog: false,
       dialog2: false,
       date: '',
@@ -552,6 +559,17 @@ export default {
     },
 
 
+    showAutoAssign() {
+      this.autoAssignOverlay = true
+    },
+
+
+    closeAutoAssign () {
+      this.autoAssignOverlay = false
+    },
+
+
+
     async moveShift (evt) {
       var newDayID = evt.to.id
       var shiftID = evt.item.id
@@ -655,27 +673,7 @@ export default {
       }
     },
 
-    async runAutoAssign() {
-      await axios({
-        method: 'post',      
-        url: '/api/assignments/auto',
-        data: {
-          team_id: this.team.id,
-          schedule_id: this.schedule.id,
-          reset: 1,
-          minormax: 'MIN'
-        }
-      })
-      .then(response => {
-        this.storeSchedule(response.data.data.schedule)
-        this.storeShifts(response.data.data.schedule.shifts)
-        this.showSnackbar(this.$t('general.info_updated'), 'success')
-        this.parseSchedule()
-      })
-      .catch(error => {
-        console.log(error)
-      })
-    }
+
   },
 
 }
