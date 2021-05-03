@@ -100,7 +100,7 @@
 
 
       <template v-slot:item.shift_counts="{ item }">
-        {{ item.shifts_7days }} / {{ item.shifts_14days }} / {{ item.shifts_30days }}
+        <!--{{ item.shifts_7days }} / {{ item.shifts_14days }} / {{ item.shifts_30days }}-->
       </template>
 
 
