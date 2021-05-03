@@ -33,20 +33,6 @@ class Team extends LaratrustTeam
   {
     return $this->belongsToMany('App\Models\User')
                 ->using('App\Pivots\TeamUser')
-                ->withCount([
-                  'shifts as shifts_30days' => function (Builder $query) {
-                    $query->where('time_start', '>=', Carbon::now()->sub(1, 'month'))
-                          ->where('shift_user.status', '<>', 3);
-                  },
-                  'shifts as shifts_14days' => function (Builder $query) {
-                    $query->where('time_start', '>=', Carbon::now()->sub(14, 'days'))
-                          ->where('shift_user.status', '<>', 3);
-                  },
-                  'shifts as shifts_7days' => function (Builder $query) {
-                    $query->where('time_start', '>=', Carbon::now()->sub(7, 'days'))
-                          ->where('shift_user.status', '<>', 3);
-                  },                                    
-                ])
                 ->with('marriage_mate')
                 ->withPivot('default_team');
   }

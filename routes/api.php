@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('account/fts', 'Settings\ProfileController@updateFTSStatus');
     Route::post('account/marriage', 'Settings\ProfileController@updateMarriageMate');
     Route::post('account/driver', 'Settings\ProfileController@updateDriverStatus');
+    Route::post('account/settings/update', 'Settings\ProfileController@updateSetting'); // TODO OpenAPI
 
     // TEAM routes
     Route::post('teams/jointeam', 'TeamController@addUserToTeam');
@@ -99,6 +100,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // ASSIGNMENT routes
     Route::post('assignments/auto', 'AssignmentController@shiftAutoAssign'); // TODO OpenAPI
+    Route::post('assignments/test', 'AssignmentController@apiTest'); // TODO OpenAPI
 
 
     // API routes (must be listed after all other routes are declared)

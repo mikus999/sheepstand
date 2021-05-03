@@ -1097,12 +1097,6 @@ paths:
                               allOf:
                                 - $ref: '#/components/schemas/User'
                                 - properties:
-                                    shifts_30days:
-                                      type: integer
-                                    shifts_14days:
-                                      type: integer
-                                    shifts_7days:
-                                      type: integer
                                     team_role:
                                       type: string
                                       example: 'publisher'
@@ -2064,12 +2058,6 @@ paths:
                               allOf:
                                 - $ref: '#/components/schemas/User'
                                 - properties:
-                                    shifts_30days:
-                                      type: integer
-                                    shifts_14days:
-                                      type: integer
-                                    shifts_7days:
-                                      type: integer
                                     marriage_mate:
                                       $ref: '#/components/schemas/User'
                                     shifts:
@@ -2164,12 +2152,6 @@ paths:
                               allOf:
                                 - $ref: '#/components/schemas/User'
                                 - properties:
-                                    shifts_30days:
-                                      type: integer
-                                    shifts_14days:
-                                      type: integer
-                                    shifts_7days:
-                                      type: integer
                                     marriage_mate:
                                       $ref: '#/components/schemas/User'
                                     shifts:

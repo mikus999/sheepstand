@@ -20,6 +20,7 @@ class Shift extends Model
 
 
     protected $with = ['schedule','location'];
+    protected $withCount = ['users'];
 
     public function schedule()
     {

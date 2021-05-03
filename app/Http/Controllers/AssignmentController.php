@@ -28,7 +28,7 @@ class AssignmentController extends Controller
           if (!$schedule) return RB::error(404); // Schedule not found
 
           // If user is a team admin, start the auto-assign process, return schedule
-          $results = $this->shiftLoop($user, $team, $schedule, $reset, $minOrMax);
+          $results = $this->shiftLoop($team, $schedule, $reset, $minOrMax);
 
           $data = [
             'schedule' => Schedule::with('shifts')->find($schedule->id)
@@ -48,45 +48,101 @@ class AssignmentController extends Controller
     }
 
 
-    public function shiftLoop($user, $team, $schedule, $reset, $minOrMax)
+    public function shiftLoop($team, $schedule, $reset, $minOrMax)
     {
-      // Get all mandatory shifts
-      $shifts = collect($schedule->shifts()->where('mandatory',1)->get());
-      $shifts = $shifts->shuffle(); // Randomize shift order. In this way, we reduce the chance of a user be assigned the same shift slot every week.
+      $start_date = new \Carbon\CarbonImmutable($schedule->date_start);
+      $end_date = $start_date->add(8, 'days');
+      $shift_status = $team->setting_shift_assignment_autoaccept ? 2 : 0;
 
-      $members = $team->users()
-                      ->with('user_availabilities')
-                      ->whereHas('user_availabilities')
-                      ->get();
-
-
-      foreach ($shifts as $shift) {
-        if ($reset) $shift->users()->detach(); // Remove all current assignments from shift, if requested
-
-        if ($minOrMax == 'MIN') {
-          $max_slots = $shift->min_participants;
-        } else {
-          $max_slots = $shift->max_participants;
-        }
-
-        $shift_status = $team->setting_shift_assignment_autoaccept ? 2 : 0;
-
-        $available_users = collect($this->getAvailableUsers($team, $shift, $members));
-        $available_users = $available_users->shuffle();
-
-        if ($available_users->count() > 0) {
-          // TODO Factors: fts status, number of assignments, weekly availability weight, has car, marriage mate
+      if ($minOrMax == 'MIN') {
+        $max_slots = 'min_participants';
+      } else {
+        $max_slots = 'max_participants';
+      }
 
 
-          foreach ($available_users as $u) {
+      for ($loopcount = 1; $loopcount < 100; $loopcount++) {
+
+
+        // Get all mandatory shifts with open slots
+        $shifts = collect($schedule->shifts()->where('mandatory',1)->get());
+        $shifts = $shifts->where('users_count', '<=', $max_slots);
+        $shifts = $shifts->shuffle(); // Randomize shift order. In this way, we reduce the chance of a user be assigned the same shift slot every week.
+        
+        // If all shifts have been filled, exit loop
+        //if ($shifts->count() == 0) break;
+
+
+        // Get all team users
+        $members = collect($team->users()
+                        ->with('available_hours')
+                        ->whereHas('available_hours')
+                        ->withCount('available_hours')
+                        ->withCount([
+                          'shifts as shifts_30days' => function (Builder $query) use ($start_date, $end_date) {
+                            $query->where('time_start', '>=', $start_date->sub(1, 'month'))
+                                  ->where('time_start', '<=', $end_date)
+                                  ->where('shift_user.status', '<>', 3);
+                          },
+                          'shifts as shifts_14days' => function (Builder $query) use ($start_date, $end_date) {
+                            $query->where('time_start', '>=', $start_date->sub(14, 'days'))
+                                  ->where('time_start', '<=', $end_date)
+                                  ->where('shift_user.status', '<>', 3);
+                          },
+                          'shifts as shifts_7days' => function (Builder $query) use ($start_date, $end_date) {
+                            $query->where('time_start', '>=', $start_date->sub(7, 'days'))
+                                  ->where('time_start', '<=', $end_date)
+                                  ->where('shift_user.status', '<>', 3);
+                          },    
+                          'shifts as shifts_current' => function (Builder $query) use ($start_date, $end_date) {
+                            $query->where('time_start', '>=', $start_date)
+                                  ->where('time_start', '<=', $end_date)
+                                  ->where('shift_user.status', '<>', 3);
+                          },                                  
+                        ])
+                        ->get());
+
+
+        // If all users have hit their weekly shift assignment limit, exit loop
+        $members = $members->where('shifts_current', '<=', 'max_weekly_shifts');
+        if ($members->count() == 0) break;
+
+
+
+
+        // ASSIGN EXACTLY ONE USER TO EACH SHIFT
+        foreach ($shifts as $shift) {
+          if ($reset && $loopcount == 1) {
+            $shift->users()->detach(); // Remove all current assignments from shift, if requested
+          }
+
+          $available_users = collect($this->getAvailableUsers($team, $shift, $members));
+
+
+          if ($available_users->count() > 0) {
+            // TODO Factors: fts status, number of assignments, weekly availability weight, has car, marriage mate
+
+            // Sort the collection
+            $availabe_users = $available_users->sortBy([
+              ['shifts_current', 'ASC'],
+              ['available_hours_count','ASC']
+            ]);
+
+
+            $u = $available_users->first();
             $u->shifts()->attach($shift);
             $u->shifts()->updateExistingPivot($shift->id, ['status' => $shift_status]);
 
-            if ($max_slots - $shift->users()->count() == 0) break;
-          }
-        }
+          } else {
+            // TODO Remove shift from future passes if there are no available users left
+            // Otherwise, an infinity loop will occur trying to fill the shift
 
-      }
+          }
+
+        } // END OF SHIFT PASS
+
+      } // END OF MAIN LOOP
+
 
       return $schedule;
 
@@ -114,22 +170,33 @@ class AssignmentController extends Controller
       }
 
 
+      $members = $members->shuffle();
 
 
       // Loop through users who have weekly availability this day of week
       foreach ($members as $member) {
         $is_available = true;
 
+
+        // Check to see if the user has hit his weekly shift assignment limit
+        if ($is_available) {
+          if ($member->shifts_current >= $member->max_weekly_shifts) {
+            $is_available = false;
+          }
+        }
+
+
         // Loop through all windows and check against user availability
         // If window is not found, remove user from list and exit loop. Not available for this shift.
-        foreach ($windows as $window) {
-          $check = $member->user_availabilities()->where('day_of_week', $dow)->where('start_time', $window[1])->where('available', 1)->get();
-          
-          if($check->count() == 0) {
-            $is_available = false;
-            break;
+        if ($is_available) {
+          foreach ($windows as $window) {
+            $check = $member->user_availabilities()->where('day_of_week', $dow)->where('start_time', $window[1])->where('available', 1)->get();
+            
+            if($check->count() == 0) {
+              $is_available = false;
+              break;
+            }
           }
-
         }
 
 
@@ -161,19 +228,71 @@ class AssignmentController extends Controller
       }
 
 
-
-
-
-
-
-
-
-
-
-
       return $available_users;
 
     }
 
 
+    public function getAvailabilityWeight($team, $schedule) {
+      $start_date = new \Carbon\CarbonImmutable($schedule->date_start);
+      $end_date = $start_date->add(8, 'days');
+
+      $members = $team->users()
+                      ->whereHas('available_hours')
+                      ->withCount('available_hours')
+                      ->withCount([
+                        'shifts as shifts_30days' => function (Builder $query) use ($start_date, $end_date) {
+                          $query->where('time_start', '>=', $start_date->sub(1, 'month'))
+                                ->where('time_start', '<=', $end_date)
+                                ->where('shift_user.status', '<>', 3);
+                        },
+                        'shifts as shifts_14days' => function (Builder $query) use ($start_date, $end_date) {
+                          $query->where('time_start', '>=', $start_date->sub(14, 'days'))
+                                ->where('time_start', '<=', $end_date)
+                                ->where('shift_user.status', '<>', 3);
+                        },
+                        'shifts as shifts_7days' => function (Builder $query) use ($start_date, $end_date) {
+                          $query->where('time_start', '>=', $start_date->sub(7, 'days'))
+                                ->where('time_start', '<=', $end_date)
+                                ->where('shift_user.status', '<>', 3);
+                        },    
+                        'shifts as shifts_current' => function (Builder $query) use ($start_date, $end_date) {
+                          $query->where('time_start', '>=', $start_date)
+                                ->where('time_start', '<=', $end_date)
+                                ->where('shift_user.status', '<>', 3);
+                        },                                  
+                      ])
+                      //->where('users.id', 16)
+                      ->orderBy('shifts_current', 'desc')
+                      ->get();
+
+
+
+                      
+      foreach ($members as $member) {
+        $member->startdate = $start_date;
+        $member->enddate = $end_date;
+        $member->schedule = $schedule;
+      }
+      
+
+      return $members;
+    }
+
+
+
+
+    public function apiTest(Request $request) {
+      $user = Auth::user();
+      $team = $user->teams->find($request->team_id);
+      $schedule = $team->schedules->find($request->schedule_id);
+
+      $members = $this->getAvailabilityWeight($team, $schedule);
+
+      $data = [
+        'users' => $members
+      ];
+
+      return RB::success($data);
+    }
 }

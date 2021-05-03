@@ -79,6 +79,12 @@ class Helper
 
       for ($d = 1; $d <= 7; $d++) {
         for ($h = 0; $h <= 23; $h++) {
+
+          // SET NIGHTTIME HOURS (BETWEEN 20:00 AND 06:00) TO NOT AVAILABLE
+          if ($h < 6 || $h >= 20) {
+            $available = 0;
+          }
+
           $temp = [
             'user_id' => $user->id, 
             'day_of_week' => $d, 

@@ -29,7 +29,8 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         'user_code', // String
         'fts_status', // Integer
         'driver', // Boolean
-        'mate_id' // Integer, FK->users.id
+        'mate_id', // Integer, FK->users.id
+        'max_weekly_shifts' // Integer, DEFAULT: 3
     ];
 
     protected $hidden = [
@@ -43,6 +44,8 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     protected $appends = [
         'photo_url'
     ];
+
+    //protected $withCount = ['available_hours'];
 
 
     public function teams()
@@ -92,6 +95,10 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 
     }
 
+    public function available_hours()
+    {
+      return $this->hasMany(UserAvailability::class)->where('available',1);
+    }
 
     public function user_availabilities()
     {

@@ -167,7 +167,8 @@
       "fts_co": "Circuit Overseer/Wife",
       "fts_bethelite": "Bethelite",
       "fts_construction": "Construction Servant",
-      "confirm_change_mate": "Are you sure you want to update your marriage mate? This will also update your mates account."
+      "confirm_change_mate": "Are you sure you want to update your marriage mate? This will also update your mates account.",
+      "max_weekly_shifts": "Maximum number of weekly shift assignments"
   },
   "roles": {
       "publisher": "Publisher",

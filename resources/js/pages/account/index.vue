@@ -140,6 +140,10 @@
                     <v-subheader class="text-subtitle-1 text-uppercase">{{ $t('account.preferences') }}</v-subheader>
                   </div>
                 </v-row>
+
+                <v-row>
+                  <UserPreferences :targetUser="user" />
+                </v-row>
               </v-col>
             </v-tab-item>
 
@@ -177,6 +181,7 @@ import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
 import debounce from 'lodash/debounce'
 import AvailabilitySchedule from '~/components/AvailabilitySchedule.vue'
 import VacationSchedule from '~/components/VacationSchedule.vue'
+import UserPreferences from '~/components/UserPreferences.vue'
 
 export default {
   middleware: 'auth',
@@ -186,6 +191,7 @@ export default {
   components: {
     AvailabilitySchedule,
     VacationSchedule,
+    UserPreferences
   },
 
   validations: {

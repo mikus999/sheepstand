@@ -662,7 +662,8 @@ export default {
         data: {
           team_id: this.team.id,
           schedule_id: this.schedule.id,
-          reset: 1
+          reset: 1,
+          minormax: 'MIN'
         }
       })
       .then(response => {

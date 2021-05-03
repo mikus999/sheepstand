@@ -123,4 +123,39 @@ class ProfileController extends Controller
     }
 
 
+    /**
+     * 
+     * Change a user preference
+     * ROLE: self, team_admin, site_admin
+     * 
+     */
+    public function updateSetting(Request $request)
+    {
+      $setting = $request->setting; // must match DB column name
+      $value = $request->value;
+
+      $user = Auth::user();
+      $team = $user->teams->find($request->team_id);
+
+      if (!$team) return RB::error(404); // Bad Request; team not found
+
+
+      if ($request->user_id != $user->id) {
+        if (($team && $user->hasRole('team_admin', $team)) || $user->hasRole('super_admin', null)) {
+          $targetUser = User::find($request->user_id);
+        } else {
+          return RB::error(403); //Access denied
+        }
+      } else {
+        $targetUser = $user;
+      }
+
+
+      $targetUser->$setting = $value;
+      $targetUser->save();
+
+      return RB::success(['user' => $targetUser]);
+
+    }
+
 }
