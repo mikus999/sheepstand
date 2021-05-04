@@ -82,6 +82,16 @@
           </v-btn>
 
           <v-btn
+            color="primary"
+            block
+            class="my-2"
+            @click="showASummaryOverlay()"
+          >
+            <v-icon small left>{{ icons.mdiClipboardList }}</v-icon>
+            <span>{{ $vuetify.breakpoint.xs ? $t('general.summary') : $t('schedules.assignment_summary') }}</span>
+          </v-btn>
+
+          <v-btn
             color="deep-orange"
             block
             class="my-2"
@@ -191,6 +201,10 @@
       <AutoAssign :schedule="schedule" v-on:update="closeAutoAssign(); parseSchedule()" v-on:close="closeAutoAssign()" />
     </v-dialog>
 
+    <v-dialog :value="aSummaryOverlay" @click:outside="closeASummaryOverlay()" width="500px">
+      <AssignmentSummary v-on:close="closeASummaryOverlay()" />
+    </v-dialog>
+
 
     <!-- NEW TEMPLATE DIALOG -->
     <v-dialog v-model="dialog2" max-width="500px">
@@ -230,6 +244,7 @@ import { helper, scheduling } from '~/mixins/helper'
 import ShiftEditCard from '~/components/ShiftEditCard.vue'
 import ShiftNewCard from '~/components/ShiftNewCard.vue'
 import AutoAssign from '~/components/AutoAssign.vue'
+import AssignmentSummary from '~/components/AssignmentSummary.vue'
 import Leaflet from '~/components/Leaflet.vue'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -242,7 +257,8 @@ export default {
     ShiftEditCard,
     ShiftNewCard,
     Leaflet,
-    AutoAssign
+    AutoAssign,
+    AssignmentSummary,
   },
   props: {
     team_availability: {
@@ -255,6 +271,7 @@ export default {
       shiftOverlay: false,
       locationOverlay: false,
       autoAssignOverlay: false,
+      aSummaryOverlay: false,
       dialog: false,
       dialog2: false,
       date: '',
@@ -422,6 +439,7 @@ export default {
   methods: {
     async initialize () {
       this.parseSchedule()
+      this.storeAssignmentTrade(null)
       this.shift = cloneDeep(this.shiftDefaults)
     },
 
@@ -558,14 +576,20 @@ export default {
       this.dialog = false
     },
 
-
     showAutoAssign() {
       this.autoAssignOverlay = true
     },
 
-
     closeAutoAssign () {
       this.autoAssignOverlay = false
+    },
+
+    showASummaryOverlay () {
+      this.aSummaryOverlay = true
+    },
+
+    closeASummaryOverlay () {
+      this.aSummaryOverlay = false
     },
 
 
@@ -629,6 +653,7 @@ export default {
         this.locationOverlay = true
       }
     },
+
 
     async saveAsTemplate() {
       if (this.newTemplateName) {

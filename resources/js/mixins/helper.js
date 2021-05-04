@@ -359,6 +359,12 @@ export const helper = {
 
 
 export const scheduling = {
+  computed: {
+    ...mapGetters({
+      assignment_trade: 'scheduling/assignment_trade'
+    })
+  },
+
   methods: {
     async storeSchedule (data) {
       this.$store.commit('scheduling/SET_SCHEDULE', data )
@@ -392,6 +398,10 @@ export const scheduling = {
 
     async storeTeamUsers (data) {
       this.$store.commit('scheduling/SET_TEAM_USERS', data)
+    },
+
+    async storeAssignmentTrade (data) {
+      this.$store.commit('scheduling/SET_ASSIGNMENT_TRADE', data)
     },
 
 

@@ -46,14 +46,23 @@
 
       <v-card-text v-if="!isTemplate" class="text-left list-participants ma-2 pa-0">
         <div v-if="hasParticipants">
-          <v-row v-for="user in filterShiftUsers(shift.users)" :key="user.id" :title="getShiftStatus(user.pivot.status).text">
+          <v-row v-for="user in filterShiftUsers(shift.users)" 
+            :key="user.id" 
+            :title="getShiftStatus(user.pivot.status).text" 
+            @click="selectUser(user)"
+          >
             <v-col cols=9 class="ml-3 pa-0">
               <v-icon small class="mr-2" :color="getShiftStatus(user.pivot.status).color">
                 {{ getShiftStatus(user.pivot.status).icon }}
               </v-icon>
-              <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + (user.pivot.status == 3 ? 'text-decoration-line-through' : '')">
+              <v-hover v-slot:default="{ hover }">
+              <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + 
+                (user.pivot.status == 3 ? 'text-decoration-line-through ' : ' ') + 
+                (assignment_trade == user ? 'selected-user ' : ' ') +
+                (hover ? 'hover-user ' : ' ')">
                 {{ user.name }}
               </span>
+              </v-hover>
             </v-col>
             <v-col cols=1 class="pa-0">
               <v-icon small v-if="user.driver">{{ icons.mdiCar }}</v-icon>
@@ -300,6 +309,53 @@ export default {
     },
 
 
+    selectUser (item) {
+      var currUser = this.assignment_trade
+
+      if (currUser == null) {
+        // Select a user
+        this.storeAssignmentTrade(item)
+        this.showSnackbar(this.$t('schedules.assignment_switch'), 'primary')
+
+      } else if (currUser.id == item.id) {
+        // Deselect user
+        this.storeAssignmentTrade(null)
+
+      } else {
+        // Make trade
+        this.switchAssignments(currUser, item)
+      }
+      
+    },
+
+
+    async switchAssignments (user1, user2) {
+      // TODO Need to check if users are already part of new shifts. If so, cancel.
+
+
+      await axios({
+        method: 'post',      
+        url: '/api/assignments/switch',
+        data: {
+          schedule_id: this.schedule.id,
+          team_id: this.team.id,
+          user1_id: user1.id,
+          user2_id: user2.id,
+          shift1_id: user1.pivot.shift_id,
+          shift2_id: user2.pivot.shift_id,
+          status1: user1.pivot.status,
+          status2: user2.pivot.status
+        }
+      })
+      .then(response => {
+        this.storeAssignmentTrade(null)
+        this.showSnackbar(this.$t('general.info_updated'), 'success')
+        this.storeSchedule(response.data.data.schedule)
+        this.$emit('update')
+      })
+    },
+
+
     showParticipantDialog() {
       this.participantDialog = true
     },
@@ -346,5 +402,18 @@ export default {
 .chip-participants--label
 {
   font-size: .6rem;
+}
+
+.hover-user
+{
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+}
+
+.selected-user
+{
+  cursor: pointer;
+  background-color: yellow;
 }
 </style>

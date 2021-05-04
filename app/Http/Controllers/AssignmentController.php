@@ -232,50 +232,64 @@ class AssignmentController extends Controller
 
 
 
+
+    /**
+     * 
+     * make trade
+     *  - ROLE: team member
+     * 
+     */
+    public function switchAssignments(Request $request)
+    {
+      $user = Auth::user();
+      $team = $user->teams->find($request->team_id);
+      $schedule = $user->schedules->find($request->schedule_id);
+
+      
+      if (!$schedule || !$team) return RB::error(404); // schedule or team not found
+
+
+      if ($user->hasRole(['team_admin'], $team) || $user->hasRole('super_admin', null)) {
+        $user1 = User::find($request->user1_id);
+        $user2 = User::find($request->user2_id);
+        $shift1 = $request->shift1_id;
+        $shift2 = $request->shift2_id;
+        $status1 = $request->status1;
+        $status2 = $request->status2;
+
+
+        $user1->shifts()->detach($shift1);
+        $user1->shifts()->attach($shift2);
+        $user1->shifts()->updateExistingPivot($shift2, ['status' => $status1]);
+
+        $user2->shifts()->detach($shift2);
+        $user2->shifts()->attach($shift1);
+        $user2->shifts()->updateExistingPivot($shift1, ['status' => $status2]);
+
+        $data = [
+          'schedule' => Schedule::with('shifts')->find($request->schedule_id),
+        ];
+
+        return RB::success($data);
+
+      } else {
+        return RB::error(403); // access denied
+      }
+    }
+
+
+
+
+
+
     public function getAvailabilityWeight($team, $schedule) {
       $start_date = new \Carbon\CarbonImmutable($schedule->date_start);
       $end_date = $start_date->add(8, 'days');
 
-      $members = $team->users()
-                      ->whereHas('available_hours')
-                      ->withCount('available_hours')
-                      ->withCount([
-                        'shifts as shifts_30days' => function (Builder $query) use ($start_date, $end_date) {
-                          $query->where('time_start', '>=', $start_date->sub(1, 'month'))
-                                ->where('time_start', '<=', $end_date)
-                                ->where('shift_user.status', '<>', 3);
-                        },
-                        'shifts as shifts_14days' => function (Builder $query) use ($start_date, $end_date) {
-                          $query->where('time_start', '>=', $start_date->sub(14, 'days'))
-                                ->where('time_start', '<=', $end_date)
-                                ->where('shift_user.status', '<>', 3);
-                        },
-                        'shifts as shifts_7days' => function (Builder $query) use ($start_date, $end_date) {
-                          $query->where('time_start', '>=', $start_date->sub(7, 'days'))
-                                ->where('time_start', '<=', $end_date)
-                                ->where('shift_user.status', '<>', 3);
-                        },    
-                        'shifts as shifts_current' => function (Builder $query) use ($start_date, $end_date) {
-                          $query->where('time_start', '>=', $start_date)
-                                ->where('time_start', '<=', $end_date)
-                                ->where('shift_user.status', '<>', 3);
-                        },                                  
-                      ])
-                      //->where('users.id', 16)
-                      ->orderBy('shifts_current', 'desc')
-                      ->get();
-
-
-
-                      
-      foreach ($members as $member) {
-        $member->startdate = $start_date;
-        $member->enddate = $end_date;
-        $member->schedule = $schedule;
-      }
+      $data = true;
       
 
-      return $members;
+      return $data;
     }
 
 
@@ -286,10 +300,10 @@ class AssignmentController extends Controller
       $team = $user->teams->find($request->team_id);
       $schedule = $team->schedules->find($request->schedule_id);
 
-      $members = $this->getAvailabilityWeight($team, $schedule);
+      $return = $this->getAvailabilityWeight($team, $schedule);
 
       $data = [
-        'users' => $members
+        'users' => $return
       ];
 
       return RB::success($data);

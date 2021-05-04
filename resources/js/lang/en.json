@@ -62,7 +62,8 @@
       "privacy_policy": "Privacy Policy",
       "manage_account": "Manage your Account",
       "menu": "Menu",
-      "auto": "Auto"
+      "auto": "Auto",
+      "summary": "Summary"
   },
   "menu": {
       "home": "Home",
@@ -297,10 +298,12 @@
       "loading_users": "Loading User Data",
       "loading_calculations": "Calculating Shift Availability...",
       "loading_complete": "Loading Complete.",
+      "assignment_summary": "Assignment Summary",
       "auto_assign": "Auto Assignment",
       "aa_start_process": "Start Process",
       "aa_min_or_max": "Assign minimum or maximum number of participants per shift?",
-      "aa_reset": "Clear all shift assignments before beginning?"
+      "aa_reset": "Clear all shift assignments before beginning?",
+      "assignment_switch": "Select another user to switch with, or click the same user to deselect."
   },
   "shifts": {
       "status_0": "Pending User Approval",
