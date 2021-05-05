@@ -198,10 +198,10 @@
     </v-overlay>
 
     <v-dialog :value="autoAssignOverlay" width="500px">
-      <AutoAssign :schedule="schedule" v-on:update="closeAutoAssign(); parseSchedule()" v-on:close="closeAutoAssign()" />
+      <AutoAssign :schedule="schedule" v-on:update="closeAutoAssign(); parseSchedule()" v-on:close="autoAssignOverlay = false" />
     </v-dialog>
 
-    <v-dialog :value="aSummaryOverlay" @click:outside="closeASummaryOverlay()" width="500px">
+    <v-dialog :value="aSummaryOverlay" @click:outside="closeASummaryOverlay()" width="800px" height="100%">
       <AssignmentSummary v-on:close="closeASummaryOverlay()" />
     </v-dialog>
 
@@ -582,6 +582,7 @@ export default {
 
     closeAutoAssign () {
       this.autoAssignOverlay = false
+      this.getTeamUsers()
     },
 
     showASummaryOverlay () {
@@ -699,6 +700,12 @@ export default {
     },
 
 
+    async getTeamUsers () {
+      await axios.get('/api/teams/' + this.team.id + '/users/')
+        .then(response => {
+          this.storeTeamUsers(response.data.data.users)
+        })
+    },
   },
 
 }
