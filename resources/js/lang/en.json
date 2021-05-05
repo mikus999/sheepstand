@@ -299,6 +299,7 @@
       "loading_calculations": "Calculating Shift Availability...",
       "loading_complete": "Loading Complete.",
       "assignment_summary": "Assignment Summary",
+      "processing": "Processing...",
       "auto_assign": "Auto Assignment",
       "aa_start_process": "Start Process",
       "aa_min_or_max": "Assign minimum or maximum number of participants per shift?",

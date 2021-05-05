@@ -8,6 +8,7 @@
     <v-card-text class="mt-6 overflow-auto" style="height: 600px;">
       <v-row class="font-weight-bold">
         <v-col>{{ $t('general.name') }}</v-col>
+        <v-col class="text-center">{{ $t('account.fts_status') }}</v-col>
         <v-col class="text-center">{{ $t('schedules.shifts') }}</v-col>
         <v-col class="text-center">{{ $t('shifts.shifts_30') }}</v-col>
       </v-row>
@@ -15,6 +16,9 @@
       <v-row v-for="i in teamData" :key="i.name">
         <v-col>
           {{ i.name }}
+        </v-col>
+        <v-col class="text-center">
+          {{ getFTSStatus(i.fts_status).text }}
         </v-col>
         <v-col class="text-center">
           {{ i.shifts_curr }}
@@ -90,6 +94,7 @@ export default {
 
         var data = {
           name: user_name,
+          fts_status: u.fts_status,
           shifts_curr: user_shifts1.length,
           shifts_30: user_shifts30.length
         }

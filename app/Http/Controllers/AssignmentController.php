@@ -86,8 +86,6 @@ class AssignmentController extends Controller
         if ($available_users->count() > 0) {
           // TODO Factors: fts status, number of assignments, weekly availability weight, has car, marriage mate
 
-          // Sort the collection
-
 
           $i = $shift->users()->count();
 
@@ -112,10 +110,12 @@ class AssignmentController extends Controller
 
 
     public function sortUsers($members) {
+
       $data = $members->sortBy([
-        ['shifts_current', 'ASC'],
-        ['shifts_30days', 'ASC'],
-        //['available_hours_count','ASC'],
+        ['mandatory', 'desc'],
+        ['shifts_current', 'asc'],
+        ['shifts_30days', 'asc'],
+        ['available_hours_count', 'asc'],
       ]);
 
       return $data;
@@ -230,6 +230,21 @@ class AssignmentController extends Controller
         }
         
 
+        if ($is_available) {
+          $fts = $member->fts_status;
+          $curr = $member->shifts_current;
+
+          if ($fts == 1 && $curr <= 2) { // Regular pioneer without shifts this week
+            $mandatory = 1;
+          } else if ($fts == 2 && $curr <= 3) { // SFTS without shifts this week
+            $mandatory = 2;
+          } else {
+            $mandatory = 0;
+          }
+
+          $members['mandatory'] = $mandatory;
+          
+        }
 
 
         if ($is_available) array_push($available_users, $member);

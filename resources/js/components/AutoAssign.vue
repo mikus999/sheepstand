@@ -27,13 +27,13 @@
       </div>
 
 
-      <div v-else class="text-center">
+      <div v-else class="text-center mt-12 mb-12">
         <v-progress-circular
           indeterminate
           color="primary"
           size="64"
         ></v-progress-circular>
-        <h3 class="mt-8 text-h4">{{ pageLoad.text }}</h3>
+        <div class="mt-8"><span class="text-h5">{{ pageLoad.text }}</span></div>
       </div>
     </v-card-text>
 
@@ -70,7 +70,7 @@ export default {
       pageLoad: {
         value: false,
         progress: 0,
-        text: ''
+        text: this.$t('schedules.processing')
       },
     }
   },
@@ -82,7 +82,7 @@ export default {
   methods: {
     async runAutoAssign() {
       this.pageLoad.value = true
-      this.pageLoad.text = this.$t('schedules.loading_complete')
+      this.pageLoad.text = this.$t('schedules.processing')
 
       await axios({
         method: 'post',      
