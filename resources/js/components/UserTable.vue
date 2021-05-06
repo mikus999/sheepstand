@@ -96,10 +96,6 @@
           <v-icon>{{ icons.mdiAccountCog }}</v-icon>
         </v-btn>
 
-        <v-btn icon @click="showRolesOverlay(item)" v-if="!teamUsers">
-          <v-icon>{{ icons.mdiShieldEdit }}</v-icon>
-        </v-btn>
-
         <v-btn icon @click="showAvailabilityOverlay(item)">
           <v-icon>{{ icons.mdiCalendarMultiselect }}</v-icon>
         </v-btn>
