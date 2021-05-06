@@ -68,7 +68,7 @@ class AssignmentController extends Controller
 
       $shifts = collect($schedule->shifts()->where('mandatory',1)->get());
       $shifts = $shifts->shuffle(); // Randomize shift order. In this way, we reduce the chance of a user be assigned the same shift slot every week.
-
+      $shifts = $shifts->sortBy('day_of_week'); // Fill week day shifts first
 
 
       foreach ($shifts as $shift) {
@@ -84,8 +84,6 @@ class AssignmentController extends Controller
 
 
         if ($available_users->count() > 0) {
-          // TODO Factors: fts status, number of assignments, weekly availability weight, has car, marriage mate
-
 
           $i = $shift->users()->count();
 
@@ -110,13 +108,16 @@ class AssignmentController extends Controller
 
 
     public function sortUsers($members) {
+      // TODO Factors: fts status, number of assignments, weekly availability weight, has car, marriage mate
 
       $data = $members->sortBy([
         ['mandatory', 'desc'],
         ['shifts_current', 'asc'],
-        ['shifts_30days', 'asc'],
         ['available_hours_count', 'asc'],
+        ['shifts_30days', 'asc'],
       ]);
+
+      $data->values()->all();
 
       return $data;
     }
@@ -235,9 +236,11 @@ class AssignmentController extends Controller
           $curr = $member->shifts_current;
 
           if ($fts == 1 && $curr <= 2) { // Regular pioneer without shifts this week
-            $mandatory = 1;
-          } else if ($fts == 2 && $curr <= 3) { // SFTS without shifts this week
             $mandatory = 2;
+          } else if ($fts == 2 && $curr <= 3) { // SP/Missionary without shifts this week
+            $mandatory = 3;
+          } else if ($fts > 2 && $curr == 0) { // Other SFTS without shifts this week
+            $mandatory = 1;
           } else {
             $mandatory = 0;
           }

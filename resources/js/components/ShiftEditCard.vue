@@ -52,16 +52,18 @@
             @click="selectUser(user)"
           >
             <v-col cols=9 class="ml-3 pa-0">
-              <v-icon small class="mr-2" :color="getShiftStatus(user.pivot.status).color">
-                {{ getShiftStatus(user.pivot.status).icon }}
-              </v-icon>
+              <v-avatar size="20" class="mr-1" :color="user.fts_status > 0 ? getShiftStatus(user.pivot.status).color : ''">
+                <v-icon small :color="user.fts_status == 0 ? getShiftStatus(user.pivot.status).color : 'white'">
+                  {{ getShiftStatus(user.pivot.status).icon }}
+                </v-icon>
+              </v-avatar>
               <v-hover v-slot:default="{ hover }">
-              <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + 
-                (user.pivot.status == 3 ? 'text-decoration-line-through ' : ' ') + 
-                (assignment_trade == user ? 'selected-user ' : ' ') +
-                (hover ? 'hover-user ' : ' ')">
-                {{ user.name }}
-              </span>
+                <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + 
+                  (user.pivot.status == 3 ? 'text-decoration-line-through ' : ' ') + 
+                  (assignment_trade == user ? 'selected-user ' : ' ') +
+                  (hover ? 'hover-user ' : ' ')">
+                  {{ user.name }}
+                </span>
               </v-hover>
             </v-col>
             <v-col cols=1 class="pa-0">
