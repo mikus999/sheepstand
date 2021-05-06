@@ -100,6 +100,10 @@
           <v-icon>{{ icons.mdiShieldEdit }}</v-icon>
         </v-btn>
 
+        <v-btn icon @click="showAvailabilityOverlay(item)">
+          <v-icon>{{ icons.mdiCalendarMultiselect }}</v-icon>
+        </v-btn>
+
         <v-btn icon @click="removeUser(item)" v-if="teamUsers && team && (team.user_id != item.id)">
           <v-icon>{{ icons.mdiAccountMinus }}</v-icon>
         </v-btn>
@@ -115,6 +119,10 @@
     <v-overlay :value="changeFTSOverlay" :dark="theme=='dark'">
       <UserProfile :data="currUser" :admin-roles="!teamUsers" width="300px" height="100%" @close="changeFTSOverlay = false; getUserData()"></UserProfile>
     </v-overlay>
+
+    <v-dialog :value="availabilityOverlay" :dark="theme=='dark'" @click:outside="availabilityOverlay = false" width="600">
+      <AvailabilitySchedule :data="currUser" height="500px" popup @close="availabilityOverlay = false" :key="keyAvailability"></AvailabilitySchedule>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -123,13 +131,15 @@ import axios from 'axios'
 import helper from '~/mixins/helper'
 import ChangeOwner from '~/components/ChangeOwner.vue'
 import UserProfile from '~/components/UserProfile.vue'
+import AvailabilitySchedule from '~/components/AvailabilitySchedule.vue'
 
 export default {
   name: 'UserTable',
   mixins: [helper],
   components: { 
     ChangeOwner,
-    UserProfile
+    UserProfile,
+    AvailabilitySchedule
   },
   
   props: {
@@ -147,6 +157,8 @@ export default {
       rolesOverlay: false,
       changeOwnerOverlay: false,
       changeFTSOverlay: false,
+      availabilityOverlay: false,
+      keyAvailability: 0,
       currUser: null,
       userSearch: '',
       userHeadersTeam: [
@@ -256,6 +268,12 @@ export default {
     showRolesOverlay(user) {
       this.currUser = user
       this.rolesOverlay = true
+    },
+
+    showAvailabilityOverlay(user) {
+      this.keyAvailability += 1
+      this.currUser = user
+      this.availabilityOverlay = true
     },
 
     showChangeOwnerOverlay(user) {

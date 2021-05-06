@@ -6,27 +6,20 @@
     </v-card-title>
 
     <v-card-text class="mt-6 overflow-auto" style="height: 600px;">
-      <v-row class="font-weight-bold">
-        <v-col>{{ $t('general.name') }}</v-col>
-        <v-col class="text-center">{{ $t('account.fts_status') }}</v-col>
-        <v-col class="text-center">{{ $t('schedules.shifts') }}</v-col>
-        <v-col class="text-center">{{ $t('shifts.shifts_30') }}</v-col>
-      </v-row>
 
-      <v-row v-for="i in teamData" :key="i.name">
-        <v-col>
-          {{ i.name }}
-        </v-col>
-        <v-col class="text-center">
-          {{ getFTSStatus(i.fts_status).text }}
-        </v-col>
-        <v-col class="text-center">
-          {{ i.shifts_curr }}
-        </v-col>
-        <v-col class="text-center">
-          {{ i.shifts_30 }}
-        </v-col>
-      </v-row>
+      <v-data-table
+        :headers="headers"
+        :items="teamData || []"
+        disable-pagination
+        hide-default-footer
+        multi-sort
+      >
+
+        <template v-slot:item.fts_status="{ item }">
+          {{ getFTSStatus(item.fts_status).text }}
+        </template>
+      </v-data-table>
+
     </v-card-text>
 
 
@@ -61,7 +54,34 @@ export default {
 
   data() {
     return {
-      teamData: []
+      teamData: [],
+      headers: [
+        { 
+          text: this.$t('general.name'), 
+          value: 'name', 
+          align: 'start', 
+        },
+        { 
+          text: this.$t('account.fts_status'), 
+          value: 'fts_status', 
+          align: 'center',
+        },
+        {
+          text: this.$t('account.availability_pct'),
+          value: 'avail_hours',
+          align: 'center',
+        },
+        { 
+          text: this.$t('schedules.shifts'), 
+          value: 'shifts_curr', 
+          align: 'center', 
+        },
+        {
+          text: this.$t('shifts.shifts_30'), 
+          value: 'shifts_30', 
+          align: 'center',
+        }
+      ],
     }
   },
 
@@ -91,12 +111,14 @@ export default {
           (this.$dayjs(f.time_start) >= this.$dayjs(this.schedule.date_start).subtract(1, 'month')) &&
           (this.$dayjs(f.time_start) <= this.$dayjs(this.schedule.date_start).add(1, 'week'))
         )
+        var avail_hours = (u.available_hours_count / 168) * 100
 
         var data = {
           name: user_name,
           fts_status: u.fts_status,
           shifts_curr: user_shifts1.length,
-          shifts_30: user_shifts30.length
+          shifts_30: user_shifts30.length,
+          avail_hours: avail_hours.toFixed(0)
         }
 
         this.teamData.push(data)

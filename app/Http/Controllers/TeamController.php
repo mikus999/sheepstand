@@ -315,6 +315,40 @@ class TeamController extends Controller
     }
 
 
+
+    /**
+     * 
+     * Return all team users
+     *  - ROLE: team admin, super admin
+     * 
+     */
+    public function getSingleUser($teamid, $userid)
+    {
+        $user = Auth::user();
+        $team = Team::find($teamid);
+        $targetUser = User::find($userid);
+
+        if (!$targetUser) return RB::error(404);
+        if (!$team) return RB::error(404); // Bad Request; team not found
+
+        // Only Team Admins and Super Admins can add/remove users from a team
+        if ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null)) {
+          $roles = Helper::getUserRoles($user);
+
+          $targetUser->roles = $roles;
+          $targetUser->user_availabilities = $targetUser->user_availabilities()->get();
+          $targetUser->user_vacations = $targetUser->user_vacations()->get();
+          $targetUser->marriage_mate = $targetUser->marriage_mate()->first();
+
+          return RB::success(['user' => $targetUser]);
+        } else {
+          return RB::error(401);
+        }
+
+    }
+
+
+
     /**
      * 
      * Return all team users

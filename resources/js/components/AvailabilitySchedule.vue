@@ -1,16 +1,20 @@
 <template>
-  <v-card width="100%" :flat="$vuetify.breakpoint.xs">
-    <v-card-title class="text-h6">
+  <v-card :flat="$vuetify.breakpoint.xs">
+    <v-card-title :class="'text-h6 ' + (popup ? 'justify-center ' : ' ')" :width="width">
       <v-icon class="mr-3">{{icons.mdiCalendarMultiselect}}</v-icon>
       {{ $t('account.availability') }}
     </v-card-title>
 
+    <v-card-subtitle v-if="popup" class="mt-6 text-center">
+      {{ data.name }}
+    </v-card-subtitle>
+
     <!-- Desktop View -->
-    <v-card-text v-if="$vuetify.breakpoint.smAndUp">
-      <v-row>
+    <v-card-text class="overflow-auto" v-if="$vuetify.breakpoint.smAndUp" :style="'height:' + height">
+      <v-row v-if="!popup">
         <v-col>
           <v-btn text @click="changeAll(1)" color="grey">
-            {{ $t('general.enable_all') }}
+            {{ $t('general.set_default') }}
           </v-btn>
           <v-btn text @click="changeAll(0)" color="grey">
             {{ $t('general.disable_all') }}
@@ -49,13 +53,13 @@
 
     <!-- Mobile View -->
     <v-card-text v-else>
-      <v-row>
+      <v-row v-if="!popup">
         <v-col>
           <v-btn block @click="saveSchedule" color="primary">
             {{ $t('general.save') }}
           </v-btn>
           <v-btn text block @click="changeAll(1)" color="grey">
-            {{ $t('general.enable_all') }}
+            {{ $t('general.set_default') }}
           </v-btn>
           <v-btn text block @click="changeAll(0)" color="grey">
             {{ $t('general.disable_all') }}
@@ -87,6 +91,21 @@
           
     </v-card-text>
 
+    <v-card-actions v-if="popup">
+      <v-btn text @click="changeAll(1)" color="grey">
+        {{ $t('general.set_default') }}
+      </v-btn>
+      <v-btn text @click="changeAll(0)" color="grey">
+        {{ $t('general.disable_all') }}
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" text v-on:click="$emit('close')">
+        {{ $t('general.cancel' ) }}
+      </v-btn>
+      <v-btn color="primary" v-on:click="saveSchedule(); $emit('close')">
+        {{ $t('general.save' ) }}
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -102,6 +121,18 @@ export default {
   props: {
     data: {
       type: [Object, Array]
+    },
+    width: {
+      type: [String, Number],
+      default: '100%'
+    },
+    height: {
+      type: [String, Number],
+      default: '100%'
+    },
+    popup: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -120,9 +151,9 @@ export default {
 
   methods: {
     async getAvailability () {
-      await axios.get('/api/account/availability')
+      await axios.get('/api/teams/' + this.team.id + '/user/' + this.data.id)
         .then(response => {
-          this.availability = response.data.data.availability
+          this.availability = response.data.data.user.user_availabilities
         })
     },
 
@@ -152,6 +183,8 @@ export default {
         method: 'post',      
         url: '/api/account/availability/default',
         data: {
+          user_id: this.data.id,
+          teamid: this.team.id,
           default: turnOn
         }
       })
@@ -170,6 +203,8 @@ export default {
           method: 'post',      
           url: '/api/account/availability',
           data: {
+            user_id: this.data.id,
+            teamid: this.team.id,
             availability: JSON.stringify(this.changed)
           }
         })

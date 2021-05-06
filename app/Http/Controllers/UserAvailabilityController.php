@@ -18,12 +18,19 @@ class UserAvailabilityController extends Controller
   public function setDefaultAvailability(Request $request)
   {
     $user = Auth::user();
+    $team = Team::find($request->teamid);
     $default = $request->default || null;
 
     if ($request->user_id) {
-      if (!$user->hasRole('super_admin', null)) return RB::error(403); // Access denied
+      $selfadd = $user->id == $request->user_id;
 
-      $targetUser = User::find($request->user_id);
+      if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
+        $targetUser = User::find($request->user_id);
+        
+      } else {
+        return RB::error(403); // Access denied
+      }
+
     } else {
       $targetUser = $user;
     }
@@ -55,14 +62,20 @@ class UserAvailabilityController extends Controller
   public function setAvailability(Request $request)
   {
     $user = Auth::user();
+    $team = Team::find($request->teamid);
     $availability = json_decode($request->availability);
     $data = [];
 
 
     if ($request->user_id) {
-      if (!$user->hasRole('super_admin', null)) return RB::error(403); // Access denied
+      $selfadd = $user->id == $request->user_id;
 
-      $targetUser = User::find($request->user_id);
+      if ($selfadd || ($user->hasRole('team_admin', $team) || $user->hasRole('super_admin', null))) {
+        $targetUser = User::find($request->user_id);
+      } else {
+        return RB::error(403); // Access denied
+      }
+
     } else {
       $targetUser = $user;
     }

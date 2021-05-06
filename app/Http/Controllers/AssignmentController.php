@@ -108,13 +108,11 @@ class AssignmentController extends Controller
 
 
     public function sortUsers($members) {
-      // TODO Factors: fts status, number of assignments, weekly availability weight, has car, marriage mate
 
       $data = $members->sortBy([
-        ['mandatory', 'desc'],
-        ['shifts_current', 'asc'],
-        ['available_hours_count', 'asc'],
-        ['shifts_30days', 'asc'],
+        ['sort_rank', 'desc'], // Priority giving to FTS and lower availability
+        ['shifts_current', 'asc'], // Give WEEKLY assignments to as many users as possible
+        ['shifts_30days', 'asc'], // Make sure MONTHLY schedule is balanced
       ]);
 
       $data->values()->all();
@@ -129,7 +127,6 @@ class AssignmentController extends Controller
       $members = collect($team->users()
                       ->with('available_hours', 'shifts')
                       ->whereHas('available_hours')
-                      ->withCount('available_hours')
                       ->withCount([
                         'shifts as shifts_30days' => function (Builder $query) use ($start_date) {
                           $query->where('time_start', '>=', $start_date->sub(1, 'month'))
@@ -180,19 +177,19 @@ class AssignmentController extends Controller
       }
 
 
-      // Loop through users who have weekly availability this day of week
+
       foreach ($members as $member) {
         $is_available = true;
 
 
-        // Check if the user already is assigned this day
+        // Check if the user already is assigned THIS DAY
         if ($is_available) {
           $check = $member->shifts()->where('time_start', '>', $start_date->copy()->startOfDay())->where('time_start','<', $start_date->copy()->endOfDay())->get();
           if($check->count() > 0) $is_available = false;
         }
 
 
-        // Loop through all windows and check against user availability
+        // Loop through all WINDOWS and check against user availability
         // If window is not found, remove user from list and exit loop. Not available for this shift.
         if ($is_available) {
           foreach ($windows as $window) {
@@ -207,9 +204,8 @@ class AssignmentController extends Controller
 
 
 
-        // Next, check for conflicts with user's existing shift assignments
+        // Next, check for CONFLICTS with user's existing shift assignments
         // Shifts at same time; Adjacent shifts at different location
-        
         if ($is_available) {
           $check = $member->shifts()->whereBetween('time_start', [$start_date, $end_date])->get();
           if($check->count() > 0) $is_available = false;
@@ -231,21 +227,26 @@ class AssignmentController extends Controller
         }
         
 
+
+        // Assign a SORT RANK based on FTS status and availablility
+        // Rank is determined by number of hours NOT AVAILABLE multiplied by FTS status
+        // Lower availability is assigned first
         if ($is_available) {
           $fts = $member->fts_status;
           $curr = $member->shifts_current;
+          $not_avail = 168 - ($member->available_hours_count);
 
           if ($fts == 1 && $curr <= 2) { // Regular pioneer without shifts this week
-            $mandatory = 2;
+            $sort_rank = 2 * $not_avail;
           } else if ($fts == 2 && $curr <= 3) { // SP/Missionary without shifts this week
-            $mandatory = 3;
+            $sort_rank = 3 * $not_avail;
           } else if ($fts > 2 && $curr == 0) { // Other SFTS without shifts this week
-            $mandatory = 1;
+            $sort_rank = 1 * $not_avail;
           } else {
-            $mandatory = 0;
+            $sort_rank = $not_avail;
           }
 
-          $members['mandatory'] = $mandatory;
+          $members['sort_rank'] = $sort_rank;
           
         }
 

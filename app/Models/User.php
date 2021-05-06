@@ -45,7 +45,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         'photo_url'
     ];
 
-    //protected $withCount = ['available_hours'];
+    protected $withCount = ['available_hours'];
 
 
     public function teams()

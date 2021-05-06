@@ -79,10 +79,11 @@ class Helper
 
       for ($d = 1; $d <= 7; $d++) {
         for ($h = 0; $h <= 23; $h++) {
+          $availTemp = $available;
 
           // SET NIGHTTIME HOURS (BETWEEN 20:00 AND 06:00) TO NOT AVAILABLE
           if ($h < 6 || $h >= 20) {
-            $available = 0;
+            $availTemp = 0;
           }
 
           $temp = [
@@ -90,7 +91,7 @@ class Helper
             'day_of_week' => $d, 
             'start_time' => $h . ':00', 
             'end_time' => ($h+1) . ':00',
-            'available' => $available
+            'available' => $availTemp
           ];
 
           $data[] = $temp;

@@ -28,9 +28,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     // ACCOUNT routes
     Route::patch('account/profile', 'Settings\ProfileController@update');
     Route::patch('account/password', 'Settings\PasswordController@update');
-    Route::get('account/availability', 'UserAvailabilityController@getAvailability');
-    Route::post('account/availability', 'UserAvailabilityController@setAvailability');
-    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability');
+    Route::get('account/availability', 'UserAvailabilityController@getAvailability'); // TODO OpenAPI UPDATE
+    Route::post('account/availability', 'UserAvailabilityController@setAvailability'); // TODO OpenAPI UPDATE
+    Route::post('account/availability/default', 'UserAvailabilityController@setDefaultAvailability'); // TODO OpenAPI UPDATE
     Route::get('account/vacation', 'UserAvailabilityController@getVacation');
     Route::post('account/vacation', 'UserAvailabilityController@setVacation');
     Route::delete('account/vacation/{id}', 'UserAvailabilityController@deleteVacation');
@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('teams/leaveteam', 'TeamController@removeUserFromTeam');
     Route::get('teams/{id}/resetcode', 'TeamController@changeTeamCode');
     Route::get('teams/{code}/findteam', 'TeamController@findTeamByCode');
+    Route::get('teams/{teamid}/user/{userid}', 'TeamController@getSingleUser'); // TODO OpenAPI
     Route::get('teams/{id}/users/', 'TeamController@getTeamUsers');
     Route::post('teams/settings/update', 'TeamController@updateSetting');
     Route::post('teams/default/update', 'TeamController@setDefault');

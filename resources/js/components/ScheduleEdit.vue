@@ -202,7 +202,7 @@
     </v-dialog>
 
     <v-dialog :value="aSummaryOverlay" @click:outside="closeASummaryOverlay()" width="800px" height="100%">
-      <AssignmentSummary v-on:close="closeASummaryOverlay()" />
+      <AssignmentSummary v-on:close="closeASummaryOverlay()" :key="keyAssignmentSummary" />
     </v-dialog>
 
 
@@ -289,6 +289,7 @@ export default {
       sw_status_archive: false,
       sort_options: 'location',
       keyShiftNewCard: 0,
+      keyAssignmentSummary: 0,
       newTemplateName: null,
       shiftDefaults: {
           id: null,
@@ -586,6 +587,7 @@ export default {
     },
 
     showASummaryOverlay () {
+      this.keyAssignmentSummary += 1
       this.aSummaryOverlay = true
     },
 
