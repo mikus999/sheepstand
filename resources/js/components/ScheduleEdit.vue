@@ -133,6 +133,7 @@
                     :team_availability="team_availability"
                     v-on:update="parseSchedule()" 
                     v-on:location="showLocationOverlay(shift)"
+                    v-on:swapmessage="showSwapMessage = $event"
                     class="shift"
                   />                  
 
@@ -231,6 +232,14 @@
       </v-card>
     </v-dialog>
 
+
+    <v-snackbar
+      v-model="showSwapMessage"
+      timeout="-1"
+      color="primary"
+    >
+      {{ $t('schedules.assignment_switch') }}
+    </v-snackbar>
   </v-card>
 
 </template>
@@ -272,6 +281,7 @@ export default {
       locationOverlay: false,
       autoAssignOverlay: false,
       aSummaryOverlay: false,
+      showSwapMessage: false,
       dialog: false,
       dialog2: false,
       date: '',

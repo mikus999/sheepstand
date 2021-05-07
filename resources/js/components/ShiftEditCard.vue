@@ -1,6 +1,6 @@
 <template>
   <div ref="mainDiv">
-    <v-card :id="shift.id" class="mt-5 handle">
+    <v-card :id="shift.id" class="mt-5 handle" :disabled="!checkAssignmentTrade">
       
       <v-card-subtitle class="text-center font-weight-bold" :style="'background-color: ' + (shift.location.color_code != null ? shift.location.color_code : '')">
         <v-row class="align-center">
@@ -61,7 +61,8 @@
                 <span :class="(getShiftStatus(user.pivot.status).color + '--text ') + 
                   (user.pivot.status == 3 ? 'text-decoration-line-through ' : ' ') + 
                   (assignment_trade == user ? 'selected-user ' : ' ') +
-                  (hover ? 'hover-user ' : ' ')">
+                  (hover ? 'hover-user ' : ' ')"
+                >
                   {{ user.name }}
                 </span>
               </v-hover>
@@ -178,8 +179,8 @@
         <ShiftAssignments :shift="shift" :team_availability="team_availability" v-on:close="closeParticipantDialog" />
       </v-dialog>
 
-
     </v-card>
+
   </div>
 </template>
 
@@ -222,6 +223,7 @@ export default {
     return {
       dialog: false,
       participantDialog: false,
+      showSwapMessage: false,
       mandatoryIcon: {
         position: 'absolute',
         top: '5px',
@@ -249,7 +251,29 @@ export default {
 
     assignmentsLoaded() {
       return this.team_availability ? this.team_availability.length > 0 : false
+    },
+
+    checkAssignmentTrade() {
+      var result = true
+
+      if (this.assignment_trade != null && this.assignment_trade.pivot.shift_id != this.shift.id) {
+
+        // Check if user is available for shift
+        var tempUser = this.team_availability.filter(ua => ua.id == this.assignment_trade.id)
+        if (tempUser.length > 0) {
+          result = this.checkShiftAvailability(this.shift, tempUser[0])
+        }
+
+        // Check if user is already in shift
+        if (result) {
+          var temp = this.shift.users.filter(su => su.id == this.assignment_trade.id)
+          result = temp.length == 0
+        }
+      }
+
+      return result
     }
+
   },
 
   methods: {
@@ -317,15 +341,21 @@ export default {
       if (currUser == null) {
         // Select a user
         this.storeAssignmentTrade(item)
-        this.showSnackbar(this.$t('schedules.assignment_switch'), 'primary')
+        this.showSwapMessage = true
+        this.$emit('swapmessage', true)
 
       } else if (currUser.id == item.id) {
         // Deselect user
         this.storeAssignmentTrade(null)
+        this.showSwapMessage = false
+        this.$emit('swapmessage', false)
 
       } else {
         // Make trade
         this.switchAssignments(currUser, item)
+        this.showSwapMessage = false
+        this.$emit('swapmessage', false)
+
       }
       
     },
