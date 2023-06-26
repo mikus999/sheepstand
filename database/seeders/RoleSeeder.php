@@ -42,6 +42,6 @@ class RoleSeeder extends Seeder
       $role = Role::create(['name' => 'translator', 'display_name' => 'Translator', 'global' => true]);
       $role->attachPermission($manage_translation);
 
-      $role = Role::create(['name' => 'super_admin2', 'display_name' => 'Site Administrator2', 'global' => true]);
+      $role = Role::create(['name' => 'super_admin', 'display_name' => 'Site Administrator', 'global' => true]);
     }
 }
